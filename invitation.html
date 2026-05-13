@@ -203,16 +203,12 @@ textarea{resize:vertical;min-height:80px}
 
       <fieldset>
         <legend>6 · AI 数字大头贴（可选 · 可做社交头像）</legend>
-        <div class="tip" style="margin-bottom:8px;color:#5b4a35">选一个风格，我们将生成一对虚拟新人的婚礼插画头像（免费、无需上传照片）。渲染需 10–20 秒。</div>
-        <label>选择风格</label>
-        <select id="avatarStyle">
-          <option value="cartoon">皮克斯卡通</option>
-          <option value="oil">古典油画</option>
-          <option value="hk">港风电影</option>
-          <option value="line">极简线稿</option>
-        </select>
+        <div class="tip" style="margin-bottom:8px;color:#5b4a35">上传一张你们的合照，我们将生成一对极简线稿风格的两人婚礼头像（一男一女）。首次生成需 15–40 秒。</div>
+        <label>上传一张你们的合照 *</label>
+        <input id="avatarSrc" type="file" accept="image/*">
+        <input type="hidden" id="avatarStyle" value="line">
         <div class="actions" style="margin-top:8px">
-          <button class="btn sm" type="button" id="aiAvatar">🎨 生成 AI 头像</button>
+          <button class="btn sm" type="button" id="aiAvatar">🎨 生成极简线稿头像</button>
           <span class="tip" id="avatarStatus"></span>
         </div>
         <div id="avatarGallery" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
@@ -332,23 +328,29 @@ $('aiStory').addEventListener('click', async () => {
   finally{ $('aiStory').disabled = false; }
 });
 
-// ---------- AI 头像（纯文生图） ----------
+// ---------- AI 头像（图生图） ----------
+let avatarSrcDataUrl = null;
+$('avatarSrc').addEventListener('change', async e => {
+  const f = e.target.files[0]; if(!f) return;
+  $('avatarStatus').textContent = '压缩中…';
+  avatarSrcDataUrl = await fileToCompressedDataUrl(f, 768, 0.85);
+  $('avatarStatus').textContent = '✅ 合照已准备，点击上方按钮生成';
+});
 $('aiAvatar').addEventListener('click', async () => {
-  const style = $('avatarStyle').value;
-  $('aiAvatar').disabled = true; $('avatarStatus').textContent = '🎨 渲染中，首次可能 10–30 秒…';
+  if(!avatarSrcDataUrl){ $('avatarStatus').textContent = '请先上传一张合照'; return; }
+  $('aiAvatar').disabled = true; $('avatarStatus').textContent = '🎨 渲染中，首次可能 15–40 秒…';
   try{
     const r = await fetch('/api/avatar',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({style})});
+      body:JSON.stringify({dataUrl: avatarSrcDataUrl})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error);
-    // 上传生成结果到 KV，拿短链
     const u = await fetch('/api/upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({dataUrl:j.dataUrl})});
     const uj = await u.json();
     if(!uj.ok) throw new Error(uj.error);
-    state.avatars.push({style, key:uj.key, url:uj.url, dataUrl:j.dataUrl});
+    state.avatars.push({style:'line', key:uj.key, url:uj.url, dataUrl:j.dataUrl});
     renderAvatarGallery();
     render();
-    $('avatarStatus').textContent = '✅ 已生成 · 可下载或继续生成其他风格';
+    $('avatarStatus').textContent = '✅ 已生成 · 不满意可再点一次重新生成';
   }catch(err){
     $('avatarStatus').textContent = '❌ ' + (err.message || '生成失败');
   }

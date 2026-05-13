@@ -1,13 +1,18 @@
-// POST /api/avatar  body: { style } -> { ok, dataUrl, provider, style }
-// 文生图：Pollinations 优先（免费无 key），失败降级到 Cloudflare Workers AI
+// POST /api/avatar  body: { dataUrl } -> { ok, dataUrl, provider }
+// 图生图：用上传的合照做底稿，输出极简线稿风格的两人婚礼头像
 import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
-const STYLE_PROMPT = {
-  cartoon: "Pixar-style 3D cartoon wedding portrait of a happy young Asian couple, bride and groom, soft lighting, pastel pink background, cute and warm, head and shoulders, high quality, smiling, detailed eyes",
-  oil:     "Classical European oil painting wedding portrait of an elegant young Asian couple in formal wedding attire, warm golden tones, soft brushstrokes, museum quality, head and shoulders",
-  hk:      "1990s Hong Kong cinema wedding portrait of a young Asian couple, Wong Kar-wai style, cinematic film grain, warm gold lighting, retro fashion, dreamy bokeh, head and shoulders",
-  line:    "Minimalist single-line ink illustration of a young Asian wedding couple, black ink on cream paper, elegant and clean, head and shoulders, no shading, modern wedding stationery style",
-};
+const PROMPT =
+  "minimalist single continuous line drawing of a romantic young wedding couple, " +
+  "exactly two people, one man and one woman side by side, head and shoulders portrait, " +
+  "elegant black ink lines on cream paper, modern wedding stationery illustration, " +
+  "clean and refined, no shading, no color fill, soft warm background";
+
+const NEGATIVE =
+  "three people, four people, group of people, crowd, multiple couples, " +
+  "extra heads, extra faces, deformed, disfigured, blurry, low quality, " +
+  "color photo, photorealistic, painting, oil painting, watercolor, " +
+  "text, watermark, signature, logo";
 
 function arrayBufferToBase64(buf) {
   const bytes = new Uint8Array(buf);
@@ -19,10 +24,17 @@ function arrayBufferToBase64(buf) {
   return btoa(binary);
 }
 
+function dataUrlToBytes(dataUrl) {
+  const m = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(dataUrl || "");
+  if (!m) return null;
+  return { mime: m[1], bytes: Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0)) };
+}
+
 export const onRequestPost = async ({ request, env }) => {
   if (!rateLimit(getIp(request), 6)) return json(429, { ok: false, error: "生成过于频繁，请稍后再试" });
   if (env.AVATAR_ENABLED !== "true") return json(503, { ok: false, error: "AI 头像功能尚未开启" });
   if (!env.WEDDING) return serverError("KV not configured");
+  if (!env.AI) return json(503, { ok: false, error: "Workers AI 未绑定，请在 Cloudflare 添加 AI binding" });
 
   // 全局每日成本兜底
   const limit = parseInt(env.AVATAR_DAILY_LIMIT || "200", 10);
@@ -33,54 +45,39 @@ export const onRequestPost = async ({ request, env }) => {
 
   let body;
   try { body = await request.json(); } catch { return badRequest("invalid json"); }
-  const style = STYLE_PROMPT[body?.style] ? body.style : "cartoon";
-  const prompt = STYLE_PROMPT[style];
-  const seed = Math.floor(Math.random() * 1_000_000);
 
-  let dataUrl, provider;
+  const decoded = dataUrlToBytes(body?.dataUrl);
+  if (!decoded) return badRequest("请先上传一张你们的合照（jpeg/png/webp）");
+  if (decoded.bytes.length > 3_500_000) return badRequest("图片过大，请压缩后重试");
 
-  // 路线 A：Pollinations（无需 key，完全免费）
   try {
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=640&height=640&seed=${seed}&nologo=true&model=flux`;
-    const r = await fetch(url, {
-      cf: { cacheTtl: 0 },
-      signal: AbortSignal.timeout(25_000),
+    // Workers AI img2img：把上传图片作为底稿，按 prompt 重绘
+    const out = await env.AI.run("@cf/runwayml/stable-diffusion-v1-5-img2img", {
+      prompt: PROMPT,
+      negative_prompt: NEGATIVE,
+      image: Array.from(decoded.bytes),
+      strength: 0.75,    // 0-1，越高越像 prompt、越不像原图
+      num_steps: 20,
+      guidance: 8.5,
     });
-    if (r.ok) {
-      const buf = await r.arrayBuffer();
-      if (buf.byteLength > 1000) {
-        dataUrl = `data:${r.headers.get("content-type") || "image/jpeg"};base64,${arrayBufferToBase64(buf)}`;
-        provider = "pollinations";
-      }
+
+    let buf;
+    if (out instanceof ReadableStream) buf = await new Response(out).arrayBuffer();
+    else if (out instanceof Uint8Array) buf = out.buffer;
+    else if (out instanceof ArrayBuffer) buf = out;
+    else if (out?.image) {
+      // 极少数情况下返回 base64 字符串
+      const bytes = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
+      buf = bytes.buffer;
+    } else {
+      return serverError("AI 返回格式异常，请重试");
     }
-  } catch (_) { /* fallthrough */ }
 
-  // 路线 B：Cloudflare Workers AI 兜底
-  if (!dataUrl && env.AI) {
-    try {
-      const out = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", { prompt, steps: 4 });
-      if (out?.image) {
-        dataUrl = `data:image/png;base64,${out.image}`;
-        provider = "workers-ai";
-      } else if (out instanceof ReadableStream) {
-        const buf = await new Response(out).arrayBuffer();
-        dataUrl = `data:image/png;base64,${arrayBufferToBase64(buf)}`;
-        provider = "workers-ai";
-      } else if (out instanceof Uint8Array || out instanceof ArrayBuffer) {
-        const buf = out instanceof Uint8Array ? out.buffer : out;
-        dataUrl = `data:image/png;base64,${arrayBufferToBase64(buf)}`;
-        provider = "workers-ai";
-      }
-    } catch (_) { /* fallthrough */ }
+    const dataUrl = `data:image/png;base64,${arrayBufferToBase64(buf)}`;
+
+    await env.WEDDING.put(counterKey, String(used + 1), { expirationTtl: 86400 * 3 });
+    return json(200, { ok: true, dataUrl, provider: "workers-ai-img2img", style: "line" });
+  } catch (e) {
+    return serverError(String(e?.message || e));
   }
-
-  if (!dataUrl) {
-    return json(503, {
-      ok: false,
-      error: "AI 头像服务暂时不可用，请稍后再试。其他功能（请帖、AI 故事、婚纱照）不受影响。",
-    });
-  }
-
-  await env.WEDDING.put(counterKey, String(used + 1), { expirationTtl: 86400 * 3 });
-  return json(200, { ok: true, dataUrl, style, provider });
 };
