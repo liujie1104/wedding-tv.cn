@@ -1,0 +1,9 @@
+node_modules/
+.netlify/
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.log
+.embedder/
+_tail_summary.txt

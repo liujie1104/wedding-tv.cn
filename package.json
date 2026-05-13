@@ -1,0 +1,10 @@
+{
+  "name": "wedding-tv-cn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "wedding-tv.cn static site + Netlify Functions",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>电子请帖 · wedding-tv.cn</title>
+<meta name="description" content="一份用 wedding-tv.cn 制作的电子请帖" />
+<meta name="theme-color" content="#1c1612" />
+<meta name="robots" content="noindex,nofollow" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="电子请帖 · wedding-tv.cn" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow-x:hidden}
+.page{max-width:480px;margin:0 auto;background:#fffaf2;min-height:100vh;position:relative;box-shadow:0 0 60px rgba(0,0,0,.4)}
+.cover{position:relative;height:78vh;min-height:520px;background:#7a1f24;background-size:cover;background-position:center;overflow:hidden}
+.cover .veil{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.15) 0%,transparent 35%,rgba(0,0,0,.65) 100%)}
+.cover .top{position:absolute;top:24px;left:0;right:0;text-align:center;color:#fff;letter-spacing:8px;font-size:13px;opacity:.85;font-family:Georgia,serif}
+.cover .center{position:absolute;left:0;right:0;top:38%;text-align:center;color:#fff}
+.cover .center .small{letter-spacing:6px;font-size:12px;opacity:.85;font-family:Georgia,serif;margin-bottom:16px}
+.cover .center h1{margin:0;font-size:46px;font-family:"Songti SC","STSong","Noto Serif SC",serif;letter-spacing:8px;text-shadow:0 4px 20px rgba(0,0,0,.55)}
+.cover .center .heart{display:block;margin:14px auto;width:32px;height:32px;line-height:32px;border:1px solid rgba(255,255,255,.7);border-radius:50%;color:#fff;font-size:16px}
+.cover .bottom{position:absolute;bottom:36px;left:0;right:0;text-align:center;color:#fff}
+.cover .bottom .date{font-size:30px;font-family:Georgia,serif;letter-spacing:4px}
+.cover .bottom .city{margin-top:8px;font-size:13px;opacity:.85;letter-spacing:4px}
+.cover .scroll{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:#fff;font-size:11px;opacity:.6;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,4px)}}
+
+.body{padding:32px 26px 24px;text-align:center;font-family:"Songti SC","STSong","Noto Serif SC",serif}
+.body .greet{font-size:14px;color:#5b4a35;line-height:2;margin:6px 0 18px;white-space:pre-wrap}
+.line{height:1px;background:linear-gradient(to right,transparent,#d8c39a,transparent);margin:18px 0}
+.kv{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;font-size:14px;color:#3a2d1e;text-align:left}
+.kv .k{color:#a07840;letter-spacing:2px;min-width:72px}
+.kv .v{flex:1;text-align:right;line-height:1.7}
+.countdown{display:flex;justify-content:center;gap:10px;margin:22px 0 6px}
+.countdown .cd{background:#fdf3e2;border:1px solid #e7d9c4;border-radius:10px;padding:10px 12px;min-width:54px}
+.countdown .cd b{display:block;font-size:22px;color:#7a1f24;font-family:Georgia,serif}
+.countdown .cd span{font-size:11px;color:#8a795f;letter-spacing:2px}
+
+.story{margin:22px 0 0;padding:18px 16px;background:#fdf3e2;border-radius:12px;color:#5b4a35;line-height:2;font-size:14px;text-align:left;white-space:pre-wrap}
+.avatars{display:flex;gap:14px;justify-content:center;margin:24px 0 0;flex-wrap:wrap}
+.avatars .av{text-align:center}
+.avatars img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.avatars .av small{display:block;font-size:11px;color:#8a795f;margin-top:6px}
+
+.actions{padding:16px 22px 28px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions .btn{display:block;text-align:center;padding:11px;border-radius:999px;border:1px solid #e7d9c4;background:#fff;color:#7a5a2f;text-decoration:none;font-family:-apple-system,sans-serif;font-size:13px;cursor:pointer}
+.actions .btn.primary{background:#b08545;color:#fff;border-color:#b08545}
+.qrwrap{padding:0 22px 22px;text-align:center}
+.qrwrap canvas{background:#fff;padding:10px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.qrwrap .tip{font-size:12px;color:#8a795f;margin-top:8px;font-family:-apple-system,sans-serif}
+
+.foot{padding:18px 22px 28px;text-align:center;font-size:12px;color:#8a795f;font-family:-apple-system,sans-serif;border-top:1px solid #f0e3cb}
+.foot a{color:#7a5a2f;text-decoration:none}
+.foot .pill{display:inline-block;padding:8px 16px;margin-top:10px;background:#fdf3e2;border-radius:999px;color:#7a5a2f;text-decoration:none}
+
+/* 模板变体 */
+.tpl-cream .page{background:#fff7ec}.tpl-cream .cover{background-color:#a06b3a}
+.tpl-morandi .page{background:#eef0ec}.tpl-morandi .cover{background-color:#5a6a55}.tpl-morandi .cover .center h1,.tpl-morandi .body{color:#3e463b}
+.tpl-hk .page{background:#1c1612;color:#f0d9a8}.tpl-hk .cover{background-color:#1c1612}.tpl-hk .body{color:#f0d9a8}.tpl-hk .body .greet,.tpl-hk .kv .v,.tpl-hk .story{color:#e2c79a}.tpl-hk .story{background:#241c16}.tpl-hk .countdown .cd{background:#241c16;border-color:#3a2d1e}.tpl-hk .countdown .cd b{color:#f0c97a}.tpl-hk .actions .btn{background:#241c16;color:#f0c97a;border-color:#3a2d1e}.tpl-hk .actions .btn.primary{background:#b08545;color:#1a1410;border-color:#b08545}.tpl-hk .foot{border-color:#3a2d1e;color:#a89070}.tpl-hk .foot a,.tpl-hk .foot .pill{background:#241c16;color:#f0c97a}
+
+/* 音乐按钮 */
+.music{position:fixed;top:14px;right:calc(50% - 220px);z-index:50;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px)}
+.music.on .icon{animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:520px){.music{right:14px}}
+
+#loading,#error{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1410;color:#fff;font-family:-apple-system,sans-serif;z-index:100}
+#error{flex-direction:column;gap:14px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="loading">加载中…</div>
+<div id="error" class="hidden"><div id="errMsg">请帖不存在或已过期</div><a href="/" style="color:#b08545">返回 wedding-tv.cn</a></div>
+
+<div id="root" class="page hidden">
+  <div id="music" class="music hidden" onclick="toggleMusic()"><span class="icon">🎵</span></div>
+
+  <div class="cover" id="cover">
+    <div class="veil"></div>
+    <div class="top">SAVE THE DATE</div>
+    <div class="center">
+      <div class="small">WE ARE GETTING MARRIED</div>
+      <h1 id="namesEn"></h1>
+      <span class="heart">❤</span>
+    </div>
+    <div class="bottom">
+      <div class="date" id="dateEn"></div>
+      <div class="city" id="cityEn"></div>
+    </div>
+    <div class="scroll">▼ 向下滑动</div>
+  </div>
+
+  <div class="body">
+    <div class="greet" id="greet"></div>
+    <div class="line"></div>
+
+    <div style="font-size:24px;letter-spacing:6px;color:#7a1f24;margin:8px 0" id="namesCn"></div>
+
+    <div class="countdown" id="countdown"></div>
+
+    <div style="margin-top:18px">
+      <div class="kv"><div class="k">日 期</div><div class="v" id="dateCn"></div></div>
+      <div class="kv"><div class="k">时 间</div><div class="v" id="timeCn"></div></div>
+      <div class="kv"><div class="k">城 市</div><div class="v" id="cityCn"></div></div>
+      <div class="kv"><div class="k">地 点</div><div class="v" id="venueCn"></div></div>
+    </div>
+
+    <div class="story hidden" id="story"></div>
+
+    <div class="avatars hidden" id="avatars"></div>
+  </div>
+
+  <div class="actions">
+    <a href="#" class="btn primary" onclick="copyLink();return false">📋 复制请帖链接</a>
+    <a href="#" class="btn" onclick="shareInvite();return false">📤 分享给宾客</a>
+    <a href="#" class="btn" onclick="addToCalendar();return false">📅 加入日历</a>
+    <a href="#" class="btn" onclick="document.getElementById('qrwrap').scrollIntoView({behavior:'smooth'});return false">🔳 二维码</a>
+  </div>
+
+  <div class="qrwrap" id="qrwrap">
+    <canvas id="qr"></canvas>
+    <div class="tip">长按二维码可保存到相册分享</div>
+  </div>
+
+  <div class="foot">
+    本请帖由 <a href="/" target="_blank">wedding-tv.cn</a> 提供 · 免费在线制作<br>
+    <a class="pill" href="/invitation.html" target="_blank">💌 制作我的电子请帖</a>
+    <a class="pill" href="/calculator.html" target="_blank" style="margin-left:6px">💰 婚礼报价计算器</a>
+  </div>
+
+  <audio id="audio" loop preload="none"></audio>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const id = params.get('id');
+
+(async function init(){
+  if(!id){ showErr('链接缺少 id 参数'); return; }
+  try{
+    const r = await fetch('/api/load?id='+encodeURIComponent(id));
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error || '加载失败');
+    render(j.invitation);
+  }catch(err){ showErr(err.message); }
+})();
+
+function showErr(msg){
+  $('loading').classList.add('hidden');
+  $('errMsg').textContent = msg;
+  $('error').classList.remove('hidden');
+}
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function render(inv){
+  document.body.classList.add('tpl-' + (inv.template || 'gold'));
+  // 封面
+  if(inv.cover?.url) $('cover').style.backgroundImage = `url('${inv.cover.url}')`;
+  // 名字
+  $('namesEn').textContent = `${inv.groom} & ${inv.bride}`;
+  $('namesCn').textContent = `${inv.groom}  ❤  ${inv.bride}`;
+  // 日期
+  const d = new Date((inv.date || '') + 'T' + (inv.time || '11:58'));
+  const dateStr = isNaN(d) ? inv.date : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  $('dateEn').textContent = dateEn || '';
+  $('dateCn').textContent = dateStr || '';
+  $('timeCn').textContent = inv.time || '11:58';
+  $('cityEn').textContent = inv.city || '';
+  $('cityCn').textContent = inv.city || '—';
+  $('venueCn').textContent = inv.venue || '—';
+  $('greet').textContent = inv.greeting || '谨订于良辰吉日，恭请阁下莅临婚宴，共证幸福时刻。';
+  // 故事
+  if(inv.story){ $('story').textContent = inv.story; $('story').classList.remove('hidden'); }
+  // 头像
+  if(Array.isArray(inv.avatars) && inv.avatars.length){
+    $('avatars').innerHTML = inv.avatars.map(a => `
+      <div class="av"><img src="${a.url}" alt=""><small>${({cartoon:'卡通',oil:'油画',hk:'港风',line:'线稿'}[a.style]||'')}</small></div>
+    `).join('');
+    $('avatars').classList.remove('hidden');
+  }
+  // 倒计时
+  startCountdown(d);
+  // 音乐
+  if(inv.music){ setupMusic(inv.music); }
+  // 二维码
+  QRCode.toCanvas($('qr'), location.href, {width:180,margin:1,color:{dark:'#2a1f17',light:'#fff'}});
+  // 标题
+  document.title = `${inv.groom} & ${inv.bride} 的电子请帖 · wedding-tv.cn`;
+  // 显示
+  $('loading').classList.add('hidden');
+  $('root').classList.remove('hidden');
+  // 保存日历用
+  window.__inv = {...inv, _date:d};
+}
+
+function startCountdown(target){
+  if(!target || isNaN(target)) return;
+  const wrap = $('countdown');
+  function tick(){
+    const ms = target - Date.now();
+    if(ms <= 0){ wrap.innerHTML = '<div class="cd"><b>💖</b><span>今天就是大喜之日</span></div>'; return; }
+    const d = Math.floor(ms/86400000);
+    const h = Math.floor(ms%86400000/3600000);
+    const m = Math.floor(ms%3600000/60000);
+    const s = Math.floor(ms%60000/1000);
+    wrap.innerHTML = [['天',d],['时',h],['分',m],['秒',s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
+  }
+  tick(); setInterval(tick,1000);
+}
+
+let audioOn = false;
+function setupMusic(track){
+  const a = $('audio'); a.src = `/audio/${track}.mp3`;
+  $('music').classList.remove('hidden');
+  // iOS 必须用户交互才能播
+  document.body.addEventListener('click', () => { if(!audioOn){ a.play().then(()=>{audioOn=true;$('music').classList.add('on')}).catch(()=>{}); }}, {once:true});
+}
+function toggleMusic(){
+  const a = $('audio');
+  if(audioOn){ a.pause(); audioOn=false; $('music').classList.remove('on'); }
+  else { a.play().then(()=>{audioOn=true;$('music').classList.add('on')}); }
+}
+
+async function copyLink(){
+  try{ await navigator.clipboard.writeText(location.href); alert('链接已复制，发给亲友吧'); }
+  catch{ prompt('复制下面的链接：', location.href); }
+}
+async function shareInvite(){
+  const data = {title:document.title, text:'诚邀您参加我们的婚礼', url:location.href};
+  if(navigator.share){ try{ await navigator.share(data); }catch{} }
+  else copyLink();
+}
+function addToCalendar(){
+  const inv = window.__inv; if(!inv?._date || isNaN(inv._date)) return alert('日期无效');
+  const start = inv._date;
+  const end = new Date(start.getTime() + 4*3600*1000);
+  const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
+    `SUMMARY:${inv.groom} & ${inv.bride} 的婚礼`,
+    `LOCATION:${inv.city||''} ${inv.venue||''}`,
+    `DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
+    `DESCRIPTION:由 wedding-tv.cn 制作 · ${location.href}`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\n');
+  const blob = new Blob([ics],{type:'text/calendar'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'wedding.ics'; a.click();
+}
+</script>
+</body>
+</html>
