@@ -54,7 +54,17 @@ export const onRequestPost = async ({ request, env }) => {
       }
     );
     const data = await r.json();
-    if (!r.ok) return serverError(data?.error?.message || "AI 调用失败");
+    if (!r.ok) {
+      const raw = data?.error?.message || "AI 调用失败";
+      // 免费额度为 0 的友好提示
+      if (/quota|free.?tier|rate.?limit/i.test(raw)) {
+        return json(503, {
+          ok: false,
+          error: "AI 头像免费额度已耗尽或该模型需付费 key。其他功能（请帖、故事、婚纱照）不受影响，可直接生成请帖。",
+        });
+      }
+      return serverError(raw);
+    }
     const parts = data?.candidates?.[0]?.content?.parts || [];
     const imgPart = parts.find((p) => p.inlineData?.data);
     if (!imgPart) return serverError("AI 未返回图片，请换一张更清晰的合照重试");

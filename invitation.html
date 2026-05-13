@@ -129,6 +129,11 @@ textarea{resize:vertical;min-height:80px}
     <small>4 套高级模板 · 背景音乐 · 婚纱照 · AI 爱情故事 · AI 数字大头贴 · 一键短链 + 二维码</small>
   </h1>
 
+  <div id="stickyBar" style="position:sticky;top:0;z-index:50;background:rgba(253,246,238,.92);backdrop-filter:blur(8px);padding:10px 0;margin:6px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)">
+    <button class="btn" id="publishTop">📤 生成请帖链接</button>
+    <span class="tip" id="publishTopTip">填完姓名和日期即可生成；其他可后补不会丢失</span>
+  </div>
+
   <div class="layout">
     <!-- 左：表单 -->
     <section class="card" id="formCard">
@@ -180,6 +185,7 @@ textarea{resize:vertical;min-height:80px}
           <option value="09">09 · Lofi Hiphop 浪漫</option>
           <option value="10">10 · 木吉他指弹</option>
         </select>
+        <audio id="musicPreview" controls preload="none" style="width:100%;margin-top:8px;display:none"></audio>
         <div class="tip">10 首均为 Pixabay CC0 授权，可商用、无版权风险。</div>
       </fieldset>
 
@@ -197,6 +203,9 @@ textarea{resize:vertical;min-height:80px}
 
       <fieldset>
         <legend>6 · AI 数字大头贴（可选 · 可做社交头像）</legend>
+        <div class="tip" style="background:#fff6e6;border:1px dashed var(--gold);padding:8px 10px;border-radius:8px;margin-bottom:8px;color:#7a5a2f">
+          ⚠️ Google Gemini 免费额度中图像生成额度为 0，该功能需要付费 API key。若生成失败，请跳过此步（其他功能不受影响）。
+        </div>
         <label>上传一张你们的合照（用于风格化生成）</label>
         <input id="avatarSrc" type="file" accept="image/*">
         <label style="margin-top:10px">选择风格</label>
@@ -264,6 +273,15 @@ const state = {
 const $ = (id)=>document.getElementById(id);
 const fields = ['groom','bride','date','time','city','venue','greeting','brief','story','music'];
 fields.forEach(id => $(id).addEventListener('input', e => { state[id]=e.target.value; render(); }));
+// 背景音乐：选中后可试听
+$('music').addEventListener('change', e => {
+  const v = e.target.value;
+  const a = $('musicPreview');
+  if(!v){ a.style.display='none'; a.pause(); a.removeAttribute('src'); return; }
+  a.src = `/audio/${v}.mp3`;
+  a.style.display = 'block';
+  a.play().catch(()=>{});
+});
 $('tpls').addEventListener('click', e => {
   const t = e.target.closest('.tpl'); if(!t) return;
   document.querySelectorAll('.tpl').forEach(x=>x.classList.remove('sel'));
@@ -341,7 +359,13 @@ $('aiAvatar').addEventListener('click', async () => {
     renderAvatarGallery();
     render();
     $('avatarStatus').textContent = '✅ 已生成。可下载用作社交头像，或继续生成更多风格';
-  }catch(err){ $('avatarStatus').textContent = '❌ ' + err.message; }
+  }catch(err){ 
+    let msg = err.message || '生成失败';
+    if(/quota|rate.?limit|free.?tier/i.test(msg)) {
+      msg = '⚠️ AI 头像免费额度已耗尽（该模型需付费 key）。其他功能不受影响，可直接生成请帖。';
+    }
+    $('avatarStatus').textContent = '❌ ' + msg;
+  }
   finally{ $('aiAvatar').disabled = false; }
 });
 function renderAvatarGallery(){
@@ -382,6 +406,8 @@ function render(){
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 render();
+// 顶部置顶按钮：调用同一个发布逻辑
+$('publishTop').addEventListener('click', () => $('publish').click());
 
 // ---------- 发布 ----------
 $('publish').addEventListener('click', async () => {

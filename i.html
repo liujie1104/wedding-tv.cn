@@ -136,7 +136,20 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
   <audio id="audio" loop preload="none"></audio>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+// 多 CDN 兜底加载 QRCode 库；任何一个失败自动尝试下一个
+(function loadQR(srcs){
+  if(!srcs.length) return;
+  const s = document.createElement('script');
+  s.src = srcs[0]; s.async = true;
+  s.onerror = () => loadQR(srcs.slice(1));
+  document.head.appendChild(s);
+})([
+  'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+  'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js'
+]);
+</script>
 <script>
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -191,8 +204,8 @@ function render(inv){
   startCountdown(d);
   // 音乐
   if(inv.music){ setupMusic(inv.music); }
-  // 二维码
-  QRCode.toCanvas($('qr'), location.href, {width:180,margin:1,color:{dark:'#2a1f17',light:'#fff'}});
+  // 二维码：库就绪后渲染；若所有 CDN 都失败，回落到外部 QR 图片服务
+  renderQR(location.href);
   // 标题
   document.title = `${inv.groom} & ${inv.bride} 的电子请帖 · wedding-tv.cn`;
   // 显示
@@ -215,6 +228,22 @@ function startCountdown(target){
     wrap.innerHTML = [['天',d],['时',h],['分',m],['秒',s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
   }
   tick(); setInterval(tick,1000);
+}
+
+// 等 QRCode 库就绪后渲染；最多等 4 秒；失败用 api.qrserver.com 兜底
+function renderQR(url){
+  const start = Date.now();
+  (function tryRender(){
+    if(typeof QRCode !== 'undefined' && QRCode.toCanvas){
+      try{ QRCode.toCanvas($('qr'), url, {width:180,margin:1,color:{dark:'#2a1f17',light:'#fff'}}); return; }
+      catch(e){ /* fallthrough */ }
+    }
+    if(Date.now()-start < 4000){ setTimeout(tryRender, 200); return; }
+    // 兜底：用图片服务（不需要 JS 库）
+    const img = new Image(); img.width=180; img.height=180; img.alt='QR';
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
+    const c = $('qr'); c.parentNode.replaceChild(img, c);
+  })();
 }
 
 let audioOn = false;

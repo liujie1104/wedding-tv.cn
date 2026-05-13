@@ -29,7 +29,12 @@ export const onRequestPost = async ({ request, env }) => {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: sys }] },
           contents: [{ role: "user", parts: [{ text: user }] }],
-          generationConfig: { temperature: 0.85, maxOutputTokens: 600 },
+          generationConfig: {
+            temperature: 0.85,
+            maxOutputTokens: 1200,
+            // 关闭 Gemini 2.5 默认 thinking，避免 output token 被思考吃掉导致正文被截断
+            thinkingConfig: { thinkingBudget: 0 },
+          },
         }),
       }
     );
