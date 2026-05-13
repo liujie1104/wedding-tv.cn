@@ -1,0 +1,15 @@
+# 不上传为公开静态资源的文件/目录
+functions/
+src/
+node_modules/
+.embedder/
+.git/
+wrangler.jsonc
+package.json
+package-lock.json
+.gitignore
+.assetsignore
+_redirects
+README.md
+*.log
+_tail_summary.txt

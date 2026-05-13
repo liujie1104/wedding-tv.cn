@@ -1,2 +1,0 @@
-# Cloudflare Pages 重定向：短链 /i/abc123 -> /i.html?id=abc123
-/i/:id  /i.html?id=:id  200
