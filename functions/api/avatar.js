@@ -1,10 +1,5 @@
-// POST /api/avatar  body: { dataUrl: "data:image/jpeg;base64,...", style: "cartoon|oil|hk|line" }
-// 返回 { ok, dataUrl }  生成的数字头像（base64）
-//
-// 使用 Gemini 2.5 Flash Image (Nano Banana) — 多模态图像编辑
-// 单张约 $0.039；用环境变量 AVATAR_ENABLED=true 开启，并用全局每日 Blob 计数兜底成本
-import { getStore } from "@netlify/blobs";
-import { json, badRequest, serverError, rateLimit, getIp } from "./_lib.js";
+// POST /api/avatar  body: { dataUrl, style } -> { ok, dataUrl }
+import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
 const MODEL = "gemini-2.5-flash-image";
 
@@ -15,25 +10,22 @@ const STYLES = {
   line:    "Convert into a clean minimalist single-line illustration avatar, black ink on cream paper, elegant, head and shoulders only, no shading.",
 };
 
-export default async (req) => {
-  if (req.method !== "POST") return badRequest("POST only");
-  if (!rateLimit(getIp(req), 4, 60_000)) return json(429, { ok: false, error: "生成过于频繁，请稍后" });
-
-  if (process.env.AVATAR_ENABLED !== "true")
-    return json(503, { ok: false, error: "AI 头像功能尚未开启" });
-  const key = process.env.GEMINI_API_KEY;
+export const onRequestPost = async ({ request, env }) => {
+  if (!rateLimit(getIp(request), 4)) return json(429, { ok: false, error: "生成过于频繁，请稍后" });
+  if (env.AVATAR_ENABLED !== "true") return json(503, { ok: false, error: "AI 头像功能尚未开启" });
+  const key = env.GEMINI_API_KEY;
   if (!key) return json(503, { ok: false, error: "AI 服务尚未配置" });
+  if (!env.WEDDING) return serverError("KV not configured");
 
-  // 全局每日成本兜底：默认 200 张/天，可通过 AVATAR_DAILY_LIMIT 覆盖
-  const limit = parseInt(process.env.AVATAR_DAILY_LIMIT || "200", 10);
+  // 全局每日成本兜底
+  const limit = parseInt(env.AVATAR_DAILY_LIMIT || "200", 10);
   const today = new Date().toISOString().slice(0, 10);
-  const counterStore = getStore("counters");
-  const counterKey = `avatar-${today}`;
-  const used = parseInt((await counterStore.get(counterKey)) || "0", 10);
+  const counterKey = `cnt:avatar-${today}`;
+  const used = parseInt((await env.WEDDING.get(counterKey)) || "0", 10);
   if (used >= limit) return json(429, { ok: false, error: "今日 AI 头像配额已用完，请明天再来" });
 
   let body;
-  try { body = await req.json(); } catch { return badRequest("invalid json"); }
+  try { body = await request.json(); } catch { return badRequest("invalid json"); }
   const dataUrl = body?.dataUrl;
   const style = STYLES[body?.style] ? body.style : "cartoon";
   if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/"))
@@ -69,13 +61,10 @@ export default async (req) => {
     const outMime = imgPart.inlineData.mimeType || "image/png";
     const outDataUrl = `data:${outMime};base64,${imgPart.inlineData.data}`;
 
-    // 计数 +1
-    await counterStore.set(counterKey, String(used + 1));
-
+    // 计数 +1（3 天后过期，自动清理）
+    await env.WEDDING.put(counterKey, String(used + 1), { expirationTtl: 86400 * 3 });
     return json(200, { ok: true, dataUrl: outDataUrl, style });
   } catch (e) {
     return serverError(String(e?.message || e));
   }
 };
-
-export const config = { path: "/api/avatar" };
