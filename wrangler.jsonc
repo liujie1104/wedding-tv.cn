@@ -9,5 +9,13 @@
     "directory": ".",
     "binding": "ASSETS",
     "not_found_handling": "404-page"
+  },
+  "kv_namespaces": [
+    { "binding": "WEDDING", "id": "11ebf337807946b68cbd33d1432ea2ee" }
+  ],
+  "ai": { "binding": "AI" },
+  "vars": {
+    "AVATAR_ENABLED": "true",
+    "AVATAR_DAILY_LIMIT": "100"
   }
 }

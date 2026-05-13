@@ -16,8 +16,8 @@ export const onRequestPost = async ({ request, env }) => {
   if (brief.length < 5) return badRequest("请至少写 5 个字");
 
   const sys =
-    "你是一位温柔的中文婚礼文案作家。请把用户提供的相识简介，扩写为 200-280 字的温馨爱情故事，" +
-    "用第三人称叙述，风格清新、不浮夸、避免陈词滥调。直接输出正文，不要标题、不要 Markdown、不要引号。";
+    "你是一位温柔的中文婚礼文案作家。请把用户提供的相识简介，改写为 90-130 字的温馨爱情故事，" +
+    "用第三人称叙述，风格清新、不浮夸、避免陈词滥调。直接输出一段正文，不要标题、不要 Markdown、不要引号、不要换行。";
   const user = `新郎：${groom || "（未填）"}\n新娘：${bride || "（未填）"}\n相识简介：${brief}`;
 
   try {
@@ -31,8 +31,7 @@ export const onRequestPost = async ({ request, env }) => {
           contents: [{ role: "user", parts: [{ text: user }] }],
           generationConfig: {
             temperature: 0.85,
-            maxOutputTokens: 1200,
-            // 关闭 Gemini 2.5 默认 thinking，避免 output token 被思考吃掉导致正文被截断
+            maxOutputTokens: 600,
             thinkingConfig: { thinkingBudget: 0 },
           },
         }),
