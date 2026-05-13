@@ -203,12 +203,8 @@ textarea{resize:vertical;min-height:80px}
 
       <fieldset>
         <legend>6 · AI 数字大头贴（可选 · 可做社交头像）</legend>
-        <div class="tip" style="background:#fff6e6;border:1px dashed var(--gold);padding:8px 10px;border-radius:8px;margin-bottom:8px;color:#7a5a2f">
-          ⚠️ Google Gemini 免费额度中图像生成额度为 0，该功能需要付费 API key。若生成失败，请跳过此步（其他功能不受影响）。
-        </div>
-        <label>上传一张你们的合照（用于风格化生成）</label>
-        <input id="avatarSrc" type="file" accept="image/*">
-        <label style="margin-top:10px">选择风格</label>
+        <div class="tip" style="margin-bottom:8px;color:#5b4a35">选一个风格，我们将生成一对虚拟新人的婚礼插画头像（免费、无需上传照片）。渲染需 10–20 秒。</div>
+        <label>选择风格</label>
         <select id="avatarStyle">
           <option value="cartoon">皮克斯卡通</option>
           <option value="oil">古典油画</option>
@@ -336,35 +332,25 @@ $('aiStory').addEventListener('click', async () => {
   finally{ $('aiStory').disabled = false; }
 });
 
-// ---------- AI 头像 ----------
-let avatarSrcDataUrl = null;
-$('avatarSrc').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
-  avatarSrcDataUrl = await fileToCompressedDataUrl(f, 1024, 0.9);
-});
+// ---------- AI 头像（纯文生图） ----------
 $('aiAvatar').addEventListener('click', async () => {
-  if(!avatarSrcDataUrl){ $('avatarStatus').textContent = '请先上传一张合照'; return; }
   const style = $('avatarStyle').value;
-  $('aiAvatar').disabled = true; $('avatarStatus').textContent = '🎨 生成中（约 10-20 秒）…';
+  $('aiAvatar').disabled = true; $('avatarStatus').textContent = '🎨 渲染中，首次可能 10–30 秒…';
   try{
     const r = await fetch('/api/avatar',{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({dataUrl:avatarSrcDataUrl, style})});
+      body:JSON.stringify({style})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error);
-    // 把生成结果上传到 Blobs（这样 i.html 可以用短链显示）
+    // 上传生成结果到 KV，拿短链
     const u = await fetch('/api/upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({dataUrl:j.dataUrl})});
     const uj = await u.json();
     if(!uj.ok) throw new Error(uj.error);
     state.avatars.push({style, key:uj.key, url:uj.url, dataUrl:j.dataUrl});
     renderAvatarGallery();
     render();
-    $('avatarStatus').textContent = '✅ 已生成。可下载用作社交头像，或继续生成更多风格';
-  }catch(err){ 
-    let msg = err.message || '生成失败';
-    if(/quota|rate.?limit|free.?tier/i.test(msg)) {
-      msg = '⚠️ AI 头像免费额度已耗尽（该模型需付费 key）。其他功能不受影响，可直接生成请帖。';
-    }
-    $('avatarStatus').textContent = '❌ ' + msg;
+    $('avatarStatus').textContent = '✅ 已生成 · 可下载或继续生成其他风格';
+  }catch(err){
+    $('avatarStatus').textContent = '❌ ' + (err.message || '生成失败');
   }
   finally{ $('aiAvatar').disabled = false; }
 });

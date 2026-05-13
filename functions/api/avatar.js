@@ -1,20 +1,27 @@
-// POST /api/avatar  body: { dataUrl, style } -> { ok, dataUrl }
+// POST /api/avatar  body: { style } -> { ok, dataUrl, provider, style }
+// 文生图：Pollinations 优先（免费无 key），失败降级到 Cloudflare Workers AI
 import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
-const MODEL = "gemini-2.5-flash-image";
-
-const STYLES = {
-  cartoon: "Convert into a cute Pixar-style 3D cartoon avatar, soft lighting, pastel background, head and shoulders only, friendly smile, high detail eyes.",
-  oil:     "Transform into a classical oil painting portrait avatar in the style of European wedding portraits, warm tones, soft brushwork, head and shoulders only.",
-  hk:      "Restyle as a 1990s Hong Kong cinema portrait, cinematic film grain, warm gold lighting, retro fashion, head and shoulders avatar, dreamy bokeh.",
-  line:    "Convert into a clean minimalist single-line illustration avatar, black ink on cream paper, elegant, head and shoulders only, no shading.",
+const STYLE_PROMPT = {
+  cartoon: "Pixar-style 3D cartoon wedding portrait of a happy young Asian couple, bride and groom, soft lighting, pastel pink background, cute and warm, head and shoulders, high quality, smiling, detailed eyes",
+  oil:     "Classical European oil painting wedding portrait of an elegant young Asian couple in formal wedding attire, warm golden tones, soft brushstrokes, museum quality, head and shoulders",
+  hk:      "1990s Hong Kong cinema wedding portrait of a young Asian couple, Wong Kar-wai style, cinematic film grain, warm gold lighting, retro fashion, dreamy bokeh, head and shoulders",
+  line:    "Minimalist single-line ink illustration of a young Asian wedding couple, black ink on cream paper, elegant and clean, head and shoulders, no shading, modern wedding stationery style",
 };
 
+function arrayBufferToBase64(buf) {
+  const bytes = new Uint8Array(buf);
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 4)) return json(429, { ok: false, error: "生成过于频繁，请稍后" });
+  if (!rateLimit(getIp(request), 6)) return json(429, { ok: false, error: "生成过于频繁，请稍后再试" });
   if (env.AVATAR_ENABLED !== "true") return json(503, { ok: false, error: "AI 头像功能尚未开启" });
-  const key = env.GEMINI_API_KEY;
-  if (!key) return json(503, { ok: false, error: "AI 服务尚未配置" });
   if (!env.WEDDING) return serverError("KV not configured");
 
   // 全局每日成本兜底
@@ -26,55 +33,54 @@ export const onRequestPost = async ({ request, env }) => {
 
   let body;
   try { body = await request.json(); } catch { return badRequest("invalid json"); }
-  const dataUrl = body?.dataUrl;
-  const style = STYLES[body?.style] ? body.style : "cartoon";
-  if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/"))
-    return badRequest("bad dataUrl");
-  const m = /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(dataUrl);
-  if (!m) return badRequest("only jpeg/png/webp accepted");
-  if (dataUrl.length > 4_500_000) return badRequest("图片过大，请压缩后再试");
+  const style = STYLE_PROMPT[body?.style] ? body.style : "cartoon";
+  const prompt = STYLE_PROMPT[style];
+  const seed = Math.floor(Math.random() * 1_000_000);
 
-  const prompt = STYLES[style];
+  let dataUrl, provider;
 
+  // 路线 A：Pollinations（无需 key，完全免费）
   try {
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${encodeURIComponent(key)}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            role: "user",
-            parts: [
-              { text: prompt },
-              { inlineData: { mimeType: m[1], data: m[2] } },
-            ],
-          }],
-        }),
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=640&height=640&seed=${seed}&nologo=true&model=flux`;
+    const r = await fetch(url, {
+      cf: { cacheTtl: 0 },
+      signal: AbortSignal.timeout(25_000),
+    });
+    if (r.ok) {
+      const buf = await r.arrayBuffer();
+      if (buf.byteLength > 1000) {
+        dataUrl = `data:${r.headers.get("content-type") || "image/jpeg"};base64,${arrayBufferToBase64(buf)}`;
+        provider = "pollinations";
       }
-    );
-    const data = await r.json();
-    if (!r.ok) {
-      const raw = data?.error?.message || "AI 调用失败";
-      // 免费额度为 0 的友好提示
-      if (/quota|free.?tier|rate.?limit/i.test(raw)) {
-        return json(503, {
-          ok: false,
-          error: "AI 头像免费额度已耗尽或该模型需付费 key。其他功能（请帖、故事、婚纱照）不受影响，可直接生成请帖。",
-        });
-      }
-      return serverError(raw);
     }
-    const parts = data?.candidates?.[0]?.content?.parts || [];
-    const imgPart = parts.find((p) => p.inlineData?.data);
-    if (!imgPart) return serverError("AI 未返回图片，请换一张更清晰的合照重试");
-    const outMime = imgPart.inlineData.mimeType || "image/png";
-    const outDataUrl = `data:${outMime};base64,${imgPart.inlineData.data}`;
+  } catch (_) { /* fallthrough */ }
 
-    // 计数 +1（3 天后过期，自动清理）
-    await env.WEDDING.put(counterKey, String(used + 1), { expirationTtl: 86400 * 3 });
-    return json(200, { ok: true, dataUrl: outDataUrl, style });
-  } catch (e) {
-    return serverError(String(e?.message || e));
+  // 路线 B：Cloudflare Workers AI 兜底
+  if (!dataUrl && env.AI) {
+    try {
+      const out = await env.AI.run("@cf/black-forest-labs/flux-1-schnell", { prompt, steps: 4 });
+      if (out?.image) {
+        dataUrl = `data:image/png;base64,${out.image}`;
+        provider = "workers-ai";
+      } else if (out instanceof ReadableStream) {
+        const buf = await new Response(out).arrayBuffer();
+        dataUrl = `data:image/png;base64,${arrayBufferToBase64(buf)}`;
+        provider = "workers-ai";
+      } else if (out instanceof Uint8Array || out instanceof ArrayBuffer) {
+        const buf = out instanceof Uint8Array ? out.buffer : out;
+        dataUrl = `data:image/png;base64,${arrayBufferToBase64(buf)}`;
+        provider = "workers-ai";
+      }
+    } catch (_) { /* fallthrough */ }
   }
+
+  if (!dataUrl) {
+    return json(503, {
+      ok: false,
+      error: "AI 头像服务暂时不可用，请稍后再试。其他功能（请帖、AI 故事、婚纱照）不受影响。",
+    });
+  }
+
+  await env.WEDDING.put(counterKey, String(used + 1), { expirationTtl: 86400 * 3 });
+  return json(200, { ok: true, dataUrl, style, provider });
 };
