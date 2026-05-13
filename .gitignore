@@ -7,3 +7,9 @@ Thumbs.db
 *.log
 .embedder/
 _tail_summary.txt
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
