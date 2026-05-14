@@ -70,6 +70,10 @@ h2{font-size:22px;margin:48px 0 16px;border-left:4px solid var(--accent);padding
 .card h3{margin:0 0 8px;font-size:18px;color:var(--fg)}
 .card p{color:var(--mute);font-size:14px;flex:1;margin:0 0 14px}
 .card .go{align-self:flex-start;color:var(--accent);font-weight:600;font-size:14px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 16px}
+.filter-bar input{min-width:220px;flex:1;padding:10px 12px;background:#130f1a;border:1px solid var(--line);color:var(--fg);border-radius:10px}
+.chip{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#130f1a;color:var(--mute);cursor:pointer;font-size:13px}
+.chip.active{border-color:var(--accent);color:var(--fg)}
 footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var(--mute);font-size:13px;text-align:center}
 </style>
 </head>
@@ -138,10 +142,33 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
     <p>把电子请帖链接生成竖版精美海报，4 套主题色，朋友圈分享或打印桌牌都好用。</p>
     <span class="go">生成海报 →</span>
   </a>
+  <a class="card" href="/budget-reference.html">
+    <span class="tag">NEW · GUIDE</span>
+    <h3>🏙️ 城市婚礼预算参考库</h3>
+    <p>按城市查看 2026 常见婚礼预算区间，含中位数与省钱建议，支持快速检索。</p>
+    <span class="go">查看预算库 →</span>
+  </a>
+  <a class="card" href="/timeline-templates.html">
+    <span class="tag">NEW · DOWNLOAD</span>
+    <h3>🗂️ 婚礼流程模板下载中心</h3>
+    <p>提供晨迎版、晚宴版、西式版等 CSV 模板，下载后可直接给司仪/婚庆团队协作。</p>
+    <span class="go">下载模板 →</span>
+  </a>
 </div>
 
 <h2 id="regions">🗺️ 各地婚俗大全（34 篇）</h2>
 <p style="color:var(--mute);margin:0 0 16px">从直辖市、省、自治区到特别行政区，每地一篇详细解读：提亲、订婚、迎亲、典礼、敬酒、回门，以及当代演变趋势。</p>
+<div class="filter-bar">
+  <input id="regionSearch" type="search" placeholder="搜索省份/关键词，如：广东、客家、苗族" />
+  <button class="chip active" data-area="all">全部</button>
+  <button class="chip" data-area="华北">华北</button>
+  <button class="chip" data-area="华东">华东</button>
+  <button class="chip" data-area="华南">华南</button>
+  <button class="chip" data-area="华中">华中</button>
+  <button class="chip" data-area="西南">西南</button>
+  <button class="chip" data-area="西北">西北</button>
+  <button class="chip" data-area="东北">东北</button>
+</div>
 <div class="grid">
 <a class="card" href="/blog/beijing.html"><span class="tag">华北</span><h3>北京婚俗</h3><p>老北京讲究"三茶六礼"，迎娶时新娘需跨马鞍、火盆、铜镜，寓意平安。喜宴必有"四四见底"十六道菜。</p><span class="go">阅读 →</span></a>
 <a class="card" href="/blog/shanghai.html"><span class="tag">华东</span><h3>上海婚俗</h3><p>海派文化下西式教堂与中式敬茶并行，讲究"看人家""送日脚""十里红妆"陪嫁。</p><span class="go">阅读 →</span></a>
@@ -229,6 +256,60 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
 <script>
 (function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1df8fda3d25e8df34a5c8e08f945e9fb";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
+
+function trackEvent(event, extra) {
+  try {
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify(Object.assign({ event, page: location.pathname, ref: document.referrer || '' }, extra || {}))
+    }).catch(()=>{});
+  } catch(_) {}
+}
+
+(function setupRegionFilter(){
+  const cards = Array.from(document.querySelectorAll('#regions + .grid .card'));
+  const chips = Array.from(document.querySelectorAll('.chip[data-area]'));
+  const input = document.getElementById('regionSearch');
+  let current = 'all';
+
+  function apply(){
+    const kw = (input.value || '').trim().toLowerCase();
+    cards.forEach((c)=>{
+      const area = (c.querySelector('.tag')?.textContent || '').trim();
+      const t = c.textContent.toLowerCase();
+      const areaOk = current === 'all' || area === current;
+      const kwOk = !kw || t.includes(kw);
+      c.style.display = (areaOk && kwOk) ? '' : 'none';
+    });
+  }
+
+  chips.forEach((ch)=>{
+    ch.addEventListener('click', ()=>{
+      chips.forEach(x=>x.classList.remove('active'));
+      ch.classList.add('active');
+      current = ch.dataset.area;
+      trackEvent('open_blog_region', { area: current });
+      apply();
+    });
+  });
+  input?.addEventListener('input', apply);
+  apply();
+})();
+
+(function trackClicks(){
+  document.querySelectorAll('a.card').forEach((a)=>{
+    a.addEventListener('click', ()=>{
+      const href = a.getAttribute('href') || '';
+      if (href.startsWith('/blog/')) {
+        trackEvent('open_blog_region', { href });
+      } else {
+        trackEvent('open_tool', { href });
+      }
+    });
+  });
+})();
 </script>
 
 </body>

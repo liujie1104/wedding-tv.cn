@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>城市婚礼预算参考库 2026 | wedding-tv.cn</title>
+<meta name="description" content="按城市查看 2026 婚礼预算参考区间，含中位数与省钱建议，支持快速筛选。" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/budget-reference.html" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:title" content="城市婚礼预算参考库 2026" />
+<meta property="og:description" content="全国城市婚礼预算参考，快速查看中位数与节省策略。" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wedding-tv.cn/budget-reference.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🏙️</text></svg>" />
+<style>
+:root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.7 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;background:#0a060f;border-bottom:1px solid var(--line)}
+.top .in{max-width:1020px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.wrap{max-width:1020px;margin:0 auto;padding:32px 20px}
+.lead{color:var(--mute)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 20px}
+input,select{background:#130f1a;border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:10px 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card h3{margin:0 0 8px;color:var(--accent);font-size:18px}
+.k{display:flex;justify-content:space-between;font-size:14px;color:var(--mute);padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
+.k:last-child{border-bottom:0}
+.tip{margin-top:8px;font-size:13px;color:#d6c9b6}
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a href="/">wedding-tv.cn</a><nav><a href="/blog.html">博客</a> · <a href="/calculator.html">预算计算器</a></nav></div></header>
+<main class="wrap">
+  <h1>🏙️ 城市婚礼预算参考库（2026）</h1>
+  <p class="lead">以下为常见婚礼预算区间参考（不含蜜月），用于快速估算。实际价格受酒店档次、桌数、档期、摄影团队影响。</p>
+  <div class="tools">
+    <input id="q" type="search" placeholder="搜索城市，如 杭州 / 成都" />
+    <select id="tier"><option value="all">全部能级</option><option value="一线">一线</option><option value="新一线">新一线</option><option value="二线">二线</option></select>
+  </div>
+  <div id="grid" class="grid"></div>
+</main>
+<script>
+const DATA=[
+{city:'北京',tier:'一线',low:120000,mid:180000,high:300000,tip:'酒店和摄影是大头，平日档期可降10-20%'},
+{city:'上海',tier:'一线',low:130000,mid:200000,high:320000,tip:'外滩/市中心场地溢价明显'},
+{city:'广州',tier:'一线',low:100000,mid:150000,high:260000,tip:'午宴常比晚宴更省'},
+{city:'深圳',tier:'一线',low:110000,mid:170000,high:280000,tip:'摄影摄像套餐可打包谈价'},
+{city:'杭州',tier:'新一线',low:90000,mid:140000,high:240000,tip:'避开国庆五一，档期性价比更高'},
+{city:'成都',tier:'新一线',low:85000,mid:130000,high:220000,tip:'坝坝宴/酒店双方案可并行比价'},
+{city:'重庆',tier:'新一线',low:80000,mid:120000,high:210000,tip:'车队与酒店套餐谈判空间大'},
+{city:'武汉',tier:'新一线',low:75000,mid:115000,high:190000,tip:'摄影棚拍+外景混搭成本更稳'},
+{city:'南京',tier:'新一线',low:85000,mid:125000,high:210000,tip:'淡季酒店常有厅费减免'},
+{city:'西安',tier:'新一线',low:70000,mid:110000,high:180000,tip:'中式礼服租赁组合更划算'},
+{city:'天津',tier:'二线',low:65000,mid:98000,high:160000,tip:'桌数控制在20桌以内最稳'},
+{city:'青岛',tier:'二线',low:68000,mid:105000,high:170000,tip:'海景外拍旺季提前锁档'}
+];
+const fmt=n=>'¥'+Number(n).toLocaleString();
+function render(){
+ const q=(document.getElementById('q').value||'').trim();
+ const tier=document.getElementById('tier').value;
+ const list=DATA.filter(x=>(tier==='all'||x.tier===tier)&&(!q||x.city.includes(q)));
+ document.getElementById('grid').innerHTML=list.map(x=>`<article class="card"><h3>${x.city} <small style="font-size:12px;color:#b9b1a3">${x.tier}</small></h3><div class="k"><span>轻量预算</span><b>${fmt(x.low)}</b></div><div class="k"><span>中位预算</span><b>${fmt(x.mid)}</b></div><div class="k"><span>品质预算</span><b>${fmt(x.high)}</b></div><div class="tip">建议：${x.tip}</div></article>`).join('');
+}
+['q','tier'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+render();
+(function(){var hm=document.createElement('script');hm.src='https://hm.baidu.com/hm.js?1df8fda3d25e8df34a5c8e08f945e9fb';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(hm,s);}());
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>

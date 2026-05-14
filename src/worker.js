@@ -9,6 +9,7 @@ import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as posterPost, onRequestGet as posterGet } from "../functions/api/poster.js";
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequestGet as debugGet } from "../functions/api/debug-env.js";
+import { onRequestPost as trackPost, onRequestGet as trackGet } from "../functions/api/track.js";
 
 const API = {
   "/api/save":      { POST: savePost },
@@ -21,6 +22,7 @@ const API = {
   "/api/poster":    { POST: posterPost, GET: posterGet },
   "/api/poster-img":{ GET:  posterImgGet },
   "/api/debug-env": { GET:  debugGet },
+  "/api/track":     { POST: trackPost, GET: trackGet },
 };
 
 function corsPreflight() {

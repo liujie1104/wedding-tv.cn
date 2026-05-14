@@ -1,6 +1,6 @@
 // Service Worker：仅缓存静态资源 + 离线 fallback；API 请求一律走网络
 // v2 (2026-05-14b)：移除根路径预缓存（避免坏响应被缓存），强制清旧缓存
-const CACHE = "wt-v2-2026-05-14b";
+const CACHE = "wt-v3-2026-05-14-ba19447";
 const PRECACHE = ["/404.html", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
