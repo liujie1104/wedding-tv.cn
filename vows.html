@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI 婚礼誓词生成器 · 一键生成中式婚礼誓词 | wedding-tv.cn</title>
+<meta name="description" content="免费 AI 婚礼誓词生成器：输入你们的恋爱故事，1 分钟生成现场可朗读的婚礼誓词，支持深情、幽默、文艺多种风格。" />
+<meta name="keywords" content="婚礼誓词,结婚誓言,婚礼誓词怎么写,新郎誓词,新娘誓词,婚礼誓词模板,AI 誓词生成器" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/vows.html" />
+<meta property="og:title" content="AI 婚礼誓词生成器 — wedding-tv.cn" />
+<meta property="og:description" content="输入恋爱故事，1 分钟 AI 生成婚礼誓词" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI 婚礼誓词生成器","url":"https://wedding-tv.cn/vows.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}
+</script>
+<style>
+  :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  a{color:var(--gold)}
+  .top{background:linear-gradient(90deg,#7a1f24,#b08545);color:#fff;text-align:center;padding:8px 16px;font-size:13px}
+  .top a{color:#fff;text-decoration:underline}
+  .wrap{max-width:760px;margin:0 auto;padding:30px 20px 80px}
+  h1{font-size:30px;margin:0 0 8px;background:linear-gradient(90deg,#fff,#ffd28a 60%,#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--sub);margin:0 0 28px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
+  label{display:block;font-size:13px;color:var(--sub);margin:14px 0 6px}
+  input,textarea,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--rose)}
+  textarea{min-height:120px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+  .btn{margin-top:18px;width:100%;padding:14px;border-radius:999px;border:0;font-weight:700;cursor:pointer;font-size:16px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .out{white-space:pre-wrap;background:#0e0a14;border:1px solid var(--line);border-radius:12px;padding:18px;min-height:120px;font-size:15px;line-height:1.85}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .toolbar button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:13px}
+  .toolbar button:hover{border-color:var(--gold);color:var(--gold)}
+  .meta{color:var(--sub);font-size:12px;margin-top:10px}
+  .related{margin-top:40px}
+  .related h3{font-size:18px;color:var(--gold)}
+  .related a{display:inline-block;margin:6px 8px 6px 0;padding:8px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);font-size:13px}
+  .related a:hover{border-color:var(--gold)}
+  footer{text-align:center;color:var(--sub);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:20px}
+</style>
+</head>
+<body>
+<div class="top">💌 <a href="/invitation.html">免费电子请帖生成器</a> · <a href="/calculator.html">婚礼报价计算器</a> · <a href="/">回首页</a></div>
+
+<div class="wrap">
+  <h1>💍 AI 婚礼誓词生成器</h1>
+  <p class="lead">输入你们的故事，1 分钟生成 180-260 字的现场可朗读誓词。完全免费，由 Gemini AI 驱动。</p>
+
+  <div class="card">
+    <div class="row">
+      <div><label>新郎名字</label><input id="groom" maxlength="20" placeholder="可选" /></div>
+      <div><label>新娘名字</label><input id="bride" maxlength="20" placeholder="可选" /></div>
+    </div>
+    <label>你们的故事 / 想对 TA 说的话 <span style="color:var(--rose)">*</span></label>
+    <textarea id="story" maxlength="600" placeholder="例：我们大学相识，他第一次送我一杯热豆浆我就知道他不会做饭。八年里他陪我走过考研、求职、生病……今天我想告诉他：往后余生你不必再独自走到任何地方。"></textarea>
+    <label>风格偏好</label>
+    <select id="style">
+      <option value="深情真挚，娓娓道来">深情真挚（推荐）</option>
+      <option value="幽默轻松，带一点小俏皮">幽默轻松</option>
+      <option value="文艺细腻，画面感强">文艺细腻</option>
+      <option value="古风婉约，端庄大气">古风婉约</option>
+      <option value="简短有力，金句感">简短有力</option>
+    </select>
+    <button class="btn" id="go">✨ 生成我的婚礼誓词</button>
+    <div class="meta">完全免费 · 无需注册 · 你的内容不会被存储</div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center"><strong>你的誓词</strong><span class="meta" id="ts"></span></div>
+    <div class="out" id="out"></div>
+    <div class="toolbar">
+      <button id="copyBtn">📋 复制</button>
+      <button id="regenBtn">🔄 换一篇</button>
+      <button id="shareBtn">🔗 分享给 TA</button>
+    </div>
+  </div>
+
+  <div class="related">
+    <h3>配套免费工具</h3>
+    <a href="/invitation.html">💌 电子请帖生成器</a>
+    <a href="/checklist.html">📋 AI 筹备清单</a>
+    <a href="/countdown.html">📅 倒计时海报</a>
+    <a href="/calculator.html">💰 婚礼预算计算</a>
+    <a href="/blog.html">📖 婚礼百科</a>
+  </div>
+
+  <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 婚礼行业品牌域名出售中</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+async function gen(){
+  const story = $("story").value.trim();
+  if (story.length < 5) { alert("请至少写 5 个字的故事"); return; }
+  const btn = $("go"); btn.disabled = true; btn.textContent = "✨ AI 创作中…";
+  $("resultCard").style.display = "block";
+  $("out").textContent = "正在为你创作中…";
+  try {
+    const r = await fetch("/api/ai", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "vows", groom: $("groom").value, bride: $("bride").value, story, style: $("style").value })
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "生成失败");
+    $("out").textContent = d.text;
+    $("ts").textContent = new Date().toLocaleTimeString();
+  } catch(e){
+    $("out").textContent = "❌ " + e.message + "\n请稍后再试。";
+  } finally {
+    btn.disabled = false; btn.textContent = "✨ 生成我的婚礼誓词";
+  }
+}
+$("go").onclick = gen;
+$("regenBtn").onclick = gen;
+$("copyBtn").onclick = async () => {
+  await navigator.clipboard.writeText($("out").textContent);
+  $("copyBtn").textContent = "✅ 已复制";
+  setTimeout(() => $("copyBtn").textContent = "📋 复制", 1500);
+};
+$("shareBtn").onclick = async () => {
+  const text = $("out").textContent;
+  if (navigator.share) {
+    try { await navigator.share({ title: "我的婚礼誓词", text, url: location.href }); } catch{}
+  } else {
+    await navigator.clipboard.writeText(text + "\n\n— 由 wedding-tv.cn AI 生成");
+    alert("已复制到剪贴板");
+  }
+};
+</script>
+</body>
+</html>

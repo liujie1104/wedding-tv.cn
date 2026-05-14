@@ -44,4 +44,4 @@
 - 总计 < 25MB
 - 选 1-3 分钟的曲目即可（默认 loop 循环播放）
 
-文件准备好后 commit 推送到 Netlify 自动部署即可。
+文件准备好后 commit 推送到 GitHub 即可，Cloudflare Pages 会自动部署。

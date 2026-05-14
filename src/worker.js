@@ -5,6 +5,7 @@ import { onRequestPost as uploadPost } from "../functions/api/upload.js";
 import { onRequestGet as imgGet } from "../functions/api/img.js";
 import { onRequestPost as storyPost } from "../functions/api/story.js";
 import { onRequestPost as avatarPost } from "../functions/api/avatar.js";
+import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestGet as debugGet } from "../functions/api/debug-env.js";
 
 const API = {
@@ -14,6 +15,7 @@ const API = {
   "/api/img":       { GET:  imgGet },
   "/api/story":     { POST: storyPost },
   "/api/avatar":    { POST: avatarPost },
+  "/api/ai":        { POST: aiPost },
   "/api/debug-env": { GET:  debugGet },
 };
 
