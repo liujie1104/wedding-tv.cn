@@ -1,5 +1,9 @@
 ﻿# 给 blog/*.html 注入 SVG hero 横幅 + 内文插画（自包含、永不失效）
 # 用法：powershell -File scripts/add-blog-images.ps1
+$msg = "[DEPRECATED] scripts/add-blog-images.ps1 已废弃：示意 SVG 方案已停止使用。"
+Write-Error $msg
+exit 1
+
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
 $dir = Join-Path $root "blog"

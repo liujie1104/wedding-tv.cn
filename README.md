@@ -7,18 +7,23 @@
 - **前端**：纯静态 HTML/CSS/JS，无打包
 - **运行时**：Cloudflare Workers（`src/worker.js` 入口） + Static Assets
 - **数据**：Cloudflare KV（绑定名 `WEDDING`）
-- **AI**：Google Gemini 2.5 Flash（文本）+ Cloudflare Workers AI Flux.1 Schnell（图像）
+- **AI**：Google Gemini 2.5 Flash（文本）+ DashScope wanx2.1-t2i-turbo（海报图像）+ Workers AI（头像）
 
 ## 目录
 
 ```
 src/worker.js          Worker 入口，路由 /api/* 到 functions/api/*.js
-functions/api/         所有后端处理函数（save / load / upload / img / story / avatar / ai / debug-env）
+functions/api/         后端处理函数（save/load/upload/img/story/avatar/ai/poster/poster-img/debug-env）
 functions/_lib.js      公共工具
 *.html                 首页 + 各工具/落地页（被 ASSETS 直接服务）
-wrangler.jsonc         Cloudflare 配置（持久化 KV / AI / 环境变量）
+wrangler.jsonc         Cloudflare 配置（KV/AI/vars）
 .assetsignore          隔离不应公开的源码
 ```
+
+## 路由策略
+
+- `live.html` 已在 Worker 中做 301 永久重定向到首页 `/`，避免重复内容。
+- 保留文件仅用于历史兼容；线上访问以 Worker 路由规则为准。
 
 ## 本地开发
 
@@ -32,7 +37,7 @@ wrangler dev
 主分支 push 到 GitHub → Cloudflare 自动构建并部署。
 
 > ⚠️ 凡是希望持久存在的 KV/AI/vars 绑定，**必须**写入 `wrangler.jsonc`，否则每次推送会被覆盖。  
-> 真正的 Secret（如 `GEMINI_API_KEY`）通过 Cloudflare Dashboard 的 Secrets 添加，不放仓库。
+> 真正的 Secret（如 `GEMINI_API_KEY`、`DASHSCOPE_API_KEY`）通过 Cloudflare Dashboard 的 Secrets 添加，不放仓库。
 
 ## 必需环境变量 / 绑定
 
@@ -42,6 +47,7 @@ wrangler dev
 | `AI` | Workers AI | 头像图像生成 |
 | `ASSETS` | Static Assets | 静态资源 |
 | `GEMINI_API_KEY` | Secret | Gemini API Key |
+| `DASHSCOPE_API_KEY` | Secret | DashScope API Key（AI 海报） |
 | `AVATAR_ENABLED` | Var | `true` / `false` 总开关 |
 | `AVATAR_DAILY_LIMIT` | Var | 头像每日全站配额 |
 
