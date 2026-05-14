@@ -47,18 +47,27 @@
       <lastmod>2026-05-14</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="en" href="https://wedding-tv.cn/blog-global-japan-en.html" />
+      <xhtml:link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/blog.html" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/blog-global-en.html" />
     </url>
     <url>
       <loc>https://wedding-tv.cn/blog-global-india-en.html</loc>
       <lastmod>2026-05-14</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="en" href="https://wedding-tv.cn/blog-global-india-en.html" />
+      <xhtml:link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/blog.html" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/blog-global-en.html" />
     </url>
     <url>
       <loc>https://wedding-tv.cn/blog-global-western-en.html</loc>
       <lastmod>2026-05-14</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="en" href="https://wedding-tv.cn/blog-global-western-en.html" />
+      <xhtml:link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/blog.html" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/blog-global-en.html" />
     </url>
     <url>
       <loc>https://wedding-tv.cn/calculator-en.html</loc>
