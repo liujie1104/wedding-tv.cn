@@ -7,6 +7,7 @@ import { onRequestPost as storyPost } from "../functions/api/story.js";
 import { onRequestPost as avatarPost } from "../functions/api/avatar.js";
 import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as posterPost, onRequestGet as posterGet } from "../functions/api/poster.js";
+import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequestGet as debugGet } from "../functions/api/debug-env.js";
 
 const API = {
@@ -18,6 +19,7 @@ const API = {
   "/api/avatar":    { POST: avatarPost },
   "/api/ai":        { POST: aiPost },
   "/api/poster":    { POST: posterPost, GET: posterGet },
+  "/api/poster-img":{ GET:  posterImgGet },
   "/api/debug-env": { GET:  debugGet },
 };
 

@@ -189,21 +189,14 @@ async function poll(taskId) {
 }
 
 async function showImage(url) {
-  // 通过我们的服务器代理避免跨域；这里直接展示 + 离线保存
+  // 通过本站代理避免 OSS 跨域（同时供下载）
   lastImageUrl = url;
-  STAGE.innerHTML = `<img id="poster" src="${url}" alt="婚礼海报" crossorigin="anonymous" />`;
-  // 把图片下载为 blob，提供本地保存
-  try {
-    const resp = await fetch(url);
-    const blob = await resp.blob();
-    const objUrl = URL.createObjectURL(blob);
-    const dl = $("dlBtn");
-    dl.href = objUrl;
-    dl.download = `wedding-poster-${Date.now()}.png`;
-  } catch(e) {
-    // 直接外链（用户右键保存）
-    $("dlBtn").href = url;
-  }
+  const proxyView = `/api/poster-img?url=${encodeURIComponent(url)}`;
+  const proxyDownload = `/api/poster-img?dl=1&name=wedding-poster-${Date.now()}.png&url=${encodeURIComponent(url)}`;
+  STAGE.innerHTML = `<img id="poster" src="${proxyView}" alt="婚礼海报" />`;
+  const dl = $("dlBtn");
+  dl.href = proxyDownload;
+  dl.download = `wedding-poster-${Date.now()}.png`;
   $("toolbar").style.display = "flex";
 }
 
