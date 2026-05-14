@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Free Wedding E-Invitation Builder | wedding-tv.cn</title>
+<meta name="description" content="Create a wedding invitation page with templates, music, AI love-story draft, and one-click QR-ready sharing." />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<link rel="canonical" href="https://wedding-tv.cn/invitation-en.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/invitation-en.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/invitation.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/invitation-en.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Free Wedding E-Invitation Builder | wedding-tv.cn" />
+<meta property="og:description" content="Build and publish your wedding invitation page in minutes." />
+<meta property="og:url" content="https://wedding-tv.cn/invitation-en.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<style>
+:root{--bg:#fdf6ee;--ink:#2a1f17;--gold:#b08545;--gold2:#7a5a2f;--line:#e7d9c4;--danger:#b3261e}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+a{color:var(--gold2)}
+.topbar{display:flex;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:#fff;align-items:center;flex-wrap:wrap}
+.topbar a{text-decoration:none;color:var(--ink);font-size:14px}
+.topbar a.brand{font-weight:700;color:var(--gold2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 20px 70px}
+h1{font-size:30px;margin:4px 0}
+.lead{margin:0 0 18px;color:#705e48}
+.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+@media(max-width:920px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+label{display:block;font-size:13px;color:#5b4a35;margin:10px 0 4px}
+input[type=text],input[type=date],input[type=time],input[type=file],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);background:#fffdf8;border-radius:8px;font:inherit;color:var(--ink)}
+textarea{min-height:88px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.row2{grid-template-columns:1fr}}
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.tpl{cursor:pointer;border:2px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;font-size:12px;background:#fffdf8}
+.tpl b{display:block;font-size:13px}
+.tpl.sel{border-color:var(--gold);background:#fff6e6}
+.tpl .swatch{height:30px;border-radius:6px;margin-bottom:5px}
+.tpl[data-tpl=gold] .swatch{background:linear-gradient(135deg,#7a1f24,#b08545)}
+.tpl[data-tpl=cream] .swatch{background:linear-gradient(135deg,#f6e2cf,#e9c9a8)}
+.tpl[data-tpl=morandi] .swatch{background:linear-gradient(135deg,#a9b3a3,#c7b8a8)}
+.tpl[data-tpl=hk] .swatch{background:linear-gradient(135deg,#1c1c1c,#7a5a2f)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{display:inline-block;padding:10px 16px;border:0;border-radius:999px;background:var(--gold);color:#fff;cursor:pointer;font:inherit;font-weight:600}
+.btn:hover{background:var(--gold2)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.preview{position:sticky;top:14px}
+.invite{max-width:420px;margin:0 auto;background:#fffaf2;border-radius:18px;overflow:hidden;box-shadow:0 18px 42px -28px rgba(122,90,47,.55);font-family:Georgia,"Times New Roman",serif}
+.cover{height:360px;background:linear-gradient(135deg,#7a1f24,#b08545);background-size:cover;background-position:center;position:relative}
+.veil{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.55))}
+.cover h2{position:absolute;left:0;right:0;bottom:18px;color:#fff;text-align:center;margin:0;letter-spacing:5px}
+.body{padding:18px 18px 20px;text-align:center}
+.names{font-size:25px;letter-spacing:2px;color:#7a1f24}
+.meta{font-size:14px;color:#3a2d1e;margin-top:6px}
+.story{margin-top:12px;background:#fdf3e2;border-radius:10px;padding:10px 12px;font-size:13px;text-align:left;white-space:pre-wrap;line-height:1.8}
+.hint{font-size:12px;color:#8a795f}
+.error{font-size:13px;color:var(--danger);margin-top:6px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">wedding-tv.cn</a>
+  <a href="/invitation.html">Chinese</a>
+  <a href="/tools-en.html">English Tools</a>
+  <a href="/poster-en.html">Poster Generator</a>
+</header>
+
+<main class="wrap">
+  <h1>Wedding E-Invitation Builder</h1>
+  <p class="lead">Create and publish your invitation page in minutes. Fill in names and date, then get a shareable link and QR-ready page.</p>
+
+  <div class="layout">
+    <section class="card">
+      <label>Template</label>
+      <div class="tpls" id="tpls">
+        <div class="tpl sel" data-tpl="gold"><div class="swatch"></div><b>Gold</b>Classic</div>
+        <div class="tpl" data-tpl="cream"><div class="swatch"></div><b>Cream</b>Soft</div>
+        <div class="tpl" data-tpl="morandi"><div class="swatch"></div><b>Morandi</b>Muted</div>
+        <div class="tpl" data-tpl="hk"><div class="swatch"></div><b>Film</b>Vintage</div>
+      </div>
+
+      <div class="row2">
+        <div><label>Groom *</label><input id="groom" type="text" maxlength="20" placeholder="e.g. Daniel" /></div>
+        <div><label>Bride *</label><input id="bride" type="text" maxlength="20" placeholder="e.g. Emma" /></div>
+      </div>
+      <div class="row2">
+        <div><label>Wedding Date *</label><input id="date" type="date" onclick="this.showPicker&&this.showPicker()" /></div>
+        <div><label>Time</label><input id="time" type="time" value="11:58" /></div>
+      </div>
+      <label>City</label><input id="city" type="text" maxlength="30" placeholder="e.g. Shanghai" />
+      <label>Venue</label><input id="venue" type="text" maxlength="60" placeholder="e.g. Riverside Ballroom" />
+
+      <label>Greeting Message</label>
+      <textarea id="greeting" maxlength="200" placeholder="We warmly invite you to celebrate our wedding day."></textarea>
+
+      <label>Cover Photo (optional)</label>
+      <input id="cover" type="file" accept="image/*" />
+      <div class="hint" id="coverHint">Max 8MB, auto-compressed before upload.</div>
+
+      <label>Background Music (optional)</label>
+      <select id="music">
+        <option value="">No music</option>
+        <option value="01">Track 01</option>
+        <option value="02">Track 02</option>
+        <option value="03">Track 03</option>
+        <option value="04">Track 04</option>
+        <option value="05">Track 05</option>
+        <option value="06">Track 06</option>
+        <option value="07">Track 07</option>
+        <option value="08">Track 08</option>
+        <option value="09">Track 09</option>
+        <option value="10">Track 10</option>
+      </select>
+
+      <label>Love Story Brief</label>
+      <textarea id="brief" maxlength="500" placeholder="Write 1-2 lines about how you met."></textarea>
+      <div class="actions">
+        <button class="btn sm" type="button" id="aiStory">Generate Story with AI</button>
+        <span class="hint" id="storyStatus"></span>
+      </div>
+      <label>Final Story</label>
+      <textarea id="story" placeholder="You can edit the AI draft."></textarea>
+
+      <div class="actions" style="justify-content:flex-end">
+        <button class="btn" id="publish">Publish Invitation Link</button>
+      </div>
+      <div class="error" id="formError"></div>
+    </section>
+
+    <aside class="preview">
+      <div class="card">
+        <strong>Live Preview</strong>
+        <div id="previewBox" style="margin-top:10px"></div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const state = {template:"gold",groom:"",bride:"",date:"",time:"11:58",city:"",venue:"",greeting:"",story:"",music:"",cover:null,coverDataUrl:null};
+const fields = ["groom","bride","date","time","city","venue","greeting","story","music"];
+fields.forEach(id => $(id).addEventListener("input", (e) => { state[id] = e.target.value; render(); }));
+
+$("tpls").addEventListener("click", (e) => {
+  const t = e.target.closest(".tpl");
+  if (!t) return;
+  document.querySelectorAll(".tpl").forEach((x) => x.classList.remove("sel"));
+  t.classList.add("sel");
+  state.template = t.dataset.tpl;
+  render();
+});
+
+async function fileToCompressedDataUrl(file, maxW = 1200, quality = 0.85) {
+  const img = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = URL.createObjectURL(file);
+  });
+  const scale = Math.min(1, maxW / img.naturalWidth);
+  const w = Math.round(img.naturalWidth * scale);
+  const h = Math.round(img.naturalHeight * scale);
+  const c = document.createElement("canvas");
+  c.width = w;
+  c.height = h;
+  c.getContext("2d").drawImage(img, 0, 0, w, h);
+  return c.toDataURL("image/jpeg", quality);
+}
+
+$("cover").addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  $("coverHint").textContent = "Compressing and uploading...";
+  try {
+    const dataUrl = await fileToCompressedDataUrl(f);
+    state.coverDataUrl = dataUrl;
+    render();
+    const r = await fetch("/api/upload", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({dataUrl})});
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "Upload failed");
+    state.cover = {key:j.key,url:j.url};
+    $("coverHint").textContent = "Uploaded successfully.";
+  } catch (err) {
+    $("coverHint").textContent = "Upload failed: " + (err.message || "unknown error");
+  }
+});
+
+$("aiStory").addEventListener("click", async () => {
+  const brief = $("brief").value.trim();
+  if (brief.length < 5) { $("storyStatus").textContent = "Please enter at least one sentence first."; return; }
+  $("aiStory").disabled = true;
+  $("storyStatus").textContent = "Generating...";
+  try {
+    const r = await fetch("/api/story", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({brief,groom:state.groom,bride:state.bride})});
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "AI failed");
+    $("story").value = j.story;
+    state.story = j.story;
+    render();
+    $("storyStatus").textContent = "Done. You can edit the text.";
+  } catch (err) {
+    $("storyStatus").textContent = "Error: " + (err.message || "unknown error");
+  } finally {
+    $("aiStory").disabled = false;
+  }
+});
+
+$("publish").addEventListener("click", async () => {
+  $("formError").textContent = "";
+  if (!state.groom || !state.bride) { $("formError").textContent = "Please fill in both names."; return; }
+  if (!state.date) { $("formError").textContent = "Please select wedding date."; return; }
+  const btn = $("publish");
+  btn.disabled = true;
+  btn.textContent = "Publishing...";
+  try {
+    const invitation = {
+      template: state.template,
+      groom: state.groom,
+      bride: state.bride,
+      date: state.date,
+      time: state.time,
+      city: state.city,
+      venue: state.venue,
+      greeting: state.greeting,
+      cover: state.cover,
+      music: state.music,
+      story: state.story,
+      avatars: []
+    };
+    const r = await fetch("/api/save", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({invitation})});
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || "Save failed");
+    location.href = "/i/" + j.id;
+  } catch (err) {
+    $("formError").textContent = "Publish failed: " + (err.message || "unknown error");
+    btn.disabled = false;
+    btn.textContent = "Publish Invitation Link";
+  }
+});
+
+function esc(s){return String(s || "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+
+function render(){
+  const d = state.date ? new Date(state.date).toLocaleDateString("en-US", {year:"numeric",month:"long",day:"numeric"}) : "Wedding Date";
+  const coverStyle = state.coverDataUrl ? `background-image:url('${state.coverDataUrl}')` : "background:linear-gradient(135deg,#7a1f24,#b08545)";
+  $("previewBox").innerHTML = `
+    <div class="invite tpl-${state.template}">
+      <div class="cover" style="${coverStyle}"><div class="veil"></div><h2>WEDDING</h2></div>
+      <div class="body">
+        <div class="names">${esc(state.groom || "Groom")} &amp; ${esc(state.bride || "Bride")}</div>
+        <div class="meta">${d} ${esc(state.time || "")}</div>
+        <div class="meta">${esc(state.city || "")}${state.city && state.venue ? " · " : ""}${esc(state.venue || "Venue")}</div>
+        ${state.greeting ? `<div class="meta">${esc(state.greeting)}</div>` : ""}
+        ${state.story ? `<div class="story">${esc(state.story)}</div>` : ""}
+      </div>
+    </div>`;
+}
+
+render();
+</script>
+</body>
+</html>

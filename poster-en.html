@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Wedding Poster Generator | wedding-tv.cn</title>
+<meta name="description" content="Generate wedding poster and Save-the-Date images with AI in about one minute. Free download supported." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/poster-en.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/poster-en.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/poster.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/poster-en.html" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="AI Wedding Poster Generator | wedding-tv.cn" />
+<meta property="og:description" content="Create and download wedding posters and Save-the-Date images." />
+<meta property="og:url" content="https://wedding-tv.cn/poster-en.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<style>
+  :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.7}
+  a{color:var(--gold)}
+  .top{background:linear-gradient(90deg,#7a1f24,#b08545);color:#fff;text-align:center;padding:8px 16px;font-size:13px}
+  .top a{color:#fff;text-decoration:underline}
+  .wrap{max-width:820px;margin:0 auto;padding:30px 20px 80px}
+  h1{font-size:30px;margin:0 0 8px;background:linear-gradient(90deg,#fff,#ffd28a 60%,#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--sub);margin:0 0 20px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
+  label{display:block;font-size:13px;color:var(--sub);margin:14px 0 6px}
+  input,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--rose)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+  .btn{margin-top:18px;width:100%;padding:14px;border-radius:999px;border:0;font-weight:700;cursor:pointer;font-size:16px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .meta{color:var(--sub);font-size:12px;margin-top:10px}
+  .stage{position:relative;background:#0e0a14;border:1px solid var(--line);border-radius:12px;min-height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+  .stage img{max-width:100%;max-height:70vh;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+  .progress{font-size:14px;color:var(--sub);margin-top:14px;text-align:center}
+  .progress .dot{display:inline-block;width:8px;height:8px;background:var(--rose);border-radius:50%;margin:0 3px;animation:b 1.2s infinite ease-in-out}
+  .progress .dot:nth-child(2){animation-delay:.2s}
+  .progress .dot:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.2)}}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+  .toolbar button,.toolbar a{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:14px;text-decoration:none;display:inline-block}
+  .toolbar button:hover,.toolbar a:hover{border-color:var(--gold);color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="top">Poster Tool: <a href="/poster.html">Chinese</a> | <a href="/tools-en.html">English Tools</a> | <a href="/invitation-en.html">Invitation Builder</a> | <a href="/">Home</a></div>
+
+<div class="wrap">
+  <h1>AI Wedding Poster Generator</h1>
+  <p class="lead">Create Save-the-Date and wedding poster images with AI in about 30-60 seconds.</p>
+
+  <div class="card">
+    <div class="row">
+      <div><label>Groom Name (optional)</label><input id="groom" maxlength="20" placeholder="e.g. Daniel" /></div>
+      <div><label>Bride Name (optional)</label><input id="bride" maxlength="20" placeholder="e.g. Emma" /></div>
+    </div>
+    <div class="row">
+      <div><label>Wedding Date</label><input id="date" type="date" onclick="this.showPicker&&this.showPicker()" /></div>
+      <div><label>Venue (optional)</label><input id="venue" maxlength="50" placeholder="e.g. Riverside Ballroom" /></div>
+    </div>
+
+    <label>Style</label>
+    <select id="style">
+      <option value="rose">Rose Gold Romantic</option>
+      <option value="ink">Chinese Ink and Red Gold</option>
+      <option value="forest">Forest Outdoor</option>
+      <option value="ocean">Ocean Sunset</option>
+      <option value="vintage">Vintage Art Deco</option>
+      <option value="modern">Modern Minimal Champagne</option>
+      <option value="cyber">Futuristic Neon</option>
+    </select>
+
+    <label>Color or Visual Notes (optional)</label>
+    <input id="color" maxlength="90" placeholder="e.g. peony flowers, warm sunlight" />
+
+    <label>Image Size</label>
+    <select id="size">
+      <option value="portrait">Portrait 720x1280</option>
+      <option value="square">Square 1024x1024</option>
+      <option value="landscape">Landscape 1280x720</option>
+    </select>
+
+    <button class="btn" id="go">Generate Poster</button>
+    <div class="meta">Free tool. AI model: wanx2.1-turbo. Rate limit applies.</div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none">
+    <div class="stage" id="stage"></div>
+    <div class="toolbar" id="toolbar" style="display:none">
+      <a id="dlBtn" download="wedding-poster.png">Download</a>
+      <button id="newBtn">Generate Another</button>
+      <a href="/invitation-en.html">Use in Invitation</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const STAGE = $("stage");
+
+function setProgress(text) {
+  STAGE.innerHTML = `<div class="progress">${text}<br><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+}
+
+async function poll(taskId) {
+  const start = Date.now();
+  while (Date.now() - start < 90_000) {
+    await new Promise((r) => setTimeout(r, 2500));
+    const r = await fetch(`/api/poster?id=${encodeURIComponent(taskId)}`);
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "Query failed");
+    if (d.status === "SUCCEEDED") return d.imageUrl;
+    if (d.status === "FAILED" || d.status === "CANCELED") throw new Error(d.error || "Generation failed");
+    setProgress(`Generating... (${d.status})`);
+  }
+  throw new Error("Timed out, please retry");
+}
+
+async function gen() {
+  const body = {
+    groom: $("groom").value.trim(),
+    bride: $("bride").value.trim(),
+    date: $("date").value,
+    venue: $("venue").value.trim(),
+    style: $("style").value,
+    color: $("color").value.trim(),
+    size: $("size").value,
+    lang: "en"
+  };
+  const btn = $("go");
+  btn.disabled = true;
+  btn.textContent = "Generating...";
+  $("resultCard").style.display = "block";
+  $("toolbar").style.display = "none";
+  setProgress("Submitting task...");
+  try {
+    const r = await fetch("/api/poster", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "Submission failed");
+    setProgress("AI is drawing your poster...");
+    const imageUrl = await poll(d.taskId);
+    const viewUrl = `/api/poster-img?url=${encodeURIComponent(imageUrl)}`;
+    const dlUrl = `/api/poster-img?dl=1&name=wedding-poster-${Date.now()}.png&url=${encodeURIComponent(imageUrl)}`;
+    STAGE.innerHTML = `<img src="${viewUrl}" alt="Wedding poster" />`;
+    const dl = $("dlBtn");
+    dl.href = dlUrl;
+    dl.download = `wedding-poster-${Date.now()}.png`;
+    $("toolbar").style.display = "flex";
+  } catch (e) {
+    STAGE.innerHTML = `<div style="color:#ff6b9d;text-align:center">Error: ${e.message || "unknown error"}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Generate Poster";
+  }
+}
+
+$("go").onclick = gen;
+$("newBtn").onclick = gen;
+</script>
+</body>
+</html>
