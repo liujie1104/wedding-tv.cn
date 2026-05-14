@@ -551,10 +551,6 @@ function styleCanvas(canvas) {
   if (userPhoto) canvas.style.cursor = "grab";
 }
 
-// 全局拖动状态，避免每次重绘重复绑定 window 事件
-const dragState = { active: false, dx: 0, dy: 0, canvasW: 0, canvasH: 0, getRect: null };
-let dragWindowBound = false;
-
 function attachDragHandlers(canvas) {
   // Pointer Events 统一处理鼠标/触摸/笔；setPointerCapture 让 move/up 始终在 canvas 上触发
   let activePointerId = null;
