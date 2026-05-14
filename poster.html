@@ -95,12 +95,24 @@
       <option value="landscape">🖥️ 横版 1280×720（电视屏/横幅）</option>
     </select>
 
-    <label>上传照片（可选 · 婚纱照/登记照，将以圆形叠加到海报中央）</label>
+    <label>上传照片（可选 · 婚纱照/登记照，自动分析背景找空位叠加）</label>
     <div class="row" style="align-items:center">
       <div><input id="photo" type="file" accept="image/*" /></div>
       <div><label style="font-size:13px;color:#cbb693"><input id="photoShape" type="checkbox" checked /> 圆形遮罩（取消则圆角矩形）</label></div>
     </div>
     <div id="photoPreview" style="display:none;margin-top:8px"><img id="photoPreviewImg" style="max-height:90px;border-radius:8px;border:2px solid #c9a85a" /> <button id="photoClear" type="button" style="margin-left:8px;background:#3a2a3a;border:1px solid #a85a85;color:#ffd2e0;padding:4px 10px;border-radius:6px;cursor:pointer">移除</button></div>
+    <div class="row" id="photoOpts" style="display:none">
+      <div><label>照片位置</label><select id="photoPos">
+        <option value="auto" selected>🎯 智能（自动避开复杂区域）</option>
+        <option value="top">⬆️ 靠上居中</option>
+        <option value="center">⏺️ 正中</option>
+        <option value="left">⬅️ 左中</option>
+        <option value="right">➡️ 右中</option>
+        <option value="topleft">↖️ 左上</option>
+        <option value="topright">↗️ 右上</option>
+      </select></div>
+      <div><label>照片大小 <span id="sizeVal" style="color:#c9a85a">40%</span></label><input id="photoSize" type="range" min="25" max="60" value="40" style="width:100%" /></div>
+    </div>
 
     <button class="btn" id="go">✨ 生成海报（约 30-60 秒）</button>
     <div class="meta">完全免费 · 由通义万相 wanx2.1-turbo 驱动 · 每分钟最多 5 次</div>
@@ -203,6 +215,8 @@ let userPhoto = null; // HTMLImageElement
 function loadImg(src) {
   return new Promise((resolve, reject) => {
     const img = new Image();
+    // 同源/data: 不需要；代理图启用 CORS 以便 getImageData 不污染画布
+    if (/^https?:/i.test(src) || src.startsWith("/")) img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = src;
@@ -219,13 +233,30 @@ $("photo").addEventListener("change", async (e) => {
       userPhoto = await loadImg(reader.result);
       $("photoPreviewImg").src = reader.result;
       $("photoPreview").style.display = "block";
+      $("photoOpts").style.display = "flex";
+      rerenderIfReady();
     } catch { alert("照片读取失败"); }
   };
   reader.readAsDataURL(f);
 });
 $("photoClear").addEventListener("click", () => {
-  userPhoto = null; $("photo").value = ""; $("photoPreview").style.display = "none";
+  userPhoto = null; $("photo").value = "";
+  $("photoPreview").style.display = "none";
+  $("photoOpts").style.display = "none";
+  rerenderIfReady();
 });
+["photoShape","photoPos","photoSize"].forEach(id => {
+  $(id).addEventListener("input", () => {
+    if (id === "photoSize") $("sizeVal").textContent = $("photoSize").value + "%";
+    rerenderIfReady();
+  });
+});
+
+let lastBgImg = null;
+async function rerenderIfReady() {
+  if (!lastBgImg) return;
+  await drawComposite(lastBgImg);
+}
 
 function fmtDate(d) {
   if (!d) return "";
@@ -304,23 +335,108 @@ function drawOverlay(ctx, w, h, form) {
   ctx.fillText("由 wedding-tv.cn 制作", w - u*0.025, h - u*0.022);
 }
 
-function drawUserPhoto(ctx, w, h, photo, circle) {
+// 分析背景，找边缘密度最低的区域堆照片（避开主体/脸/调复杂装饰）
+function findBestSpot(bgImg, w, h, d) {
+  const scale = 80 / Math.max(w, h);
+  const sw = Math.max(40, Math.round(w * scale));
+  const sh = Math.max(40, Math.round(h * scale));
+  const off = document.createElement("canvas");
+  off.width = sw; off.height = sh;
+  const oc = off.getContext("2d", { willReadFrequently: true });
+  oc.drawImage(bgImg, 0, 0, sw, sh);
+  const data = oc.getImageData(0, 0, sw, sh).data;
+  // 个像素亮度 + 水平/垂直梯度 取绝对值作为“复杂度”
+  const lum = new Float32Array(sw * sh);
+  for (let i = 0; i < sw*sh; i++) {
+    const r = data[i*4], g = data[i*4+1], b = data[i*4+2];
+    lum[i] = 0.299*r + 0.587*g + 0.114*b;
+  }
+  const edge = new Float32Array(sw * sh);
+  for (let y = 1; y < sh-1; y++) {
+    for (let x = 1; x < sw-1; x++) {
+      const i = y*sw + x;
+      const gx = Math.abs(lum[i+1] - lum[i-1]);
+      const gy = Math.abs(lum[i+sw] - lum[i-sw]);
+      edge[i] = gx + gy;
+    }
+  }
+  // 积分图
+  const integ = new Float64Array(sw * sh);
+  for (let y = 0; y < sh; y++) {
+    let row = 0;
+    for (let x = 0; x < sw; x++) {
+      row += edge[y*sw + x];
+      integ[y*sw + x] = row + (y > 0 ? integ[(y-1)*sw + x] : 0);
+    }
+  }
+  const sumRect = (x0,y0,x1,y1) => {
+    x0 = Math.max(0, x0); y0 = Math.max(0, y0);
+    x1 = Math.min(sw-1, x1); y1 = Math.min(sh-1, y1);
+    const A = (x0>0 && y0>0) ? integ[(y0-1)*sw + (x0-1)] : 0;
+    const B = (y0>0) ? integ[(y0-1)*sw + x1] : 0;
+    const C = (x0>0) ? integ[y1*sw + (x0-1)] : 0;
+    const D = integ[y1*sw + x1];
+    return D - B - C + A;
+  };
+
+  const ds = d * scale;
+  const half = ds / 2;
+  const margin = ds * 0.1;
+  // 留出底部文字区（~h*0.55 以下不考虑）
+  const yMin = half + margin;
+  const yMax = sh * 0.55 - half - margin;
+  const xMin = half + margin;
+  const xMax = sw - half - margin;
+
+  let best = null;
+  // 7x5 网格采样
+  for (let yi = 0; yi < 7; yi++) {
+    const cy = yMin + (yMax - yMin) * (yi / 6);
+    for (let xi = 0; xi < 7; xi++) {
+      const cx = xMin + (xMax - xMin) * (xi / 6);
+      if (cy < yMin || cy > yMax) continue;
+      const s = sumRect(cx-half, cy-half, cx+half, cy+half);
+      // 偏好靠上（不要太贴近文字区）与轻微偏中水平
+      const yFav = 1 + (cy / sh) * 0.3;       // 越上分数越低
+      const xFav = 1 + Math.abs(cx - sw/2) / sw * 0.4;
+      const score = s * yFav * xFav;
+      if (!best || score < best.score) best = { score, cx: cx/scale, cy: cy/scale };
+    }
+  }
+  return best || { cx: w/2, cy: h*0.32 };
+}
+
+function posToCenter(pos, w, h, d) {
+  const isPortrait = h > w;
+  const margin = d * 0.6;
+  switch (pos) {
+    case "top":      return { cx: w/2,         cy: d/2 + margin*0.3 };
+    case "center":   return { cx: w/2,         cy: h/2 - h*0.1 };
+    case "left":     return { cx: d/2 + margin*0.2, cy: h*0.4 };
+    case "right":    return { cx: w - d/2 - margin*0.2, cy: h*0.4 };
+    case "topleft":  return { cx: d/2 + margin*0.2, cy: d/2 + margin*0.3 };
+    case "topright": return { cx: w - d/2 - margin*0.2, cy: d/2 + margin*0.3 };
+    default:         return { cx: w/2, cy: isPortrait ? h*0.30 : h*0.32 };
+  }
+}
+
+function drawUserPhoto(ctx, w, h, photo, circle, bgImg) {
   const u = Math.min(w, h);
   const isPortrait = h > w;
-  // 直径与位置：留出底部文字区
-  const d = (isPortrait ? w : u) * 0.48;
-  const cx = w / 2;
-  const cy = isPortrait ? h * 0.30 : h * 0.32;
+  const sizePct = parseInt($("photoSize").value, 10) / 100;
+  const d = (isPortrait ? w : u) * sizePct;
+  const pos = $("photoPos").value;
+  const center = (pos === "auto" && bgImg) ? findBestSpot(bgImg, w, h, d) : posToCenter(pos, w, h, d);
+  const cx = center.cx, cy = center.cy;
   const x = cx - d/2, y = cy - d/2;
 
-  // 源图按 cover 方式裁剪到正方形
+  // 源图 cover 裁剪
   const src = photo;
   const sw = src.naturalWidth, sh = src.naturalHeight;
   const side = Math.min(sw, sh);
   const sx = (sw - side) / 2, sy = (sh - side) / 2;
 
   ctx.save();
-  // 描边光晕
   ctx.shadowColor = "rgba(0,0,0,0.5)";
   ctx.shadowBlur = u * 0.02;
   ctx.beginPath();
@@ -367,16 +483,40 @@ function drawUserPhoto(ctx, w, h, photo, circle) {
 async function composite(url, form) {
   const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`;
   const img = await loadImg(proxy);
+  lastBgImg = img;
+  return await drawComposite(img);
+}
+
+async function drawComposite(img) {
   const canvas = document.createElement("canvas");
   canvas.width = img.naturalWidth;
   canvas.height = img.naturalHeight;
   const ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0);
   if (userPhoto) {
-    drawUserPhoto(ctx, canvas.width, canvas.height, userPhoto, $("photoShape").checked);
+    drawUserPhoto(ctx, canvas.width, canvas.height, userPhoto, $("photoShape").checked, img);
   }
-  drawOverlay(ctx, canvas.width, canvas.height, form);
+  drawOverlay(ctx, canvas.width, canvas.height, lastForm);
+  // 替换舒台中的 canvas
+  lastCanvas = canvas;
+  if (STAGE.firstChild && STAGE.firstChild.tagName === "CANVAS") {
+    STAGE.replaceChild(canvas, STAGE.firstChild);
+    canvas.style.maxWidth = "100%";
+    canvas.style.maxHeight = "70vh";
+    canvas.style.borderRadius = "8px";
+    canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
+    refreshDownload(canvas);
+  }
   return canvas;
+}
+
+function refreshDownload(canvas) {
+  canvas.toBlob((blob) => {
+    const obj = URL.createObjectURL(blob);
+    const dl = $("dlBtn");
+    dl.href = obj;
+    dl.download = `wedding-poster-${Date.now()}.png`;
+  }, "image/png");
 }
 
 async function showImage(url) {
@@ -391,13 +531,7 @@ async function showImage(url) {
     canvas.style.borderRadius = "8px";
     canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
     STAGE.appendChild(canvas);
-    // 下载用 blob
-    canvas.toBlob((blob) => {
-      const obj = URL.createObjectURL(blob);
-      const dl = $("dlBtn");
-      dl.href = obj;
-      dl.download = `wedding-poster-${Date.now()}.png`;
-    }, "image/png");
+    refreshDownload(canvas);
     $("toolbar").style.display = "flex";
   } catch(e) {
     // 兜底：直接展示原图
