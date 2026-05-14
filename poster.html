@@ -95,6 +95,13 @@
       <option value="landscape">🖥️ 横版 1280×720（电视屏/横幅）</option>
     </select>
 
+    <label>上传照片（可选 · 婚纱照/登记照，将以圆形叠加到海报中央）</label>
+    <div class="row" style="align-items:center">
+      <div><input id="photo" type="file" accept="image/*" /></div>
+      <div><label style="font-size:13px;color:#cbb693"><input id="photoShape" type="checkbox" checked /> 圆形遮罩（取消则圆角矩形）</label></div>
+    </div>
+    <div id="photoPreview" style="display:none;margin-top:8px"><img id="photoPreviewImg" style="max-height:90px;border-radius:8px;border:2px solid #c9a85a" /> <button id="photoClear" type="button" style="margin-left:8px;background:#3a2a3a;border:1px solid #a85a85;color:#ffd2e0;padding:4px 10px;border-radius:6px;cursor:pointer">移除</button></div>
+
     <button class="btn" id="go">✨ 生成海报（约 30-60 秒）</button>
     <div class="meta">完全免费 · 由通义万相 wanx2.1-turbo 驱动 · 每分钟最多 5 次</div>
 
@@ -191,6 +198,7 @@ async function poll(taskId) {
 
 let lastForm = {};
 let lastCanvas = null;
+let userPhoto = null; // HTMLImageElement
 
 function loadImg(src) {
   return new Promise((resolve, reject) => {
@@ -200,6 +208,24 @@ function loadImg(src) {
     img.src = src;
   });
 }
+
+$("photo").addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  if (f.size > 8 * 1024 * 1024) { alert("照片请小于 8MB"); e.target.value = ""; return; }
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      userPhoto = await loadImg(reader.result);
+      $("photoPreviewImg").src = reader.result;
+      $("photoPreview").style.display = "block";
+    } catch { alert("照片读取失败"); }
+  };
+  reader.readAsDataURL(f);
+});
+$("photoClear").addEventListener("click", () => {
+  userPhoto = null; $("photo").value = ""; $("photoPreview").style.display = "none";
+});
 
 function fmtDate(d) {
   if (!d) return "";
@@ -278,6 +304,66 @@ function drawOverlay(ctx, w, h, form) {
   ctx.fillText("由 wedding-tv.cn 制作", w - u*0.025, h - u*0.022);
 }
 
+function drawUserPhoto(ctx, w, h, photo, circle) {
+  const u = Math.min(w, h);
+  const isPortrait = h > w;
+  // 直径与位置：留出底部文字区
+  const d = (isPortrait ? w : u) * 0.48;
+  const cx = w / 2;
+  const cy = isPortrait ? h * 0.30 : h * 0.32;
+  const x = cx - d/2, y = cy - d/2;
+
+  // 源图按 cover 方式裁剪到正方形
+  const src = photo;
+  const sw = src.naturalWidth, sh = src.naturalHeight;
+  const side = Math.min(sw, sh);
+  const sx = (sw - side) / 2, sy = (sh - side) / 2;
+
+  ctx.save();
+  // 描边光晕
+  ctx.shadowColor = "rgba(0,0,0,0.5)";
+  ctx.shadowBlur = u * 0.02;
+  ctx.beginPath();
+  if (circle) {
+    ctx.arc(cx, cy, d/2, 0, Math.PI*2);
+  } else {
+    const r = d * 0.08;
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+d, y,   x+d, y+d, r);
+    ctx.arcTo(x+d, y+d, x,   y+d, r);
+    ctx.arcTo(x,   y+d, x,   y,   r);
+    ctx.arcTo(x,   y,   x+d, y,   r);
+    ctx.closePath();
+  }
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(src, sx, sy, side, side, x, y, d, d);
+  ctx.restore();
+
+  // 金色描边
+  ctx.save();
+  ctx.lineWidth = u * 0.008;
+  const grd = ctx.createLinearGradient(x, y, x+d, y+d);
+  grd.addColorStop(0, "#fff7e0");
+  grd.addColorStop(0.5, "#d9b170");
+  grd.addColorStop(1, "#a87c3e");
+  ctx.strokeStyle = grd;
+  ctx.beginPath();
+  if (circle) {
+    ctx.arc(cx, cy, d/2, 0, Math.PI*2);
+  } else {
+    const r = d * 0.08;
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+d, y,   x+d, y+d, r);
+    ctx.arcTo(x+d, y+d, x,   y+d, r);
+    ctx.arcTo(x,   y+d, x,   y,   r);
+    ctx.arcTo(x,   y,   x+d, y,   r);
+    ctx.closePath();
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
 async function composite(url, form) {
   const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`;
   const img = await loadImg(proxy);
@@ -286,6 +372,9 @@ async function composite(url, form) {
   canvas.height = img.naturalHeight;
   const ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0);
+  if (userPhoto) {
+    drawUserPhoto(ctx, canvas.width, canvas.height, userPhoto, $("photoShape").checked);
+  }
   drawOverlay(ctx, canvas.width, canvas.height, form);
   return canvas;
 }
