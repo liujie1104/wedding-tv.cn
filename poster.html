@@ -262,8 +262,8 @@ let lastPhotoBox = null;
 
 let lastBgImg = null;
 async function rerenderIfReady() {
-  if (!lastBgImg) return;
-  await drawComposite(lastBgImg);
+  if (!lastBgImg || !lastCanvas) return;
+  drawComposite(lastBgImg);
 }
 
 function fmtDate(d) {
@@ -509,27 +509,33 @@ async function composite(url, form) {
   const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`;
   const img = await loadImg(proxy);
   lastBgImg = img;
-  return await drawComposite(img);
+  // 创建唯一 canvas，后续重绘在同一个上面
+  let canvas = lastCanvas;
+  if (!canvas || canvas.width !== img.naturalWidth || canvas.height !== img.naturalHeight) {
+    canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    lastCanvas = canvas;
+    STAGE.innerHTML = "";
+    styleCanvas(canvas);
+    STAGE.appendChild(canvas);
+    attachDragHandlers(canvas);
+  }
+  drawComposite(img);
+  return canvas;
 }
 
-async function drawComposite(img) {
-  const canvas = document.createElement("canvas");
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
+function drawComposite(img) {
+  const canvas = lastCanvas;
+  if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   if (userPhoto) {
     drawUserPhoto(ctx, canvas.width, canvas.height, userPhoto, $("photoShape").checked, img);
   }
   drawOverlay(ctx, canvas.width, canvas.height, lastForm);
-  // 始终走同一路径：清空后插入，避免 <img> 回退导致重绘失效
-  lastCanvas = canvas;
-  STAGE.innerHTML = "";
-  styleCanvas(canvas);
-  STAGE.appendChild(canvas);
-  attachDragHandlers(canvas);
   refreshDownload(canvas);
-  return canvas;
 }
 
 function styleCanvas(canvas) {
@@ -538,6 +544,7 @@ function styleCanvas(canvas) {
   canvas.style.borderRadius = "8px";
   canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
   canvas.style.touchAction = "none";
+  canvas.style.userSelect = "none";
   if (userPhoto) canvas.style.cursor = "grab";
 }
 
@@ -612,13 +619,7 @@ async function showImage(url) {
   lastImageUrl = url;
   setProgress("叠加中文文字…");
   try {
-    const canvas = await composite(url, lastForm);
-    lastCanvas = canvas;
-    STAGE.innerHTML = "";
-    styleCanvas(canvas);
-    STAGE.appendChild(canvas);
-    attachDragHandlers(canvas);
-    refreshDownload(canvas);
+    await composite(url, lastForm);
     $("toolbar").style.display = "flex";
   } catch(e) {
     // 兜底：直接展示原图
