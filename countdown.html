@@ -61,7 +61,7 @@
         <div><label>新娘</label><input id="bride" maxlength="10" placeholder="小美" value="新娘" /></div>
       </div>
       <label>婚礼日期</label>
-      <input id="date" type="date" />
+      <input id="date" type="date" onclick="this.showPicker&&this.showPicker()" />
       <label>底部文字</label>
       <input id="tag" maxlength="30" value="我们的故事 即将翻开新的一页" />
       <label>风格主题</label>
@@ -139,8 +139,12 @@ function daysLeft(d){
 function render(){
   const w = cv.width, h = cv.height;
   const t = THEMES[style];
+  const ratio = w / h;
+  const landscape = ratio > 1.2;
+  const u = Math.min(w, h); // 统一尺度基准
+
   // 渐变背景
-  const g = ctx.createLinearGradient(0, 0, 0, h);
+  const g = ctx.createLinearGradient(0, 0, landscape ? w : 0, h);
   g.addColorStop(0, t.bg[0]); g.addColorStop(0.55, t.bg[1]); g.addColorStop(1, t.bg[2]);
   ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
 
@@ -152,54 +156,98 @@ function render(){
     ctx.fill();
   }
 
-  // 上传的照片：圆形头像放在上方
-  const cx = w/2, cy = h * 0.28, r = Math.min(w, h) * 0.18;
+  const groom = $("groom").value || "新郎";
+  const bride = $("bride").value || "新娘";
+  const days = daysLeft($("date").value);
+  const tag = $("tag").value || "";
+
+  if (landscape) {
+    // 两栏：左头像 / 右文字
+    const leftCx = w * 0.28, leftCy = h * 0.5, r = Math.min(w * 0.16, h * 0.32);
+    drawAvatar(leftCx, leftCy, r, t);
+
+    const rx = w * 0.58;
+    ctx.textAlign = "left";
+    ctx.fillStyle = t.ink;
+    ctx.font = `bold ${Math.round(u*0.075)}px "Songti SC","STSong","SimSun",serif`;
+    const namesY = h * 0.32;
+    ctx.fillText(`${groom}`, rx, namesY);
+    const gw = ctx.measureText(`${groom}`).width;
+    ctx.fillStyle = t.accent; ctx.font = `${Math.round(u*0.06)}px serif`;
+    ctx.fillText(" ❤ ", rx + gw, namesY);
+    const hw = ctx.measureText(" ❤ ").width;
+    ctx.fillStyle = t.ink; ctx.font = `bold ${Math.round(u*0.075)}px "Songti SC","STSong","SimSun",serif`;
+    ctx.fillText(`${bride}`, rx + gw + hw, namesY);
+
+    ctx.fillStyle = t.sub; ctx.font = `${Math.round(u*0.035)}px sans-serif`;
+    ctx.fillText("距我们结婚还有", rx, h * 0.50);
+
+    ctx.fillStyle = t.accent;
+    ctx.font = `bold ${Math.round(u*0.22)}px -apple-system,sans-serif`;
+    ctx.fillText(String(days), rx, h * 0.78);
+    const dw = ctx.measureText(String(days)).width;
+    ctx.fillStyle = t.ink; ctx.font = `${Math.round(u*0.05)}px sans-serif`;
+    ctx.fillText("天", rx + dw + 12, h * 0.78);
+
+    if (tag){
+      ctx.fillStyle = t.sub; ctx.font = `${Math.round(u*0.028)}px sans-serif`;
+      ctx.fillText(tag, rx, h * 0.90);
+    }
+  } else {
+    // 競版 / 方版：上下布局
+    const cx = w / 2, cy = h * 0.22, r = u * 0.18;
+    drawAvatar(cx, cy, r, t);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = t.ink;
+    ctx.font = `bold ${Math.round(u*0.075)}px "Songti SC","STSong","SimSun",serif`;
+    const namesY = cy + r + u*0.10;
+    ctx.fillText(`${groom}      ${bride}`, cx, namesY);
+    ctx.fillStyle = t.accent; ctx.font = `${Math.round(u*0.06)}px serif`;
+    ctx.fillText("❤", cx, namesY);
+
+    ctx.fillStyle = t.sub; ctx.font = `${Math.round(u*0.035)}px sans-serif`;
+    ctx.fillText("距我们结婚还有", cx, namesY + u*0.10);
+
+    ctx.fillStyle = t.accent;
+    ctx.font = `bold ${Math.round(u*0.22)}px -apple-system,sans-serif`;
+    const daysY = namesY + u*0.32;
+    ctx.fillText(String(days), cx, daysY);
+    ctx.fillStyle = t.ink; ctx.font = `${Math.round(u*0.05)}px sans-serif`;
+    ctx.textAlign = "left";
+    ctx.fillText(" 天", cx + (String(days).length * u*0.06), daysY);
+
+    if (tag){
+      ctx.fillStyle = t.sub; ctx.font = `${Math.round(u*0.03)}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(tag, cx, h - u*0.10);
+    }
+  }
+
+  // 水印
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.font = `${Math.round(u*0.022)}px sans-serif`;
+  ctx.textAlign = "right";
+  ctx.fillText("由 wedding-tv.cn 制作", w - 20, h - 20);
+}
+
+function drawAvatar(cx, cy, r, t){
   if (userImg){
     ctx.save();
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.closePath(); ctx.clip();
-    // 等比裁剪填充
     const s = Math.max((r*2)/userImg.width, (r*2)/userImg.height);
     const dw = userImg.width*s, dh = userImg.height*s;
     ctx.drawImage(userImg, cx-dw/2, cy-dh/2, dw, dh);
     ctx.restore();
-    // 圆环
     ctx.strokeStyle = t.accent; ctx.lineWidth = 6;
     ctx.beginPath(); ctx.arc(cx, cy, r+2, 0, Math.PI*2); ctx.stroke();
   } else {
-    // 默认 emoji 装饰
-    ctx.fillStyle = t.accent; ctx.font = `${r*1.2}px serif`; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillStyle = t.accent;
+    ctx.font = `${r*1.2}px serif`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(t.deco, cx, cy);
+    ctx.textBaseline = "alphabetic";
   }
-
-  // 新郎 ❤ 新娘
-  ctx.fillStyle = t.ink;
-  ctx.textAlign = "center";
-  ctx.font = `bold ${Math.round(w*0.07)}px "Songti SC","STSong","SimSun",serif`;
-  const groom = $("groom").value || "新郎", bride = $("bride").value || "新娘";
-  const namesY = cy + r + Math.round(w*0.10);
-  ctx.fillText(`${groom}    ${bride}`, cx, namesY);
-  ctx.fillStyle = t.accent; ctx.font = `${Math.round(w*0.06)}px serif`;
-  ctx.fillText("❤", cx, namesY);
-
-  // 距 XX 天
-  const days = daysLeft($("date").value);
-  ctx.fillStyle = t.sub; ctx.font = `${Math.round(w*0.035)}px sans-serif`;
-  ctx.fillText("距我们结婚还有", cx, namesY + Math.round(w*0.10));
-  ctx.fillStyle = t.accent;
-  ctx.font = `bold ${Math.round(w*0.22)}px -apple-system,sans-serif`;
-  ctx.fillText(String(days), cx, namesY + Math.round(w*0.30));
-  ctx.fillStyle = t.ink; ctx.font = `${Math.round(w*0.045)}px sans-serif`;
-  ctx.fillText("天", cx + (String(days).length * w*0.07), namesY + Math.round(w*0.30));
-
-  // 底部文字
-  ctx.fillStyle = t.sub; ctx.font = `${Math.round(w*0.03)}px sans-serif`;
-  ctx.fillText($("tag").value || "", cx, h - Math.round(w*0.10));
-
-  // 水印
-  ctx.fillStyle = "rgba(255,255,255,0.45)";
-  ctx.font = `${Math.round(w*0.022)}px sans-serif`;
-  ctx.textAlign = "right";
-  ctx.fillText("由 wedding-tv.cn 制作", w - 20, h - 18);
 }
 
 $("dlBtn").onclick = () => {
