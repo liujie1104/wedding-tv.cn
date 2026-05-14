@@ -1,22 +1,23 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>请帖二维码海报生成器 · 朋友圈分享专用 | wedding-tv.cn</title>
-<meta name="description" content="把电子请帖链接生成精美二维码海报，竖版 9:16 适配朋友圈和打印，支持自定义新人姓名、婚期、酒店地址，纯前端生成，免费下载。" />
-<meta name="keywords" content="婚礼二维码海报,请帖二维码,婚礼朋友圈海报,电子请帖海报" />
+<title>璇峰笘浜岀淮鐮佹捣鎶ョ敓鎴愬櫒 路 鏈嬪弸鍦堝垎浜笓鐢?| wedding-tv.cn</title>
+<meta name="description" content="鎶婄數瀛愯甯栭摼鎺ョ敓鎴愮簿缇庝簩缁寸爜娴锋姤锛岀珫鐗?9:16 閫傞厤鏈嬪弸鍦堝拰鎵撳嵃锛屾敮鎸佽嚜瀹氫箟鏂颁汉濮撳悕銆佸鏈熴€侀厭搴楀湴鍧€锛岀函鍓嶇鐢熸垚锛屽厤璐逛笅杞姐€? />
+<meta name="keywords" content="濠氱ぜ浜岀淮鐮佹捣鎶?璇峰笘浜岀淮鐮?濠氱ぜ鏈嬪弸鍦堟捣鎶?鐢靛瓙璇峰笘娴锋姤" />
 <meta name="robots" content="index,follow" />
-<link rel="canonical" href="https://wedding-tv.cn/qr-poster.html" />
-<link rel="manifest" href="/manifest.webmanifest" />
-<meta property="og:title" content="请帖二维码海报生成器" />
-<meta property="og:description" content="一键生成竖版婚礼二维码海报，分享朋友圈/打印桌牌。" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/qr-poster.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/tools-en.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/qr-poster.html" /><link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:title" content="璇峰笘浜岀淮鐮佹捣鎶ョ敓鎴愬櫒" />
+<meta property="og:description" content="涓€閿敓鎴愮珫鐗堝绀间簩缁寸爜娴锋姤锛屽垎浜湅鍙嬪湀/鎵撳嵃妗岀墝銆? />
 <meta property="og:url" content="https://wedding-tv.cn/qr-poster.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
 <meta name="google-adsense-account" content="ca-pub-6560247681968502" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🔗</text></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>馃敆</text></svg>" />
 <style>
 :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
@@ -44,67 +45,68 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
 </style>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
-<body>
-<div class="wrap">
+<div id="globalEnEntry" style="position:fixed;right:14px;top:14px;z-index:9999">
+  <a href="/tools-en.html" style="display:inline-block;padding:8px 12px;border-radius:999px;background:#1b1526;color:#f5f1ea;border:1px solid rgba(255,255,255,.18);font:13px/1.2 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.22)">English</a>
+</div><div class="wrap">
   <nav>
-    <a href="/">← 回首页</a>
-    <a href="/invitation.html">💌 请帖</a>
-    <a href="/poster.html">🖼️ 海报</a>
-    <a href="/timeline.html">⏱️ 流程</a>
-    <a href="/almanac.html">📅 吉日</a>
+    <a href="/">鈫?鍥為椤?/a>
+    <a href="/invitation.html">馃拰 璇峰笘</a>
+    <a href="/poster.html">馃柤锔?娴锋姤</a>
+    <a href="/timeline.html">鈴憋笍 娴佺▼</a>
+    <a href="/almanac.html">馃搮 鍚夋棩</a>
   </nav>
-  <h1>🔗 请帖二维码海报生成器</h1>
-  <p class="lead">把<a href="/invitation.html">电子请帖</a>链接、个人微信或任意网址生成<strong>竖版精美海报</strong>。可分享到朋友圈、群发祝福，或打印做酒店签到台桌牌。</p>
+  <h1>馃敆 璇峰笘浜岀淮鐮佹捣鎶ョ敓鎴愬櫒</h1>
+  <p class="lead">鎶?a href="/invitation.html">鐢靛瓙璇峰笘</a>閾炬帴銆佷釜浜哄井淇℃垨浠绘剰缃戝潃鐢熸垚<strong>绔栫増绮剧編娴锋姤</strong>銆傚彲鍒嗕韩鍒版湅鍙嬪湀銆佺兢鍙戠绂忥紝鎴栨墦鍗板仛閰掑簵绛惧埌鍙版鐗屻€?/p>
 
   <div class="layout">
     <div class="form">
-      <label>请帖链接 / 网址</label>
+      <label>璇峰笘閾炬帴 / 缃戝潃</label>
       <input id="url" value="https://wedding-tv.cn/invitation.html" />
-      <label>新郎</label><input id="groom" value="张三" />
-      <label>新娘</label><input id="bride" value="李四" />
-      <label>婚期</label><input id="date" type="date" />
-      <label>酒店/地点</label><input id="venue" value="北京 · 富力万丽酒店三楼宴会厅" />
-      <label>主标题文案</label><input id="title" value="敬请光临" />
-      <label>副标题（可选）</label><input id="subtitle" value="扫码查看请帖详情" />
-      <label>主题色</label>
+      <label>鏂伴儙</label><input id="groom" value="寮犱笁" />
+      <label>鏂板</label><input id="bride" value="鏉庡洓" />
+      <label>濠氭湡</label><input id="date" type="date" />
+      <label>閰掑簵/鍦扮偣</label><input id="venue" value="鍖椾含 路 瀵屽姏涓囦附閰掑簵涓夋ゼ瀹翠細鍘? />
+      <label>涓绘爣棰樻枃妗?/label><input id="title" value="鏁鍏変复" />
+      <label>鍓爣棰橈紙鍙€夛級</label><input id="subtitle" value="鎵爜鏌ョ湅璇峰笘璇︽儏" />
+      <label>涓婚鑹?/label>
       <select id="theme">
-        <option value="rose">玫瑰金（默认）</option>
-        <option value="navy">藏青典雅</option>
-        <option value="cream">米白雅致</option>
-        <option value="red">中式喜庆红</option>
+        <option value="rose">鐜懓閲戯紙榛樿锛?/option>
+        <option value="navy">钘忛潚鍏搁泤</option>
+        <option value="cream">绫崇櫧闆呰嚧</option>
+        <option value="red">涓紡鍠滃簡绾?/option>
       </select>
-      <button onclick="render()">生成海报</button>
+      <button onclick="render()">鐢熸垚娴锋姤</button>
     </div>
     <div class="preview">
       <canvas id="cv" width="540" height="960"></canvas>
       <div class="actions">
-        <button class="primary" onclick="download()">⬇️ 下载海报</button>
-        <button onclick="copyLink()">📋 复制链接</button>
+        <button class="primary" onclick="download()">猬囷笍 涓嬭浇娴锋姤</button>
+        <button onclick="copyLink()">馃搵 澶嶅埗閾炬帴</button>
       </div>
     </div>
   </div>
 
   <div class="notes">
-    <h3>使用建议</h3>
+    <h3>浣跨敤寤鸿</h3>
     <ul>
-      <li>建议先用<a href="/invitation.html">电子请帖</a>生成专属链接，再粘贴到此处。</li>
-      <li>导出图片为 540×960（9:16），适配朋友圈、小红书、群分享。</li>
-      <li>打印桌牌可放大到 A5/A4 仍清晰（高容错率二维码）。</li>
-      <li>纯前端生成，无任何上传，链接和姓名信息完全保留在你浏览器。</li>
+      <li>寤鸿鍏堢敤<a href="/invitation.html">鐢靛瓙璇峰笘</a>鐢熸垚涓撳睘閾炬帴锛屽啀绮樿创鍒版澶勩€?/li>
+      <li>瀵煎嚭鍥剧墖涓?540脳960锛?:16锛夛紝閫傞厤鏈嬪弸鍦堛€佸皬绾功銆佺兢鍒嗕韩銆?/li>
+      <li>鎵撳嵃妗岀墝鍙斁澶у埌 A5/A4 浠嶆竻鏅帮紙楂樺閿欑巼浜岀淮鐮侊級銆?/li>
+      <li>绾墠绔敓鎴愶紝鏃犱换浣曚笂浼狅紝閾炬帴鍜屽鍚嶄俊鎭畬鍏ㄤ繚鐣欏湪浣犳祻瑙堝櫒銆?/li>
     </ul>
   </div>
 
-  <h3 style="margin-top:30px">配套工具</h3>
+  <h3 style="margin-top:30px">閰嶅宸ュ叿</h3>
   <div class="tools-bar">
-    <a href="/invitation.html">💌 电子请帖</a>
-    <a href="/poster.html">🖼️ AI 海报</a>
-    <a href="/timeline.html">⏱️ 时间轴</a>
-    <a href="/playlist.html">🎵 歌单</a>
-    <a href="/almanac.html">📅 吉日</a>
-    <a href="/blog.html">📚 婚俗</a>
+    <a href="/invitation.html">馃拰 鐢靛瓙璇峰笘</a>
+    <a href="/poster.html">馃柤锔?AI 娴锋姤</a>
+    <a href="/timeline.html">鈴憋笍 鏃堕棿杞?/a>
+    <a href="/playlist.html">馃幍 姝屽崟</a>
+    <a href="/almanac.html">馃搮 鍚夋棩</a>
+    <a href="/blog.html">馃摎 濠氫織</a>
   </div>
 
-  <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 婚礼行业品牌域名 <a href="/#contact">议价出售中 →</a></footer>
+  <footer>鐢?<a href="/">wedding-tv.cn</a> 鎻愪緵 路 濠氱ぜ琛屼笟鍝佺墝鍩熷悕 <a href="/#contact">璁环鍑哄敭涓?鈫?/a></footer>
 </div>
 
 <script>
@@ -118,79 +120,79 @@ const THEMES={
 
 async function render(){
   const url=$("url").value.trim()||"https://wedding-tv.cn/";
-  const groom=$("groom").value.trim()||"新郎";
-  const bride=$("bride").value.trim()||"新娘";
+  const groom=$("groom").value.trim()||"鏂伴儙";
+  const bride=$("bride").value.trim()||"鏂板";
   const date=$("date").value;
   const venue=$("venue").value.trim();
-  const title=$("title").value.trim()||"敬请光临";
+  const title=$("title").value.trim()||"鏁鍏変复";
   const subtitle=$("subtitle").value.trim();
   const theme=THEMES[$("theme").value];
 
   const cv=$("cv"),ctx=cv.getContext("2d");
   const W=cv.width,H=cv.height;
-  // 渐变背景
+  // 娓愬彉鑳屾櫙
   const g=ctx.createLinearGradient(0,0,0,H);
   g.addColorStop(0,theme.bg[0]);g.addColorStop(1,theme.bg[1]);
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
 
-  // 装饰边框
+  // 瑁呴グ杈规
   ctx.strokeStyle=theme.accent;ctx.lineWidth=2;
   ctx.strokeRect(24,24,W-48,H-48);
   ctx.strokeStyle=theme.accent+"55";ctx.lineWidth=1;
   ctx.strokeRect(34,34,W-68,H-68);
 
-  // 顶部小字
+  // 椤堕儴灏忓瓧
   ctx.fillStyle=theme.sub;ctx.font="14px sans-serif";ctx.textAlign="center";
   ctx.fillText("WEDDING INVITATION",W/2,80);
 
-  // 主标题
+  // 涓绘爣棰?
   ctx.fillStyle=theme.accent;ctx.font="bold 48px serif";
   ctx.fillText(title,W/2,140);
 
-  // 新人姓名
+  // 鏂颁汉濮撳悕
   ctx.fillStyle=theme.ink;ctx.font="bold 36px serif";
-  ctx.fillText(`${groom}  ❤  ${bride}`,W/2,210);
+  ctx.fillText(`${groom}  鉂? ${bride}`,W/2,210);
 
-  // 日期
+  // 鏃ユ湡
   if(date){
     const d=new Date(date);
-    const dateStr=`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`;
+    const dateStr=`${d.getFullYear()} 骞?${d.getMonth()+1} 鏈?${d.getDate()} 鏃;
     ctx.fillStyle=theme.ink;ctx.font="20px sans-serif";
     ctx.fillText(dateStr,W/2,260);
-    const wn=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][d.getDay()];
+    const wn=["鏄熸湡鏃?,"鏄熸湡涓€","鏄熸湡浜?,"鏄熸湡涓?,"鏄熸湡鍥?,"鏄熸湡浜?,"鏄熸湡鍏?][d.getDay()];
     ctx.fillStyle=theme.sub;ctx.font="14px sans-serif";
     ctx.fillText(wn,W/2,285);
   }
 
-  // 地点
+  // 鍦扮偣
   if(venue){
     ctx.fillStyle=theme.sub;ctx.font="15px sans-serif";
     wrapText(ctx,venue,W/2,330,W-100,22);
   }
 
-  // 二维码
+  // 浜岀淮鐮?
   const qrSize=280;
   const qrX=(W-qrSize)/2,qrY=410;
-  // 白底卡片
+  // 鐧藉簳鍗＄墖
   ctx.fillStyle="#ffffff";
   roundRect(ctx,qrX-20,qrY-20,qrSize+40,qrSize+40,16,true);
-  // 生成二维码
+  // 鐢熸垚浜岀淮鐮?
   const tmp=document.createElement("canvas");
   tmp.width=qrSize;tmp.height=qrSize;
   await QRCode.toCanvas(tmp,url,{width:qrSize,margin:0,errorCorrectionLevel:"H",color:{dark:"#1a0f1f",light:"#ffffff"}});
   ctx.drawImage(tmp,qrX,qrY);
 
-  // 副标题
+  // 鍓爣棰?
   if(subtitle){
     ctx.fillStyle=theme.ink;ctx.font="16px sans-serif";
     ctx.fillText(subtitle,W/2,qrY+qrSize+60);
   }
 
-  // 底部水印
+  // 搴曢儴姘村嵃
   ctx.fillStyle=theme.sub;ctx.font="12px sans-serif";
-  ctx.fillText("由 wedding-tv.cn 免费生成",W/2,H-50);
+  ctx.fillText("鐢?wedding-tv.cn 鍏嶈垂鐢熸垚",W/2,H-50);
   ctx.font="11px sans-serif";
-  ctx.fillText("婚礼工具箱 · 请帖 · 海报 · 流程 · 歌单",W/2,H-32);
+  ctx.fillText("濠氱ぜ宸ュ叿绠?路 璇峰笘 路 娴锋姤 路 娴佺▼ 路 姝屽崟",W/2,H-32);
 }
 function wrapText(ctx,text,x,y,maxW,lineH){
   const chars=text.split("");
@@ -213,13 +215,13 @@ function roundRect(ctx,x,y,w,h,r,fill){
 function download(){
   const a=document.createElement("a");
   a.href=$("cv").toDataURL("image/png");
-  a.download=`婚礼请帖海报-${$("groom").value}${$("bride").value}.png`;
+  a.download=`濠氱ぜ璇峰笘娴锋姤-${$("groom").value}${$("bride").value}.png`;
   a.click();
 }
 function copyLink(){
-  navigator.clipboard.writeText($("url").value).then(()=>alert("链接已复制"));
+  navigator.clipboard.writeText($("url").value).then(()=>alert("閾炬帴宸插鍒?));
 }
-// 默认日期 = 30 天后
+// 榛樿鏃ユ湡 = 30 澶╁悗
 const d=new Date();d.setDate(d.getDate()+90);$("date").value=d.toISOString().slice(0,10);
 render();
 </script>
@@ -229,3 +231,4 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
 </script>
 </body>
 </html>
+
