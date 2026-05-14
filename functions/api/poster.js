@@ -22,21 +22,18 @@ const STYLES = {
 
 function buildPrompt({ groom, bride, date, venue, style, color }) {
   const palette = STYLES[style] || STYLES.rose;
-  const names = [groom, bride].filter(Boolean).join(" & ");
   const parts = [
-    "elegant wedding poster, ultra-detailed, romantic atmosphere, professional photography composition,",
+    "elegant wedding poster background, ultra-detailed, romantic atmosphere, professional photography composition,",
     `color palette: ${palette}, ${color || ""},`,
-    "soft bokeh background, floral decoration, delicate gold foil typography area,",
-    names ? `with elegant calligraphy text area for couple names "${names}"` : "with empty calligraphy text area for couple names",
-    date ? `and wedding date "${date}"` : "",
-    venue ? `, venue: ${venue}` : "",
-    ", high resolution, 8k, masterpiece, award-winning design, symmetrical composition,",
-    "clean center area for text overlay (do NOT render Chinese characters)",
+    "soft bokeh background, floral decoration, gold foil details,",
+    "IMPORTANT: leave the bottom 40% of the image clean and uncluttered for text overlay (no faces, no important details there),",
+    "do NOT render any text or letters or chinese characters in the image,",
+    "high resolution, 8k, masterpiece, award-winning design, symmetrical composition",
   ];
   return parts.filter(Boolean).join(" ");
 }
 
-const NEGATIVE = "low quality, blurry, watermark, text artifacts, garbled text, ugly, distorted, extra limbs, signature, chinese characters wrong, poor anatomy";
+const NEGATIVE = "text, letters, words, chinese characters, watermark, signature, logo, low quality, blurry, ugly, distorted, extra limbs, poor anatomy, busy bottom area, cluttered foreground";
 
 // ---------- POST: 创建任务 ----------
 async function createTask({ request, env }) {

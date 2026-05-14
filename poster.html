@@ -64,7 +64,7 @@
 
 <div class="wrap">
   <h1>🖼️ AI 婚礼海报生成器</h1>
-  <p class="lead">由通义万相 AI 驱动，1 分钟生成婚礼海报。可用作 Save the Date、请帖封面、朋友圈预告。完全免费。</p>
+  <p class="lead">由通义万相 AI 驱动，1 分钟生成婚礼海报。新人姓名/婚期/场地由本站叠加为清晰中文。可用作 Save the Date、请帖封面、朋友圈预告。完全免费。</p>
 
   <div class="card">
     <div class="row">
@@ -152,6 +152,7 @@ async function gen() {
     color: $("color").value.trim(),
     size: $("size").value,
   };
+  lastForm = body;
   const btn = $("go"); btn.disabled = true; btn.textContent = "✨ AI 创作中…";
   $("resultCard").style.display = "block";
   $("toolbar").style.display = "none";
@@ -166,7 +167,7 @@ async function gen() {
     if (!d.ok) throw new Error(d.error || "提交失败");
     setProgress("AI 正在绘制中（约 20-50 秒）");
     const url = await poll(d.taskId);
-    showImage(url);
+    await showImage(url);
   } catch(e) {
     STAGE.innerHTML = `<div style="color:#ff6b9d;text-align:center">❌ ${e.message}<br><small>请稍后重试</small></div>`;
   } finally {
@@ -188,16 +189,137 @@ async function poll(taskId) {
   throw new Error("超时，请重试");
 }
 
+let lastForm = {};
+let lastCanvas = null;
+
+function loadImg(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function fmtDate(d) {
+  if (!d) return "";
+  const m = /(\d{4})-(\d{2})-(\d{2})/.exec(d);
+  if (!m) return d;
+  return `${m[1]}.${m[2]}.${m[3]}`;
+}
+
+function drawOverlay(ctx, w, h, form) {
+  const isPortrait = h > w;
+  const isSquare = Math.abs(w - h) < 20;
+  const u = Math.min(w, h);
+  const names = [form.groom, form.bride].filter(Boolean).join("  &  ");
+  const date = fmtDate(form.date);
+  const venue = form.venue || "";
+
+  // 半透明渐变区，让文字始终清晰
+  const gradH = isPortrait ? h * 0.45 : (isSquare ? h * 0.4 : h * 0.5);
+  const grad = ctx.createLinearGradient(0, h - gradH, 0, h);
+  grad.addColorStop(0, "rgba(0,0,0,0)");
+  grad.addColorStop(0.6, "rgba(0,0,0,0.55)");
+  grad.addColorStop(1, "rgba(0,0,0,0.85)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, h - gradH, w, gradH);
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = u * 0.012;
+
+  let y = h - u * 0.18;
+
+  // 主标题：新人名字
+  if (names) {
+    const fs = u * 0.085;
+    ctx.font = `700 ${fs}px "PingFang SC","Microsoft YaHei",serif`;
+    const grd = ctx.createLinearGradient(w*0.2, y - fs, w*0.8, y);
+    grd.addColorStop(0, "#fff7e6");
+    grd.addColorStop(0.5, "#ffd28a");
+    grd.addColorStop(1, "#ff9bb8");
+    ctx.fillStyle = grd;
+    ctx.fillText(names, w / 2, y);
+    y += u * 0.06;
+  }
+
+  // 装饰线 + WEDDING
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "rgba(255,255,255,0.85)";
+  const sub = u * 0.026;
+  ctx.font = `300 ${sub}px "PingFang SC",sans-serif`;
+  ctx.fillText("— OUR WEDDING —", w / 2, y);
+  y += u * 0.05;
+
+  // 日期
+  if (date) {
+    const fs = u * 0.045;
+    ctx.font = `500 ${fs}px "PingFang SC","Microsoft YaHei",serif`;
+    ctx.fillStyle = "#ffd28a";
+    ctx.fillText(date, w / 2, y);
+    y += u * 0.04;
+  }
+
+  // 场地
+  if (venue) {
+    const fs = u * 0.028;
+    ctx.font = `300 ${fs}px "PingFang SC","Microsoft YaHei",sans-serif`;
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.fillText(venue, w / 2, y);
+    y += u * 0.035;
+  }
+
+  // 水印（右下小字）
+  ctx.font = `${u*0.018}px sans-serif`;
+  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.textAlign = "right";
+  ctx.fillText("由 wedding-tv.cn 制作", w - u*0.025, h - u*0.022);
+}
+
+async function composite(url, form) {
+  const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`;
+  const img = await loadImg(proxy);
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  drawOverlay(ctx, canvas.width, canvas.height, form);
+  return canvas;
+}
+
 async function showImage(url) {
-  // 通过本站代理避免 OSS 跨域（同时供下载）
   lastImageUrl = url;
-  const proxyView = `/api/poster-img?url=${encodeURIComponent(url)}`;
-  const proxyDownload = `/api/poster-img?dl=1&name=wedding-poster-${Date.now()}.png&url=${encodeURIComponent(url)}`;
-  STAGE.innerHTML = `<img id="poster" src="${proxyView}" alt="婚礼海报" />`;
-  const dl = $("dlBtn");
-  dl.href = proxyDownload;
-  dl.download = `wedding-poster-${Date.now()}.png`;
-  $("toolbar").style.display = "flex";
+  setProgress("叠加中文文字…");
+  try {
+    const canvas = await composite(url, lastForm);
+    lastCanvas = canvas;
+    STAGE.innerHTML = "";
+    canvas.style.maxWidth = "100%";
+    canvas.style.maxHeight = "70vh";
+    canvas.style.borderRadius = "8px";
+    canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
+    STAGE.appendChild(canvas);
+    // 下载用 blob
+    canvas.toBlob((blob) => {
+      const obj = URL.createObjectURL(blob);
+      const dl = $("dlBtn");
+      dl.href = obj;
+      dl.download = `wedding-poster-${Date.now()}.png`;
+    }, "image/png");
+    $("toolbar").style.display = "flex";
+  } catch(e) {
+    // 兜底：直接展示原图
+    const proxyView = `/api/poster-img?url=${encodeURIComponent(url)}`;
+    const proxyDownload = `/api/poster-img?dl=1&name=wedding-poster-${Date.now()}.png&url=${encodeURIComponent(url)}`;
+    STAGE.innerHTML = `<img src="${proxyView}" alt="婚礼海报" />`;
+    const dl = $("dlBtn");
+    dl.href = proxyDownload;
+    dl.download = `wedding-poster-${Date.now()}.png`;
+    $("toolbar").style.display = "flex";
+  }
 }
 
 $("go").onclick = gen;
