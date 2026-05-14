@@ -237,6 +237,7 @@ $("photo").addEventListener("change", async (e) => {
       $("photoPreviewImg").src = reader.result;
       $("photoPreview").style.display = "block";
       $("photoOpts").style.display = "flex";
+      if (lastCanvas) lastCanvas.style.cursor = "grab";
       rerenderIfReady();
     } catch { alert("照片读取失败"); }
   };
@@ -246,6 +247,8 @@ $("photoClear").addEventListener("click", () => {
   userPhoto = null; $("photo").value = "";
   $("photoPreview").style.display = "none";
   $("photoOpts").style.display = "none";
+  customPos = null;
+  if (lastCanvas) lastCanvas.style.cursor = "default";
   rerenderIfReady();
 });
 ["photoShape","photoPos","photoSize"].forEach(id => {
@@ -553,57 +556,55 @@ const dragState = { active: false, dx: 0, dy: 0, canvasW: 0, canvasH: 0, getRect
 let dragWindowBound = false;
 
 function attachDragHandlers(canvas) {
-  if (!userPhoto) return;
+  // Pointer Events 统一处理鼠标/触摸/笔；setPointerCapture 让 move/up 始终在 canvas 上触发
+  let activePointerId = null;
+  let dx = 0, dy = 0;
+
   const toCanvasPx = (clientX, clientY) => {
     const r = canvas.getBoundingClientRect();
-    const sx = canvas.width / r.width;
-    const sy = canvas.height / r.height;
-    return { x: (clientX - r.left) * sx, y: (clientY - r.top) * sy };
+    if (r.width === 0 || r.height === 0) return null;
+    return {
+      x: (clientX - r.left) * (canvas.width / r.width),
+      y: (clientY - r.top) * (canvas.height / r.height),
+    };
   };
-  const start = (clientX, clientY) => {
-    if (!lastPhotoBox) return;
-    const p = toCanvasPx(clientX, clientY);
-    const dx = p.x - lastPhotoBox.cx, dy = p.y - lastPhotoBox.cy;
-    if (Math.hypot(dx, dy) > lastPhotoBox.d / 2 + 20) return;
-    dragState.active = true;
-    dragState.dx = dx; dragState.dy = dy;
-    dragState.canvasW = canvas.width; dragState.canvasH = canvas.height;
-    dragState.getRect = () => canvas.getBoundingClientRect();
+
+  canvas.addEventListener("pointerdown", (e) => {
+    if (!userPhoto || !lastPhotoBox) return;
+    const p = toCanvasPx(e.clientX, e.clientY);
+    if (!p) return;
+    const ox = p.x - lastPhotoBox.cx, oy = p.y - lastPhotoBox.cy;
+    if (Math.hypot(ox, oy) > lastPhotoBox.d / 2 + 20) return;
+    activePointerId = e.pointerId;
+    dx = ox; dy = oy;
+    canvas.setPointerCapture(e.pointerId);
     canvas.style.cursor = "grabbing";
     if ($("photoPos").value !== "custom") {
       $("photoPos").value = "custom";
       $("dragHint").style.display = "block";
     }
-  };
-  canvas.onmousedown = e => start(e.clientX, e.clientY);
-  canvas.ontouchstart = e => { const t = e.touches[0]; start(t.clientX, t.clientY); };
-  canvas.ontouchmove = e => { if (dragState.active) e.preventDefault(); };
+    e.preventDefault();
+  });
 
-  if (dragWindowBound) return;
-  dragWindowBound = true;
-  const move = (clientX, clientY) => {
-    if (!dragState.active || !dragState.getRect) return;
-    const r = dragState.getRect();
-    const sx = dragState.canvasW / r.width;
-    const sy = dragState.canvasH / r.height;
-    const px = (clientX - r.left) * sx;
-    const py = (clientY - r.top) * sy;
-    customPos = {
-      fx: (px - dragState.dx) / dragState.canvasW,
-      fy: (py - dragState.dy) / dragState.canvasH,
-    };
+  canvas.addEventListener("pointermove", (e) => {
+    if (e.pointerId !== activePointerId) return;
+    const p = toCanvasPx(e.clientX, e.clientY);
+    if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) return;
+    const fx = (p.x - dx) / canvas.width;
+    const fy = (p.y - dy) / canvas.height;
+    if (!Number.isFinite(fx) || !Number.isFinite(fy)) return;
+    customPos = { fx, fy };
     rerenderIfReady();
+  });
+
+  const release = (e) => {
+    if (e.pointerId !== activePointerId) return;
+    activePointerId = null;
+    try { canvas.releasePointerCapture(e.pointerId); } catch {}
+    canvas.style.cursor = userPhoto ? "grab" : "default";
   };
-  const end = () => {
-    if (!dragState.active) return;
-    dragState.active = false;
-    if (lastCanvas) lastCanvas.style.cursor = "grab";
-  };
-  window.addEventListener("mousemove", e => move(e.clientX, e.clientY));
-  window.addEventListener("mouseup", end);
-  window.addEventListener("touchmove", e => { const t = e.touches[0]; if (t) move(t.clientX, t.clientY); }, { passive: true });
-  window.addEventListener("touchend", end);
-  window.addEventListener("touchcancel", end);
+  canvas.addEventListener("pointerup", release);
+  canvas.addEventListener("pointercancel", release);
 }
 
 function refreshDownload(canvas) {
