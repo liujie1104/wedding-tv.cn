@@ -442,9 +442,10 @@ function drawUserPhoto(ctx, w, h, photo, circle, bgImg) {
   if (pos === "custom" && customPos) {
     center = { cx: customPos.fx * w, cy: customPos.fy * h };
   } else if (pos === "auto" && bgImg) {
-    center = findBestSpot(bgImg, w, h, d);
+    try { center = findBestSpot(bgImg, w, h, d); }
+    catch { center = posToCenter("top", w, h, d); }
   } else {
-    center = posToCenter(pos, w, h, d);
+    center = posToCenter(pos === "custom" ? "top" : pos, w, h, d);
   }
   // 限制在画布内
   const half = d / 2;
@@ -521,14 +522,13 @@ async function drawComposite(img) {
     drawUserPhoto(ctx, canvas.width, canvas.height, userPhoto, $("photoShape").checked, img);
   }
   drawOverlay(ctx, canvas.width, canvas.height, lastForm);
-  // 替换舒台中的 canvas
+  // 始终走同一路径：清空后插入，避免 <img> 回退导致重绘失效
   lastCanvas = canvas;
-  if (STAGE.firstChild && STAGE.firstChild.tagName === "CANVAS") {
-    STAGE.replaceChild(canvas, STAGE.firstChild);
-    styleCanvas(canvas);
-    attachDragHandlers(canvas);
-    refreshDownload(canvas);
-  }
+  STAGE.innerHTML = "";
+  styleCanvas(canvas);
+  STAGE.appendChild(canvas);
+  attachDragHandlers(canvas);
+  refreshDownload(canvas);
   return canvas;
 }
 
@@ -541,10 +541,12 @@ function styleCanvas(canvas) {
   if (userPhoto) canvas.style.cursor = "grab";
 }
 
+// 全局拖动状态，避免每次重绘重复绑定 window 事件
+const dragState = { active: false, dx: 0, dy: 0, canvasW: 0, canvasH: 0, getRect: null };
+let dragWindowBound = false;
+
 function attachDragHandlers(canvas) {
   if (!userPhoto) return;
-  let dragging = false;
-  let offset = { dx: 0, dy: 0 };
   const toCanvasPx = (clientX, clientY) => {
     const r = canvas.getBoundingClientRect();
     const sx = canvas.width / r.width;
@@ -555,29 +557,46 @@ function attachDragHandlers(canvas) {
     if (!lastPhotoBox) return;
     const p = toCanvasPx(clientX, clientY);
     const dx = p.x - lastPhotoBox.cx, dy = p.y - lastPhotoBox.cy;
-    if (Math.hypot(dx, dy) > lastPhotoBox.d / 2 + 20) return; // 点击不在照片区域
-    dragging = true;
-    offset = { dx, dy };
+    if (Math.hypot(dx, dy) > lastPhotoBox.d / 2 + 20) return;
+    dragState.active = true;
+    dragState.dx = dx; dragState.dy = dy;
+    dragState.canvasW = canvas.width; dragState.canvasH = canvas.height;
+    dragState.getRect = () => canvas.getBoundingClientRect();
     canvas.style.cursor = "grabbing";
-    // 切换到自定义模式
     if ($("photoPos").value !== "custom") {
       $("photoPos").value = "custom";
       $("dragHint").style.display = "block";
     }
   };
+  canvas.onmousedown = e => start(e.clientX, e.clientY);
+  canvas.ontouchstart = e => { const t = e.touches[0]; start(t.clientX, t.clientY); };
+  canvas.ontouchmove = e => { if (dragState.active) e.preventDefault(); };
+
+  if (dragWindowBound) return;
+  dragWindowBound = true;
   const move = (clientX, clientY) => {
-    if (!dragging) return;
-    const p = toCanvasPx(clientX, clientY);
-    customPos = { fx: (p.x - offset.dx) / canvas.width, fy: (p.y - offset.dy) / canvas.height };
+    if (!dragState.active || !dragState.getRect) return;
+    const r = dragState.getRect();
+    const sx = dragState.canvasW / r.width;
+    const sy = dragState.canvasH / r.height;
+    const px = (clientX - r.left) * sx;
+    const py = (clientY - r.top) * sy;
+    customPos = {
+      fx: (px - dragState.dx) / dragState.canvasW,
+      fy: (py - dragState.dy) / dragState.canvasH,
+    };
     rerenderIfReady();
   };
-  const end = () => { dragging = false; canvas.style.cursor = "grab"; };
-  canvas.addEventListener("mousedown", e => start(e.clientX, e.clientY));
+  const end = () => {
+    if (!dragState.active) return;
+    dragState.active = false;
+    if (lastCanvas) lastCanvas.style.cursor = "grab";
+  };
   window.addEventListener("mousemove", e => move(e.clientX, e.clientY));
   window.addEventListener("mouseup", end);
-  canvas.addEventListener("touchstart", e => { const t = e.touches[0]; start(t.clientX, t.clientY); }, { passive: true });
-  canvas.addEventListener("touchmove", e => { const t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
-  canvas.addEventListener("touchend", end);
+  window.addEventListener("touchmove", e => { const t = e.touches[0]; if (t) move(t.clientX, t.clientY); }, { passive: true });
+  window.addEventListener("touchend", end);
+  window.addEventListener("touchcancel", end);
 }
 
 function refreshDownload(canvas) {
