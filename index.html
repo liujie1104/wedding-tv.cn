@@ -191,6 +191,18 @@
   body.en [lang="zh"]{display:none}
   body.en [lang="en"]{display:block}
   body.en h1[lang="en"], body.en span[lang="en"]{display:inline}
+
+  /* 免费工具横条：桌面端居中换行；移动端横向滑动，避免折成多行密集小字 */
+  .toolsbar{background:#171121;border-bottom:1px solid var(--line)}
+  .toolsbar-inner{max-width:var(--max);margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;font-size:13px;color:var(--ink)}
+  .toolsbar-inner .toolsbar-label{color:var(--sub);font-weight:600;margin-right:4px}
+  .toolsbar-inner a{color:var(--ink);padding:4px 8px;border-radius:8px;white-space:nowrap;line-height:1.6}
+  .toolsbar-inner a:hover{background:rgba(255,210,138,.14);color:var(--gold);text-decoration:none}
+  @media (max-width:640px){
+    .toolsbar-inner{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 12px;scrollbar-width:none}
+    .toolsbar-inner::-webkit-scrollbar{display:none}
+    .toolsbar-inner .toolsbar-label{position:sticky;left:0;background:#171121;padding-right:6px}
+  }
 </style>
 </head>
 <body>
@@ -201,11 +213,36 @@
 </div>
 <div style="background:linear-gradient(90deg,#7a1f24,#b08545);color:#fff;text-align:center;padding:10px 16px;font-size:14px">
   <span lang="zh">💌 全新上线：<a href="/invitation.html" style="color:#fff;text-decoration:underline;font-weight:700">免费电子请帖生成器</a> · 4 套模板 + AI 爱情故事 + AI 头像，2 分钟生成专属链接</span>
-  <span lang="en">💌 New: <a href="/invitation.html" style="color:#fff;text-decoration:underline;font-weight:700">Free e-Invitation Generator</a> · 4 templates + AI love story + AI avatars</span>
+  <span lang="en">💌 New: <a href="/invitation-en.html" style="color:#fff;text-decoration:underline;font-weight:700">Free e-Invitation Generator</a> · 4 templates + AI love story</span>
 </div>
-<div style="background:#171121;color:var(--ink);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid var(--line)">
-  <span lang="zh">🎨 全部免费工具：<a href="/poster.html">🖼️ AI 海报</a> · <a href="/invitation.html">💌 电子请帖</a> · <a href="/qr-poster.html">🔗 请帖二维码海报</a> · <a href="/almanac.html">📅 婚期吉日</a> · <a href="/timeline.html">⏱️ 流程时间轴</a> · <a href="/timeline-templates.html">🗂️ 流程模板下载</a> · <a href="/playlist.html">🎵 婚礼歌单</a> · <a href="/vows.html">💍 AI 誓词</a> · <a href="/speech.html">🎤 AI 致辞</a> · <a href="/checklist.html">📋 筹备清单</a> · <a href="/countdown.html">倒计时</a> · <a href="/calculator.html">💰 预算</a> · <a href="/budget-reference.html">🏙️ 预算参考库</a> · <a href="/blog.html">📚 各地婚俗</a></span>
-  <span lang="en">🎨 Free tools: <a href="/tools-en.html">Tools Center (EN)</a> · <a href="/poster.html">AI Poster</a> · <a href="/invitation.html">e-Invitation</a> · <a href="/qr-poster.html">QR Poster</a> · <a href="/almanac.html">Lucky Dates</a> · <a href="/timeline.html">Timeline</a> · <a href="/timeline-templates.html">Timeline Templates</a> · <a href="/playlist.html">Playlist</a> · <a href="/vows.html">AI Vows</a> · <a href="/speech.html">AI Speeches</a> · <a href="/checklist.html">Checklist</a> · <a href="/budget-reference.html">Budget Reference</a> · <a href="/blog-global-en.html">Global Customs (EN)</a> · <a href="/blog.html">Customs Blog (CN)</a></span>
+<div class="toolsbar" role="navigation" aria-label="Free tools">
+  <div class="toolsbar-inner" lang="zh">
+    <span class="toolsbar-label">🎨 全部免费工具</span>
+    <a href="/poster.html">🖼️ AI 海报</a>
+    <a href="/invitation.html">💌 电子请帖</a>
+    <a href="/qr-poster.html">🔗 请帖二维码</a>
+    <a href="/almanac.html">📅 婚期吉日</a>
+    <a href="/timeline.html">⏱️ 流程时间轴</a>
+    <a href="/timeline-templates.html">🗂️ 流程模板</a>
+    <a href="/playlist.html">🎵 婚礼歌单</a>
+    <a href="/vows.html">💍 AI 誓词</a>
+    <a href="/speech.html">🎤 AI 致辞</a>
+    <a href="/checklist.html">📋 筹备清单</a>
+    <a href="/countdown.html">⌛ 倒计时</a>
+    <a href="/calculator.html">💰 预算</a>
+    <a href="/budget-reference.html">🏙️ 预算参考</a>
+    <a href="/blog.html">📚 各地婚俗</a>
+  </div>
+  <div class="toolsbar-inner" lang="en">
+    <span class="toolsbar-label">🎨 Free tools</span>
+    <a href="/tools-en.html"><strong>Tools Center</strong></a>
+    <a href="/poster-en.html">🖼️ AI Poster</a>
+    <a href="/invitation-en.html">💌 Invitation</a>
+    <a href="/calculator-en.html">💰 Budget</a>
+    <a href="/checklist-en.html">📋 Checklist</a>
+    <a href="/timeline-en.html">⏱️ Timeline</a>
+    <a href="/blog-global-en.html">🌏 Global Customs</a>
+  </div>
 </div>
 
 <header class="hero">
@@ -234,9 +271,9 @@
 
     <div class="cta">
       <a id="ctaInvite" class="btn btn-primary" href="/invitation.html" style="background:linear-gradient(135deg,#b08545,#7a1f24);color:#fff;box-shadow:0 8px 24px -8px rgba(176,133,69,.6)" lang="zh">💌 免费制作电子请帖</a>
-      <a id="ctaInviteEn" class="btn btn-primary" href="/invitation.html" style="background:linear-gradient(135deg,#b08545,#7a1f24);color:#fff;box-shadow:0 8px 24px -8px rgba(176,133,69,.6)" lang="en">💌 Free e-Invitation</a>
+      <a id="ctaInviteEn" class="btn btn-primary" href="/invitation-en.html" style="background:linear-gradient(135deg,#b08545,#7a1f24);color:#fff;box-shadow:0 8px 24px -8px rgba(176,133,69,.6)" lang="en">💌 Free e-Invitation</a>
       <a id="ctaBlogTop" class="btn" href="/blog.html#regions" style="background:linear-gradient(135deg,#ff6b9d,#ff9f68);color:#fff;box-shadow:0 8px 24px -8px rgba(255,107,157,.6)" lang="zh">📚 34 省婚俗速览</a>
-      <a id="ctaBlogTopEn" class="btn" href="/blog.html#regions" style="background:linear-gradient(135deg,#ff6b9d,#ff9f68);color:#fff;box-shadow:0 8px 24px -8px rgba(255,107,157,.6)" lang="en">📚 34 Regions Customs</a>
+      <a id="ctaBlogTopEn" class="btn" href="/blog-global-en.html" style="background:linear-gradient(135deg,#ff6b9d,#ff9f68);color:#fff;box-shadow:0 8px 24px -8px rgba(255,107,157,.6)" lang="en">📚 Global Wedding Customs</a>
       <a id="ctaOffer" class="btn btn-ghost" href="#contact" lang="zh">提交报价</a>
       <a id="ctaOfferEn" class="btn btn-ghost" href="#contact" lang="en">Submit Offer</a>
       <a class="btn btn-ghost" href="#why" lang="zh">为何值得拥有</a>
@@ -252,7 +289,7 @@
       <div class="path-card">
         <h3 lang="zh">我是婚礼用户</h3><h3 lang="en">I need wedding tools</h3>
         <p lang="zh">先用免费工具：请帖、吉日、流程、歌单、婚俗。</p><p lang="en">Use free tools first: invitation, date, timeline, playlist, customs.</p>
-        <a id="pathUser" href="/blog.html" lang="zh">去工具与博客</a><a id="pathUserEn" href="/blog.html" lang="en">Open tools & blog</a>
+        <a id="pathUser" href="/blog.html" lang="zh">去工具与博客</a><a id="pathUserEn" href="/tools-en.html" lang="en">Open tools & blog</a>
       </div>
     </div>
   </div>
@@ -673,23 +710,18 @@
 </script>
 
 <script id="site-stats">
+  // 站点访客与询价的真实展示数据
+  // 注意：以下三项 (views/inquiries/cities) 为静态展示用兜底值；如需真实数据请替换为 /api/stats 实时接口
+  // 浮动通知 (ticker) 已默认关闭，避免使用伪造的实时社交证明，损伤可信度
   window.SITE_STATS = {
     views: 1280,
     inquiries: 37,
     cities: 24,
-    useDailyJitter: true,
-    showTicker: true,
+    useDailyJitter: false,
+    showTicker: false,
     tickerIntervalSec: 18,
     tickerStaySec: 6,
-    tickerSamples: [
-      { who: '上海·婚庆团队', ago: '14 分钟前' },
-      { who: '杭州·影像工作室', ago: '38 分钟前' },
-      { who: '深圳·SaaS 创业者', ago: '1 小时前' },
-      { who: '北京·MCN 商务', ago: '2 小时前' },
-      { who: 'Singapore visitor', ago: '3 hours ago' },
-      { who: '成都·策划工作室', ago: '5 小时前' },
-      { who: '广州·跟拍团队', ago: '昨天' }
-    ]
+    tickerSamples: []
   };
 
   (function(){

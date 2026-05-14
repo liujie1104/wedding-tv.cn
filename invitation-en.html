@@ -218,6 +218,7 @@ $("publish").addEventListener("click", async () => {
   btn.textContent = "Publishing...";
   try {
     const invitation = {
+      lang: "en",
       template: state.template,
       groom: state.groom,
       bride: state.bride,

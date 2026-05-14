@@ -74,7 +74,7 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
 </head>
 <body>
 
-<div id="loading">加载中…</div>
+<div id="loading">加载中… / Loading…</div>
 <div id="error" class="hidden"><div id="errMsg">请帖不存在或已过期</div><a href="/" style="color:#b08545">返回 wedding-tv.cn</a></div>
 
 <div id="root" class="page hidden">
@@ -92,7 +92,7 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
       <div class="date" id="dateEn"></div>
       <div class="city" id="cityEn"></div>
     </div>
-    <div class="scroll">▼ 向下滑动</div>
+    <div class="scroll" id="scrollHint">▼ 向下滑动</div>
   </div>
 
   <div class="body">
@@ -103,11 +103,11 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
 
     <div class="countdown" id="countdown"></div>
 
-    <div style="margin-top:18px">
-      <div class="kv"><div class="k">日 期</div><div class="v" id="dateCn"></div></div>
-      <div class="kv"><div class="k">时 间</div><div class="v" id="timeCn"></div></div>
-      <div class="kv"><div class="k">城 市</div><div class="v" id="cityCn"></div></div>
-      <div class="kv"><div class="k">地 点</div><div class="v" id="venueCn"></div></div>
+    <div style="margin-top:18px" id="kvBlock">
+      <div class="kv"><div class="k" id="kDate">日期</div><div class="v" id="dateCn"></div></div>
+      <div class="kv"><div class="k" id="kTime">时间</div><div class="v" id="timeCn"></div></div>
+      <div class="kv"><div class="k" id="kCity">城市</div><div class="v" id="cityCn"></div></div>
+      <div class="kv"><div class="k" id="kVenue">地点</div><div class="v" id="venueCn"></div></div>
     </div>
 
     <div class="story hidden" id="story"></div>
@@ -116,21 +116,21 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
   </div>
 
   <div class="actions">
-    <a href="#" class="btn primary" onclick="copyLink();return false">📋 复制请帖链接</a>
-    <a href="#" class="btn" onclick="shareInvite();return false">📤 分享给宾客</a>
-    <a href="#" class="btn" onclick="addToCalendar();return false">📅 加入日历</a>
-    <a href="#" class="btn" onclick="document.getElementById('qrwrap').scrollIntoView({behavior:'smooth'});return false">🔳 二维码</a>
+    <a href="#" class="btn primary" id="btnCopy" onclick="copyLink();return false">📋 复制请帖链接</a>
+    <a href="#" class="btn" id="btnShare" onclick="shareInvite();return false">📤 分享给宾客</a>
+    <a href="#" class="btn" id="btnCal" onclick="addToCalendar();return false">📅 加入日历</a>
+    <a href="#" class="btn" id="btnQr" onclick="document.getElementById('qrwrap').scrollIntoView({behavior:'smooth'});return false">🔳 二维码</a>
   </div>
 
   <div class="qrwrap" id="qrwrap">
     <canvas id="qr"></canvas>
-    <div class="tip">长按二维码可保存到相册分享</div>
+    <div class="tip" id="qrTip">长按二维码可保存到相册分享</div>
   </div>
 
-  <div class="foot">
+  <div class="foot" id="foot">
     本请帖由 <a href="/" target="_blank">wedding-tv.cn</a> 提供 · 免费在线制作<br>
-    <a class="pill" href="/invitation.html" target="_blank">💌 制作我的电子请帖</a>
-    <a class="pill" href="/calculator.html" target="_blank" style="margin-left:6px">💰 婚礼报价计算器</a>
+    <a class="pill" id="footMake" href="/invitation.html" target="_blank">💌 制作我的电子请帖</a>
+    <a class="pill" id="footCalc" href="/calculator.html" target="_blank" style="margin-left:6px">💰 婚礼报价计算器</a>
   </div>
 
   <audio id="audio" loop preload="none"></audio>
@@ -207,7 +207,7 @@ function render(inv){
   // 二维码：库就绪后渲染；若所有 CDN 都失败，回落到外部 QR 图片服务
   renderQR(location.href);
   // 标题
-  document.title = `${inv.groom} & ${inv.bride} 的电子请帖 · wedding-tv.cn`;
+  document.title = (window.__T && window.__T.title) ? window.__T.title(inv.groom, inv.bride) : `${inv.groom} & ${inv.bride} 的电子请帖 · wedding-tv.cn`;
   // 显示
   $('loading').classList.add('hidden');
   $('root').classList.remove('hidden');
@@ -218,14 +218,15 @@ function render(inv){
 function startCountdown(target){
   if(!target || isNaN(target)) return;
   const wrap = $('countdown');
+  const T = window.__T || {todayLabel:'今天就是大喜之日', cdLabels:['天','时','分','秒']};
   function tick(){
     const ms = target - Date.now();
-    if(ms <= 0){ wrap.innerHTML = '<div class="cd"><b>💖</b><span>今天就是大喜之日</span></div>'; return; }
+    if(ms <= 0){ wrap.innerHTML = `<div class="cd"><b>💖</b><span>${T.todayLabel}</span></div>`; return; }
     const d = Math.floor(ms/86400000);
     const h = Math.floor(ms%86400000/3600000);
     const m = Math.floor(ms%3600000/60000);
     const s = Math.floor(ms%60000/1000);
-    wrap.innerHTML = [['天',d],['时',h],['分',m],['秒',s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
+    wrap.innerHTML = [[T.cdLabels[0],d],[T.cdLabels[1],h],[T.cdLabels[2],m],[T.cdLabels[3],s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
   }
   tick(); setInterval(tick,1000);
 }
@@ -260,25 +261,31 @@ function toggleMusic(){
 }
 
 async function copyLink(){
-  try{ await navigator.clipboard.writeText(location.href); alert('链接已复制，发给亲友吧'); }
-  catch{ prompt('复制下面的链接：', location.href); }
+  const T = window.__T || {};
+  try{ await navigator.clipboard.writeText(location.href); alert(T.scroll && T.scroll.startsWith('▼ S') ? 'Link copied. Share it with your guests!' : '链接已复制，发给亲友吧'); }
+  catch{ prompt(T.scroll && T.scroll.startsWith('▼ S') ? 'Copy this link:' : '复制下面的链接：', location.href); }
 }
 async function shareInvite(){
-  const data = {title:document.title, text:'诚邀您参加我们的婚礼', url:location.href};
+  const T = window.__T || {};
+  const isEn = T.scroll && T.scroll.startsWith('▼ S');
+  const data = {title:document.title, text: isEn ? 'You are invited to our wedding' : '诚邀您参加我们的婚礼', url:location.href};
   if(navigator.share){ try{ await navigator.share(data); }catch{} }
   else copyLink();
 }
 function addToCalendar(){
-  const inv = window.__inv; if(!inv?._date || isNaN(inv._date)) return alert('日期无效');
+  const inv = window.__inv;
+  const T = window.__T || {invalidDate:'日期无效'};
+  if(!inv?._date || isNaN(inv._date)) return alert(T.invalidDate);
+  const isEn = inv.lang === 'en';
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
   const ics = [
     'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
-    `SUMMARY:${inv.groom} & ${inv.bride} 的婚礼`,
+    `SUMMARY:${inv.groom} & ${inv.bride} ${isEn ? 'Wedding' : '的婚礼'}`,
     `LOCATION:${inv.city||''} ${inv.venue||''}`,
     `DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
-    `DESCRIPTION:由 wedding-tv.cn 制作 · ${location.href}`,
+    `DESCRIPTION:${isEn ? 'Made with wedding-tv.cn' : '由 wedding-tv.cn 制作'} · ${location.href}`,
     'END:VEVENT','END:VCALENDAR'
   ].join('\n');
   const blob = new Blob([ics],{type:'text/calendar'});
