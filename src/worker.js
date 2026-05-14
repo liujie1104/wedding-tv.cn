@@ -68,6 +68,11 @@ export default {
       }
     }
 
+    // live.html -> 首页 301（避免重复内容）
+    if (path === "/live.html") {
+      return Response.redirect(new URL("/", url.origin).href, 301);
+    }
+
     // 其它路径 -> 静态资源；根目录显式映射 index.html（因 html_handling=none 关闭了自动 index）
     if (path === "/" || path.endsWith("/")) {
       const idx = new URL(path + "index.html", url.origin);
