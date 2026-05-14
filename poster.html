@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI 婚礼海报生成器 · 一键生成婚礼请帖封面/Save the Date | wedding-tv.cn</title>
+<meta name="description" content="免费 AI 婚礼海报生成器：填入你们的名字与风格，1 分钟由通义万相 AI 生成婚礼海报，支持竖版/横版/方形，可下载高清原图。" />
+<meta name="keywords" content="婚礼海报,Save the Date,婚礼请帖封面,AI 海报生成,婚礼背景图,婚礼KV设计,通义万相" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/poster.html" />
+<meta property="og:title" content="AI 婚礼海报生成器 — wedding-tv.cn" />
+<meta property="og:description" content="1 分钟生成婚礼海报，免费下载高清原图" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🖼️</text></svg>" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI 婚礼海报生成器","url":"https://wedding-tv.cn/poster.html","applicationCategory":"DesignApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}
+</script>
+<style>
+  :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  a{color:var(--gold)}
+  .top{background:linear-gradient(90deg,#7a1f24,#b08545);color:#fff;text-align:center;padding:8px 16px;font-size:13px}
+  .top a{color:#fff;text-decoration:underline}
+  .wrap{max-width:760px;margin:0 auto;padding:30px 20px 80px}
+  h1{font-size:30px;margin:0 0 8px;background:linear-gradient(90deg,#fff,#ffd28a 60%,#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--sub);margin:0 0 20px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
+  label{display:block;font-size:13px;color:var(--sub);margin:14px 0 6px}
+  input,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit}
+  input:focus,select:focus{outline:none;border-color:var(--rose)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:600px){.row{grid-template-columns:1fr}}
+  .btn{margin-top:18px;width:100%;padding:14px;border-radius:999px;border:0;font-weight:700;cursor:pointer;font-size:16px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .meta{color:var(--sub);font-size:12px;margin-top:10px}
+  .stage{position:relative;background:#0e0a14;border:1px solid var(--line);border-radius:12px;min-height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+  .stage img,.stage canvas{max-width:100%;max-height:70vh;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+  .progress{font-size:14px;color:var(--sub);margin-top:14px;text-align:center}
+  .progress .dot{display:inline-block;width:8px;height:8px;background:var(--rose);border-radius:50%;margin:0 3px;animation:b 1.2s infinite ease-in-out}
+  .progress .dot:nth-child(2){animation-delay:.2s}
+  .progress .dot:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1.2)}}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+  .toolbar button,.toolbar a{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:14px;text-decoration:none;display:inline-block}
+  .toolbar button:hover,.toolbar a:hover{border-color:var(--gold);color:var(--gold)}
+  .examples{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+  @media(max-width:600px){.examples{grid-template-columns:repeat(2,1fr)}}
+  .examples button{padding:10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font-size:12px;text-align:left;line-height:1.4}
+  .examples button:hover{border-color:var(--gold)}
+  .related{margin-top:40px}
+  .related h3{font-size:18px;color:var(--gold)}
+  .related a{display:inline-block;margin:6px 8px 6px 0;padding:8px 14px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink);font-size:13px}
+  .related a:hover{border-color:var(--gold)}
+  footer{text-align:center;color:var(--sub);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:20px}
+  .toggle{display:flex;gap:0;margin-top:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .toggle label{flex:1;margin:0;padding:10px;text-align:center;cursor:pointer;color:var(--sub);font-size:13px}
+  .toggle input{display:none}
+  .toggle input:checked + span{background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;font-weight:700;display:block;border-radius:8px;padding:8px 4px;margin:-2px}
+</style>
+</head>
+<body>
+<div class="top">🖼️ <a href="/vows.html">AI 誓词</a> · <a href="/speech.html">AI 致辞</a> · <a href="/invitation.html">电子请帖</a> · <a href="/">回首页</a></div>
+
+<div class="wrap">
+  <h1>🖼️ AI 婚礼海报生成器</h1>
+  <p class="lead">由通义万相 AI 驱动，1 分钟生成婚礼海报。可用作 Save the Date、请帖封面、朋友圈预告。完全免费。</p>
+
+  <div class="card">
+    <div class="row">
+      <div><label>新郎名字</label><input id="groom" maxlength="20" placeholder="可选" /></div>
+      <div><label>新娘名字</label><input id="bride" maxlength="20" placeholder="可选" /></div>
+    </div>
+    <div class="row">
+      <div><label>婚期</label><input id="date" type="date" onclick="this.showPicker&&this.showPicker()" /></div>
+      <div><label>场地（可选）</label><input id="venue" maxlength="40" placeholder="例：上海外滩源" /></div>
+    </div>
+    <label>风格</label>
+    <select id="style">
+      <option value="rose">🌹 玫瑰金 · 浪漫西式</option>
+      <option value="ink">🀄 中式水墨 · 红金喜庆</option>
+      <option value="forest">🌿 森林系 · 户外草坪</option>
+      <option value="ocean">🌊 海滨日落</option>
+      <option value="vintage">🍷 复古酒红 · Art Deco</option>
+      <option value="modern">⬜ 现代简约 · 香槟金</option>
+      <option value="cyber">🌌 未来感 · 霓虹紫青</option>
+    </select>
+    <label>额外色彩描述（可选，英文/中文都行）</label>
+    <input id="color" maxlength="60" placeholder="例：with peony flowers / 加入牡丹元素" />
+
+    <label>尺寸</label>
+    <select id="size">
+      <option value="portrait">📱 竖版 720×1280（朋友圈/请帖封面）</option>
+      <option value="square">⬜ 方形 1024×1024（小红书/Ins）</option>
+      <option value="landscape">🖥️ 横版 1280×720（电视屏/横幅）</option>
+    </select>
+
+    <button class="btn" id="go">✨ 生成海报（约 30-60 秒）</button>
+    <div class="meta">完全免费 · 由通义万相 wanx2.1-turbo 驱动 · 每分钟最多 5 次</div>
+
+    <div class="examples" style="margin-top:18px">
+      <button data-ex="rose">🌹 浪漫玫瑰金</button>
+      <button data-ex="ink">🀄 中式水墨</button>
+      <button data-ex="forest">🌿 森系户外</button>
+      <button data-ex="ocean">🌊 海边日落</button>
+    </div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none">
+    <div class="stage" id="stage"></div>
+    <div class="toolbar" id="toolbar" style="display:none">
+      <a id="dlBtn" download="wedding-poster.png">⬇️ 下载原图</a>
+      <button id="newBtn">🔄 再生成一张</button>
+      <a href="/invitation.html" class="">💌 用作请帖封面</a>
+    </div>
+  </div>
+
+  <div class="related">
+    <h3>配套免费工具</h3>
+    <a href="/vows.html">💍 AI 婚礼誓词</a>
+    <a href="/speech.html">🎤 AI 婚礼致辞（6 种）</a>
+    <a href="/invitation.html">💌 电子请帖生成器</a>
+    <a href="/checklist.html">📋 AI 筹备清单</a>
+    <a href="/countdown.html">📅 倒计时海报</a>
+    <a href="/calculator.html">💰 婚礼预算计算</a>
+  </div>
+
+  <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 婚礼行业品牌域名出售中</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+document.querySelectorAll(".examples button").forEach(b => {
+  b.onclick = () => { $("style").value = b.dataset.ex; };
+});
+
+const STAGE = $("stage");
+let lastImageUrl = "";
+
+function setProgress(text) {
+  STAGE.innerHTML = `<div class="progress">${text}<br><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+}
+
+async function gen() {
+  const body = {
+    groom: $("groom").value.trim(),
+    bride: $("bride").value.trim(),
+    date: $("date").value,
+    venue: $("venue").value.trim(),
+    style: $("style").value,
+    color: $("color").value.trim(),
+    size: $("size").value,
+  };
+  const btn = $("go"); btn.disabled = true; btn.textContent = "✨ AI 创作中…";
+  $("resultCard").style.display = "block";
+  $("toolbar").style.display = "none";
+  setProgress("提交任务中…");
+  try {
+    const r = await fetch("/api/poster", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "提交失败");
+    setProgress("AI 正在绘制中（约 20-50 秒）");
+    const url = await poll(d.taskId);
+    showImage(url);
+  } catch(e) {
+    STAGE.innerHTML = `<div style="color:#ff6b9d;text-align:center">❌ ${e.message}<br><small>请稍后重试</small></div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = "✨ 生成海报（约 30-60 秒）";
+  }
+}
+
+async function poll(taskId) {
+  const start = Date.now();
+  while (Date.now() - start < 90_000) {
+    await new Promise(r => setTimeout(r, 2500));
+    const r = await fetch(`/api/poster?id=${encodeURIComponent(taskId)}`);
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || "查询失败");
+    if (d.status === "SUCCEEDED") return d.imageUrl;
+    if (d.status === "FAILED" || d.status === "CANCELED") throw new Error(d.error || "生成失败");
+    setProgress(`AI 绘制中…（${d.status}，已等待 ${Math.round((Date.now()-start)/1000)}s）`);
+  }
+  throw new Error("超时，请重试");
+}
+
+async function showImage(url) {
+  // 通过我们的服务器代理避免跨域；这里直接展示 + 离线保存
+  lastImageUrl = url;
+  STAGE.innerHTML = `<img id="poster" src="${url}" alt="婚礼海报" crossorigin="anonymous" />`;
+  // 把图片下载为 blob，提供本地保存
+  try {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    const objUrl = URL.createObjectURL(blob);
+    const dl = $("dlBtn");
+    dl.href = objUrl;
+    dl.download = `wedding-poster-${Date.now()}.png`;
+  } catch(e) {
+    // 直接外链（用户右键保存）
+    $("dlBtn").href = url;
+  }
+  $("toolbar").style.display = "flex";
+}
+
+$("go").onclick = gen;
+$("newBtn").onclick = gen;
+</script>
+</body>
+</html>
