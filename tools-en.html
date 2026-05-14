@@ -15,6 +15,20 @@
 <meta property="og:description" content="Free wedding planning and content tools." />
 <meta property="og:url" content="https://wedding-tv.cn/tools-en.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":"Wedding Tools (English)","itemListOrder":"https://schema.org/ItemListUnordered","numberOfItems":10,"itemListElement":[
+{"@type":"ListItem","position":1,"url":"https://wedding-tv.cn/calculator-en.html","name":"Wedding Budget Calculator"},
+{"@type":"ListItem","position":2,"url":"https://wedding-tv.cn/invitation-en.html","name":"E-Invitation Builder"},
+{"@type":"ListItem","position":3,"url":"https://wedding-tv.cn/poster-en.html","name":"AI Wedding Poster Generator"},
+{"@type":"ListItem","position":4,"url":"https://wedding-tv.cn/timeline-en.html","name":"Wedding Timeline Builder"},
+{"@type":"ListItem","position":5,"url":"https://wedding-tv.cn/checklist-en.html","name":"AI Checklist Generator"},
+{"@type":"ListItem","position":6,"url":"https://wedding-tv.cn/timeline-templates.html","name":"Timeline Templates"},
+{"@type":"ListItem","position":7,"url":"https://wedding-tv.cn/vows.html","name":"AI Vows Generator"},
+{"@type":"ListItem","position":8,"url":"https://wedding-tv.cn/speech.html","name":"AI Speech Generator"},
+{"@type":"ListItem","position":9,"url":"https://wedding-tv.cn/almanac.html","name":"Lucky Date Finder"},
+{"@type":"ListItem","position":10,"url":"https://wedding-tv.cn/budget-reference.html","name":"City Budget Reference (2026)"}
+]}
+</script>
 <style>
 :root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}
 *{box-sizing:border-box}
@@ -22,12 +36,16 @@ body{margin:0;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sa
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .wrap{max-width:1020px;margin:0 auto;padding:26px 22px 56px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-.card h2{margin:0 0 6px;font-size:18px}
+.crumbs{font-size:13px;color:var(--mute);margin:14px 0 4px}.crumbs a{color:var(--mute)}
+.lead{color:var(--mute);font-size:17px;line-height:1.65;margin:6px 0 4px;max-width:760px}
+.section-title{margin:32px 0 4px;font-size:13px;color:var(--mute);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
+.card .ico{font-size:24px;line-height:1;margin-bottom:8px}
+.card h2{margin:0 0 4px;font-size:17px;color:var(--fg)}
 .card p{margin:0;color:var(--mute);font-size:14px}
-.badge{display:inline-block;padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--mute);font-size:12px;margin-bottom:8px}
-.note{margin-top:18px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);color:var(--mute);font-size:14px}
+.note{margin-top:24px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02);color:var(--mute);font-size:14px}
 </style>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 </head>
@@ -37,24 +55,34 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
     <a href="/">wedding-tv.cn</a>
     <div><a href="/en.html">English Hub</a> · <a href="/blog.html">Chinese Tool Center</a></div>
   </div>
+  <div class="crumbs"><a href="/en.html">English Hub</a> · Tools</div>
 
   <h1>Wedding Tools (English Navigation)</h1>
-  <p style="color:var(--mute)">Core English tools are live, including dedicated English pages for invitation and poster builders.</p>
+  <p class="lead">All free, no signup. Each tool has a dedicated English page where it makes sense; pages without an EN UI yet are written so the output works in any language.</p>
 
+  <div class="section-title">Planning &amp; Budget</div>
   <div class="grid">
-    <a class="card" href="/calculator-en.html"><div class="badge">Budget</div><h2>Wedding Budget Calculator</h2><p>Estimate video/livestream/MV budget range in seconds.</p></a>
-    <a class="card" href="/invitation-en.html"><div class="badge">Invitation</div><h2>E-Invitation Builder</h2><p>Create invitation pages with templates, music, AI story and QR sharing.</p></a>
-    <a class="card" href="/poster-en.html"><div class="badge">Creative</div><h2>AI Wedding Poster Generator</h2><p>Generate Save-the-Date and poster images with AI styles.</p></a>
-    <a class="card" href="/timeline-en.html"><div class="badge">Planning</div><h2>Wedding Timeline Builder</h2><p>Build minute-by-minute ceremony timeline and export.</p></a>
-    <a class="card" href="/timeline-templates.html"><div class="badge">Templates</div><h2>Timeline Templates Download</h2><p>Download morning/evening/western timeline CSV templates.</p></a>
-    <a class="card" href="/checklist-en.html"><div class="badge">Planning</div><h2>AI Checklist Generator</h2><p>Create personalized prep checklist by date, city and budget.</p></a>
-    <a class="card" href="/vows.html"><div class="badge">Writing</div><h2>AI Vows Generator</h2><p>Draft personalized wedding vows quickly.</p></a>
-    <a class="card" href="/speech.html"><div class="badge">Writing</div><h2>AI Speech Generator</h2><p>Generate groom, bride, parent and MC speech drafts.</p></a>
-    <a class="card" href="/almanac.html"><div class="badge">Date</div><h2>Lucky Date Finder</h2><p>Find suitable wedding dates by Chinese almanac rules.</p></a>
-    <a class="card" href="/budget-reference.html"><div class="badge">Reference</div><h2>City Budget Reference (2026)</h2><p>Check common budget ranges by city.</p></a>
+    <a class="card" href="/calculator-en.html"><div class="ico">&#128176;</div><h2>Budget Calculator</h2><p>Estimate video / livestream / MV budget range in seconds.</p></a>
+    <a class="card" href="/timeline-en.html"><div class="ico">&#9201;&#65039;</div><h2>Timeline Builder</h2><p>Build a minute-by-minute ceremony &amp; reception schedule.</p></a>
+    <a class="card" href="/checklist-en.html"><div class="ico">&#128203;</div><h2>AI Checklist Generator</h2><p>Personalized prep checklist by date, city and budget.</p></a>
+    <a class="card" href="/timeline-templates.html"><div class="ico">&#128196;</div><h2>Timeline Templates</h2><p>Download morning / evening / western timeline CSV.</p></a>
   </div>
 
-  <div class="note">Need culture content in English? Visit <a href="/blog-global-en.html">Global Wedding Customs (English)</a>.</div>
+  <div class="section-title">Creative &amp; Writing</div>
+  <div class="grid">
+    <a class="card" href="/invitation-en.html"><div class="ico">&#128231;</div><h2>E-Invitation Builder</h2><p>Templates, music, AI story, QR sharing &mdash; in 60 seconds.</p></a>
+    <a class="card" href="/poster-en.html"><div class="ico">&#127912;</div><h2>AI Poster Generator</h2><p>Generate Save-the-Date and poster images with AI styles.</p></a>
+    <a class="card" href="/vows.html"><div class="ico">&#128141;</div><h2>AI Vows Generator</h2><p>Draft personalized wedding vows in seconds.</p></a>
+    <a class="card" href="/speech.html"><div class="ico">&#127908;</div><h2>AI Speech Generator</h2><p>Groom, bride, parent and MC speech drafts.</p></a>
+  </div>
+
+  <div class="section-title">Reference</div>
+  <div class="grid">
+    <a class="card" href="/almanac.html"><div class="ico">&#128197;</div><h2>Lucky Date Finder</h2><p>Find suitable wedding dates by Chinese almanac rules.</p></a>
+    <a class="card" href="/budget-reference.html"><div class="ico">&#127961;&#65039;</div><h2>City Budget Reference (2026)</h2><p>Common budget ranges by city &mdash; plan with real numbers.</p></a>
+  </div>
+
+  <div class="note">Looking for culture content in English? Visit <a href="/blog-global-en.html">Global Wedding Customs (English)</a>.</div>
 
 <!-- AdSense slot 5588066302 -->
 <div class="ad-slot" style="margin:28px auto;max-width:920px;padding:0 16px">
