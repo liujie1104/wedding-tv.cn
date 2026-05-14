@@ -15,6 +15,9 @@
 <link rel="alternate" hreflang="en" href="https://wedding-tv.cn/?lang=en" />
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/" />
 <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="婚礼工具箱" />
 
 <!-- Open Graph -->
 <meta property="og:site_name" content="wedding-tv.cn" />
@@ -191,8 +194,8 @@
   <span lang="en">💌 New: <a href="/invitation.html" style="color:#fff;text-decoration:underline;font-weight:700">Free e-Invitation Generator</a> · 4 templates + AI love story + AI avatars</span>
 </div>
 <div style="background:#171121;color:var(--ink);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid var(--line)">
-  <span lang="zh">🎨 全部免费工具：<a href="/poster.html">🖼️ AI 海报</a> · <a href="/invitation.html">电子请帖</a> · <a href="/vows.html">💍 AI 誓词</a> · <a href="/speech.html">🎤 AI 致辞</a> · <a href="/checklist.html">📋 筹备清单</a> · <a href="/countdown.html">📅 倒计时海报</a> · <a href="/calculator.html">💰 预算计算</a></span>
-  <span lang="en">🎨 Free tools: <a href="/poster.html">AI Poster</a> · <a href="/invitation.html">e-Invitation</a> · <a href="/vows.html">AI Vows</a> · <a href="/speech.html">AI Speeches</a> · <a href="/checklist.html">Checklist</a> · <a href="/countdown.html">Countdown Poster</a></span>
+  <span lang="zh">🎨 全部免费工具：<a href="/poster.html">🖼️ AI 海报</a> · <a href="/invitation.html">💌 电子请帖</a> · <a href="/qr-poster.html">🔗 请帖二维码海报</a> · <a href="/almanac.html">📅 婚期吉日</a> · <a href="/timeline.html">⏱️ 流程时间轴</a> · <a href="/playlist.html">🎵 婚礼歌单</a> · <a href="/vows.html">💍 AI 誓词</a> · <a href="/speech.html">🎤 AI 致辞</a> · <a href="/checklist.html">📋 筹备清单</a> · <a href="/countdown.html">倒计时</a> · <a href="/calculator.html">💰 预算</a> · <a href="/blog.html">📚 各地婚俗</a></span>
+  <span lang="en">🎨 Free tools: <a href="/poster.html">AI Poster</a> · <a href="/invitation.html">e-Invitation</a> · <a href="/qr-poster.html">QR Poster</a> · <a href="/almanac.html">Lucky Dates</a> · <a href="/timeline.html">Timeline</a> · <a href="/playlist.html">Playlist</a> · <a href="/vows.html">AI Vows</a> · <a href="/speech.html">AI Speeches</a> · <a href="/checklist.html">Checklist</a> · <a href="/blog.html">Customs Blog</a></span>
 </div>
 
 <header class="hero">
@@ -640,6 +643,12 @@
     window._hmt = window._hmt || [];
   }
 })();
+</script>
+<script>
+// PWA Service Worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(()=>{}));
+}
 </script>
 </body>
 </html>

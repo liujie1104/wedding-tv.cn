@@ -78,6 +78,12 @@ export default {
       const idx = new URL(path + "index.html", url.origin);
       return env.ASSETS.fetch(new Request(idx, request));
     }
-    return env.ASSETS.fetch(request);
+    const res = await env.ASSETS.fetch(request);
+    // 404 fallback：HTML 请求失败时返回自定义 404 页面
+    if (res.status === 404 && (request.headers.get("accept") || "").includes("text/html")) {
+      const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin), request));
+      return new Response(notFound.body, { status: 404, headers: notFound.headers });
+    }
+    return res;
   },
 };

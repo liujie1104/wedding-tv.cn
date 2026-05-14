@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>婚礼流程时间轴生成器 · 中式/西式/草坪婚礼当天时间表 | wedding-tv.cn</title>
+<meta name="description" content="一键生成婚礼当天完整流程时间轴：从早晨化妆、接亲、迎宾、仪式、敬酒到送宾，30+ 节点精确到分钟，支持中式/西式/草坪/酒店四种类型，可下载图片打印。" />
+<meta name="keywords" content="婚礼流程,婚礼时间轴,婚礼当天流程表,中式婚礼流程,西式婚礼流程,接亲时间,敬酒流程" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/timeline.html" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:title" content="婚礼流程时间轴生成器" />
+<meta property="og:description" content="一键生成婚礼当天完整流程，可下载打印。" />
+<meta property="og:url" content="https://wedding-tv.cn/timeline.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<meta name="theme-color" content="#0e0a14" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⏱️</text></svg>" />
+<style>
+:root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:24px}
+nav{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);margin-bottom:20px}
+h1{margin:8px 0 6px;font-size:30px}
+.lead{color:var(--sub);margin:0 0 24px}
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px}
+input,select,button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit;width:100%}
+button.primary{background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border:none;font-weight:600;cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.btn-row button{width:auto;flex:0 0 auto}
+.timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;position:relative}
+.tl-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);align-items:flex-start}
+.tl-row:last-child{border-bottom:none}
+.tl-time{flex:0 0 70px;color:var(--gold);font-weight:700;font-size:18px;font-family:"Courier New",monospace}
+.tl-body{flex:1}
+.tl-title{font-weight:600;color:var(--ink);font-size:15px}
+.tl-desc{color:var(--sub);font-size:13px;margin-top:2px}
+.tl-cat{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub);margin-right:6px}
+.tl-cat.morning{color:#ffd28a;border-color:#ffd28a}
+.tl-cat.ceremony{color:#ff6b9d;border-color:#ff6b9d}
+.tl-cat.banquet{color:#88d8b0;border-color:#88d8b0}
+.tl-cat.evening{color:#9bb1ff;border-color:#9bb1ff}
+footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;border-top:1px solid var(--line);padding-top:20px}
+.tools-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.tools-bar a{padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px}
+.notes{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--sub);font-size:14px}
+.notes h3{color:var(--gold);margin:0 0 8px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a href="/">← 回首页</a>
+    <a href="/invitation.html">💌 请帖</a>
+    <a href="/poster.html">🖼️ 海报</a>
+    <a href="/almanac.html">📅 吉日</a>
+    <a href="/playlist.html">🎵 歌单</a>
+    <a href="/checklist.html">📋 清单</a>
+  </nav>
+  <h1>⏱️ 婚礼流程时间轴生成器</h1>
+  <p class="lead">输入婚礼仪式时间和类型，一键生成新郎接亲到送宾的完整流程表。可截图保存或分享给婚庆团队、伴郎伴娘协调时间。</p>
+
+  <div class="controls">
+    <div><label>婚礼类型</label>
+      <select id="type">
+        <option value="cn">中式（接亲+酒店）</option>
+        <option value="cn-double">中式双仪式（外景+酒店）</option>
+        <option value="west">西式（教堂/草坪）</option>
+        <option value="hotel">酒店西式（仪式+宴会）</option>
+      </select>
+    </div>
+    <div><label>仪式开始时间</label><input id="start" type="time" value="11:18" /></div>
+    <div><label>新郎接亲（中式必填）</label><input id="pickup" type="time" value="07:30" /></div>
+    <div style="align-self:end"><button class="primary" onclick="render()">生成时间轴</button></div>
+  </div>
+
+  <div class="btn-row">
+    <button onclick="downloadImg()">⬇️ 下载图片</button>
+    <button onclick="copyText()">📋 复制为文字</button>
+    <button onclick="window.print()">🖨️ 打印</button>
+  </div>
+
+  <div class="timeline" id="tl"></div>
+
+  <div class="notes">
+    <h3>使用说明</h3>
+    <ul>
+      <li>仪式开始时间一般选 <strong>11:08 / 11:18 / 11:28</strong>（双数寓意成双成对，避开整点）。</li>
+      <li>接亲建议提前 <strong>3.5-4 小时</strong> 出发，留足堵车 + 堵门游戏 + 拍合照时间。</li>
+      <li>若是 <strong>外景+酒店双仪式</strong>，外景一般在上午 9-10 点，酒店仪式 11:30 左右。</li>
+      <li>晚宴一般 18:08 / 18:18 开始；如改晚宴，请将"仪式开始时间"调整为 18:08 即可。</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:30px">配套工具</h3>
+  <div class="tools-bar">
+    <a href="/almanac.html">📅 婚期吉日</a>
+    <a href="/playlist.html">🎵 婚礼歌单</a>
+    <a href="/checklist.html">📋 筹备清单</a>
+    <a href="/calculator.html">💰 预算</a>
+    <a href="/vows.html">💍 AI 誓词</a>
+    <a href="/speech.html">🎤 致辞</a>
+    <a href="/blog.html">📚 各地婚俗</a>
+  </div>
+
+  <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 婚礼行业品牌域名 <a href="/#contact">议价出售中 →</a></footer>
+</div>
+
+<script>
+// 模板：起始为"仪式开始"时刻，每条 [偏移分钟, 类别, 标题, 描述]
+const TEMPLATES = {
+  "cn": [
+    [-240,"morning","新郎起床整理","堵门红包准备齐全，伴郎集合"],
+    [-220,"morning","新娘开始化妆","化妆 90-120 分钟，建议同步直播给亲友"],
+    [-180,"morning","车队集合出发","婚车贴喜字，跟拍摄影到位"],
+    [-150,"morning","到达新娘家堵门","派红包、堵门游戏，时间控 20 分钟"],
+    [-120,"morning","见父母敬茶/找婚鞋","传统流程，注意备好茶具"],
+    [-90,"morning","新人合影 → 出发","与娘家亲友合影后启程"],
+    [-60,"morning","到达新郎家","回门礼、改口、敬茶"],
+    [-30,"ceremony","抵达酒店签到","新人补妆、嘉宾陆续到场"],
+    [0,"ceremony","典礼开始 · 新人入场","主持人开场，证婚人到位"],
+    [10,"ceremony","誓词 + 交换戒指","建议提前练习誓词"],
+    [20,"ceremony","父母上台 · 改口敬茶","准备改口红包"],
+    [30,"ceremony","切蛋糕 · 香槟塔","摄影抓拍重点"],
+    [40,"banquet","新人退场换装","新娘换敬酒服，控时 15 分钟"],
+    [55,"banquet","正式开席 · 上菜","主持暖场互动游戏"],
+    [80,"banquet","新人敬酒（每桌 3 分钟）","按桌号顺序，预备小杯"],
+    [180,"banquet","抛捧花 · 集体合影","邀请单身好友上台"],
+    [200,"evening","送宾 · 答谢嘉宾","站在门口送客，备伴手礼"],
+    [240,"evening","结束 · 收尾结算","与婚庆/酒店核对账目"]
+  ],
+  "cn-double": [
+    [-240,"morning","新郎起床 · 接亲集合","同中式接亲流程"],
+    [-180,"morning","到新娘家堵门 + 敬茶",""],
+    [-120,"morning","回新郎家 → 外景仪式","中式外景一般在草坪/园林"],
+    [-90,"ceremony","外景仪式 · 拜天地",""],
+    [-60,"ceremony","外景结束 → 前往酒店","路上补妆"],
+    [-20,"ceremony","酒店签到 · 候场",""],
+    [0,"ceremony","酒店仪式 · 新人入场",""],
+    [15,"ceremony","誓词 · 交换戒指 · 敬茶",""],
+    [40,"banquet","新人退场换装",""],
+    [55,"banquet","开席 · 上菜",""],
+    [80,"banquet","新人敬酒",""],
+    [180,"banquet","抛捧花 · 集体合影",""],
+    [200,"evening","送宾"],
+    [240,"evening","结束 · 收尾结算"]
+  ],
+  "west": [
+    [-180,"morning","新娘化妆造型","白纱建议简洁妆容"],
+    [-90,"morning","新郎到场布置","花艺、座位卡、签到台"],
+    [-30,"morning","嘉宾入场签到","背景音乐：纯钢琴/弦乐"],
+    [0,"ceremony","新郎入场 · 父母入场",""],
+    [5,"ceremony","花童 + 伴娘入场","音乐：Canon in D"],
+    [10,"ceremony","新娘父亲牵新娘入场","音乐：Bridal Chorus"],
+    [15,"ceremony","牧师/证婚人致辞 · 誓词",""],
+    [25,"ceremony","交换戒指 · 接吻 · 礼成",""],
+    [30,"banquet","鸡尾酒 cocktail hour","暖场酒水 + 小食"],
+    [90,"banquet","开席 · 第一支舞",""],
+    [120,"banquet","切蛋糕 · 父亲致辞",""],
+    [150,"banquet","抛捧花 · 自由跳舞",""],
+    [240,"evening","送宾结束"]
+  ],
+  "hotel": [
+    [-120,"morning","酒店化妆 · 拍摄准备",""],
+    [-30,"morning","嘉宾签到 · 暖场音乐",""],
+    [0,"ceremony","主持人开场 · 新人入场",""],
+    [10,"ceremony","誓词 · 戒指 · 敬茶",""],
+    [25,"ceremony","切蛋糕 · 香槟塔 · 父母致辞",""],
+    [40,"banquet","新人退场换装",""],
+    [55,"banquet","开席",""],
+    [80,"banquet","新人敬酒",""],
+    [180,"banquet","抛捧花 · 合影",""],
+    [200,"evening","送宾 · 结束"]
+  ]
+};
+
+const $=id=>document.getElementById(id);
+function fmtTime(base, offset){
+  const d=new Date(base.getTime()+offset*60000);
+  return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+}
+function render(){
+  const t=$("type").value;
+  const [hh,mm]=$("start").value.split(":").map(Number);
+  const base=new Date();base.setHours(hh,mm,0,0);
+  const tpl=TEMPLATES[t];
+  $("tl").innerHTML=tpl.map(([off,cat,title,desc])=>{
+    return `<div class="tl-row"><div class="tl-time">${fmtTime(base,off)}</div><div class="tl-body"><div class="tl-title"><span class="tl-cat ${cat}">${cat==='morning'?'晨间':cat==='ceremony'?'仪式':cat==='banquet'?'宴会':'晚间'}</span>${title}</div>${desc?`<div class="tl-desc">${desc}</div>`:""}</div></div>`;
+  }).join("");
+}
+function copyText(){
+  const rows=document.querySelectorAll(".tl-row");
+  const text=Array.from(rows).map(r=>{
+    return r.querySelector(".tl-time").textContent+"  "+r.querySelector(".tl-title").textContent.replace(/^(晨间|仪式|宴会|晚间)/,"");
+  }).join("\n");
+  navigator.clipboard.writeText("【婚礼流程】by wedding-tv.cn\n\n"+text).then(()=>alert("已复制到剪贴板"));
+}
+function downloadImg(){
+  // 用 html-to-canvas 风格的简单 SVG 序列化
+  const tl=$("tl");
+  const w=820,padY=30;
+  const rows=tl.querySelectorAll(".tl-row");
+  const lineH=58;
+  const h=padY*2+rows.length*lineH+60;
+  const items=Array.from(rows).map((r,i)=>{
+    const time=r.querySelector(".tl-time").textContent;
+    const title=r.querySelector(".tl-title").textContent.replace(/^(晨间|仪式|宴会|晚间)/,"");
+    const desc=r.querySelector(".tl-desc")?.textContent||"";
+    const y=padY+50+i*lineH;
+    return `<text x="40" y="${y}" font-size="22" font-family="monospace" fill="#ffd28a" font-weight="700">${time}</text>
+<text x="140" y="${y-2}" font-size="16" fill="#f7f3ff" font-weight="600">${escapeXml(title)}</text>
+<text x="140" y="${y+18}" font-size="12" fill="#b9aed1">${escapeXml(desc)}</text>
+<line x1="40" y1="${y+30}" x2="${w-40}" y2="${y+30}" stroke="rgba(255,255,255,0.08)"/>`;
+  }).join("");
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+<rect width="${w}" height="${h}" fill="#0e0a14"/>
+<text x="40" y="40" font-size="22" fill="#ff6b9d" font-weight="700">⏱️ 婚礼当天流程时间表</text>
+${items}
+<text x="${w/2}" y="${h-15}" text-anchor="middle" font-size="11" fill="#b9aed1">由 wedding-tv.cn 免费生成</text>
+</svg>`;
+  const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml"}));
+  const a=document.createElement("a");a.href=url;a.download="婚礼流程时间表.svg";a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function escapeXml(s){return (s||"").replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]))}
+render();
+</script>
+<script>
+(function(){var BAIDU_ID='1df8fda3d25e8df34a5c8e08f945e9fb';var hm=document.createElement('script');hm.src='https://hm.baidu.com/hm.js?'+BAIDU_ID;var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(hm,s);window._hmt=window._hmt||[];})();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>

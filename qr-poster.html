@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>请帖二维码海报生成器 · 朋友圈分享专用 | wedding-tv.cn</title>
+<meta name="description" content="把电子请帖链接生成精美二维码海报，竖版 9:16 适配朋友圈和打印，支持自定义新人姓名、婚期、酒店地址，纯前端生成，免费下载。" />
+<meta name="keywords" content="婚礼二维码海报,请帖二维码,婚礼朋友圈海报,电子请帖海报" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/qr-poster.html" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:title" content="请帖二维码海报生成器" />
+<meta property="og:description" content="一键生成竖版婚礼二维码海报，分享朋友圈/打印桌牌。" />
+<meta property="og:url" content="https://wedding-tv.cn/qr-poster.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<meta name="theme-color" content="#0e0a14" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🔗</text></svg>" />
+<style>
+:root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:24px}
+nav{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);margin-bottom:20px}
+h1{margin:8px 0 6px;font-size:30px}
+.lead{color:var(--sub);margin:0 0 24px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:20px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+.form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.form label{display:block;font-size:13px;color:var(--sub);margin:10px 0 6px}
+.form input,.form select,.form textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit}
+.form button{margin-top:14px;padding:11px 18px;border-radius:10px;border:none;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;font-weight:600;cursor:pointer;font-size:15px}
+.preview{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.preview canvas{max-width:100%;height:auto;border-radius:8px;background:#fff}
+.preview .actions{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.preview button{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);cursor:pointer;font-size:13px}
+.preview button.primary{background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border:none;font-weight:600}
+.notes{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--sub);font-size:14px}
+.notes h3{color:var(--gold);margin:0 0 8px;font-size:16px}
+footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;border-top:1px solid var(--line);padding-top:20px}
+.tools-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.tools-bar a{padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a href="/">← 回首页</a>
+    <a href="/invitation.html">💌 请帖</a>
+    <a href="/poster.html">🖼️ 海报</a>
+    <a href="/timeline.html">⏱️ 流程</a>
+    <a href="/almanac.html">📅 吉日</a>
+  </nav>
+  <h1>🔗 请帖二维码海报生成器</h1>
+  <p class="lead">把<a href="/invitation.html">电子请帖</a>链接、个人微信或任意网址生成<strong>竖版精美海报</strong>。可分享到朋友圈、群发祝福，或打印做酒店签到台桌牌。</p>
+
+  <div class="layout">
+    <div class="form">
+      <label>请帖链接 / 网址</label>
+      <input id="url" value="https://wedding-tv.cn/invitation.html" />
+      <label>新郎</label><input id="groom" value="张三" />
+      <label>新娘</label><input id="bride" value="李四" />
+      <label>婚期</label><input id="date" type="date" />
+      <label>酒店/地点</label><input id="venue" value="北京 · 富力万丽酒店三楼宴会厅" />
+      <label>主标题文案</label><input id="title" value="敬请光临" />
+      <label>副标题（可选）</label><input id="subtitle" value="扫码查看请帖详情" />
+      <label>主题色</label>
+      <select id="theme">
+        <option value="rose">玫瑰金（默认）</option>
+        <option value="navy">藏青典雅</option>
+        <option value="cream">米白雅致</option>
+        <option value="red">中式喜庆红</option>
+      </select>
+      <button onclick="render()">生成海报</button>
+    </div>
+    <div class="preview">
+      <canvas id="cv" width="540" height="960"></canvas>
+      <div class="actions">
+        <button class="primary" onclick="download()">⬇️ 下载海报</button>
+        <button onclick="copyLink()">📋 复制链接</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>使用建议</h3>
+    <ul>
+      <li>建议先用<a href="/invitation.html">电子请帖</a>生成专属链接，再粘贴到此处。</li>
+      <li>导出图片为 540×960（9:16），适配朋友圈、小红书、群分享。</li>
+      <li>打印桌牌可放大到 A5/A4 仍清晰（高容错率二维码）。</li>
+      <li>纯前端生成，无任何上传，链接和姓名信息完全保留在你浏览器。</li>
+    </ul>
+  </div>
+
+  <h3 style="margin-top:30px">配套工具</h3>
+  <div class="tools-bar">
+    <a href="/invitation.html">💌 电子请帖</a>
+    <a href="/poster.html">🖼️ AI 海报</a>
+    <a href="/timeline.html">⏱️ 时间轴</a>
+    <a href="/playlist.html">🎵 歌单</a>
+    <a href="/almanac.html">📅 吉日</a>
+    <a href="/blog.html">📚 婚俗</a>
+  </div>
+
+  <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 婚礼行业品牌域名 <a href="/#contact">议价出售中 →</a></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const THEMES={
+  rose:{bg:["#fff7f0","#ffe5ec"],ink:"#5a2a3a",accent:"#c2185b",sub:"#8e6f7d"},
+  navy:{bg:["#1b2438","#2a3654"],ink:"#f7f3ff",accent:"#ffd28a",sub:"#b9aed1"},
+  cream:{bg:["#faf6ee","#f0e6d2"],ink:"#3a2e1a",accent:"#a87b3a",sub:"#7a6a4a"},
+  red:{bg:["#8b0000","#c41e3a"],ink:"#fff7e6",accent:"#ffd700",sub:"#f5d6a8"}
+};
+
+async function render(){
+  const url=$("url").value.trim()||"https://wedding-tv.cn/";
+  const groom=$("groom").value.trim()||"新郎";
+  const bride=$("bride").value.trim()||"新娘";
+  const date=$("date").value;
+  const venue=$("venue").value.trim();
+  const title=$("title").value.trim()||"敬请光临";
+  const subtitle=$("subtitle").value.trim();
+  const theme=THEMES[$("theme").value];
+
+  const cv=$("cv"),ctx=cv.getContext("2d");
+  const W=cv.width,H=cv.height;
+  // 渐变背景
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,theme.bg[0]);g.addColorStop(1,theme.bg[1]);
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  // 装饰边框
+  ctx.strokeStyle=theme.accent;ctx.lineWidth=2;
+  ctx.strokeRect(24,24,W-48,H-48);
+  ctx.strokeStyle=theme.accent+"55";ctx.lineWidth=1;
+  ctx.strokeRect(34,34,W-68,H-68);
+
+  // 顶部小字
+  ctx.fillStyle=theme.sub;ctx.font="14px sans-serif";ctx.textAlign="center";
+  ctx.fillText("WEDDING INVITATION",W/2,80);
+
+  // 主标题
+  ctx.fillStyle=theme.accent;ctx.font="bold 48px serif";
+  ctx.fillText(title,W/2,140);
+
+  // 新人姓名
+  ctx.fillStyle=theme.ink;ctx.font="bold 36px serif";
+  ctx.fillText(`${groom}  ❤  ${bride}`,W/2,210);
+
+  // 日期
+  if(date){
+    const d=new Date(date);
+    const dateStr=`${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`;
+    ctx.fillStyle=theme.ink;ctx.font="20px sans-serif";
+    ctx.fillText(dateStr,W/2,260);
+    const wn=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"][d.getDay()];
+    ctx.fillStyle=theme.sub;ctx.font="14px sans-serif";
+    ctx.fillText(wn,W/2,285);
+  }
+
+  // 地点
+  if(venue){
+    ctx.fillStyle=theme.sub;ctx.font="15px sans-serif";
+    wrapText(ctx,venue,W/2,330,W-100,22);
+  }
+
+  // 二维码
+  const qrSize=280;
+  const qrX=(W-qrSize)/2,qrY=410;
+  // 白底卡片
+  ctx.fillStyle="#ffffff";
+  roundRect(ctx,qrX-20,qrY-20,qrSize+40,qrSize+40,16,true);
+  // 生成二维码
+  const tmp=document.createElement("canvas");
+  tmp.width=qrSize;tmp.height=qrSize;
+  await QRCode.toCanvas(tmp,url,{width:qrSize,margin:0,errorCorrectionLevel:"H",color:{dark:"#1a0f1f",light:"#ffffff"}});
+  ctx.drawImage(tmp,qrX,qrY);
+
+  // 副标题
+  if(subtitle){
+    ctx.fillStyle=theme.ink;ctx.font="16px sans-serif";
+    ctx.fillText(subtitle,W/2,qrY+qrSize+60);
+  }
+
+  // 底部水印
+  ctx.fillStyle=theme.sub;ctx.font="12px sans-serif";
+  ctx.fillText("由 wedding-tv.cn 免费生成",W/2,H-50);
+  ctx.font="11px sans-serif";
+  ctx.fillText("婚礼工具箱 · 请帖 · 海报 · 流程 · 歌单",W/2,H-32);
+}
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const chars=text.split("");
+  let line="",lines=[];
+  for(const c of chars){
+    if(ctx.measureText(line+c).width>maxW){lines.push(line);line=c}
+    else line+=c;
+  }
+  if(line)lines.push(line);
+  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineH));
+}
+function roundRect(ctx,x,y,w,h,r,fill){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();if(fill)ctx.fill();
+}
+function download(){
+  const a=document.createElement("a");
+  a.href=$("cv").toDataURL("image/png");
+  a.download=`婚礼请帖海报-${$("groom").value}${$("bride").value}.png`;
+  a.click();
+}
+function copyLink(){
+  navigator.clipboard.writeText($("url").value).then(()=>alert("链接已复制"));
+}
+// 默认日期 = 30 天后
+const d=new Date();d.setDate(d.getDate()+90);$("date").value=d.toISOString().slice(0,10);
+render();
+</script>
+<script>
+(function(){var BAIDU_ID='1df8fda3d25e8df34a5c8e08f945e9fb';var hm=document.createElement('script');hm.src='https://hm.baidu.com/hm.js?'+BAIDU_ID;var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(hm,s);window._hmt=window._hmt||[];})();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>
