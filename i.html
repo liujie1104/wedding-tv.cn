@@ -1,17 +1,16 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
-<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/i.html" />
-<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/tools-en.html" />
-<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/i.html" /><title>鐢靛瓙璇峰笘 路 wedding-tv.cn</title>
-<meta name="description" content="涓€浠界敤 wedding-tv.cn 鍒朵綔鐨勭數瀛愯甯? />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>电子请帖 · wedding-tv.cn</title>
+<meta name="description" content="一份用 wedding-tv.cn 制作的电子请帖" />
 <meta name="theme-color" content="#1c1612" />
 <meta name="robots" content="noindex,nofollow" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="鐢靛瓙璇峰笘 路 wedding-tv.cn" />
+<meta property="og:title" content="电子请帖 · wedding-tv.cn" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>馃拲</text></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow-x:hidden}
@@ -57,12 +56,12 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
 .foot a{color:#7a5a2f;text-decoration:none}
 .foot .pill{display:inline-block;padding:8px 16px;margin-top:10px;background:#fdf3e2;border-radius:999px;color:#7a5a2f;text-decoration:none}
 
-/* 妯℃澘鍙樹綋 */
+/* 模板变体 */
 .tpl-cream .page{background:#fff7ec}.tpl-cream .cover{background-color:#a06b3a}
 .tpl-morandi .page{background:#eef0ec}.tpl-morandi .cover{background-color:#5a6a55}.tpl-morandi .cover .center h1,.tpl-morandi .body{color:#3e463b}
 .tpl-hk .page{background:#1c1612;color:#f0d9a8}.tpl-hk .cover{background-color:#1c1612}.tpl-hk .body{color:#f0d9a8}.tpl-hk .body .greet,.tpl-hk .kv .v,.tpl-hk .story{color:#e2c79a}.tpl-hk .story{background:#241c16}.tpl-hk .countdown .cd{background:#241c16;border-color:#3a2d1e}.tpl-hk .countdown .cd b{color:#f0c97a}.tpl-hk .actions .btn{background:#241c16;color:#f0c97a;border-color:#3a2d1e}.tpl-hk .actions .btn.primary{background:#b08545;color:#1a1410;border-color:#b08545}.tpl-hk .foot{border-color:#3a2d1e;color:#a89070}.tpl-hk .foot a,.tpl-hk .foot .pill{background:#241c16;color:#f0c97a}
 
-/* 闊充箰鎸夐挳 */
+/* 音乐按钮 */
 .music{position:fixed;top:14px;right:calc(50% - 220px);z-index:50;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px)}
 .music.on .icon{animation:spin 4s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -73,13 +72,13 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
 .hidden{display:none!important}
 </style>
 </head>
-<div id="globalEnEntry" style="position:fixed;right:14px;top:14px;z-index:9999">
-  <a href="/tools-en.html" style="display:inline-block;padding:8px 12px;border-radius:999px;background:#1b1526;color:#f5f1ea;border:1px solid rgba(255,255,255,.18);font:13px/1.2 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.22)">English</a>
-</div><div id="loading">鍔犺浇涓€?/div>
-<div id="error" class="hidden"><div id="errMsg">璇峰笘涓嶅瓨鍦ㄦ垨宸茶繃鏈?/div><a href="/" style="color:#b08545">杩斿洖 wedding-tv.cn</a></div>
+<body>
+
+<div id="loading">加载中…</div>
+<div id="error" class="hidden"><div id="errMsg">请帖不存在或已过期</div><a href="/" style="color:#b08545">返回 wedding-tv.cn</a></div>
 
 <div id="root" class="page hidden">
-  <div id="music" class="music hidden" onclick="toggleMusic()"><span class="icon">馃幍</span></div>
+  <div id="music" class="music hidden" onclick="toggleMusic()"><span class="icon">🎵</span></div>
 
   <div class="cover" id="cover">
     <div class="veil"></div>
@@ -87,13 +86,13 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
     <div class="center">
       <div class="small">WE ARE GETTING MARRIED</div>
       <h1 id="namesEn"></h1>
-      <span class="heart">鉂?/span>
+      <span class="heart">❤</span>
     </div>
     <div class="bottom">
       <div class="date" id="dateEn"></div>
       <div class="city" id="cityEn"></div>
     </div>
-    <div class="scroll">鈻?鍚戜笅婊戝姩</div>
+    <div class="scroll">▼ 向下滑动</div>
   </div>
 
   <div class="body">
@@ -105,10 +104,10 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
     <div class="countdown" id="countdown"></div>
 
     <div style="margin-top:18px">
-      <div class="kv"><div class="k">鏃?鏈?/div><div class="v" id="dateCn"></div></div>
-      <div class="kv"><div class="k">鏃?闂?/div><div class="v" id="timeCn"></div></div>
-      <div class="kv"><div class="k">鍩?甯?/div><div class="v" id="cityCn"></div></div>
-      <div class="kv"><div class="k">鍦?鐐?/div><div class="v" id="venueCn"></div></div>
+      <div class="kv"><div class="k">日 期</div><div class="v" id="dateCn"></div></div>
+      <div class="kv"><div class="k">时 间</div><div class="v" id="timeCn"></div></div>
+      <div class="kv"><div class="k">城 市</div><div class="v" id="cityCn"></div></div>
+      <div class="kv"><div class="k">地 点</div><div class="v" id="venueCn"></div></div>
     </div>
 
     <div class="story hidden" id="story"></div>
@@ -117,28 +116,28 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
   </div>
 
   <div class="actions">
-    <a href="#" class="btn primary" onclick="copyLink();return false">馃搵 澶嶅埗璇峰笘閾炬帴</a>
-    <a href="#" class="btn" onclick="shareInvite();return false">馃摛 鍒嗕韩缁欏瀹?/a>
-    <a href="#" class="btn" onclick="addToCalendar();return false">馃搮 鍔犲叆鏃ュ巻</a>
-    <a href="#" class="btn" onclick="document.getElementById('qrwrap').scrollIntoView({behavior:'smooth'});return false">馃敵 浜岀淮鐮?/a>
+    <a href="#" class="btn primary" onclick="copyLink();return false">📋 复制请帖链接</a>
+    <a href="#" class="btn" onclick="shareInvite();return false">📤 分享给宾客</a>
+    <a href="#" class="btn" onclick="addToCalendar();return false">📅 加入日历</a>
+    <a href="#" class="btn" onclick="document.getElementById('qrwrap').scrollIntoView({behavior:'smooth'});return false">🔳 二维码</a>
   </div>
 
   <div class="qrwrap" id="qrwrap">
     <canvas id="qr"></canvas>
-    <div class="tip">闀挎寜浜岀淮鐮佸彲淇濆瓨鍒扮浉鍐屽垎浜?/div>
+    <div class="tip">长按二维码可保存到相册分享</div>
   </div>
 
   <div class="foot">
-    鏈甯栫敱 <a href="/" target="_blank">wedding-tv.cn</a> 鎻愪緵 路 鍏嶈垂鍦ㄧ嚎鍒朵綔<br>
-    <a class="pill" href="/invitation.html" target="_blank">馃拰 鍒朵綔鎴戠殑鐢靛瓙璇峰笘</a>
-    <a class="pill" href="/calculator.html" target="_blank" style="margin-left:6px">馃挵 濠氱ぜ鎶ヤ环璁＄畻鍣?/a>
+    本请帖由 <a href="/" target="_blank">wedding-tv.cn</a> 提供 · 免费在线制作<br>
+    <a class="pill" href="/invitation.html" target="_blank">💌 制作我的电子请帖</a>
+    <a class="pill" href="/calculator.html" target="_blank" style="margin-left:6px">💰 婚礼报价计算器</a>
   </div>
 
   <audio id="audio" loop preload="none"></audio>
 </div>
 
 <script>
-// 澶?CDN 鍏滃簳鍔犺浇 QRCode 搴擄紱浠讳綍涓€涓け璐ヨ嚜鍔ㄥ皾璇曚笅涓€涓?
+// 多 CDN 兜底加载 QRCode 库；任何一个失败自动尝试下一个
 (function loadQR(srcs){
   if(!srcs.length) return;
   const s = document.createElement('script');
@@ -157,11 +156,11 @@ const params = new URLSearchParams(location.search);
 const id = params.get('id');
 
 (async function init(){
-  if(!id){ showErr('閾炬帴缂哄皯 id 鍙傛暟'); return; }
+  if(!id){ showErr('链接缺少 id 参数'); return; }
   try{
     const r = await fetch('/api/load?id='+encodeURIComponent(id));
     const j = await r.json();
-    if(!j.ok) throw new Error(j.error || '鍔犺浇澶辫触');
+    if(!j.ok) throw new Error(j.error || '加载失败');
     render(j.invitation);
   }catch(err){ showErr(err.message); }
 })();
@@ -176,12 +175,12 @@ function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 
 function render(inv){
   document.body.classList.add('tpl-' + (inv.template || 'gold'));
-  // 灏侀潰
+  // 封面
   if(inv.cover?.url) $('cover').style.backgroundImage = `url('${inv.cover.url}')`;
-  // 鍚嶅瓧
+  // 名字
   $('namesEn').textContent = `${inv.groom} & ${inv.bride}`;
-  $('namesCn').textContent = `${inv.groom}  鉂? ${inv.bride}`;
-  // 鏃ユ湡
+  $('namesCn').textContent = `${inv.groom}  ❤  ${inv.bride}`;
+  // 日期
   const d = new Date((inv.date || '') + 'T' + (inv.time || '11:58'));
   const dateStr = isNaN(d) ? inv.date : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
@@ -189,30 +188,30 @@ function render(inv){
   $('dateCn').textContent = dateStr || '';
   $('timeCn').textContent = inv.time || '11:58';
   $('cityEn').textContent = inv.city || '';
-  $('cityCn').textContent = inv.city || '鈥?;
-  $('venueCn').textContent = inv.venue || '鈥?;
-  $('greet').textContent = inv.greeting || '璋ㄨ浜庤壇杈板悏鏃ワ紝鎭闃佷笅鑾呬复濠氬锛屽叡璇佸垢绂忔椂鍒汇€?;
-  // 鏁呬簨
+  $('cityCn').textContent = inv.city || '—';
+  $('venueCn').textContent = inv.venue || '—';
+  $('greet').textContent = inv.greeting || '谨订于良辰吉日，恭请阁下莅临婚宴，共证幸福时刻。';
+  // 故事
   if(inv.story){ $('story').textContent = inv.story; $('story').classList.remove('hidden'); }
-  // 澶村儚
+  // 头像
   if(Array.isArray(inv.avatars) && inv.avatars.length){
     $('avatars').innerHTML = inv.avatars.map(a => `
-      <div class="av"><img src="${a.url}" alt=""><small>${({cartoon:'鍗￠€?,oil:'娌圭敾',hk:'娓',line:'绾跨'}[a.style]||'')}</small></div>
+      <div class="av"><img src="${a.url}" alt=""><small>${({cartoon:'卡通',oil:'油画',hk:'港风',line:'线稿'}[a.style]||'')}</small></div>
     `).join('');
     $('avatars').classList.remove('hidden');
   }
-  // 鍊掕鏃?
+  // 倒计时
   startCountdown(d);
-  // 闊充箰
+  // 音乐
   if(inv.music){ setupMusic(inv.music); }
-  // 浜岀淮鐮侊細搴撳氨缁悗娓叉煋锛涜嫢鎵€鏈?CDN 閮藉け璐ワ紝鍥炶惤鍒板閮?QR 鍥剧墖鏈嶅姟
+  // 二维码：库就绪后渲染；若所有 CDN 都失败，回落到外部 QR 图片服务
   renderQR(location.href);
-  // 鏍囬
-  document.title = `${inv.groom} & ${inv.bride} 鐨勭數瀛愯甯?路 wedding-tv.cn`;
-  // 鏄剧ず
+  // 标题
+  document.title = `${inv.groom} & ${inv.bride} 的电子请帖 · wedding-tv.cn`;
+  // 显示
   $('loading').classList.add('hidden');
   $('root').classList.remove('hidden');
-  // 淇濆瓨鏃ュ巻鐢?
+  // 保存日历用
   window.__inv = {...inv, _date:d};
 }
 
@@ -221,17 +220,17 @@ function startCountdown(target){
   const wrap = $('countdown');
   function tick(){
     const ms = target - Date.now();
-    if(ms <= 0){ wrap.innerHTML = '<div class="cd"><b>馃挅</b><span>浠婂ぉ灏辨槸澶у枩涔嬫棩</span></div>'; return; }
+    if(ms <= 0){ wrap.innerHTML = '<div class="cd"><b>💖</b><span>今天就是大喜之日</span></div>'; return; }
     const d = Math.floor(ms/86400000);
     const h = Math.floor(ms%86400000/3600000);
     const m = Math.floor(ms%3600000/60000);
     const s = Math.floor(ms%60000/1000);
-    wrap.innerHTML = [['澶?,d],['鏃?,h],['鍒?,m],['绉?,s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
+    wrap.innerHTML = [['天',d],['时',h],['分',m],['秒',s]].map(([k,v])=>`<div class="cd"><b>${v}</b><span>${k}</span></div>`).join('');
   }
   tick(); setInterval(tick,1000);
 }
 
-// 绛?QRCode 搴撳氨缁悗娓叉煋锛涙渶澶氱瓑 4 绉掞紱澶辫触鐢?api.qrserver.com 鍏滃簳
+// 等 QRCode 库就绪后渲染；最多等 4 秒；失败用 api.qrserver.com 兜底
 function renderQR(url){
   const start = Date.now();
   (function tryRender(){
@@ -240,7 +239,7 @@ function renderQR(url){
       catch(e){ /* fallthrough */ }
     }
     if(Date.now()-start < 4000){ setTimeout(tryRender, 200); return; }
-    // 鍏滃簳锛氱敤鍥剧墖鏈嶅姟锛堜笉闇€瑕?JS 搴擄級
+    // 兜底：用图片服务（不需要 JS 库）
     const img = new Image(); img.width=180; img.height=180; img.alt='QR';
     img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(url);
     const c = $('qr'); c.parentNode.replaceChild(img, c);
@@ -251,7 +250,7 @@ let audioOn = false;
 function setupMusic(track){
   const a = $('audio'); a.src = `/audio/${track}.mp3`;
   $('music').classList.remove('hidden');
-  // iOS 蹇呴』鐢ㄦ埛浜や簰鎵嶈兘鎾?
+  // iOS 必须用户交互才能播
   document.body.addEventListener('click', () => { if(!audioOn){ a.play().then(()=>{audioOn=true;$('music').classList.add('on')}).catch(()=>{}); }}, {once:true});
 }
 function toggleMusic(){
@@ -261,25 +260,25 @@ function toggleMusic(){
 }
 
 async function copyLink(){
-  try{ await navigator.clipboard.writeText(location.href); alert('閾炬帴宸插鍒讹紝鍙戠粰浜插弸鍚?); }
-  catch{ prompt('澶嶅埗涓嬮潰鐨勯摼鎺ワ細', location.href); }
+  try{ await navigator.clipboard.writeText(location.href); alert('链接已复制，发给亲友吧'); }
+  catch{ prompt('复制下面的链接：', location.href); }
 }
 async function shareInvite(){
-  const data = {title:document.title, text:'璇氶個鎮ㄥ弬鍔犳垜浠殑濠氱ぜ', url:location.href};
+  const data = {title:document.title, text:'诚邀您参加我们的婚礼', url:location.href};
   if(navigator.share){ try{ await navigator.share(data); }catch{} }
   else copyLink();
 }
 function addToCalendar(){
-  const inv = window.__inv; if(!inv?._date || isNaN(inv._date)) return alert('鏃ユ湡鏃犳晥');
+  const inv = window.__inv; if(!inv?._date || isNaN(inv._date)) return alert('日期无效');
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
   const ics = [
     'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
-    `SUMMARY:${inv.groom} & ${inv.bride} 鐨勫绀糮,
+    `SUMMARY:${inv.groom} & ${inv.bride} 的婚礼`,
     `LOCATION:${inv.city||''} ${inv.venue||''}`,
     `DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
-    `DESCRIPTION:鐢?wedding-tv.cn 鍒朵綔 路 ${location.href}`,
+    `DESCRIPTION:由 wedding-tv.cn 制作 · ${location.href}`,
     'END:VEVENT','END:VCALENDAR'
   ].join('\n');
   const blob = new Blob([ics],{type:'text/calendar'});
@@ -289,4 +288,3 @@ function addToCalendar(){
 </script>
 </body>
 </html>
-

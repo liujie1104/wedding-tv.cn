@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wedding Budget Calculator 2026 | wedding-tv.cn</title>
+<meta name="description" content="Estimate wedding video, livestream, MV and filming budget in seconds." />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<link rel="canonical" href="https://wedding-tv.cn/calculator-en.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/calculator-en.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/calculator.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/calculator-en.html" />
+<style>
+:root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--fg)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header.topbar{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:5}
+header.topbar .inner{max-width:920px;margin:0 auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+nav a{margin-left:16px;color:var(--mute);font-size:14px}
+.wrap{max-width:920px;margin:0 auto;padding:48px 22px}
+h1{font-size:32px;margin:0 0 8px}.lead{color:var(--mute);margin:0 0 28px}
+.calc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:28px}
+.row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;align-items:center}
+.row label{flex:0 0 180px;color:var(--mute);font-size:14px}
+.row select,.row input[type=number]{flex:1;min-width:200px;background:#0a060f;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:15px}
+.row .opts{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+.opts label.chk{display:inline-flex;align-items:center;gap:6px;background:#0a060f;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--fg)}
+.result{background:linear-gradient(135deg,#1f1426,#2a1838);border:1px solid var(--accent);border-radius:12px;padding:28px;text-align:center;margin-top:8px}
+.price{font-size:42px;font-weight:800;color:var(--accent)}
+.range{color:var(--mute);font-size:14px;margin-top:6px}
+.breakdown{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.breakdown table{width:100%;border-collapse:collapse;font-size:14px}
+.breakdown th,.breakdown td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left}
+.breakdown th{background:#1f1628;color:var(--accent)}
+.breakdown tr:last-child td{border-bottom:none;background:#1f1628;font-weight:700}
+.share{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+.share button,.share a{background:#0a060f;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px}
+h2{font-size:22px;margin:42px 0 12px;border-left:4px solid var(--accent);padding-left:12px}
+footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var(--mute);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="inner"><a href="/">wedding-tv.cn</a><nav><a href="/en.html">English Hub</a><a href="/tools-en.html">Tools</a><a href="/calculator.html">中文</a></nav></div></header>
+<main class="wrap">
+<h1>Wedding Budget Calculator 2026</h1>
+<p class="lead">Estimate your <strong>wedding video / livestream / MV / filming</strong> budget range in 3 seconds.</p>
+<form id="calc" class="calc" onsubmit="return false">
+  <div class="row"><label>City Tier</label><select id="city"><option value="1.0">Standard city</option><option value="1.15">Provincial capital / strong tier-2</option><option value="1.35" selected>Tier-1 (Beijing/Shanghai/Guangzhou/Shenzhen)</option><option value="0.85">Tier-3/4 county</option></select></div>
+  <div class="row"><label>Camera Setup</label><select id="cams"><option value="2500">Single camera</option><option value="6000" selected>Dual camera</option><option value="13000">Triple camera + jib</option><option value="22000">Four camera + director</option></select></div>
+  <div class="row"><label>Coverage Duration</label><select id="dur"><option value="0.7">Half day (4h)</option><option value="1.0" selected>Full day (8h)</option><option value="1.5">Full day + early prep</option><option value="1.9">Full day + next-day banquet</option></select></div>
+  <div class="row"><label>Add-ons</label><div class="opts"><label class="chk"><input type="checkbox" data-cost="3500"> Livestream</label><label class="chk"><input type="checkbox" data-cost="1200" checked> Same-day edit</label><label class="chk"><input type="checkbox" data-cost="9000"> Cinematic MV</label><label class="chk"><input type="checkbox" data-cost="1500"> Drone</label><label class="chk"><input type="checkbox" data-cost="2800"> Long documentary cut</label><label class="chk"><input type="checkbox" data-cost="800"> E-invitation</label></div></div>
+  <div class="row"><label>Guest Count</label><input type="number" id="guests" value="120" min="20" max="800" step="10"></div>
+</form>
+<div class="result"><div style="color:var(--mute);font-size:14px;margin-bottom:6px">Estimated Total (CNY)</div><div class="price" id="total">¥ —</div><div class="range" id="range">Min ¥— · Max ¥—</div><div class="share"><button onclick="copyResult()">Copy result</button><button onclick="shareResult()">Share link</button><a href="/#contact">Ask for quote</a></div></div>
+<div class="breakdown"><table><thead><tr><th>Item</th><th style="text-align:right">Subtotal</th></tr></thead><tbody id="bd"></tbody></table></div>
+<h2>Negotiation Tips</h2>
+<ul><li>Use this estimate as a market anchor.</li><li>Confirm raw files, color grading, overtime and backup responsibilities.</li><li>For livestream, verify independent camera and bitrate requirements.</li></ul>
+</main>
+<footer>© wedding-tv.cn · <a href="/tools-en.html">Tools</a> · <a href="/calculator.html">中文页</a></footer>
+<script>
+const fmt = n => '¥ ' + Math.round(n).toLocaleString('en-US');
+function calc(){
+  const city = parseFloat(document.getElementById('city').value);
+  const cams = parseFloat(document.getElementById('cams').value);
+  const dur = parseFloat(document.getElementById('dur').value);
+  const base = cams * dur;
+  const items = [{name:'Camera x duration factor ('+dur+')', cost: base}];
+  document.querySelectorAll('.opts input[type=checkbox]').forEach(cb=>{ if(cb.checked){ items.push({name: cb.parentNode.textContent.trim(), cost: parseFloat(cb.dataset.cost)}); } });
+  const guests = parseInt(document.getElementById('guests').value)||120;
+  const guestFee = Math.max(0,(guests-100))*15;
+  if(guestFee>0) items.push({name:'Guest scale surcharge ('+guests+')', cost: guestFee});
+  const sub = items.reduce((s,i)=>s+i.cost,0);
+  const total = sub * city;
+  const cityFee = total - sub;
+  if(Math.abs(cityFee)>1) items.push({name:'City multiplier x '+city, cost: cityFee});
+  items.push({name:'Total', cost: total});
+  document.getElementById('bd').innerHTML = items.map(i=>'<tr><td>'+i.name+'</td><td style="text-align:right">'+fmt(i.cost)+'</td></tr>').join('');
+  document.getElementById('total').textContent = fmt(total);
+  document.getElementById('range').textContent = 'Range: ' + fmt(total*0.85) + ' — ' + fmt(total*1.25);
+}
+document.getElementById('calc').addEventListener('input', calc);
+document.getElementById('calc').addEventListener('change', calc);
+calc();
+function copyResult(){ navigator.clipboard.writeText('My wedding estimate: '+document.getElementById('total').textContent+' ('+document.getElementById('range').textContent+')'); alert('Copied'); }
+function shareResult(){ if(navigator.share){ navigator.share({title:'Wedding budget estimate', text:'My estimate', url:location.href}); } else { navigator.clipboard.writeText(location.href); alert('Link copied'); } }
+</script>
+</body>
+</html>

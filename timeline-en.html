@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wedding Timeline Generator | wedding-tv.cn</title>
+<meta name="description" content="Generate a complete wedding day timeline in one click." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/timeline-en.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/timeline-en.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/timeline.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/timeline-en.html" />
+<style>
+:root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.6}
+a{color:var(--gold);text-decoration:none}.wrap{max-width:980px;margin:0 auto;padding:24px}
+nav{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);margin-bottom:20px}
+h1{margin:8px 0 6px;font-size:30px}.lead{color:var(--sub);margin:0 0 24px}
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
+label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px}input,select,button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit;width:100%}
+button.primary{background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border:none;font-weight:600;cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.btn-row button{width:auto}
+.timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+.tl-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line)}.tl-row:last-child{border-bottom:none}
+.tl-time{flex:0 0 70px;color:var(--gold);font-weight:700;font-size:18px;font-family:"Courier New",monospace}
+.tl-title{font-weight:600}.tl-desc{color:var(--sub);font-size:13px;margin-top:2px}
+.tl-cat{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub);margin-right:6px}
+footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;border-top:1px solid var(--line);padding-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="/en.html">English Hub</a><a href="/tools-en.html">Tools</a><a href="/timeline.html">中文</a></nav>
+<h1>Wedding Timeline Generator</h1>
+<p class="lead">Generate a complete wedding-day timeline from prep to send-off and share it with your team.</p>
+<div class="controls">
+<div><label>Wedding Format</label><select id="type"><option value="cn">Chinese Style</option><option value="cn-double">Chinese Double Ceremony</option><option value="west">Western</option><option value="hotel">Hotel Banquet</option></select></div>
+<div><label>Ceremony Start</label><input id="start" type="time" value="11:18" /></div>
+<div><label>Pickup Time (for Chinese style)</label><input id="pickup" type="time" value="07:30" /></div>
+<div style="align-self:end"><button class="primary" onclick="render()">Generate Timeline</button></div>
+</div>
+<div class="btn-row"><button onclick="downloadImg()">Download Image</button><button onclick="copyText()">Copy Text</button><button onclick="window.print()">Print</button></div>
+<div class="timeline" id="tl"></div>
+<footer>© wedding-tv.cn · <a href="/timeline.html">中文页</a></footer>
+</div>
+<script>
+const TEMPLATES={
+cn:[[-240,'morning','Groom prep','Prepare red envelopes and team'],[-220,'morning','Bride makeup','90-120 mins'],[-150,'morning','Door games','Traditional entrance games'],[-30,'ceremony','Arrive at venue','Guests start arriving'],[0,'ceremony','Ceremony starts','Host opening and entrance'],[55,'banquet','Banquet starts','Meal service'],[200,'evening','Guest send-off','Thank guests and wrap-up']],
+'cn-double':[[-240,'morning','Pickup prep','Chinese pickup flow'],[-90,'ceremony','Outdoor ceremony','First ceremony'],[0,'ceremony','Hotel ceremony','Second ceremony'],[80,'banquet','Toasts','Table rounds'],[200,'evening','Send-off','Wrap up']],
+west:[[-180,'morning','Bride makeup',''],[-30,'morning','Guest check-in',''],[0,'ceremony','Processional',''],[25,'ceremony','Rings and kiss',''],[90,'banquet','Dinner and first dance',''],[240,'evening','End','']],
+hotel:[[-120,'morning','Venue prep',''],[0,'ceremony','Opening and entrance',''],[25,'ceremony','Cake and toast',''],[55,'banquet','Banquet',''],[200,'evening','Send-off','']]
+};
+const $=id=>document.getElementById(id);
+function fmtTime(base,off){const d=new Date(base.getTime()+off*60000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function catName(cat){return cat==='morning'?'Morning':cat==='ceremony'?'Ceremony':cat==='banquet'?'Banquet':'Evening';}
+function render(){const t=$('type').value;const [hh,mm]=$('start').value.split(':').map(Number);const base=new Date();base.setHours(hh,mm,0,0);$('tl').innerHTML=TEMPLATES[t].map(([off,cat,title,desc])=>`<div class='tl-row'><div class='tl-time'>${fmtTime(base,off)}</div><div><div class='tl-title'><span class='tl-cat'>${catName(cat)}</span>${title}</div>${desc?`<div class='tl-desc'>${desc}</div>`:''}</div></div>`).join('');}
+function copyText(){const rows=document.querySelectorAll('.tl-row');const text=Array.from(rows).map(r=>r.querySelector('.tl-time').textContent+' '+r.querySelector('.tl-title').textContent).join('\n');navigator.clipboard.writeText('[Wedding Timeline]\n\n'+text).then(()=>alert('Copied'));}
+function downloadImg(){const w=820,padY=30,lineH=58,rows=document.querySelectorAll('.tl-row'),h=padY*2+rows.length*lineH+60;const items=Array.from(rows).map((r,i)=>{const time=r.querySelector('.tl-time').textContent;const title=r.querySelector('.tl-title').textContent;const desc=r.querySelector('.tl-desc')?.textContent||'';const y=padY+50+i*lineH;return `<text x='40' y='${y}' font-size='22' font-family='monospace' fill='#ffd28a' font-weight='700'>${time}</text><text x='140' y='${y-2}' font-size='16' fill='#f7f3ff' font-weight='600'>${title}</text><text x='140' y='${y+18}' font-size='12' fill='#b9aed1'>${desc}</text><line x1='40' y1='${y+30}' x2='${w-40}' y2='${y+30}' stroke='rgba(255,255,255,0.08)'/>`;}).join('');const svg=`<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'><rect width='${w}' height='${h}' fill='#0e0a14'/><text x='40' y='40' font-size='22' fill='#ff6b9d' font-weight='700'>Wedding Day Timeline</text>${items}</svg>`;const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));const a=document.createElement('a');a.href=url;a.download='wedding-timeline.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+render();
+</script>
+</body>
+</html>

@@ -60,6 +60,24 @@
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
     </url>
+    <url>
+      <loc>https://wedding-tv.cn/calculator-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.86</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/checklist-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.86</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/timeline-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.86</priority>
+    </url>
   <url>
     <loc>https://wedding-tv.cn/guide-en.html</loc>
     <lastmod>2026-05-13</lastmod>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Wedding Checklist | wedding-tv.cn</title>
+<meta name="description" content="Generate a personalized 6-month wedding checklist with AI." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/checklist-en.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/checklist-en.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/checklist.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/checklist-en.html" />
+<style>
+:root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;line-height:1.7}
+a{color:var(--gold)}
+.top{background:linear-gradient(90deg,#7a1f24,#b08545);color:#fff;text-align:center;padding:8px 16px;font-size:13px}
+.top a{color:#fff;text-decoration:underline}
+.wrap{max-width:820px;margin:0 auto;padding:30px 20px 80px}
+h1{font-size:30px;margin:0 0 8px}.lead{color:var(--sub);margin:0 0 28px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:18px}
+label{display:block;font-size:13px;color:var(--sub);margin:14px 0 6px}
+input,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.btn{margin-top:18px;width:100%;padding:14px;border-radius:999px;border:0;font-weight:700;cursor:pointer;font-size:16px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f}
+.out{background:#0e0a14;border:1px solid var(--line);border-radius:12px;padding:18px;min-height:120px;font-size:15px;line-height:1.85}
+.out h2{font-size:18px;color:var(--gold);margin:18px 0 10px;border-left:3px solid var(--rose);padding-left:10px}
+.out ul{list-style:none;padding:0;margin:0}.out li{padding:6px 0;display:flex;gap:10px;align-items:flex-start}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.toolbar button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink)}
+footer{text-align:center;color:var(--sub);font-size:12px;margin-top:40px;border-top:1px solid var(--line);padding-top:20px}
+</style>
+</head>
+<body>
+<div class="top">Checklist · <a href="/tools-en.html">English Tools</a> · <a href="/checklist.html">中文</a></div>
+<div class="wrap">
+<h1>AI Wedding Checklist</h1>
+<p class="lead">Generate a personalized 6-month countdown checklist based on your city, date and budget.</p>
+<div class="card">
+  <div class="row"><div><label>City</label><input id="city" placeholder="e.g. Shanghai" maxlength="20" /></div><div><label>Wedding Date</label><input id="date" type="date" /></div></div>
+  <div class="row"><div><label>Total Budget (CNY)</label><input id="budget" type="number" min="0" placeholder="e.g. 150000" /></div><div><label>Guest Count</label><input id="guests" type="number" min="0" placeholder="e.g. 120" /></div></div>
+  <label>Wedding Style</label>
+  <select id="style"><option>Traditional Chinese</option><option>Western Chapel</option><option>Outdoor Garden</option><option>Beach</option><option>Vintage</option><option>Modern Minimal</option><option>Not sure</option></select>
+  <button class="btn" id="go">Generate My Checklist</button>
+</div>
+<div class="card" id="resultCard" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center"><strong>Your Checklist</strong><span id="progress"></span></div>
+  <div class="out" id="out"></div>
+  <div class="toolbar"><button id="copyBtn">Copy</button><button id="printBtn">Print</button><button id="regenBtn">Regenerate</button></div>
+</div>
+<footer>© wedding-tv.cn · <a href="/checklist.html">中文页</a></footer>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+const STORAGE_KEY = 'checklist_state_v1_en';
+function esc(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function renderMarkdown(md){
+  const lines = md.split(/\r?\n/); let html='', inUl=false;
+  const close=()=>{ if(inUl){ html+='</ul>'; inUl=false; } };
+  for(const raw of lines){ const line=raw.trim(); if(!line){ close(); continue; }
+    if(line.startsWith('## ')){ close(); html += '<h2>'+esc(line.slice(3))+'</h2>'; continue; }
+    const m = /^[-*]\s*\[( |x|X)\]\s*(.+)$/.exec(line) || /^[-*]\s+(.+)$/.exec(line);
+    if(m){ if(!inUl){ html+='<ul>'; inUl=true; } const checked = m[1]==='x'||m[1]==='X'; const txt=m[2]||m[1]; html += '<li><input type="checkbox" '+(checked?'checked':'')+'><span>'+esc(txt)+'</span></li>'; continue; }
+    close(); html += '<div>'+esc(line)+'</div>'; }
+  close(); return html;
+}
+function bind(){
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
+  document.querySelectorAll('.out li').forEach(li=>{ const cb=li.querySelector('input'); const k=li.querySelector('span').textContent; if(state[k]) cb.checked=true; li.classList.toggle('done', cb.checked); cb.addEventListener('change', ()=>{ const cur=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); if(cb.checked) cur[k]=1; else delete cur[k]; localStorage.setItem(STORAGE_KEY, JSON.stringify(cur)); li.classList.toggle('done', cb.checked); progress(); }); });
+  progress();
+}
+function progress(){ const all=document.querySelectorAll('.out li input').length; const done=document.querySelectorAll('.out li input:checked').length; $('progress').textContent = all?('Done '+done+'/'+all):''; }
+async function gen(){
+  const city=$('city').value.trim(); const date=$('date').value; if(!city||!date){ alert('Please fill city and date'); return; }
+  $('resultCard').style.display='block'; $('out').innerHTML='<div style="color:#b9aed1">Generating checklist...</div>'; $('go').disabled=true;
+  try{
+    const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind:'checklist',city,date,budget:$('budget').value,guests:$('guests').value,style:$('style').value,lang:'en'})});
+    const d=await r.json(); if(!d.ok) throw new Error(d.error||'Failed');
+    $('out').innerHTML = renderMarkdown(d.text); sessionStorage.setItem('checklist_md_en', d.text); bind();
+  }catch(e){ $('out').innerHTML='<div style="color:#ff6b9d">'+esc(e.message)+'</div>'; }
+  finally{ $('go').disabled=false; }
+}
+$('go').onclick=gen; $('regenBtn').onclick=()=>{ localStorage.removeItem(STORAGE_KEY); gen(); }; $('copyBtn').onclick=async()=>{ await navigator.clipboard.writeText(sessionStorage.getItem('checklist_md_en')||$('out').innerText); alert('Copied'); }; $('printBtn').onclick=()=>window.print();
+</script>
+</body>
+</html>

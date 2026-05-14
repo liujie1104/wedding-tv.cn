@@ -1,20 +1,19 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>鍩庡競濠氱ぜ棰勭畻鍙傝€冨簱 2026 | wedding-tv.cn</title>
-<meta name="description" content="鎸夊煄甯傛煡鐪?2026 濠氱ぜ棰勭畻鍙傝€冨尯闂达紝鍚腑浣嶆暟涓庣渷閽卞缓璁紝鏀寔蹇€熺瓫閫夈€? />
+<title>城市婚礼预算参考库 2026 | wedding-tv.cn</title>
+<meta name="description" content="按城市查看 2026 婚礼预算参考区间，含中位数与省钱建议，支持快速筛选。" />
 <meta name="robots" content="index,follow" />
-<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/budget-reference.html" />
-<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/tools-en.html" />
-<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/budget-reference.html" /><link rel="manifest" href="/manifest.webmanifest" />
-<meta property="og:title" content="鍩庡競濠氱ぜ棰勭畻鍙傝€冨簱 2026" />
-<meta property="og:description" content="鍏ㄥ浗鍩庡競濠氱ぜ棰勭畻鍙傝€冿紝蹇€熸煡鐪嬩腑浣嶆暟涓庤妭鐪佺瓥鐣ャ€? />
+<link rel="canonical" href="https://wedding-tv.cn/budget-reference.html" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:title" content="城市婚礼预算参考库 2026" />
+<meta property="og:description" content="全国城市婚礼预算参考，快速查看中位数与节省策略。" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wedding-tv.cn/budget-reference.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>馃彊锔?/text></svg>" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🏙️</text></svg>" />
 <style>
 :root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}
 *{box-sizing:border-box}
@@ -34,39 +33,38 @@ input,select{background:#130f1a;border:1px solid var(--line);color:var(--fg);bor
 .tip{margin-top:8px;font-size:13px;color:#d6c9b6}
 </style>
 </head>
-<div id="globalEnEntry" style="position:fixed;right:14px;top:14px;z-index:9999">
-  <a href="/tools-en.html" style="display:inline-block;padding:8px 12px;border-radius:999px;background:#1b1526;color:#f5f1ea;border:1px solid rgba(255,255,255,.18);font:13px/1.2 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.22)">English</a>
-</div><header class="top"><div class="in"><a href="/">wedding-tv.cn</a><nav><a href="/blog.html">鍗氬</a> 路 <a href="/calculator.html">棰勭畻璁＄畻鍣?/a></nav></div></header>
+<body>
+<header class="top"><div class="in"><a href="/">wedding-tv.cn</a><nav><a href="/blog.html">博客</a> · <a href="/calculator.html">预算计算器</a></nav></div></header>
 <main class="wrap">
-  <h1>馃彊锔?鍩庡競濠氱ぜ棰勭畻鍙傝€冨簱锛?026锛?/h1>
-  <p class="lead">浠ヤ笅涓哄父瑙佸绀奸绠楀尯闂村弬鑰冿紙涓嶅惈铚滄湀锛夛紝鐢ㄤ簬蹇€熶及绠椼€傚疄闄呬环鏍煎彈閰掑簵妗ｆ銆佹鏁般€佹。鏈熴€佹憚褰卞洟闃熷奖鍝嶃€?/p>
+  <h1>🏙️ 城市婚礼预算参考库（2026）</h1>
+  <p class="lead">以下为常见婚礼预算区间参考（不含蜜月），用于快速估算。实际价格受酒店档次、桌数、档期、摄影团队影响。</p>
   <div class="tools">
-    <input id="q" type="search" placeholder="鎼滅储鍩庡競锛屽 鏉窞 / 鎴愰兘" />
-    <select id="tier"><option value="all">鍏ㄩ儴鑳界骇</option><option value="涓€绾?>涓€绾?/option><option value="鏂颁竴绾?>鏂颁竴绾?/option><option value="浜岀嚎">浜岀嚎</option></select>
+    <input id="q" type="search" placeholder="搜索城市，如 杭州 / 成都" />
+    <select id="tier"><option value="all">全部能级</option><option value="一线">一线</option><option value="新一线">新一线</option><option value="二线">二线</option></select>
   </div>
   <div id="grid" class="grid"></div>
 </main>
 <script>
 const DATA=[
-{city:'鍖椾含',tier:'涓€绾?,low:120000,mid:180000,high:300000,tip:'閰掑簵鍜屾憚褰辨槸澶уご锛屽钩鏃ユ。鏈熷彲闄?0-20%'},
-{city:'涓婃捣',tier:'涓€绾?,low:130000,mid:200000,high:320000,tip:'澶栨哗/甯備腑蹇冨満鍦版孩浠锋槑鏄?},
-{city:'骞垮窞',tier:'涓€绾?,low:100000,mid:150000,high:260000,tip:'鍗堝甯告瘮鏅氬鏇寸渷'},
-{city:'娣卞湷',tier:'涓€绾?,low:110000,mid:170000,high:280000,tip:'鎽勫奖鎽勫儚濂楅鍙墦鍖呰皥浠?},
-{city:'鏉窞',tier:'鏂颁竴绾?,low:90000,mid:140000,high:240000,tip:'閬垮紑鍥藉簡浜斾竴锛屾。鏈熸€т环姣旀洿楂?},
-{city:'鎴愰兘',tier:'鏂颁竴绾?,low:85000,mid:130000,high:220000,tip:'鍧濆潩瀹?閰掑簵鍙屾柟妗堝彲骞惰姣斾环'},
-{city:'閲嶅簡',tier:'鏂颁竴绾?,low:80000,mid:120000,high:210000,tip:'杞﹂槦涓庨厭搴楀椁愯皥鍒ょ┖闂村ぇ'},
-{city:'姝︽眽',tier:'鏂颁竴绾?,low:75000,mid:115000,high:190000,tip:'鎽勫奖妫氭媿+澶栨櫙娣锋惌鎴愭湰鏇寸ǔ'},
-{city:'鍗椾含',tier:'鏂颁竴绾?,low:85000,mid:125000,high:210000,tip:'娣″閰掑簵甯告湁鍘呰垂鍑忓厤'},
-{city:'瑗垮畨',tier:'鏂颁竴绾?,low:70000,mid:110000,high:180000,tip:'涓紡绀兼湇绉熻祦缁勫悎鏇村垝绠?},
-{city:'澶╂触',tier:'浜岀嚎',low:65000,mid:98000,high:160000,tip:'妗屾暟鎺у埗鍦?0妗屼互鍐呮渶绋?},
-{city:'闈掑矝',tier:'浜岀嚎',low:68000,mid:105000,high:170000,tip:'娴锋櫙澶栨媿鏃哄鎻愬墠閿佹。'}
+{city:'北京',tier:'一线',low:120000,mid:180000,high:300000,tip:'酒店和摄影是大头，平日档期可降10-20%'},
+{city:'上海',tier:'一线',low:130000,mid:200000,high:320000,tip:'外滩/市中心场地溢价明显'},
+{city:'广州',tier:'一线',low:100000,mid:150000,high:260000,tip:'午宴常比晚宴更省'},
+{city:'深圳',tier:'一线',low:110000,mid:170000,high:280000,tip:'摄影摄像套餐可打包谈价'},
+{city:'杭州',tier:'新一线',low:90000,mid:140000,high:240000,tip:'避开国庆五一，档期性价比更高'},
+{city:'成都',tier:'新一线',low:85000,mid:130000,high:220000,tip:'坝坝宴/酒店双方案可并行比价'},
+{city:'重庆',tier:'新一线',low:80000,mid:120000,high:210000,tip:'车队与酒店套餐谈判空间大'},
+{city:'武汉',tier:'新一线',low:75000,mid:115000,high:190000,tip:'摄影棚拍+外景混搭成本更稳'},
+{city:'南京',tier:'新一线',low:85000,mid:125000,high:210000,tip:'淡季酒店常有厅费减免'},
+{city:'西安',tier:'新一线',low:70000,mid:110000,high:180000,tip:'中式礼服租赁组合更划算'},
+{city:'天津',tier:'二线',low:65000,mid:98000,high:160000,tip:'桌数控制在20桌以内最稳'},
+{city:'青岛',tier:'二线',low:68000,mid:105000,high:170000,tip:'海景外拍旺季提前锁档'}
 ];
-const fmt=n=>'楼'+Number(n).toLocaleString();
+const fmt=n=>'¥'+Number(n).toLocaleString();
 function render(){
  const q=(document.getElementById('q').value||'').trim();
  const tier=document.getElementById('tier').value;
  const list=DATA.filter(x=>(tier==='all'||x.tier===tier)&&(!q||x.city.includes(q)));
- document.getElementById('grid').innerHTML=list.map(x=>`<article class="card"><h3>${x.city} <small style="font-size:12px;color:#b9b1a3">${x.tier}</small></h3><div class="k"><span>杞婚噺棰勭畻</span><b>${fmt(x.low)}</b></div><div class="k"><span>涓綅棰勭畻</span><b>${fmt(x.mid)}</b></div><div class="k"><span>鍝佽川棰勭畻</span><b>${fmt(x.high)}</b></div><div class="tip">寤鸿锛?{x.tip}</div></article>`).join('');
+ document.getElementById('grid').innerHTML=list.map(x=>`<article class="card"><h3>${x.city} <small style="font-size:12px;color:#b9b1a3">${x.tier}</small></h3><div class="k"><span>轻量预算</span><b>${fmt(x.low)}</b></div><div class="k"><span>中位预算</span><b>${fmt(x.mid)}</b></div><div class="k"><span>品质预算</span><b>${fmt(x.high)}</b></div><div class="tip">建议：${x.tip}</div></article>`).join('');
 }
 ['q','tier'].forEach(id=>document.getElementById(id).addEventListener('input',render));
 render();
