@@ -24,6 +24,42 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://wedding-tv.cn/guide-en.html" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/guide.html" />
   </url>
+    <url>
+      <loc>https://wedding-tv.cn/en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.88</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/tools-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.88</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/blog-global-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.86</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/blog-global-japan-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/blog-global-india-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>
+    <url>
+      <loc>https://wedding-tv.cn/blog-global-western-en.html</loc>
+      <lastmod>2026-05-14</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>
   <url>
     <loc>https://wedding-tv.cn/guide-en.html</loc>
     <lastmod>2026-05-13</lastmod>
