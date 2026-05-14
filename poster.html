@@ -106,13 +106,16 @@
         <option value="auto" selected>🎯 智能（自动避开复杂区域）</option>
         <option value="top">⬆️ 靠上居中</option>
         <option value="center">⏺️ 正中</option>
+        <option value="bottom">⬇️ 靠下居中（文字上方）</option>
         <option value="left">⬅️ 左中</option>
         <option value="right">➡️ 右中</option>
         <option value="topleft">↖️ 左上</option>
         <option value="topright">↗️ 右上</option>
+        <option value="custom">✋ 自定义（鼠标/手指拖动）</option>
       </select></div>
       <div><label>照片大小 <span id="sizeVal" style="color:#c9a85a">40%</span></label><input id="photoSize" type="range" min="25" max="60" value="40" style="width:100%" /></div>
     </div>
+    <div id="dragHint" style="display:none;color:#c9a85a;font-size:12px;margin-top:-4px">代“自定义”模式：直接在右侧预览里拖动照片到任意位置</div>
 
     <button class="btn" id="go">✨ 生成海报（约 30-60 秒）</button>
     <div class="meta">完全免费 · 由通义万相 wanx2.1-turbo 驱动 · 每分钟最多 5 次</div>
@@ -248,9 +251,14 @@ $("photoClear").addEventListener("click", () => {
 ["photoShape","photoPos","photoSize"].forEach(id => {
   $(id).addEventListener("input", () => {
     if (id === "photoSize") $("sizeVal").textContent = $("photoSize").value + "%";
+    if (id === "photoPos") {
+      $("dragHint").style.display = $("photoPos").value === "custom" ? "block" : "none";
+    }
     rerenderIfReady();
   });
 });
+
+let lastPhotoBox = null;
 
 let lastBgImg = null;
 async function rerenderIfReady() {
@@ -412,6 +420,7 @@ function posToCenter(pos, w, h, d) {
   switch (pos) {
     case "top":      return { cx: w/2,         cy: d/2 + margin*0.3 };
     case "center":   return { cx: w/2,         cy: h/2 - h*0.1 };
+    case "bottom":   return { cx: w/2,         cy: h*0.55 - d/2 - h*0.01 };
     case "left":     return { cx: d/2 + margin*0.2, cy: h*0.4 };
     case "right":    return { cx: w - d/2 - margin*0.2, cy: h*0.4 };
     case "topleft":  return { cx: d/2 + margin*0.2, cy: d/2 + margin*0.3 };
@@ -420,15 +429,30 @@ function posToCenter(pos, w, h, d) {
   }
 }
 
+// 自定义拖动位置（以画布比例保存，便于重绘）
+let customPos = null; // {fx: 0..1, fy: 0..1}
+
 function drawUserPhoto(ctx, w, h, photo, circle, bgImg) {
   const u = Math.min(w, h);
   const isPortrait = h > w;
   const sizePct = parseInt($("photoSize").value, 10) / 100;
   const d = (isPortrait ? w : u) * sizePct;
   const pos = $("photoPos").value;
-  const center = (pos === "auto" && bgImg) ? findBestSpot(bgImg, w, h, d) : posToCenter(pos, w, h, d);
-  const cx = center.cx, cy = center.cy;
+  let center;
+  if (pos === "custom" && customPos) {
+    center = { cx: customPos.fx * w, cy: customPos.fy * h };
+  } else if (pos === "auto" && bgImg) {
+    center = findBestSpot(bgImg, w, h, d);
+  } else {
+    center = posToCenter(pos, w, h, d);
+  }
+  // 限制在画布内
+  const half = d / 2;
+  const cx = Math.min(Math.max(center.cx, half), w - half);
+  const cy = Math.min(Math.max(center.cy, half), h - half);
   const x = cx - d/2, y = cy - d/2;
+  // 快照供拖动点击检测
+  lastPhotoBox = { cx, cy, d };
 
   // 源图 cover 裁剪
   const src = photo;
@@ -501,13 +525,59 @@ async function drawComposite(img) {
   lastCanvas = canvas;
   if (STAGE.firstChild && STAGE.firstChild.tagName === "CANVAS") {
     STAGE.replaceChild(canvas, STAGE.firstChild);
-    canvas.style.maxWidth = "100%";
-    canvas.style.maxHeight = "70vh";
-    canvas.style.borderRadius = "8px";
-    canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
+    styleCanvas(canvas);
+    attachDragHandlers(canvas);
     refreshDownload(canvas);
   }
   return canvas;
+}
+
+function styleCanvas(canvas) {
+  canvas.style.maxWidth = "100%";
+  canvas.style.maxHeight = "70vh";
+  canvas.style.borderRadius = "8px";
+  canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
+  canvas.style.touchAction = "none";
+  if (userPhoto) canvas.style.cursor = "grab";
+}
+
+function attachDragHandlers(canvas) {
+  if (!userPhoto) return;
+  let dragging = false;
+  let offset = { dx: 0, dy: 0 };
+  const toCanvasPx = (clientX, clientY) => {
+    const r = canvas.getBoundingClientRect();
+    const sx = canvas.width / r.width;
+    const sy = canvas.height / r.height;
+    return { x: (clientX - r.left) * sx, y: (clientY - r.top) * sy };
+  };
+  const start = (clientX, clientY) => {
+    if (!lastPhotoBox) return;
+    const p = toCanvasPx(clientX, clientY);
+    const dx = p.x - lastPhotoBox.cx, dy = p.y - lastPhotoBox.cy;
+    if (Math.hypot(dx, dy) > lastPhotoBox.d / 2 + 20) return; // 点击不在照片区域
+    dragging = true;
+    offset = { dx, dy };
+    canvas.style.cursor = "grabbing";
+    // 切换到自定义模式
+    if ($("photoPos").value !== "custom") {
+      $("photoPos").value = "custom";
+      $("dragHint").style.display = "block";
+    }
+  };
+  const move = (clientX, clientY) => {
+    if (!dragging) return;
+    const p = toCanvasPx(clientX, clientY);
+    customPos = { fx: (p.x - offset.dx) / canvas.width, fy: (p.y - offset.dy) / canvas.height };
+    rerenderIfReady();
+  };
+  const end = () => { dragging = false; canvas.style.cursor = "grab"; };
+  canvas.addEventListener("mousedown", e => start(e.clientX, e.clientY));
+  window.addEventListener("mousemove", e => move(e.clientX, e.clientY));
+  window.addEventListener("mouseup", end);
+  canvas.addEventListener("touchstart", e => { const t = e.touches[0]; start(t.clientX, t.clientY); }, { passive: true });
+  canvas.addEventListener("touchmove", e => { const t = e.touches[0]; move(t.clientX, t.clientY); e.preventDefault(); }, { passive: false });
+  canvas.addEventListener("touchend", end);
 }
 
 function refreshDownload(canvas) {
@@ -526,11 +596,9 @@ async function showImage(url) {
     const canvas = await composite(url, lastForm);
     lastCanvas = canvas;
     STAGE.innerHTML = "";
-    canvas.style.maxWidth = "100%";
-    canvas.style.maxHeight = "70vh";
-    canvas.style.borderRadius = "8px";
-    canvas.style.boxShadow = "0 10px 40px rgba(0,0,0,.4)";
+    styleCanvas(canvas);
     STAGE.appendChild(canvas);
+    attachDragHandlers(canvas);
     refreshDownload(canvas);
     $("toolbar").style.display = "flex";
   } catch(e) {
