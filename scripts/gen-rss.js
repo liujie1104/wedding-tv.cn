@@ -10,7 +10,8 @@ const regions = {
   jiangsu:'江苏', jiangxi:'江西', jilin:'吉林', liaoning:'辽宁', neimenggu:'内蒙古',
   ningxia:'宁夏', qinghai:'青海', shaanxi:'陕西', shandong:'山东', shanghai:'上海',
   shanxi:'山西', sichuan:'四川', taiwan:'台湾', tianjin:'天津', xianggang:'香港',
-  xinjiang:'新疆', xizang:'西藏', yunnan:'云南', zhejiang:'浙江'
+  xinjiang:'新疆', xizang:'西藏', yunnan:'云南', zhejiang:'浙江',
+  thailand:'泰国', vietnam:'越南', indonesia:'印度尼西亚', dubai:'迪拜'
 };
 
 const pubDate = new Date().toUTCString();
