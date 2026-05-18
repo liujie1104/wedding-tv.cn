@@ -1,0 +1,407 @@
+{
+  "project": "wedding-tv.cn SEO Title Optimization",
+  "purpose": "34 Chinese regions wedding customs SEO-friendly title alternatives",
+  "regions": [
+    {
+      "id": "anhui",
+      "name": "安徽",
+      "category": "华东",
+      "current_title": "安徽婚俗大全：从提亲到回门，老安徽人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "安徽婚俗完全指南 - 传统婚礼流程、彩礼习俗与禁忌详解",
+        "皖地婚俗：徽州古礼、皖北风俗与现代皖中婚礼对比",
+        "安徽结婚习俗大全 - 从提亲相看到回门的婚礼流程完全解析"
+      ]
+    },
+    {
+      "id": "aomen",
+      "name": "澳门",
+      "category": "华南",
+      "current_title": "澳门婚俗大全：传统习俗与葡萄牙文化融合的现代婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "澳门婚俗完全手册 - 中葡合璧的回澳祖地婚礼与传统彩礼",
+        "澳门结婚习俗指南 - 粤式传统与葡式风情的融合婚礼",
+        "澳门婚礼文化详解 - 三圣街到十月初五街的婚俗变迁"
+      ]
+    },
+    {
+      "id": "beijing",
+      "name": "北京",
+      "category": "华北",
+      "current_title": "北京婚俗大全：京城古都风俗、现代首都婚礼与传统礼仪 | wedding-tv.cn",
+      "alternatives": [
+        "北京婚俗完全指南 - 皇城根下的传统婚礼与京城新俗",
+        "京城结婚习俗大全 - 从提亲订婚到洞房的婚礼全流程",
+        "北京婚礼文化详解 - 老北京风俗与现代CBD婚礼的融合"
+      ]
+    },
+    {
+      "id": "chongqing",
+      "name": "重庆",
+      "category": "西南",
+      "current_title": "重庆婚俗大全：山城古都的传统婚礼、坝坝宴与闹房文化 | wedding-tv.cn",
+      "alternatives": [
+        "重庆婚俗完全手册 - 巴渝文化中的传统婚礼与现代融合",
+        "山城婚礼指南 - 重庆坝坝宴、闹洞房与婚俗特色详解",
+        "重庆结婚习俗大全 - 从山城婚俗到现代渝式婚礼完全解析"
+      ]
+    },
+    {
+      "id": "fujian",
+      "name": "福建",
+      "category": "华东",
+      "current_title": "福建婚俗大全：闽南传统婚礼、妈祖信俗与茶文化习俗 | wedding-tv.cn",
+      "alternatives": [
+        "福建婚俗完全指南 - 闽南古礼、闽西客家与闽北风俗的婚礼传统",
+        "闽地结婚习俗大全 - 茶礼、回礼与闽南传统婚礼流程详解",
+        "福建婚礼文化详解 - 从古田八斗到厦门现代婚俗的演变"
+      ]
+    },
+    {
+      "id": "gansu",
+      "name": "甘肃",
+      "category": "西北",
+      "current_title": "甘肃婚俗大全：陇右古道的传统婚礼、敦煌文化与民族习俗 | wedding-tv.cn",
+      "alternatives": [
+        "甘肃婚俗完全手册 - 丝路文化中的传统婚礼与多民族融合",
+        "陇地结婚习俗指南 - 甘肃民间婚俗、彩礼讲究与婚礼流程",
+        "甘肃婚礼文化详解 - 从河西走廊到陇中高原的婚俗传统"
+      ]
+    },
+    {
+      "id": "guangdong",
+      "name": "广东",
+      "category": "华南",
+      "current_title": "广东婚俗大全：岭南古礼、粤菜文化与现代港式婚礼融合 | wedding-tv.cn",
+      "alternatives": [
+        "广东婚俗完全指南 - 粤式传统婚礼、过大礼与回门习俗详解",
+        "岭南结婚习俗大全 - 广府婚俗、客家传统与潮汕风俗对比",
+        "广东婚礼文化详解 - 从敬茶改口到中式婚宴的粤地特色"
+      ]
+    },
+    {
+      "id": "guangxi",
+      "name": "广西",
+      "category": "华南",
+      "current_title": "广西婚俗大全：侗族侗寨、壮族风俗与少数民族传统婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "广西婚俗完全手册 - 12 个民族的多彩传统婚礼与民俗习俗",
+        "八桂结婚习俗指南 - 壮侗苗瑶的婚俗融合与现代广西婚礼",
+        "广西婚礼文化详解 - 从民族特色到现代融合的婚俗演变"
+      ]
+    },
+    {
+      "id": "guizhou",
+      "name": "贵州",
+      "category": "西南",
+      "current_title": "贵州婚俗大全：苗族芦笙、侗族大歌与多民族传统婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "贵州婚俗完全指南 - 苗侗彝布的传统婚礼与民族特色习俗",
+        "黔地结婚习俗大全 - 少数民族婚礼、酒文化与婚俗禁忌详解",
+        "贵州婚礼文化详解 - 从村寨到城市的多民族婚俗融合"
+      ]
+    },
+    {
+      "id": "hainan",
+      "name": "海南",
+      "category": "华南",
+      "current_title": "海南婚俗大全：海南传统婚礼、黎族苗族风俗与南海岛屿特色 | wedding-tv.cn",
+      "alternatives": [
+        "海南婚俗完全手册 - 黎苗传统、海派风俗与现代海南婚礼",
+        "琼岛结婚习俗指南 - 海岛婚礼、椰风文化与传统彩礼讲究",
+        "海南婚礼文化详解 - 从民族风情到海滨度假婚礼的演变"
+      ]
+    },
+    {
+      "id": "hebei",
+      "name": "河北",
+      "category": "华北",
+      "current_title": "河北婚俗大全：燕赵古韵、京津冀婚俗与华北传统礼仪 | wedding-tv.cn",
+      "alternatives": [
+        "河北婚俗完全指南 - 燕赵风俗、京冀差异与传统婚礼流程详解",
+        "冀地结婚习俗大全 - 从张家口到沧州的区域婚俗特色",
+        "河北婚礼文化详解 - 华北古礼保留地的传统婚俗与彩礼习俗"
+      ]
+    },
+    {
+      "id": "heilongjiang",
+      "name": "黑龙江",
+      "category": "东北",
+      "current_title": "黑龙江婚俗大全：东北粗粮文化、冰城婚礼与满族传统习俗 | wedding-tv.cn",
+      "alternatives": [
+        "黑龙江婚俗完全手册 - 东北豪爽、满族传统与现代冰城婚礼",
+        "龙江结婚习俗指南 - 东北婚俗、闹洞房与传统彩礼讲究",
+        "黑龙江婚礼文化详解 - 从哈尔滨到大兴安岭的区域婚俗"
+      ]
+    },
+    {
+      "id": "henan",
+      "name": "河南",
+      "category": "华中",
+      "current_title": "河南婚俗大全：中原古都婚礼、豫中传统与现代郑州婚俗融合 | wedding-tv.cn",
+      "alternatives": [
+        "河南婚俗完全指南 - 中原文化、豫东豫西差异与传统婚礼习俗",
+        "豫地结婚习俗大全 - 从开封到南阳的中原婚俗与彩礼文化",
+        "河南婚礼文化详解 - 十三朝古都的传统婚俗与现代演变"
+      ]
+    },
+    {
+      "id": "hubei",
+      "name": "湖北",
+      "category": "华中",
+      "current_title": "湖北婚俗大全：荆楚风俗、长江文化与武汉现代婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "湖北婚俗完全手册 - 荆楚古礼、鄂西民俗与现代武汉婚礼",
+        "楚地结婚习俗指南 - 长江婚俗、彩礼讲究与回门传统详解",
+        "湖北婚礼文化详解 - 从古城到江城的传统婚俗演变"
+      ]
+    },
+    {
+      "id": "hunan",
+      "name": "湖南",
+      "category": "华中",
+      "current_title": "湖南婚俗大全：湘江古韵、苗寨风俗与长沙现代婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "湖南婚俗完全指南 - 湘西民俗、苗族传统与现代长沙婚礼",
+        "湘地结婚习俗大全 - 湘江古城、山区婚俗与传统彩礼讲究",
+        "湖南婚礼文化详解 - 从凤凰古城到五一广场的婚俗融合"
+      ]
+    },
+    {
+      "id": "jiangsu",
+      "name": "江苏",
+      "category": "华东",
+      "current_title": "江苏婚俗大全：吴越文化、十里红妆与南京现代婚礼 | wedding-tv.cn",
+      "alternatives": [
+        "江苏婚俗完全手册 - 江南古礼、苏州传统与现代南京婚礼",
+        "苏地结婚习俗指南 - 吴文化、高端彩礼与传统婚礼流程详解",
+        "江苏婚礼文化详解 - 从水乡到都市的婚俗演变与创新"
+      ]
+    },
+    {
+      "id": "jiangxi",
+      "name": "江西",
+      "category": "华东",
+      "current_title": "江西婚俗大全：从提亲到回门，老江西人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "江西婚俗完全指南 - 赣南客家、瓦罐汤与传统抹黑脸习俗详解",
+        "赣地结婚习俗大全 - 江西婚礼流程、彩礼讲究与回门传统",
+        "江西婚礼文化详解 - 从南昌到赣州的婚俗传统与融合"
+      ]
+    },
+    {
+      "id": "jilin",
+      "name": "吉林",
+      "category": "东北",
+      "current_title": "吉林婚俗大全：从提亲到回门，老吉林人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "吉林婚俗完全手册 - 朝鲜族传统、延边特色与现代吉林婚礼",
+        "吉地结婚习俗指南 - 东北粗粮、打糕冷面与婚礼闹房文化",
+        "吉林婚礼文化详解 - 从长春到吉阳的传统婚俗与民族融合"
+      ]
+    },
+    {
+      "id": "liaoning",
+      "name": "辽宁",
+      "category": "东北",
+      "current_title": "辽宁婚俗大全：从提亲到回门，老辽宁人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "辽宁婚俗完全指南 - 满族旗袍、酸菜白肉与东北传统婚礼",
+        "辽地结婚习俗大全 - 坐福习俗、改口红包与现代沈阳婚礼",
+        "辽宁婚礼文化详解 - 从满族文化到现代融合的婚俗演变"
+      ]
+    },
+    {
+      "id": "neimenggu",
+      "name": "内蒙古",
+      "category": "华北",
+      "current_title": "内蒙古婚俗大全：从提亲到回门，老内蒙古人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "内蒙古婚俗完全手册 - 蒙古族传统、拜火仪式与全羊宴文化",
+        "蒙地结婚习俗指南 - 草原婚礼、哈达献礼与现代呼市婚礼",
+        "内蒙古婚礼文化详解 - 从草原抢婚到城市融合的婚俗演变"
+      ]
+    },
+    {
+      "id": "ningxia",
+      "name": "宁夏",
+      "category": "西北",
+      "current_title": "宁夏婚俗大全：从提亲到回门，老宁夏人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "宁夏婚俗完全指南 - 回族尼卡哈、撒喜仪式与清真婚宴文化",
+        "宁地结婚习俗大全 - 手抓羊肉、阿訇证婚与现代银川婚礼",
+        "宁夏婚礼文化详解 - 从沙坡头到黄河的多民族婚俗融合"
+      ]
+    },
+    {
+      "id": "qinghai",
+      "name": "青海",
+      "category": "西北",
+      "current_title": "青海婚俗大全：从提亲到回门，老青海人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "青海婚俗完全手册 - 藏族献哈达、土族婚礼歌与多民族融合",
+        "青地结婚习俗指南 - 青稞酒文化、锅庄舞与高原婚礼传统",
+        "青海婚礼文化详解 - 从青海湖到茶卡的民族婚俗演变"
+      ]
+    },
+    {
+      "id": "shaanxi",
+      "name": "陕西",
+      "category": "西北",
+      "current_title": "陕西婚俗大全：从提亲到回门，老陕西人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "陕西婚俗完全指南 - 周礼遗风、唢呐迎亲与陕北传统婚俗",
+        "秦地结婚习俗大全 - 关中古礼、八大碗与现代西安婚礼",
+        "陕西婚礼文化详解 - 从长安古都到现代的传统婚俗传承"
+      ]
+    },
+    {
+      "id": "shandong",
+      "name": "山东",
+      "category": "华东",
+      "current_title": "山东婚俗大全：从提亮到回门，老山东人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "山东婚俗完全手册 - 儒家传统、万紫千红与胶东压床习俗",
+        "鲁地结婚习俗指南 - 山东彩礼讲究、婚宴大菜与闹房文化",
+        "山东婚礼文化详解 - 从孔子故里到现代济南的婚俗融合"
+      ]
+    },
+    {
+      "id": "shanghai",
+      "name": "上海",
+      "category": "华东",
+      "current_title": "上海婚俗大全：从提亲到回门，老上海人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "上海婚俗完全指南 - 海派风俗、十里红妆与现代摩登婚礼",
+        "申地结婚习俗大全 - 上海礼仪、西式教堂与中式敬茶融合",
+        "上海婚礼文化详解 - 从老洋房到浦东的传统与现代融合"
+      ]
+    },
+    {
+      "id": "shanxi",
+      "name": "山西",
+      "category": "华北",
+      "current_title": "山西婚俗大全：从提亲到回门，老山西人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "山西婚俗完全手册 - 晋商文化、八碟八碗与传统山西婚礼",
+        "晋地结婚习俗指南 - 跨火盆、射红箭与平遥古城婚俗",
+        "山西婚礼文化详解 - 从晋中富贵到现代太原的婚俗演变"
+      ]
+    },
+    {
+      "id": "sichuan",
+      "name": "四川",
+      "category": "西南",
+      "current_title": "四川婚俗大全：从提亲到回门，老四川人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "四川婚俗完全指南 - 坝坝宴、闹洞房与蜀绣秀禾传统",
+        "蜀地结婚习俗大全 - 九大碗、回锅肉与川西藏区婚俗融合",
+        "四川婚礼文化详解 - 从成都茶馆到山区的传统婚俗演变"
+      ]
+    },
+    {
+      "id": "taiwan",
+      "name": "台湾",
+      "category": "华东",
+      "current_title": "台湾婚俗大全：从提亲到回门，老台湾人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "台湾婚俗完全手册 - 闽南传统、六礼仪式与现代台北婚礼",
+        "台岛结婚习俗指南 - 女儿酒、压茶瓯与台湾特色婚宴",
+        "台湾婚礼文化详解 - 从古礼保留到现代的传统婚俗传承"
+      ]
+    },
+    {
+      "id": "tianjin",
+      "name": "天津",
+      "category": "华北",
+      "current_title": "天津婚俗大全：从提亲到回门，老天津人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "天津婚俗完全指南 - 换盅仪式、子孙桶与八大碗婚宴文化",
+        "津地结婚习俗大全 - 天津彩礼、改口红包与现代滨河婚礼",
+        "天津婚礼文化详解 - 从老城厢到和平区的婚俗融合"
+      ]
+    },
+    {
+      "id": "xianggang",
+      "name": "香港",
+      "category": "华南",
+      "current_title": "香港婚俗大全：从提亲到回门，老香港人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "香港婚俗完全手册 - 过大礼、大妗姐与中西合璧的维港婚礼",
+        "港岛结婚习俗指南 - 潮州龙凤褂、盆菜与现代香港婚宴",
+        "香港婚礼文化详解 - 从传统到现代的中西合璧婚俗融合"
+      ]
+    },
+    {
+      "id": "xinjiang",
+      "name": "新疆",
+      "category": "西北",
+      "current_title": "新疆婚俗大全：从提亲到回门，老新疆人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "新疆婚俗完全指南 - 维吾尔尼卡哈、麦西热甫与多民族婚礼",
+        "疆地结婚习俗大全 - 揭面纱仪式、手抓饭与新疆传统婚俗",
+        "新疆婚礼文化详解 - 从丝路文化到现代乌市的婚俗演变"
+      ]
+    },
+    {
+      "id": "xizang",
+      "name": "西藏",
+      "category": "西南",
+      "current_title": "西藏婚俗大全：从提亲到回门，老西藏人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "西藏婚俗完全手册 - 献哈达、喝青稞酒与神圣的藏族婚礼",
+        "藏地结婚习俗指南 - 吉祥地毯、三天三夜与高原婚俗传统",
+        "西藏婚礼文化详解 - 从喇嘛择吉到现代拉萨的婚俗融合"
+      ]
+    },
+    {
+      "id": "yunnan",
+      "name": "云南",
+      "category": "西南",
+      "current_title": "云南婚俗大全：从提亲到回门，老云南人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "云南婚俗完全指南 - 白族掐新娘、傣族拴线与25民族婚礼",
+        "云地结婚习俗大全 - 彝族抢亲、纳西东巴与多民族婚俗",
+        "云南婚礼文化详解 - 从洱海古城到现代昆明的婚俗融合"
+      ]
+    },
+    {
+      "id": "zhejiang",
+      "name": "浙江",
+      "category": "华东",
+      "current_title": "浙江婚俗大全：从提亲到回门，老浙江人的结婚流程与禁忌 | wedding-tv.cn",
+      "alternatives": [
+        "浙江婚俗完全手册 - 十里红妆、女儿酒与江南传统婚礼",
+        "浙地结婚习俗指南 - 宁波奢华、绍兴古礼与温州婚宴讲究",
+        "浙江婚礼文化详解 - 从杭州西湖到宁波的传统婚俗传承"
+      ]
+    }
+  ],
+  "seo_guidelines": {
+    "title_length": "55-60 characters optimal for Google SERP",
+    "keywords_strategy": [
+      "Include region name + wedding customs",
+      "Add local cultural elements (food, traditions, unique practices)",
+      "Use variations: 婚俗、结婚习俗、婚礼、传统、文化",
+      "Mention specific customs for differentiation"
+    ],
+    "best_practices": [
+      "Lead with the region name or cultural descriptor",
+      "Include actionable keywords (完全指南、大全、详解)",
+      "Add regional identity (地名、文化特色)",
+      "Emphasize comprehensiveness and tradition",
+      "Consider search intent: 'how to', 'traditions', 'guide'"
+    ],
+    "keyword_composition": {
+      "format_1": "[Region] + Wedding Customs + Complete Guide + Local Feature",
+      "format_2": "[Cultural Name] + Wedding Customs + Regional Variations",
+      "format_3": "[Region] + Wedding Customs + Detailed Explanation + Modern Fusion"
+    }
+  },
+  "notes": {
+    "data_collection": "Based on HTML analysis of 18 regions, templates applied to all 34",
+    "optimization_approach": "Multi-angle titles targeting different search intents",
+    "cultural_specificity": "Each region has unique customs highlighted in alternatives",
+    "search_volume_targeting": "High-volume (guide, customs) + medium-volume (regional specifics)"
+  }
+}
