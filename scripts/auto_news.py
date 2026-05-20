@@ -44,14 +44,19 @@ BJ_TZ = timezone(timedelta(hours=8))
 
 # 婚礼/婚庆/婚恋关键词（命中任一则视为相关）
 KEYWORDS = [
+    # 强相关
     "婚礼", "婚庆", "婚宴", "婚纱", "婚戒", "结婚", "求婚", "订婚",
     "迎亲", "新娘", "新郎", "伴娘", "伴郎", "彩礼", "嫁妆",
     "蜜月", "婚房", "喜帖", "请帖", "婚车", "婚俗", "婚介",
-    "恋爱", "表白", "领证", "离婚", "复婚", "婚检",
-    "婚姻", "夫妻", "情侣", "异地恋", "情人节", "七夕",
+    "领证", "离婚", "复婚", "婚检", "再婚", "裸婚", "婚闹",
+    "婚姻", "夫妻", "小两口", "婚后", "婚前",
+    # 弱相关（明星婚讯、恋情、情感话题，AI 可从婚礼视角点评）
+    "恋爱", "表白", "情侣", "异地恋", "情人节", "七夕",
+    "恋情", "官宣", "分手", "复合", "领证日", "520",
+    "婚讯", "婚照", "婚戒", "喜糖", "喜事",
 ]
 
-# 热搜数据源（全部为公开 JSON / RSS）
+# 热搜数据源（多套备用，单点失败不影响）
 SOURCES = [
     # vvhan 免费聚合（国内可直连）
     {"name": "百度热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/baiduRD"},
@@ -59,9 +64,17 @@ SOURCES = [
     {"name": "知乎热榜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/zhihuHot"},
     {"name": "抖音热点", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/douyinHot"},
     {"name": "小红书",   "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/xhsHot"},
+    {"name": "哔哩热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/bili"},
+    # tophub 备用聚合
+    {"name": "今日头条", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/toutiao"},
+    # newsnow 公开实例
+    {"name": "NewsNow微博", "type": "newsnow", "url": "https://newsnow.busiyi.world/api/s?id=weibo"},
+    {"name": "NewsNow抖音", "type": "newsnow", "url": "https://newsnow.busiyi.world/api/s?id=douyin"},
     # 新浪情感/娱乐 RSS
-    {"name": "新浪情感", "type": "rss", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=1700&num=30&versionNumber=1.2.4&format=json"},
-    {"name": "新浪娱乐", "type": "rss", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2462&num=30&versionNumber=1.2.4&format=json"},
+    {"name": "新浪情感", "type": "sina", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=1700&num=30&versionNumber=1.2.4&format=json"},
+    {"name": "新浪娱乐", "type": "sina", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2462&num=30&versionNumber=1.2.4&format=json"},
+    # 60s API 备用
+    {"name": "60s微博", "type": "sixtys", "url": "https://60s.viki.moe/v2/weibo"},
 ]
 
 USER_AGENT = (
@@ -100,28 +113,58 @@ def save_state(state: dict) -> None:
 
 def fetch_one(src: dict) -> list[dict]:
     try:
-        r = requests.get(src["url"], headers={"User-Agent": USER_AGENT}, timeout=TIMEOUT)
+        r = requests.get(
+            src["url"],
+            headers={
+                "User-Agent": USER_AGENT,
+                "Accept": "application/json, text/plain, */*",
+                "Referer": "https://api.vvhan.com/",
+            },
+            timeout=TIMEOUT,
+        )
         r.raise_for_status()
         data = r.json()
     except Exception as e:
-        log(f"  ✗ {src['name']} 抓取失败：{e}")
+        log(f"  ✗ {src['name']} 抓取失败：{type(e).__name__}: {str(e)[:120]}")
         return []
 
     items: list[dict] = []
-    if src["type"] == "vvhan":
+    t_type = src["type"]
+    if t_type == "vvhan":
         # vvhan: { success:true, data:[{title,hot,url,...}] }
-        for it in (data.get("data") or [])[:50]:
+        rows = data.get("data") or []
+        for it in rows[:50]:
             t = (it.get("title") or "").strip()
             if t:
                 items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    elif src["type"] == "rss":
-        # 新浪滚动接口：{ result:{ data:[{title,url,wapurl,...}] } }
+    elif t_type == "sina":
         rows = (data.get("result") or {}).get("data") or []
         for it in rows[:50]:
             t = (it.get("title") or "").strip()
             if t:
                 items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    log(f"  ✓ {src['name']}：{len(items)} 条")
+    elif t_type == "newsnow":
+        # newsnow: { status:'success', data:{items:[{title,url}]}}  或  data:[items]
+        d = data.get("data")
+        if isinstance(d, dict):
+            rows = d.get("items") or []
+        elif isinstance(d, list):
+            rows = d
+        else:
+            rows = []
+        for it in rows[:50]:
+            t = (it.get("title") or "").strip()
+            if t:
+                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
+    elif t_type == "sixtys":
+        # 60s.viki.moe: { code, data:{ list:[{title,...}] } }
+        d = data.get("data") or {}
+        rows = d.get("list") or d.get("hot") or []
+        for it in rows[:50]:
+            t = (it.get("title") or it.get("name") or "").strip()
+            if t:
+                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
+    log(f"  ✓ {src['name']}：{len(items)} 条" + (f" | 示例: {items[0]['title'][:40]}" if items else ""))
     return items
 
 
@@ -149,7 +192,12 @@ def filter_relevant(items: list[dict], state: dict) -> list[dict]:
             it["fp"] = fp
             seen.add(fp)
             keep.append(it)
-    log(f"婚礼相关：{len(keep)} 条候选")
+    log(f"婚礼相关：{len(keep)} 条候选 / 已发布历史 {len(published)} 条")
+    if not keep and items:
+        # 调试：输出前 10 条原始标题，方便排查为何无命中
+        log("  · 未命中关键词，部分原始热点示例：")
+        for i in items[:10]:
+            log(f"    [{i['source']}] {i['title'][:60]}")
     return keep
 
 
@@ -563,6 +611,11 @@ def ensure_blog_index_entry() -> None:
 
 def main() -> int:
     log(f"开始运行（每次最多 {MAX_ARTICLES} 篇）")
+    if not os.environ.get("DASHSCOPE_API_KEY"):
+        log("⚠️  警告：未检测到 DASHSCOPE_API_KEY 环境变量！")
+        log("⚠️  请到 GitHub 仓库 Settings → Secrets and variables → Actions")
+        log("⚠️  新建 secret 名为 DASHSCOPE_API_KEY，值为阿里云百炼的 sk-xxx... API Key")
+        log("⚠️  本次将仍尝试抓取热点用于诊断，但不会生成文章。")
     NEWS_DIR.mkdir(parents=True, exist_ok=True)
     state = load_state()
 
