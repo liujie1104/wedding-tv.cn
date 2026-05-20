@@ -1,0 +1,615 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+wedding-tv.cn 全自动婚礼热点资讯生成器
+
+流程：
+  1. 抓取多源热搜（vvhan 聚合 + RSSHub 公开实例 + 新浪 RSS）
+  2. 关键词过滤 → 只保留与婚礼/婚庆/婚恋相关的热点
+  3. 与 news_state.json 已发布列表去重
+  4. 调通义千问 qwen-plus 生成原创点评文章（JSON）
+  5. 渲染 HTML（与站点风格一致，带 Article + FAQPage Schema）
+  6. 更新 sitemap.xml、news/index.html、blog.html 入口
+  7. 写回 news_state.json
+
+环境变量：
+  DASHSCOPE_API_KEY  通义千问 API Key（必需）
+  MAX_ARTICLES       本次最多生成几篇（默认 2）
+"""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+import html
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from typing import Iterable
+
+import requests
+
+# ---------- 配置 ----------
+
+ROOT = Path(__file__).resolve().parent.parent
+NEWS_DIR = ROOT / "news"
+SITEMAP = ROOT / "sitemap.xml"
+STATE_FILE = ROOT / "scripts" / "news_state.json"
+BLOG_INDEX = ROOT / "blog.html"
+
+MAX_ARTICLES = int(os.environ.get("MAX_ARTICLES", "2"))
+BJ_TZ = timezone(timedelta(hours=8))
+
+# 婚礼/婚庆/婚恋关键词（命中任一则视为相关）
+KEYWORDS = [
+    "婚礼", "婚庆", "婚宴", "婚纱", "婚戒", "结婚", "求婚", "订婚",
+    "迎亲", "新娘", "新郎", "伴娘", "伴郎", "彩礼", "嫁妆",
+    "蜜月", "婚房", "喜帖", "请帖", "婚车", "婚俗", "婚介",
+    "恋爱", "表白", "领证", "离婚", "复婚", "婚检",
+    "婚姻", "夫妻", "情侣", "异地恋", "情人节", "七夕",
+]
+
+# 热搜数据源（全部为公开 JSON / RSS）
+SOURCES = [
+    # vvhan 免费聚合（国内可直连）
+    {"name": "百度热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/baiduRD"},
+    {"name": "微博热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/wbHot"},
+    {"name": "知乎热榜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/zhihuHot"},
+    {"name": "抖音热点", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/douyinHot"},
+    {"name": "小红书",   "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/xhsHot"},
+    # 新浪情感/娱乐 RSS
+    {"name": "新浪情感", "type": "rss", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=1700&num=30&versionNumber=1.2.4&format=json"},
+    {"name": "新浪娱乐", "type": "rss", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2462&num=30&versionNumber=1.2.4&format=json"},
+]
+
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+)
+TIMEOUT = 12
+
+
+# ---------- 工具函数 ----------
+
+def log(msg: str) -> None:
+    print(f"[auto-news] {msg}", flush=True)
+
+
+def fingerprint(title: str) -> str:
+    """标题指纹，用于去重。"""
+    norm = re.sub(r"\s+", "", title)
+    return hashlib.md5(norm.encode("utf-8")).hexdigest()[:12]
+
+
+def load_state() -> dict:
+    if STATE_FILE.exists():
+        try:
+            return json.loads(STATE_FILE.read_text("utf-8"))
+        except Exception:
+            pass
+    return {"published": []}
+
+
+def save_state(state: dict) -> None:
+    STATE_FILE.write_text(json.dumps(state, ensure_ascii=False, indent=2), "utf-8")
+
+
+# ---------- 抓取 ----------
+
+def fetch_one(src: dict) -> list[dict]:
+    try:
+        r = requests.get(src["url"], headers={"User-Agent": USER_AGENT}, timeout=TIMEOUT)
+        r.raise_for_status()
+        data = r.json()
+    except Exception as e:
+        log(f"  ✗ {src['name']} 抓取失败：{e}")
+        return []
+
+    items: list[dict] = []
+    if src["type"] == "vvhan":
+        # vvhan: { success:true, data:[{title,hot,url,...}] }
+        for it in (data.get("data") or [])[:50]:
+            t = (it.get("title") or "").strip()
+            if t:
+                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
+    elif src["type"] == "rss":
+        # 新浪滚动接口：{ result:{ data:[{title,url,wapurl,...}] } }
+        rows = (data.get("result") or {}).get("data") or []
+        for it in rows[:50]:
+            t = (it.get("title") or "").strip()
+            if t:
+                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
+    log(f"  ✓ {src['name']}：{len(items)} 条")
+    return items
+
+
+def fetch_all() -> list[dict]:
+    log("抓取热搜源…")
+    all_items: list[dict] = []
+    for src in SOURCES:
+        all_items.extend(fetch_one(src))
+        time.sleep(0.5)
+    log(f"合计 {len(all_items)} 条原始热点")
+    return all_items
+
+
+def filter_relevant(items: list[dict], state: dict) -> list[dict]:
+    """关键词过滤 + 去重 + 已发布过滤。"""
+    published = set(state.get("published", []))
+    keep: list[dict] = []
+    seen: set[str] = set()
+    for it in items:
+        t = it["title"]
+        fp = fingerprint(t)
+        if fp in seen or fp in published:
+            continue
+        if any(k in t for k in KEYWORDS):
+            it["fp"] = fp
+            seen.add(fp)
+            keep.append(it)
+    log(f"婚礼相关：{len(keep)} 条候选")
+    return keep
+
+
+# ---------- AI 生成 ----------
+
+def call_qwen(hot_title: str, source: str) -> dict | None:
+    """调用通义千问生成结构化文章 JSON。"""
+    api_key = os.environ.get("DASHSCOPE_API_KEY")
+    if not api_key:
+        log("  ✗ 未配置 DASHSCOPE_API_KEY，跳过")
+        return None
+    try:
+        from openai import OpenAI
+    except ImportError:
+        log("  ✗ openai 库未安装")
+        return None
+
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
+
+    system_prompt = (
+        "你是 wedding-tv.cn 的资深婚礼行业内容编辑。"
+        "请围绕用户给出的热点话题，从婚礼/婚庆/婚恋行业视角写一篇 800-1200 字的原创中文点评文章。"
+        "要求：\n"
+        "1. 标题：吸引人、不超过 30 字、自然包含婚礼/婚庆/婚恋等关键词\n"
+        "2. 摘要：80 字内\n"
+        "3. 正文：3-4 个二级小标题，每段 200-350 字，观点鲜明、有数据或案例支撑\n"
+        "4. 结尾段必须自然引导读者使用 wedding-tv.cn 提供的免费工具"
+        "（如：吉日查询/预算计算器/电子请帖/AI 誓词/AI 致辞/筹备清单/流程时间轴）\n"
+        "5. 文风：客观、专业、有温度，不出现广告夸张语\n"
+        "6. 不得编造未经证实的明星隐私或负面爆料\n"
+        "7. 输出严格 JSON，不要 markdown 包裹。结构：\n"
+        '{"title":"...","summary":"...","keywords":["...","..."],'
+        '"sections":[{"h2":"...","content":"..."}],'
+        '"faq":[{"q":"...","a":"..."},{"q":"...","a":"..."},{"q":"...","a":"..."}]}'
+    )
+    user_prompt = f"热点来源：{source}\n热点标题：{hot_title}\n请生成文章。"
+
+    try:
+        resp = client.chat.completions.create(
+            model="qwen-plus",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": user_prompt},
+            ],
+            temperature=0.7,
+            response_format={"type": "json_object"},
+            timeout=60,
+        )
+        raw = resp.choices[0].message.content or ""
+        data = json.loads(raw)
+        # 简单校验
+        if not data.get("title") or not data.get("sections"):
+            log("  ✗ AI 返回缺字段")
+            return None
+        return data
+    except Exception as e:
+        log(f"  ✗ AI 调用失败：{e}")
+        return None
+
+
+# ---------- HTML 渲染 ----------
+
+PAGE_TEMPLATE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>{title_esc} | wedding-tv.cn 婚礼热点</title>
+<meta name="description" content="{summary_esc}" />
+<meta name="keywords" content="{keywords_csv}" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/news/{slug}.html" />
+<meta property="og:title" content="{title_esc}" />
+<meta property="og:description" content="{summary_esc}" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wedding-tv.cn/news/{slug}.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{title_esc}" />
+<meta name="twitter:description" content="{summary_esc}" />
+<meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
+<meta name="theme-color" content="#0e0a14" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📰</text></svg>" />
+<script type="application/ld+json">
+{article_ld}
+</script>
+{faq_ld_block}
+<style>
+:root{{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}}
+*{{box-sizing:border-box}}
+body{{margin:0;font:16px/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}}
+a{{color:var(--accent);text-decoration:none}}a:hover{{text-decoration:underline}}
+header.topbar{{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:5}}
+header.topbar .inner{{max-width:780px;margin:0 auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}}
+header.topbar a.brand{{font-weight:700;color:var(--fg)}}
+nav a{{margin-left:14px;color:var(--mute);font-size:13px}}
+.wrap{{max-width:780px;margin:0 auto;padding:36px 22px}}
+.crumbs{{font-size:13px;color:var(--mute);margin-bottom:14px}}
+h1{{font-size:28px;margin:0 0 12px;line-height:1.35}}
+.meta{{color:var(--mute);font-size:13px;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:18px}}
+.meta span{{margin-right:14px}}
+h2{{font-size:21px;margin:32px 0 12px;color:var(--accent);border-left:4px solid var(--accent);padding-left:12px}}
+p{{margin:14px 0}}
+.intro{{font-size:16px;color:#e8dfca;background:rgba(212,165,116,.06);padding:16px 18px;border-radius:8px;border-left:3px solid var(--accent)}}
+.faq-section{{margin:40px 0 24px;padding:24px;background:var(--card);border:1px solid var(--line);border-radius:12px}}
+.faq-section details{{margin:14px 0;padding:12px 14px;background:#0e0a14;border-radius:8px;border:1px solid var(--line)}}
+.faq-section summary{{cursor:pointer;font-weight:600;color:var(--accent)}}
+.cta{{background:linear-gradient(135deg,rgba(212,165,116,.12),var(--card));border:1px solid var(--accent);border-radius:12px;padding:20px;margin:32px 0}}
+.cta h3{{margin:0 0 8px;color:var(--accent)}}
+.cta a{{display:inline-block;margin:6px 6px 0 0;padding:6px 12px;background:#0e0a14;border:1px solid var(--line);border-radius:6px;font-size:13px}}
+.disclaimer{{font-size:12px;color:var(--mute);margin-top:36px;padding-top:18px;border-top:1px dashed var(--line);line-height:1.7}}
+footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color:var(--mute);font-size:13px;text-align:center}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="/">wedding-tv.cn</a>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/news/">📰 资讯</a>
+      <a href="/blog.html">博客</a>
+      <a href="/almanac.html">📅 吉日</a>
+      <a href="/invitation.html">💌 请帖</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+<div class="crumbs"><a href="/">首页</a> · <a href="/news/">婚礼资讯</a> · 当前文章</div>
+<h1>{title_esc}</h1>
+<div class="meta"><span>📰 来源：{source_esc}</span><span>🗓️ 发布：{date_str}</span><span>📖 阅读约 {read_min} 分钟</span></div>
+<p class="intro">{summary_esc}</p>
+{sections_html}
+{faq_html}
+<div class="cta">
+  <h3>🎁 wedding-tv.cn 婚礼筹备免费工具</h3>
+  <p style="margin:0 0 8px;color:var(--mute);font-size:14px">无需注册，纯前端生成，全部免费：</p>
+  <a href="/almanac.html">📅 婚期吉日</a>
+  <a href="/calculator.html">💰 预算计算</a>
+  <a href="/invitation.html">💌 电子请帖</a>
+  <a href="/timeline.html">⏱️ 流程时间轴</a>
+  <a href="/vows.html">💍 AI 誓词</a>
+  <a href="/speech.html">🎤 AI 致辞</a>
+  <a href="/playlist.html">🎵 婚礼歌单</a>
+  <a href="/checklist.html">📋 筹备清单</a>
+</div>
+<p class="disclaimer">📌 本文由 wedding-tv.cn AI 编辑团队根据公开热点信息原创点评，仅代表作者本人观点。文中涉及的人物、事件描述如有出入，以权威媒体报道为准。如需联系修改或撤稿，请通过 <a href="/about.html">关于页面</a> 与我们联系。</p>
+</main>
+<footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a> · <a href="/sitemap.xml">Sitemap</a></footer>
+<script>
+(function(){{var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1df8fda3d25e8df34a5c8e08f945e9fb";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);}})();
+if("serviceWorker" in navigator){{window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{{}}))}}
+</script>
+</body>
+</html>
+"""
+
+
+def esc(s: str) -> str:
+    return html.escape(s or "", quote=True)
+
+
+def render_article(article: dict, source: str, slug: str, pub_dt: datetime) -> str:
+    title = article["title"].strip()
+    summary = (article.get("summary") or "").strip()
+    keywords = article.get("keywords") or []
+    sections = article.get("sections") or []
+    faq = article.get("faq") or []
+
+    # 正文
+    parts = []
+    total_text = summary
+    for sec in sections:
+        h2 = (sec.get("h2") or "").strip()
+        content = (sec.get("content") or "").strip()
+        if not h2 or not content:
+            continue
+        # 段落拆分
+        paras = [p.strip() for p in re.split(r"\n{2,}|\r\n\r\n", content) if p.strip()]
+        if not paras:
+            paras = [content]
+        body = "\n".join(f"<p>{esc(p)}</p>" for p in paras)
+        parts.append(f'<h2>{esc(h2)}</h2>\n{body}')
+        total_text += content
+    sections_html = "\n".join(parts)
+
+    # FAQ
+    faq_html = ""
+    faq_ld_block = ""
+    if faq:
+        items = []
+        ld_main = []
+        for qa in faq[:5]:
+            q = (qa.get("q") or "").strip()
+            a = (qa.get("a") or "").strip()
+            if not q or not a:
+                continue
+            items.append(
+                f'  <details>\n    <summary>{esc(q)}</summary>\n'
+                f'    <p style="margin:10px 0 0;color:var(--fg);line-height:1.85">{esc(a)}</p>\n  </details>'
+            )
+            ld_main.append({
+                "@type": "Question",
+                "name": q,
+                "acceptedAnswer": {"@type": "Answer", "text": a},
+            })
+        if items:
+            faq_html = (
+                '<section class="faq-section">\n'
+                '  <h2 style="margin-top:0;border:none;padding:0">❓ 相关常见问题</h2>\n'
+                + "\n".join(items)
+                + "\n</section>"
+            )
+            faq_ld_block = (
+                '<script type="application/ld+json">\n'
+                + json.dumps(
+                    {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ld_main},
+                    ensure_ascii=False,
+                )
+                + "\n</script>"
+            )
+
+    article_ld = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "headline": title,
+        "description": summary,
+        "author": {"@type": "Organization", "name": "wedding-tv.cn AI 编辑"},
+        "publisher": {"@type": "Organization", "name": "wedding-tv.cn", "url": "https://wedding-tv.cn/"},
+        "datePublished": pub_dt.isoformat(),
+        "dateModified": pub_dt.isoformat(),
+        "mainEntityOfPage": f"https://wedding-tv.cn/news/{slug}.html",
+        "image": "https://wedding-tv.cn/og.png",
+        "keywords": ",".join(keywords),
+    }, ensure_ascii=False)
+
+    read_min = max(2, len(total_text) // 400)
+
+    return PAGE_TEMPLATE.format(
+        title_esc=esc(title),
+        summary_esc=esc(summary),
+        keywords_csv=esc(",".join(keywords + ["婚礼资讯", "婚庆热点", "wedding-tv.cn"])),
+        slug=slug,
+        article_ld=article_ld,
+        faq_ld_block=faq_ld_block,
+        source_esc=esc(source),
+        date_str=pub_dt.strftime("%Y-%m-%d"),
+        read_min=read_min,
+        sections_html=sections_html,
+        faq_html=faq_html,
+    )
+
+
+# ---------- 索引 / sitemap ----------
+
+NEWS_INDEX_TEMPLATE = """<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>婚礼热点资讯 | wedding-tv.cn</title>
+<meta name="description" content="wedding-tv.cn 婚礼行业热点资讯：每天自动汇总并点评婚礼、婚庆、婚恋领域的最新热点话题。" />
+<meta name="keywords" content="婚礼新闻,婚庆资讯,婚恋热点,婚礼热点,wedding news" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/news/" />
+<meta name="theme-color" content="#0e0a14" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📰</text></svg>" />
+<style>
+:root{{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}}
+*{{box-sizing:border-box}}body{{margin:0;font:16px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}}
+a{{color:var(--accent);text-decoration:none}}a:hover{{text-decoration:underline}}
+header.topbar{{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:5}}
+header.topbar .inner{{max-width:880px;margin:0 auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}}
+header.topbar a.brand{{font-weight:700;color:var(--fg)}}
+nav a{{margin-left:14px;color:var(--mute);font-size:13px}}
+.wrap{{max-width:880px;margin:0 auto;padding:32px 22px}}
+h1{{font-size:28px;margin:0 0 8px}}
+.lead{{color:var(--mute);margin-bottom:28px}}
+.card{{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;color:var(--fg);transition:.2s}}
+.card:hover{{border-color:var(--accent);text-decoration:none;transform:translateY(-1px)}}
+.card .t{{font-size:17px;font-weight:600;color:var(--fg);margin:0 0 6px}}
+.card .s{{font-size:13px;color:var(--mute);margin:0 0 8px}}
+.card .d{{font-size:14px;color:#cfc4ad;margin:0}}
+footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color:var(--mute);font-size:13px;text-align:center}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="/">wedding-tv.cn</a>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/news/">📰 资讯</a>
+      <a href="/blog.html">博客</a>
+      <a href="/almanac.html">📅 吉日</a>
+      <a href="/invitation.html">💌 请帖</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+<h1>📰 婚礼热点资讯</h1>
+<p class="lead">每天自动汇总并点评全网婚礼、婚庆、婚恋领域的最新热点。共 {total} 篇文章。</p>
+{cards}
+</main>
+<footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a> · <a href="/sitemap.xml">Sitemap</a></footer>
+</body>
+</html>
+"""
+
+
+def rebuild_news_index() -> None:
+    NEWS_DIR.mkdir(parents=True, exist_ok=True)
+    entries = []
+    for f in NEWS_DIR.glob("*.html"):
+        if f.name == "index.html":
+            continue
+        try:
+            txt = f.read_text("utf-8")
+            m_title = re.search(r"<h1>([^<]+)</h1>", txt)
+            m_summary = re.search(r'<p class="intro">([^<]+)</p>', txt)
+            m_date = re.search(r"🗓️ 发布：([\d\-]+)", txt)
+            m_src = re.search(r"📰 来源：([^<]+)</span>", txt)
+            if not m_title:
+                continue
+            entries.append({
+                "file": f.name,
+                "title": m_title.group(1).strip(),
+                "summary": (m_summary.group(1).strip() if m_summary else ""),
+                "date": (m_date.group(1).strip() if m_date else ""),
+                "source": (m_src.group(1).strip() if m_src else ""),
+            })
+        except Exception:
+            continue
+    entries.sort(key=lambda x: x["date"], reverse=True)
+    cards = "\n".join(
+        f'<a class="card" href="/news/{esc(e["file"])}">\n'
+        f'  <p class="t">{esc(e["title"])}</p>\n'
+        f'  <p class="s">🗓️ {esc(e["date"])} · 📰 {esc(e["source"])}</p>\n'
+        f'  <p class="d">{esc(e["summary"][:120])}</p>\n'
+        f'</a>'
+        for e in entries
+    ) or '<p style="color:#b9b1a3">暂无文章，请稍候。</p>'
+    (NEWS_DIR / "index.html").write_text(
+        NEWS_INDEX_TEMPLATE.format(total=len(entries), cards=cards),
+        "utf-8",
+    )
+    log(f"  ✓ news/index.html 已更新（{len(entries)} 篇）")
+
+
+def update_sitemap(new_slugs: list[str], pub_date: str) -> None:
+    if not new_slugs or not SITEMAP.exists():
+        return
+    xml = SITEMAP.read_text("utf-8")
+
+    # 加 /news/ 索引（只加一次）
+    if "https://wedding-tv.cn/news/</loc>" not in xml:
+        block = (
+            "  <url>\n"
+            "    <loc>https://wedding-tv.cn/news/</loc>\n"
+            f"    <lastmod>{pub_date}</lastmod>\n"
+            "    <changefreq>daily</changefreq>\n"
+            "    <priority>0.85</priority>\n"
+            "  </url>\n"
+        )
+        xml = xml.replace("</urlset>", block + "</urlset>")
+
+    for slug in new_slugs:
+        url = f"https://wedding-tv.cn/news/{slug}.html"
+        if url in xml:
+            continue
+        block = (
+            "  <url>\n"
+            f"    <loc>{url}</loc>\n"
+            f"    <lastmod>{pub_date}</lastmod>\n"
+            "    <changefreq>monthly</changefreq>\n"
+            "    <priority>0.7</priority>\n"
+            "  </url>\n"
+        )
+        xml = xml.replace("</urlset>", block + "</urlset>")
+    SITEMAP.write_text(xml, "utf-8")
+    log(f"  ✓ sitemap.xml 已写入 {len(new_slugs)} 条新 URL")
+
+
+def ensure_blog_index_entry() -> None:
+    """在 blog.html 的导航里加一个 /news/ 入口（幂等）。"""
+    if not BLOG_INDEX.exists():
+        return
+    txt = BLOG_INDEX.read_text("utf-8")
+    if 'href="/news/"' in txt:
+        return
+    # 在第一个 <nav> 里追加
+    new_txt, n = re.subn(
+        r'(<nav[^>]*>\s*(?:<a[^>]*>[^<]*</a>\s*)*)',
+        r'\1<a href="/news/">📰 资讯</a>',
+        txt,
+        count=1,
+    )
+    if n:
+        BLOG_INDEX.write_text(new_txt, "utf-8")
+        log("  ✓ blog.html 已加 /news/ 导航入口")
+
+
+# ---------- 主流程 ----------
+
+def main() -> int:
+    log(f"开始运行（每次最多 {MAX_ARTICLES} 篇）")
+    NEWS_DIR.mkdir(parents=True, exist_ok=True)
+    state = load_state()
+
+    items = fetch_all()
+    if not items:
+        log("没有抓到任何热点，退出。")
+        return 0
+
+    candidates = filter_relevant(items, state)
+    if not candidates:
+        log("没有与婚礼相关的新热点，退出。")
+        return 0
+
+    pub_dt = datetime.now(BJ_TZ)
+    pub_date_str = pub_dt.strftime("%Y-%m-%d")
+    new_slugs: list[str] = []
+    success = 0
+
+    for cand in candidates:
+        if success >= MAX_ARTICLES:
+            break
+        log(f"生成中：[{cand['source']}] {cand['title'][:40]}…")
+        article = call_qwen(cand["title"], cand["source"])
+        if not article:
+            continue
+        slug = f"{pub_dt.strftime('%Y%m%d')}-{cand['fp']}"
+        html_out = render_article(article, cand["source"], slug, pub_dt)
+        (NEWS_DIR / f"{slug}.html").write_text(html_out, "utf-8")
+        state.setdefault("published", []).append(cand["fp"])
+        new_slugs.append(slug)
+        success += 1
+        log(f"  ✓ 已保存 news/{slug}.html")
+        time.sleep(1)
+
+    if success == 0:
+        log("本轮没有生成任何文章。")
+        return 0
+
+    # 控制 published 列表长度（避免无限增长）
+    state["published"] = state["published"][-2000:]
+    save_state(state)
+    update_sitemap(new_slugs, pub_date_str)
+    rebuild_news_index()
+    ensure_blog_index_entry()
+    log(f"完成：本次生成 {success} 篇")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

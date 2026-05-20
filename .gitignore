@@ -7,6 +7,9 @@ Thumbs.db
 *.log
 .embedder/
 _tail_summary.txt
+_audit*.txt
+__pycache__/
+*.pyc
 
 # wrangler files
 .wrangler
