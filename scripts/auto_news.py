@@ -31,6 +31,12 @@ from typing import Iterable
 
 import requests
 
+try:
+    from rss_builder import build_rss
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from rss_builder import build_rss
+
 # ---------- 配置 ----------
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -650,6 +656,11 @@ def main() -> int:
     update_sitemap(new_slugs, pub_date_str)
     rebuild_news_index()
     ensure_blog_index_entry()
+    try:
+        n = build_rss()
+        log(f"  ✓ rss.xml 重建（{n} 条）")
+    except Exception as e:
+        log(f"  ⚠ rss 重建失败：{e}")
     log(f"完成：本次生成 {success} 篇")
     return 0
 

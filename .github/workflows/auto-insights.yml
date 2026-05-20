@@ -1,25 +1,20 @@
-name: auto-news
+name: auto-insights
 
 on:
   schedule:
-    # UTC: 00:00/06:00/12:00 = 北京 08:00/14:00/20:00（每天 3 轮 × 2 篇 = 每天约 6 篇）
-    - cron: '0 0,6,12 * * *'
+    # 每周一 UTC 01:00 = 北京周一 09:00
+    - cron: '0 1 * * 1'
   workflow_dispatch:
-    inputs:
-      max_articles:
-        description: '本次最多生成几篇'
-        required: false
-        default: '2'
 
 permissions:
   contents: write
 
 concurrency:
-  group: auto-news
+  group: auto-insights
   cancel-in-progress: false
 
 jobs:
-  fetch-and-publish:
+  generate:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -35,16 +30,12 @@ jobs:
           python-version: '3.11'
 
       - name: Install deps
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests openai
+        run: pip install --quiet requests openai
 
-      - name: Run auto-news
+      - name: Generate weekly insight
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
-          MAX_ARTICLES: ${{ github.event.inputs.max_articles || '2' }}
-        run: |
-          python scripts/auto_news.py
+        run: python scripts/auto_insights.py
 
       - name: Commit & push if changed
         run: |
@@ -52,8 +43,8 @@ jobs:
           git config user.email "bot@wedding-tv.cn"
           git add -A
           if git diff --cached --quiet; then
-            echo "No new articles generated."
+            echo "No new insight generated."
           else
-            git commit -m "feat(news): auto-publish $(date -u +%Y-%m-%dT%H:%MZ) hot wedding news"
+            git commit -m "feat(insights): weekly deep-dive $(date -u +%Y-%m-%d)"
             git push
           fi
