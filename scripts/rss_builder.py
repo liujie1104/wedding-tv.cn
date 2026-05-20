@@ -26,6 +26,7 @@ SITE = "https://wedding-tv.cn"
 SECTIONS = [
     ("news", "婚礼资讯"),
     ("insights", "行业洞察"),
+    ("blog/cities", "地级市婚俗"),
     ("blog", "婚俗指南"),
 ]
 
@@ -80,10 +81,10 @@ def build_rss(max_items: int = 80) -> int:
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
         "<channel>",
-        "  <title>wedding-tv.cn — 婚礼资讯 / 行业洞察 / 34省婚俗</title>",
+        "  <title>wedding-tv.cn — 婚礼资讯 / 行业洞察 / 34省 + 地级市婚俗</title>",
         f"  <link>{SITE}/</link>",
         f'  <atom:link href="{SITE}/rss.xml" rel="self" type="application/rss+xml" />',
-        "  <description>每日婚礼热点、每周行业洞察、全国婚俗完全指南</description>",
+        "  <description>每日婚礼热点、每周行业洞察、全国婚俗及地级市婚俗完全指南</description>",
         "  <language>zh-CN</language>",
         f"  <lastBuildDate>{last_build}</lastBuildDate>",
         "  <generator>wedding-tv.cn rss_builder</generator>",
