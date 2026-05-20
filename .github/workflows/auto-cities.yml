@@ -1,16 +1,21 @@
-name: auto-insights
+name: auto-cities
 
 on:
   schedule:
-    # 每周一 UTC 01:00 = 北京周一 09:00
-    - cron: '0 1 * * 1'
+    # 每天 UTC 02:00 = 北京 10:00；每次 2 个城市，50 天填满 100 城
+    - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      max_cities:
+        description: '本次生成几个'
+        required: false
+        default: '2'
 
 permissions:
   contents: write
 
 concurrency:
-  group: auto-insights
+  group: auto-cities
   cancel-in-progress: false
 
 jobs:
@@ -32,10 +37,11 @@ jobs:
       - name: Install deps
         run: pip install --quiet requests openai
 
-      - name: Generate weekly insight
+      - name: Generate
         env:
           DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
-        run: python scripts/auto_insights.py
+          MAX_CITIES: ${{ github.event.inputs.max_cities || '2' }}
+        run: python scripts/auto_cities.py
 
       - name: Commit & push if changed
         run: |
@@ -43,8 +49,8 @@ jobs:
           git config user.email "bot@wedding-tv.cn"
           git add -A
           if git diff --cached --quiet; then
-            echo "No new insight generated."
+            echo "No new city pages generated."
           else
-            git commit -m "feat(insights): weekly deep-dive $(date -u +%Y-%m-%d)"
+            git commit -m "feat(cities): add city wedding guides $(date -u +%Y-%m-%d)"
             git push
           fi
