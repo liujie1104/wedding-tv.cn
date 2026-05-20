@@ -292,6 +292,69 @@ PROVINCE_PINYIN = {
     "辽宁": "liaoning", "吉林": "jilin", "黑龙江": "heilongjiang",
 }
 
+BLOG_HTML = ROOT / "blog.html"
+
+# 各大区对应其后一个 zone-id（用于找插入锚点）
+ZONE_NEXT = {
+    "华北": "zone-dongbei",
+    "东北": "zone-huadong",
+    "华东": "zone-huazhong",
+    "华中": "zone-huanan",
+    "华南": "zone-xinan",
+    "西南": "zone-xibei",
+    "西北": None,  # 最后一区，插到 grid 结束前
+}
+
+
+def inject_city_to_blog_html(city: str, pinyin: str, province: str, region: str, summary: str) -> None:
+    """把城市卡片注入 blog.html 对应大区末尾，并更新文章计数。"""
+    if not BLOG_HTML.exists():
+        return
+    content = BLOG_HTML.read_text("utf-8")
+
+    city_url = f"/blog/cities/{pinyin}.html"
+    if city_url in content:
+        log(f"  ℹ  {city} 已在 blog.html 中，跳过")
+        return
+
+    # 截取摘要（不超过 45 字）
+    short = summary[:45].rstrip("，。；：、") if summary else f"{province}地级市婚俗"
+    card = (
+        f'  <a class="card" href="{city_url}">'
+        f'<span class="tag">{html.escape(region)}</span>'
+        f'<h3>🏙️ {html.escape(city)}婚俗</h3>'
+        f'<p>{html.escape(province)}·地级市 | {html.escape(short)}…</p>'
+        f'<span class="go">阅读 →</span></a>\n'
+    )
+
+    next_zone = ZONE_NEXT.get(region)
+    if next_zone:
+        anchor = f'  <h3 id="{next_zone}"'
+        if anchor not in content:
+            log(f"  ⚠  未找到 {next_zone} 锚点，跳过注入")
+            return
+        content = content.replace(anchor, card + anchor, 1)
+    else:
+        # 西北是最后一区，插到 </div> 紧接 <!-- AdSense 之前
+        anchor = '</div>\n<!-- AdSense ad2'
+        if anchor not in content:
+            anchor = '</div>\n\n<h2 id="international"'
+        if anchor not in content:
+            log("  ⚠  未找到西北区结束锚点，跳过注入")
+            return
+        content = content.replace(anchor, card + anchor, 1)
+
+    # 更新 h2 计数：城市文件总数（排除 index.html）
+    city_count = len([f for f in CITIES_DIR.glob("*.html") if f.name != "index.html"])
+    content = re.sub(
+        r'各地婚俗大全（34[^）]*）',
+        f'各地婚俗大全（34 省 + {city_count} 地级市）',
+        content,
+    )
+
+    BLOG_HTML.write_text(content, "utf-8")
+    log(f"  ✓ blog.html 注入 {city}（{region}）并更新计数为 {city_count}")
+
 
 def render(article: dict, city: str, province: str, region: str, slug: str, pub_dt: datetime) -> str:
     title = article["title"].strip()
@@ -545,6 +608,7 @@ def main() -> int:
         out.write_text(render(article, city, province, region, pinyin, pub_dt), "utf-8")
         state.setdefault("published", []).append(pinyin)
         new_slugs.append(pinyin)
+        inject_city_to_blog_html(city, pinyin, province, region, article.get("summary", ""))
         log(f"  ✓ 已保存 blog/cities/{pinyin}.html")
 
     if not new_slugs:

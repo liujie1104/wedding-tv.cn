@@ -77,8 +77,10 @@ export default {
 
     // 其它路径 -> 静态资源；根目录显式映射 index.html（因 html_handling=none 关闭了自动 index）
     if (path === "/" || path.endsWith("/")) {
-      const idx = new URL((path === "/" ? "/index.html" : path + "index.html"), url.origin);
-      const res = await env.ASSETS.fetch(new Request(idx, request));
+      const idxPath = path === "/" ? "/index.html" : path + "index.html";
+      const idxUrl = new URL(idxPath, url.origin).toString();
+      // 不复制原始 request 对象（避免 URL 被覆盖），只传 headers
+      const res = await env.ASSETS.fetch(new Request(idxUrl, { headers: request.headers }));
       if (res.status === 200) {
         const newHeaders = new Headers(res.headers);
         newHeaders.set("content-type", "text/html; charset=utf-8");
