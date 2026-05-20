@@ -50,12 +50,10 @@ jobs:
         run: |
           git config user.name "wedding-tv-bot"
           git config user.email "bot@wedding-tv.cn"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add news/ sitemap.xml scripts/news_state.json blog.html 2>/dev/null || true
-            git add -A
-            git add news/*.html || true
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No new articles generated."
+          else
             git commit -m "feat(news): auto-publish $(date -u +%Y-%m-%dT%H:%MZ) hot wedding news"
             git push
-          else
-            echo "No new articles generated."
           fi

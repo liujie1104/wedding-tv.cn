@@ -7,7 +7,7 @@ wedding-tv.cn 全自动婚礼热点资讯生成器
   1. 抓取多源热搜（vvhan 聚合 + RSSHub 公开实例 + 新浪 RSS）
   2. 关键词过滤 → 只保留与婚礼/婚庆/婚恋相关的热点
   3. 与 news_state.json 已发布列表去重
-  4. 调通义千问 qwen-plus 生成原创点评文章（JSON）
+  4. 调通义千问 qwen-plus-latest 生成原创点评文章（JSON）
   5. 渲染 HTML（与站点风格一致，带 Article + FAQPage Schema）
   6. 更新 sitemap.xml、news/index.html、blog.html 入口
   7. 写回 news_state.json
@@ -230,7 +230,7 @@ def call_qwen(hot_title: str, source: str) -> dict | None:
 
     try:
         resp = client.chat.completions.create(
-            model="qwen-plus",
+            model="qwen-plus-latest",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": user_prompt},
