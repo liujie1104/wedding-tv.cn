@@ -1,5 +1,0 @@
-# Cloudflare Pages directory index fallback
-# 把"目录/"URL 内部 rewrite 到对应 index.html（200 状态码=rewrite，不影响 URL）
-/news/         /news/index.html         200
-/insights/     /insights/index.html     200
-/blog/cities/  /blog/cities/index.html  200
