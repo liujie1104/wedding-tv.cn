@@ -9,7 +9,7 @@
     "directory": ".",
     "binding": "ASSETS",
     "not_found_handling": "404-page",
-    "html_handling": "none"
+    "html_handling": "auto-trailing-slash"
   },
   "kv_namespaces": [
     { "binding": "WEDDING", "id": "11ebf337807946b68cbd33d1432ea2ee" }

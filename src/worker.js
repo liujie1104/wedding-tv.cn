@@ -75,12 +75,9 @@ export default {
       return Response.redirect(new URL("/", url.origin).href, 301);
     }
 
-    // 其它路径 -> 静态资源；根目录显式映射 index.html（因 html_handling=none 关闭了自动 index）
+    // 其它路径 -> 静态资源；html_handling=auto-trailing-slash 会让 ASSETS 自动将 /dir/ 映射到 dir/index.html
     if (path === "/" || path.endsWith("/")) {
-      const idxPath = path === "/" ? "/index.html" : path + "index.html";
-      const idxUrl = new URL(idxPath, url.origin).toString();
-      // 不复制原始 request 对象（避免 URL 被覆盖），只传 headers
-      const res = await env.ASSETS.fetch(new Request(idxUrl, { headers: request.headers }));
+      const res = await env.ASSETS.fetch(request);
       if (res.status === 200) {
         const newHeaders = new Headers(res.headers);
         newHeaders.set("content-type", "text/html; charset=utf-8");
@@ -91,7 +88,7 @@ export default {
     const res = await env.ASSETS.fetch(request);
     // 404 fallback：HTML 请求失败时返回自定义 404 页面
     if (res.status === 404 && (request.headers.get("accept") || "").includes("text/html")) {
-      const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin), request));
+      const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin).href));
       return new Response(notFound.body, { status: 404, headers: notFound.headers });
     }
     return res;
