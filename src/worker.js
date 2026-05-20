@@ -77,7 +77,7 @@ export default {
 
     // 其它路径 -> 静态资源；根目录显式映射 index.html（因 html_handling=none 关闭了自动 index）
     if (path === "/" || path.endsWith("/")) {
-      const idx = new URL(path + "index.html", url.origin);
+      const idx = new URL((path === "/" ? "/index.html" : path + "index.html"), url.origin);
       return env.ASSETS.fetch(new Request(idx, request));
     }
     const res = await env.ASSETS.fetch(request);
