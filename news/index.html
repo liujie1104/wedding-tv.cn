@@ -20,12 +20,14 @@ header.topbar{border-bottom:1px solid var(--line);background:#0a060f;position:st
 header.topbar .inner{max-width:880px;margin:0 auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 header.topbar a.brand{font-weight:700;color:var(--fg)}
 nav a{margin-left:14px;color:var(--mute);font-size:13px}
-.wrap{max-width:880px;margin:0 auto;padding:32px 22px;min-height:60vh}
+.wrap{max-width:880px;margin:0 auto;padding:32px 22px}
 h1{font-size:28px;margin:0 0 8px}
 .lead{color:var(--mute);margin-bottom:28px}
-.empty{padding:32px;background:var(--card);border:1px dashed var(--line);border-radius:12px;text-align:center;color:var(--mute)}
-.empty p{margin:8px 0}
-.btns a{display:inline-block;margin:8px 6px 0;padding:8px 14px;background:#0e0a14;border:1px solid var(--accent);border-radius:6px;font-size:13px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;color:var(--fg);transition:.2s}
+.card:hover{border-color:var(--accent);text-decoration:none;transform:translateY(-1px)}
+.card .t{font-size:17px;font-weight:600;color:var(--fg);margin:0 0 6px}
+.card .s{font-size:13px;color:var(--mute);margin:0 0 8px}
+.card .d{font-size:14px;color:#cfc4ad;margin:0}
 footer{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color:var(--mute);font-size:13px;text-align:center}
 </style>
 </head>
@@ -44,18 +46,17 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color:
 </header>
 <main class="wrap">
 <h1>📰 婚礼热点资讯</h1>
-<p class="lead">每天 8:00 / 20:00 自动汇总并点评全网婚礼、婚庆、婚恋领域的最新热点。</p>
-<div class="empty">
-  <p>📡 系统正在准备首批文章，请稍候…</p>
-  <p style="font-size:13px">在此期间，欢迎先浏览我们的婚俗博客与免费工具：</p>
-  <div class="btns">
-    <a href="/blog.html">📚 婚俗博客</a>
-    <a href="/almanac.html">📅 婚期吉日</a>
-    <a href="/calculator.html">💰 预算计算</a>
-    <a href="/invitation.html">💌 电子请帖</a>
-    <a href="/vows.html">💍 AI 誓词</a>
-  </div>
-</div>
+<p class="lead">每天自动汇总并点评全网婚礼、婚庆、婚恋领域的最新热点。共 2 篇文章。</p>
+<a class="card" href="/news/20260520-07a8a737931e.html">
+  <p class="t">战争阴影下的婚礼：全球新人如何坚守爱与仪式感</p>
+  <p class="s">🗓️ 2026-05-20 · 📰 Google新闻·婚礼</p>
+  <p class="d">地缘冲突持续影响跨国婚恋与婚礼筹备。本文梳理乌克兰、以色列、苏丹等地新人的真实应对策略，探讨行业韧性与人文温度。</p>
+</a>
+<a class="card" href="/news/20260520-099b91f6303f.html">
+  <p class="t">阿娇缺席阿Sa婚礼引发热议：明星婚恋选择折射当代婚礼价值观变迁</p>
+  <p class="s">🗓️ 2026-05-20 · 📰 Google新闻·婚礼</p>
+  <p class="d">阿娇未出席阿Sa婚礼事件引发公众对亲密关系、婚姻自主性与婚礼意义的深度讨论。本文从行业视角解析明星婚恋行为对大众婚礼观念的影响。</p>
+</a>
 </main>
 <footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a> · <a href="/sitemap.xml">Sitemap</a></footer>
 </body>
