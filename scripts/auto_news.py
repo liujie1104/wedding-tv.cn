@@ -42,39 +42,40 @@ BLOG_INDEX = ROOT / "blog.html"
 MAX_ARTICLES = int(os.environ.get("MAX_ARTICLES", "2"))
 BJ_TZ = timezone(timedelta(hours=8))
 
-# 婚礼/婚庆/婚恋关键词（命中任一则视为相关）
-KEYWORDS = [
-    # 强相关
+# 婚礼/婚庆/婚恋关键词（用于 Google News RSS 搜索，每个词独立查询）
+# 这些词命中即视为相关；搜索时按关键词查询，返回结果已天然相关
+QUERY_KEYWORDS = [
+    "婚礼", "婚庆", "结婚", "婚纱", "婚姻",
+    "求婚", "明星婚讯", "蜜月", "彩礼",
+]
+
+# 二次过滤关键词（确保标题确实是婚礼主题，剔除"婚姻法"等边缘命中）
+RELEVANT_WORDS = [
     "婚礼", "婚庆", "婚宴", "婚纱", "婚戒", "结婚", "求婚", "订婚",
     "迎亲", "新娘", "新郎", "伴娘", "伴郎", "彩礼", "嫁妆",
     "蜜月", "婚房", "喜帖", "请帖", "婚车", "婚俗", "婚介",
-    "领证", "离婚", "复婚", "婚检", "再婚", "裸婚", "婚闹",
-    "婚姻", "夫妻", "小两口", "婚后", "婚前",
-    # 弱相关（明星婚讯、恋情、情感话题，AI 可从婚礼视角点评）
-    "恋爱", "表白", "情侣", "异地恋", "情人节", "七夕",
-    "恋情", "官宣", "分手", "复合", "领证日", "520",
-    "婚讯", "婚照", "婚戒", "喜糖", "喜事",
+    "领证", "婚检", "再婚", "裸婚", "婚闹", "婚后", "婚前",
+    "婚姻", "夫妻", "婚讯", "婚照", "喜糖", "喜事",
+    "恋情", "官宣", "复合", "情侣", "情人节", "七夕", "520",
 ]
 
-# 热搜数据源（多套备用，单点失败不影响）
+# 热搜数据源：使用 Google News RSS（GitHub Actions runner 海外 IP 100% 可达）
+# 每个关键词独立查询，hl=zh-CN 简体中文，gl=CN 中国地区
 SOURCES = [
-    # vvhan 免费聚合（国内可直连）
-    {"name": "百度热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/baiduRD"},
-    {"name": "微博热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/wbHot"},
-    {"name": "知乎热榜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/zhihuHot"},
-    {"name": "抖音热点", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/douyinHot"},
-    {"name": "小红书",   "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/xhsHot"},
-    {"name": "哔哩热搜", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/bili"},
-    # tophub 备用聚合
-    {"name": "今日头条", "type": "vvhan", "url": "https://api.vvhan.com/api/hotlist/toutiao"},
-    # newsnow 公开实例
-    {"name": "NewsNow微博", "type": "newsnow", "url": "https://newsnow.busiyi.world/api/s?id=weibo"},
-    {"name": "NewsNow抖音", "type": "newsnow", "url": "https://newsnow.busiyi.world/api/s?id=douyin"},
-    # 新浪情感/娱乐 RSS
-    {"name": "新浪情感", "type": "sina", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=1700&num=30&versionNumber=1.2.4&format=json"},
-    {"name": "新浪娱乐", "type": "sina", "url": "https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2462&num=30&versionNumber=1.2.4&format=json"},
-    # 60s API 备用
-    {"name": "60s微博", "type": "sixtys", "url": "https://60s.viki.moe/v2/weibo"},
+    {
+        "name": f"Google新闻·{kw}",
+        "type": "rss",
+        "url": f"https://news.google.com/rss/search?q={requests.utils.quote(kw)}&hl=zh-CN&gl=CN&ceid=CN:zh-Hans",
+    }
+    for kw in QUERY_KEYWORDS
+] + [
+    # Bing News RSS 备份源
+    {
+        "name": f"Bing新闻·{kw}",
+        "type": "rss",
+        "url": f"https://www.bing.com/news/search?q={requests.utils.quote(kw)}&setlang=zh-CN&format=RSS",
+    }
+    for kw in ["婚礼", "婚庆", "结婚"]
 ]
 
 USER_AGENT = (
@@ -112,59 +113,48 @@ def save_state(state: dict) -> None:
 # ---------- 抓取 ----------
 
 def fetch_one(src: dict) -> list[dict]:
+    """抓取一个 RSS 源，解析为 [{title, source, url}, ...]。"""
+    import xml.etree.ElementTree as ET
     try:
         r = requests.get(
             src["url"],
             headers={
                 "User-Agent": USER_AGENT,
-                "Accept": "application/json, text/plain, */*",
-                "Referer": "https://api.vvhan.com/",
+                "Accept": "application/rss+xml, application/xml, text/xml, */*",
             },
             timeout=TIMEOUT,
         )
         r.raise_for_status()
-        data = r.json()
+        text = r.text
     except Exception as e:
         log(f"  ✗ {src['name']} 抓取失败：{type(e).__name__}: {str(e)[:120]}")
         return []
 
     items: list[dict] = []
-    t_type = src["type"]
-    if t_type == "vvhan":
-        # vvhan: { success:true, data:[{title,hot,url,...}] }
-        rows = data.get("data") or []
-        for it in rows[:50]:
-            t = (it.get("title") or "").strip()
-            if t:
-                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    elif t_type == "sina":
-        rows = (data.get("result") or {}).get("data") or []
-        for it in rows[:50]:
-            t = (it.get("title") or "").strip()
-            if t:
-                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    elif t_type == "newsnow":
-        # newsnow: { status:'success', data:{items:[{title,url}]}}  或  data:[items]
-        d = data.get("data")
-        if isinstance(d, dict):
-            rows = d.get("items") or []
-        elif isinstance(d, list):
-            rows = d
-        else:
-            rows = []
-        for it in rows[:50]:
-            t = (it.get("title") or "").strip()
-            if t:
-                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    elif t_type == "sixtys":
-        # 60s.viki.moe: { code, data:{ list:[{title,...}] } }
-        d = data.get("data") or {}
-        rows = d.get("list") or d.get("hot") or []
-        for it in rows[:50]:
-            t = (it.get("title") or it.get("name") or "").strip()
-            if t:
-                items.append({"title": t, "source": src["name"], "url": it.get("url", "")})
-    log(f"  ✓ {src['name']}：{len(items)} 条" + (f" | 示例: {items[0]['title'][:40]}" if items else ""))
+    try:
+        root = ET.fromstring(text)
+        # 同时兼容 RSS 2.0 (channel/item) 和 Atom (entry)
+        for item in root.iter():
+            tag = item.tag.split("}")[-1]  # 去 namespace
+            if tag not in ("item", "entry"):
+                continue
+            title = ""
+            link = ""
+            for child in item:
+                ctag = child.tag.split("}")[-1]
+                if ctag == "title" and child.text:
+                    title = child.text.strip()
+                elif ctag == "link":
+                    link = (child.text or child.get("href") or "").strip()
+            if title:
+                items.append({"title": title, "source": src["name"], "url": link})
+            if len(items) >= 30:
+                break
+    except Exception as e:
+        log(f"  ✗ {src['name']} 解析失败：{type(e).__name__}: {str(e)[:120]}")
+        return []
+
+    log(f"  ✓ {src['name']}：{len(items)} 条" + (f" | 示例: {items[0]['title'][:50]}" if items else ""))
     return items
 
 
@@ -188,7 +178,7 @@ def filter_relevant(items: list[dict], state: dict) -> list[dict]:
         fp = fingerprint(t)
         if fp in seen or fp in published:
             continue
-        if any(k in t for k in KEYWORDS):
+        if any(k in t for k in RELEVANT_WORDS):
             it["fp"] = fp
             seen.add(fp)
             keep.append(it)
