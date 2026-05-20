@@ -44,24 +44,7 @@ p{color:var(--sub)}
   </div>
   <p style="margin-top:36px"><a class="home" href="/">回到首页 →</a></p>
 </div>
-<script>
-// 若用户在根路径看到 404，多数是旧 Service Worker 缓存导致；自动自愈。
-(function () {
-  if (location.pathname !== "/") return;
-  if (!("serviceWorker" in navigator)) {
-    location.replace("/?recover=1");
-    return;
-  }
-  navigator.serviceWorker.getRegistrations().then((regs) =>
-    Promise.all(regs.map((r) => r.unregister()))
-  ).then(() => {
-    if (window.caches && caches.keys) {
-      return caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
-    }
-  }).finally(() => {
-    location.replace("/?recover=1");
-  });
-})();
-</script>
+</body>
+</html>
 </body>
 </html>
