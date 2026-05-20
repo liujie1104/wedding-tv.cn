@@ -53,6 +53,7 @@ jobs:
           if [ -n "$(git status --porcelain)" ]; then
             git add news/ sitemap.xml scripts/news_state.json blog.html 2>/dev/null || true
             git add -A
+            git add news/*.html || true
             git commit -m "feat(news): auto-publish $(date -u +%Y-%m-%dT%H:%MZ) hot wedding news"
             git push
           else
