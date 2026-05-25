@@ -31,6 +31,32 @@ SECTIONS = [
 ]
 
 
+def _normalize_title(title: str) -> str:
+    t = title.strip().lower()
+    t = re.sub(r"\s*[-|｜]\s*[^-|｜]{1,20}$", "", t)
+    parts = [p.strip() for p in re.split(r"[：:？?！!。；;]", t) if p.strip()]
+    if parts:
+        t = max(parts, key=len)
+    return re.sub(r"[^\u4e00-\u9fa5a-z0-9]", "", t)
+
+
+def _title_similarity(a: str, b: str) -> float:
+    if not a or not b:
+        return 0.0
+    if a == b:
+        return 1.0
+    if len(a) >= 10 and len(b) >= 10 and (a in b or b in a):
+        return 0.95
+    if len(a) < 2 or len(b) < 2:
+        return 0.0
+    ga = {a[i:i + 2] for i in range(len(a) - 1)}
+    gb = {b[i:i + 2] for i in range(len(b) - 1)}
+    union = ga | gb
+    if not union:
+        return 0.0
+    return len(ga & gb) / len(union)
+
+
 def _extract(file: Path) -> dict | None:
     try:
         txt = file.read_text("utf-8", errors="ignore")
@@ -74,7 +100,20 @@ def build_rss(max_items: int = 80) -> int:
             if info:
                 items.append((info, label))
     items.sort(key=lambda x: x[0]["dt"], reverse=True)
-    items = items[:max_items]
+
+    # 输出层去重：按分类折叠近似同题材，保留较新条目
+    deduped: list[tuple[dict, str]] = []
+    norms_by_label: dict[str, list[str]] = {}
+    for info, label in items:
+        norm = _normalize_title(info["title"])
+        old_norms = norms_by_label.setdefault(label, [])
+        if any(_title_similarity(norm, old) >= 0.72 for old in old_norms):
+            continue
+        deduped.append((info, label))
+        old_norms.append(norm)
+        if len(deduped) >= max_items:
+            break
+    items = deduped
 
     last_build = format_datetime(datetime.now(timezone.utc))
     parts = [

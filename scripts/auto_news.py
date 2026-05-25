@@ -596,19 +596,31 @@ def rebuild_news_index() -> None:
         except Exception:
             continue
     entries.sort(key=lambda x: x["date"], reverse=True)
+
+    # 展示层去重：保留较新的一条，折叠近似同题材文章（不删除原文）
+    shown: list[dict] = []
+    shown_norms: list[str] = []
+    for e in entries:
+        norm = normalize_title(e["title"])
+        if any(title_similarity(norm, old) >= 0.72 for old in shown_norms):
+            continue
+        shown.append(e)
+        shown_norms.append(norm)
+
     cards = "\n".join(
         f'<a class="card" href="/news/{esc(e["file"])}">\n'
         f'  <p class="t">{esc(e["title"])}</p>\n'
         f'  <p class="s">🗓️ {esc(e["date"])} · 📰 {esc(e["source"])}</p>\n'
         f'  <p class="d">{esc(e["summary"][:120])}</p>\n'
         f'</a>'
-        for e in entries
+        for e in shown
     ) or '<p style="color:#b9b1a3">暂无文章，请稍候。</p>'
     (NEWS_DIR / "index.html").write_text(
-        NEWS_INDEX_TEMPLATE.format(total=len(entries), cards=cards),
+        NEWS_INDEX_TEMPLATE.format(total=len(shown), cards=cards),
         "utf-8",
     )
-    log(f"  ✓ news/index.html 已更新（{len(entries)} 篇）")
+    dropped = max(0, len(entries) - len(shown))
+    log(f"  ✓ news/index.html 已更新（展示 {len(shown)} 篇，折叠 {dropped} 篇近似稿）")
 
 
 def update_sitemap(new_slugs: list[str], pub_date: str) -> None:
