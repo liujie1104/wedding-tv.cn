@@ -580,6 +580,19 @@ def update_sitemap(slugs: list[str], pub_date: str) -> None:
             "    <priority>0.75</priority>\n"
             "  </url>\n</urlset>",
         )
+
+    # 刷新核心索引页 lastmod，提升抓取时效信号
+    for loc in [
+        "https://wedding-tv.cn/blog/cities/",
+        "https://wedding-tv.cn/blog.html",
+    ]:
+        xml = re.sub(
+            rf"(<loc>{re.escape(loc)}</loc>\s*<lastmod>)([^<]+)(</lastmod>)",
+            rf"\g<1>{pub_date}\g<3>",
+            xml,
+            count=1,
+        )
+
     SITEMAP.write_text(xml, "utf-8")
     log(f"  ✓ sitemap.xml 已写入 {len(slugs)} 条")
 

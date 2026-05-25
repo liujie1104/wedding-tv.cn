@@ -103,6 +103,59 @@ def fingerprint(title: str) -> str:
     return hashlib.md5(norm.encode("utf-8")).hexdigest()[:12]
 
 
+def normalize_title(title: str) -> str:
+    """标题归一化：用于近似重复判断。"""
+    t = title.strip().lower()
+    # 去掉常见来源后缀，如 " - Google 新闻" / "｜央视网"
+    t = re.sub(r"\s*[-|｜]\s*[^-|｜]{1,20}$", "", t)
+    # 按常见分隔符截断，优先保留核心主语片段
+    parts = [p.strip() for p in re.split(r"[：:？?！!。；;]", t) if p.strip()]
+    if parts:
+        t = max(parts, key=len)
+    # 清理噪音字符，仅保留中英文数字
+    t = re.sub(r"[^\u4e00-\u9fa5a-z0-9]", "", t)
+    return t
+
+
+def title_similarity(a: str, b: str) -> float:
+    """基于 2-gram 的 Jaccard 相似度。"""
+    if not a or not b:
+        return 0.0
+    if a == b:
+        return 1.0
+    if len(a) >= 10 and len(b) >= 10 and (a in b or b in a):
+        return 0.95
+    if len(a) < 2 or len(b) < 2:
+        return 0.0
+    ga = {a[i:i + 2] for i in range(len(a) - 1)}
+    gb = {b[i:i + 2] for i in range(len(b) - 1)}
+    union = ga | gb
+    if not union:
+        return 0.0
+    return len(ga & gb) / len(union)
+
+
+def load_existing_title_norms() -> list[str]:
+    """读取已发布文章标题，用于近似去重。"""
+    norms: list[str] = []
+    if not NEWS_DIR.exists():
+        return norms
+    for f in NEWS_DIR.glob("*.html"):
+        if f.name == "index.html":
+            continue
+        try:
+            txt = f.read_text("utf-8", errors="ignore")
+        except Exception:
+            continue
+        m = re.search(r"<h1>([^<]+)</h1>", txt)
+        if not m:
+            continue
+        norm = normalize_title(m.group(1))
+        if norm:
+            norms.append(norm)
+    return norms
+
+
 def load_state() -> dict:
     if STATE_FILE.exists():
         try:
@@ -177,6 +230,8 @@ def fetch_all() -> list[dict]:
 def filter_relevant(items: list[dict], state: dict) -> list[dict]:
     """关键词过滤 + 去重 + 已发布过滤。"""
     published = set(state.get("published", []))
+    historical_norms = load_existing_title_norms()
+    accepted_norms: list[str] = []
     keep: list[dict] = []
     seen: set[str] = set()
     for it in items:
@@ -185,8 +240,14 @@ def filter_relevant(items: list[dict], state: dict) -> list[dict]:
         if fp in seen or fp in published:
             continue
         if any(k in t for k in RELEVANT_WORDS):
+            norm = normalize_title(t)
+            similar_exists = any(title_similarity(norm, old) >= 0.72 for old in (historical_norms + accepted_norms))
+            if similar_exists:
+                continue
             it["fp"] = fp
+            it["norm"] = norm
             seen.add(fp)
+            accepted_norms.append(norm)
             keep.append(it)
     log(f"婚礼相关：{len(keep)} 条候选 / 已发布历史 {len(published)} 条")
     if not keep and items:
@@ -580,6 +641,19 @@ def update_sitemap(new_slugs: list[str], pub_date: str) -> None:
             "  </url>\n"
         )
         xml = xml.replace("</urlset>", block + "</urlset>")
+
+    # 刷新核心索引页 lastmod，提升抓取时效信号
+    for loc in [
+        "https://wedding-tv.cn/news/",
+        "https://wedding-tv.cn/blog.html",
+    ]:
+        xml = re.sub(
+            rf"(<loc>{re.escape(loc)}</loc>\s*<lastmod>)([^<]+)(</lastmod>)",
+            rf"\g<1>{pub_date}\g<3>",
+            xml,
+            count=1,
+        )
+
     SITEMAP.write_text(xml, "utf-8")
     log(f"  ✓ sitemap.xml 已写入 {len(new_slugs)} 条新 URL")
 
