@@ -1059,4 +1059,16 @@
     <changefreq>yearly</changefreq>
     <priority>0.75</priority>
   </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260602-3c02976aef10.html</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260602-b849962dcef7.html</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
