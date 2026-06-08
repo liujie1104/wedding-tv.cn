@@ -395,7 +395,7 @@
   </url>
   <url>
     <loc>https://wedding-tv.cn/insights/</loc>
-    <lastmod>2026-06-01</lastmod>
+    <lastmod>2026-06-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1334,5 +1334,11 @@
     <lastmod>2026-06-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/insights/20260608-acf19c6e39.html</loc>
+    <lastmod>2026-06-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
