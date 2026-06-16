@@ -407,7 +407,7 @@
   </url>
   <url>
     <loc>https://wedding-tv.cn/blog/cities/</loc>
-    <lastmod>2026-06-15</lastmod>
+    <lastmod>2026-06-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1730,5 +1730,17 @@
     <lastmod>2026-06-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/blog/cities/zhanjiang.html</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/blog/cities/meizhou.html</loc>
+    <lastmod>2026-06-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.75</priority>
   </url>
 </urlset>
