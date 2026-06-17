@@ -1803,4 +1803,16 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260617-07cd560f5433.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260617-7c406703cc0f.html</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
