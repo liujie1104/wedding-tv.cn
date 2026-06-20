@@ -11,7 +11,7 @@
   </url>
   <url>
     <loc>https://wedding-tv.cn/blog.html</loc>
-    <lastmod>2026-06-19</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -347,7 +347,7 @@
   </url>
   <url>
     <loc>https://wedding-tv.cn/news/</loc>
-    <lastmod>2026-06-19</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.85</priority>
   </url>
@@ -1908,6 +1908,18 @@
   <url>
     <loc>https://wedding-tv.cn/news/20260619-67ae2f4b97b6.html</loc>
     <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260620-6d8af421e19d.html</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/news/20260620-2c22d9dd9d4c.html</loc>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
