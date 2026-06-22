@@ -1,6 +1,6 @@
 # wedding-tv.cn
 
-稀缺婚礼行业品牌域名 + 一组面向新人的免费 AI 工具（电子请帖、誓词生成、筹备清单、倒计时海报、报价计算器…）。
+稀缺婚礼行业品牌域名 + 一组面向新人的免费 AI 工具（AI 婚礼策划助手、电子请帖、誓词生成、筹备清单、倒计时海报、报价计算器…）。
 
 ## 技术栈
 
@@ -47,10 +47,23 @@ wrangler dev
 | `AI` | Workers AI | 头像图像生成 |
 | `ASSETS` | Static Assets | 静态资源 |
 | `GEMINI_API_KEY` | Secret | Gemini API Key |
-| `DASHSCOPE_API_KEY` | Secret | DashScope API Key（AI 海报） |
+| `DASHSCOPE_API_KEY` | Secret | DashScope / 阿里云百炼 API Key（AI 文案、AI 策划、AI 海报） |
+| `BAILIAN_BASE_URL` | Var | 可选，百炼 OpenAI 兼容模式 Base URL；不填则使用 `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| `BAILIAN_MODEL` | Var | 可选，AI 文案模型；不填则使用 `qwen-plus` |
 | `AVATAR_ENABLED` | Var | `true` / `false` 总开关 |
 | `AVATAR_DAILY_LIMIT` | Var | 头像每日全站配额 |
 
 ## 自检
 
 部署后访问 `/api/debug-env` 应返回所有项 ✅。
+
+## AI 内容质量审查
+
+发布新页面或自动化内容前，可以用百炼做一次 SEO / AdSense 风险审查：
+
+```powershell
+$env:DASHSCOPE_API_KEY="你的百炼或 DashScope Key"
+python scripts/ai_content_quality.py index.html ai-planner.html guide.html
+```
+
+脚本会输出每个页面的 JSON 评分；`risk_level=high` 或 `score < 60` 时返回非 0 退出码，适合后续接入 GitHub Actions。

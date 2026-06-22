@@ -13,6 +13,8 @@ export const onRequestGet = async ({ env }) => {
   return json(200, {
     GEMINI_API_KEY: probe(env.GEMINI_API_KEY || ""),
     DASHSCOPE_API_KEY: probe(env.DASHSCOPE_API_KEY || ""),
+    BAILIAN_BASE_URL: env.BAILIAN_BASE_URL || "",
+    BAILIAN_MODEL: env.BAILIAN_MODEL || "",
     AVATAR_ENABLED: env.AVATAR_ENABLED || "",
     AVATAR_DAILY_LIMIT: env.AVATAR_DAILY_LIMIT || "",
     KV_BOUND: !!env.WEDDING,

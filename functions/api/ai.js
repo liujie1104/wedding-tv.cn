@@ -4,6 +4,7 @@
 import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
 const QWEN_MODEL = "qwen-plus";
+const QWEN_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 const GEMINI_MODEL = "gemini-2.5-flash";
 
 const PROMPTS = {
@@ -90,12 +91,45 @@ const PROMPTS = {
       `想纪念的瞬间/想表达的：${highlight || "未填"}\n基调：${tone || "温暖"}`,
     cfg: { temperature: 0.9, maxTokens: 500 },
   }),
+  invitationCopy: ({ groom, bride, date, city, venue, style, story }) => ({
+    sys:
+      "你是中文婚礼请帖文案策划。请为电子请帖生成可直接使用的文案。" +
+      "输出 Markdown，结构固定为：## 请帖标题、## 开场邀请、## 婚礼信息、## 朋友圈分享文案、## 短信/微信邀请。" +
+      "文字要体面、温暖、适合新人直接复制，不要夸张营销，不要虚构具体地址。每个版本都要简洁。",
+    user:
+      `新郎：${groom || "未填"}\n新娘：${bride || "未填"}\n婚期：${date || "未填"}\n` +
+      `城市：${city || "未填"}\n场地：${venue || "未填"}\n风格：${style || "温柔正式"}\n` +
+      `爱情故事/想表达的重点：${story || "未填"}`,
+    cfg: { temperature: 0.82, maxTokens: 1200 },
+  }),
+  weddingPlan: ({ city, date, budget, guests, style, priorities }) => ({
+    sys:
+      "你是资深婚礼策划总监。请基于新人输入，生成一份可执行的婚礼筹备方案。" +
+      "输出 Markdown，必须包含：## 方案定位、## 预算拆分、## 当天流程、## 供应商选择、## 风险提醒、## 下一步清单。" +
+      "预算拆分要给出人民币金额区间和比例；流程要按时间段；建议要具体、克制、可落地。" +
+      "如果信息缺失，用合理假设并明确写出假设。",
+    user:
+      `城市：${city || "未填"}\n婚期：${date || "未填"}\n总预算：${budget || "未填"}\n` +
+      `宾客人数：${guests || "未填"}\n婚礼风格：${style || "未填"}\n优先事项：${priorities || "未填"}`,
+    cfg: { temperature: 0.72, maxTokens: 2200 },
+  }),
+  cityPlan: ({ city, season, budget, guests, customs, focus }) => ({
+    sys:
+      "你是熟悉中国城市婚俗和婚礼预算的编辑型策划师。请生成一个城市婚礼方案。" +
+      "输出 Markdown，必须包含：## 城市婚礼特点、## 婚俗沟通清单、## 预算建议、## 场地与服务商选择、## 视频/直播建议、## 可分享给家人的确认清单。" +
+      "避免编造具体商家；如涉及地方习俗，使用'建议与双方长辈和当地团队确认'的表述。",
+    user:
+      `城市：${city || "未填"}\n季节：${season || "未填"}\n预算：${budget || "未填"}\n` +
+      `宾客人数：${guests || "未填"}\n已知习俗/家庭要求：${customs || "未填"}\n重点关注：${focus || "预算、流程、婚俗"}`,
+    cfg: { temperature: 0.7, maxTokens: 2000 },
+  }),
 };
 
 // ---------- 模型适配 ----------
-async function callQwen({ key, sys, user, cfg }) {
+async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
+  const root = String(baseUrl || QWEN_BASE_URL).replace(/\/+$/, "");
   const r = await fetch(
-    "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    `${root}/chat/completions`,
     {
       method: "POST",
       headers: {
@@ -103,7 +137,7 @@ async function callQwen({ key, sys, user, cfg }) {
         authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model: QWEN_MODEL,
+        model: model || QWEN_MODEL,
         messages: [
           { role: "system", content: sys },
           { role: "user", content: user },
@@ -148,6 +182,8 @@ export const onRequestPost = async ({ request, env }) => {
   if (!rateLimit(getIp(request), 12)) return json(429, { ok: false, error: "请稍后再试" });
 
   const qwenKey = env.DASHSCOPE_API_KEY;
+  const qwenBaseUrl = env.BAILIAN_BASE_URL || env.DASHSCOPE_BASE_URL || QWEN_BASE_URL;
+  const qwenModel = env.BAILIAN_MODEL || env.DASHSCOPE_MODEL || QWEN_MODEL;
   const geminiKey = env.GEMINI_API_KEY;
   if (!qwenKey && !geminiKey) return json(503, { ok: false, error: "AI 服务尚未配置" });
 
@@ -162,7 +198,7 @@ export const onRequestPost = async ({ request, env }) => {
 
   // 优先 qwen，失败兜底 gemini
   const order = [];
-  if (qwenKey) order.push({ name: "qwen-plus", fn: () => callQwen({ key: qwenKey, sys, user, cfg }) });
+  if (qwenKey) order.push({ name: qwenModel, fn: () => callQwen({ key: qwenKey, baseUrl: qwenBaseUrl, model: qwenModel, sys, user, cfg }) });
   if (geminiKey) order.push({ name: "gemini-2.5-flash", fn: () => callGemini({ key: geminiKey, sys, user, cfg }) });
 
   let lastErr;
