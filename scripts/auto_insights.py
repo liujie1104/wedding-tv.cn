@@ -213,7 +213,7 @@ footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color
     <a class="brand" href="/">wedding-tv.cn</a>
     <nav>
       <a href="/">首页</a>
-      <a href="/news/">📰 资讯</a>
+      <a href="/guide.html">📖 指南</a>
       <a href="/insights/">📊 洞察</a>
       <a href="/blog.html">博客</a>
     </nav>
@@ -357,11 +357,9 @@ INDEX_TEMPLATE = """<!doctype html>
 <title>婚礼行业洞察 | wedding-tv.cn</title>
 <meta name="description" content="wedding-tv.cn 行业研究组出品的婚礼 / 婚庆 / 婚恋深度洞察长文，每周更新。" />
 <meta name="keywords" content="婚礼行业,婚庆趋势,婚礼洞察,婚礼研究,wedding insights" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/insights/" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📊</text></svg>" />
 <style>
 :root{{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}}
@@ -388,7 +386,7 @@ footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color
     <a class="brand" href="/">wedding-tv.cn</a>
     <nav>
       <a href="/">首页</a>
-      <a href="/news/">📰 资讯</a>
+      <a href="/guide.html">📖 指南</a>
       <a href="/insights/">📊 洞察</a>
       <a href="/blog.html">博客</a>
     </nav>
@@ -448,16 +446,6 @@ def update_sitemap(slug: str, pub_date: str) -> None:
     if not SITEMAP.exists():
         return
     xml = SITEMAP.read_text("utf-8")
-    if "https://wedding-tv.cn/insights/</loc>" not in xml:
-        xml = xml.replace(
-            "</urlset>",
-            "  <url>\n"
-            "    <loc>https://wedding-tv.cn/insights/</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>weekly</changefreq>\n"
-            "    <priority>0.85</priority>\n"
-            "  </url>\n</urlset>",
-        )
     url = f"https://wedding-tv.cn/insights/{slug}.html"
     if url not in xml:
         xml = xml.replace(
@@ -472,7 +460,6 @@ def update_sitemap(slug: str, pub_date: str) -> None:
 
     # 刷新核心索引页 lastmod，提升抓取时效信号
     for loc in [
-        "https://wedding-tv.cn/insights/",
         "https://wedding-tv.cn/blog.html",
     ]:
         xml = re.sub(

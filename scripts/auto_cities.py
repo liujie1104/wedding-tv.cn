@@ -469,11 +469,9 @@ INDEX_TEMPLATE = """<!doctype html>
 <title>地级市婚俗大全 | wedding-tv.cn</title>
 <meta name="description" content="wedding-tv.cn 中国 100+ 地级市婚俗指南：本地特色、彩礼区间、婚宴菜肴、流程礼节，每日新增。" />
 <meta name="keywords" content="地级市婚俗,城市婚礼,本地婚俗,中国婚俗,wedding-tv.cn" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/blog/cities/" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🏙️</text></svg>" />
 <style>
 :root{{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}}
@@ -503,7 +501,7 @@ footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color
       <a href="/">首页</a>
       <a href="/blog.html">博客</a>
       <a href="/blog/cities/">🏙️ 地级市</a>
-      <a href="/news/">📰 资讯</a>
+      <a href="/guide.html">📖 指南</a>
       <a href="/insights/">📊 洞察</a>
     </nav>
   </div>
@@ -557,16 +555,6 @@ def update_sitemap(slugs: list[str], pub_date: str) -> None:
     if not slugs or not SITEMAP.exists():
         return
     xml = SITEMAP.read_text("utf-8")
-    if "https://wedding-tv.cn/blog/cities/</loc>" not in xml:
-        xml = xml.replace(
-            "</urlset>",
-            "  <url>\n"
-            "    <loc>https://wedding-tv.cn/blog/cities/</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>daily</changefreq>\n"
-            "    <priority>0.85</priority>\n"
-            "  </url>\n</urlset>",
-        )
     for slug in slugs:
         url = f"https://wedding-tv.cn/blog/cities/{slug}.html"
         if url in xml:
@@ -583,7 +571,6 @@ def update_sitemap(slugs: list[str], pub_date: str) -> None:
 
     # 刷新核心索引页 lastmod，提升抓取时效信号
     for loc in [
-        "https://wedding-tv.cn/blog/cities/",
         "https://wedding-tv.cn/blog.html",
     ]:
         xml = re.sub(

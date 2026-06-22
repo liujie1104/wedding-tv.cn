@@ -9,7 +9,7 @@ wedding-tv.cn 全自动婚礼热点资讯生成器
   3. 与 news_state.json 已发布列表去重
   4. 调通义千问 qwen-plus-latest 生成原创点评文章（JSON）
   5. 渲染 HTML（与站点风格一致，带 Article + FAQPage Schema）
-  6. 更新 sitemap.xml、news/index.html、blog.html 入口
+  6. 更新 news/index.html（新闻页不进入 sitemap，避免 AdSense 审核期聚合内容拉低质量信号）
   7. 写回 news_state.json
 
 环境变量：
@@ -328,7 +328,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <title>{title_esc} | wedding-tv.cn 婚礼热点</title>
 <meta name="description" content="{summary_esc}" />
 <meta name="keywords" content="{keywords_csv}" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/news/{slug}.html" />
 <meta property="og:title" content="{title_esc}" />
 <meta property="og:description" content="{summary_esc}" />
@@ -340,8 +340,6 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta name="twitter:description" content="{summary_esc}" />
 <meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📰</text></svg>" />
 <script type="application/ld+json">
 {article_ld}
@@ -380,7 +378,7 @@ footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color
     <a class="brand" href="/">wedding-tv.cn</a>
     <nav>
       <a href="/">首页</a>
-      <a href="/news/">📰 资讯</a>
+      <a href="/guide.html">📖 指南</a>
       <a href="/blog.html">博客</a>
       <a href="/almanac.html">📅 吉日</a>
       <a href="/invitation.html">💌 请帖</a>
@@ -523,11 +521,9 @@ NEWS_INDEX_TEMPLATE = """<!doctype html>
 <title>婚礼热点资讯 | wedding-tv.cn</title>
 <meta name="description" content="wedding-tv.cn 婚礼行业热点资讯：每天自动汇总并点评婚礼、婚庆、婚恋领域的最新热点话题。" />
 <meta name="keywords" content="婚礼新闻,婚庆资讯,婚恋热点,婚礼热点,wedding news" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/news/" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📰</text></svg>" />
 <style>
 :root{{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}}
@@ -554,7 +550,7 @@ footer{{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color
     <a class="brand" href="/">wedding-tv.cn</a>
     <nav>
       <a href="/">首页</a>
-      <a href="/news/">📰 资讯</a>
+      <a href="/guide.html">📖 指南</a>
       <a href="/blog.html">博客</a>
       <a href="/almanac.html">📅 吉日</a>
       <a href="/invitation.html">💌 请帖</a>
@@ -624,69 +620,12 @@ def rebuild_news_index() -> None:
 
 
 def update_sitemap(new_slugs: list[str], pub_date: str) -> None:
-    if not new_slugs or not SITEMAP.exists():
-        return
-    xml = SITEMAP.read_text("utf-8")
-
-    # 加 /news/ 索引（只加一次）
-    if "https://wedding-tv.cn/news/</loc>" not in xml:
-        block = (
-            "  <url>\n"
-            "    <loc>https://wedding-tv.cn/news/</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>daily</changefreq>\n"
-            "    <priority>0.85</priority>\n"
-            "  </url>\n"
-        )
-        xml = xml.replace("</urlset>", block + "</urlset>")
-
-    for slug in new_slugs:
-        url = f"https://wedding-tv.cn/news/{slug}.html"
-        if url in xml:
-            continue
-        block = (
-            "  <url>\n"
-            f"    <loc>{url}</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>monthly</changefreq>\n"
-            "    <priority>0.7</priority>\n"
-            "  </url>\n"
-        )
-        xml = xml.replace("</urlset>", block + "</urlset>")
-
-    # 刷新核心索引页 lastmod，提升抓取时效信号
-    for loc in [
-        "https://wedding-tv.cn/news/",
-        "https://wedding-tv.cn/blog.html",
-    ]:
-        xml = re.sub(
-            rf"(<loc>{re.escape(loc)}</loc>\s*<lastmod>)([^<]+)(</lastmod>)",
-            rf"\g<1>{pub_date}\g<3>",
-            xml,
-            count=1,
-        )
-
-    SITEMAP.write_text(xml, "utf-8")
-    log(f"  ✓ sitemap.xml 已写入 {len(new_slugs)} 条新 URL")
+    log("  · news 页面为 noindex，跳过 sitemap 写入")
 
 
 def ensure_blog_index_entry() -> None:
-    """在 blog.html 的导航里加一个 /news/ 入口（幂等）。"""
-    if not BLOG_INDEX.exists():
-        return
-    txt = BLOG_INDEX.read_text("utf-8")
-    if 'href="/news/"' in txt:
-        return
-    # 在第一个 <nav> 里追加
-    new_txt, n = re.subn(
-        r'(<nav[^>]*>\s*(?:<a[^>]*>[^<]*</a>\s*)*)',
-        r'\1<a href="/news/">📰 资讯</a>',
-        txt,
-        count=1,
-    )
-    if n:
-        BLOG_INDEX.write_text(new_txt, "utf-8")
-        log("  ✓ blog.html 已加 /news/ 导航入口")
+    """AdSense 审核期不把自动新闻入口挂到核心博客导航。"""
+    return
 
 
 # ---------- 主流程 ----------

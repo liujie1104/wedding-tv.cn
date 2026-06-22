@@ -27,6 +27,12 @@
    - 从 `sitemap.xml` 移除 `news/`、`insights/` 索引和 `blog/cities/` 薄索引入口。
    - sitemap URL 数量从 110 收窄到 59，保留首页、核心工具、指南、地域婚俗长文、深度洞察文章和政策页。
 
+5. **自动化任务兼容**
+   - 合并远端 `main` 的自动新闻、城市婚俗和洞察任务产物。
+   - 调整 `scripts/auto_news.py`，后续自动新闻默认 `noindex,follow`、不加载 AdSense、不写入 sitemap、不向核心博客导航添加新闻入口。
+   - 调整 `scripts/auto_cities.py` 与 `scripts/auto_insights.py`，后续薄索引页保持 `noindex,follow` 且不加载广告，详情长文继续可索引。
+   - 重新生成 sitemap，保留远端新增的城市婚俗和洞察长文，排除自动新闻和薄索引页。
+
 ## 复审前建议
 
 1. 部署后等待 Google 重新抓取 sitemap 和首页。
