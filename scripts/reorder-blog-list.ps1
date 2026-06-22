@@ -1,4 +1,4 @@
-﻿# 重排 blog.html 的卡片：按地理分区分组并加锚点 H3
+﻿﻿# 重排 blog.html 的卡片：按地理分区分组并加锚点 H3
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot\..
 $file = 'blog.html'
@@ -54,7 +54,7 @@ foreach ($z in $zones.Keys) {
   }
 }
 [void]$sb.AppendLine('</div>')
-[void]$sb.Append('<!-- AdSense ad2')
+[void]$sb.Append('<!-- AdSense ad2 -->')
 
 $newHtml = $gridBlockRegex.Replace($html, $sb.ToString(), 1)
 

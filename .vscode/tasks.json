@@ -1,0 +1,149 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "git-commit-push-automation-fixes",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"scripts/auto_news.py",
+				"scripts/auto_insights.py",
+				"scripts/auto_cities.py",
+				";",
+				"git",
+				"commit",
+				"-m",
+				"feat(automation): 增加新闻近似去重并刷新sitemap核心页lastmod",
+				";",
+				"git",
+				"push"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "git-rebase-and-push",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"pull",
+				"--rebase",
+				"origin",
+				"main",
+				";",
+				"git",
+				"push",
+				"origin",
+				"main"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "check-git-and-key-lines",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short",
+				";",
+				"git",
+				"log",
+				"--oneline",
+				"-5",
+				";",
+				"powershell",
+				"-NoProfile",
+				"-Command",
+				"Select-String -Path sitemap.xml -Pattern '<loc>https://wedding-tv.cn/blog.html</loc>|<loc>https://wedding-tv.cn/news/</loc>|<loc>https://wedding-tv.cn/insights/</loc>|<loc>https://wedding-tv.cn/blog/cities/</loc>' -Context 0,2 | ForEach-Object { $_.Line; $_.Context.PostContext }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "git-status-short",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "rebuild-news-and-rss",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"scripts/auto_news.py"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "rebuild-index-and-rss-no-ai",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-c",
+				"import sys; sys.path.insert(0,'scripts'); import auto_news, rss_builder; auto_news.rebuild_news_index(); print('news-index rebuilt'); n=rss_builder.build_rss(); print(f'rss rebuilt {n} items')"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "rebuild-index-and-rss-no-ai-2",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-c",
+				"import sys;sys.path.insert(0,\"scripts\");import auto_news,rss_builder;auto_news.rebuild_news_index();print(\"news-index rebuilt\");n=rss_builder.build_rss();print(\"rss rebuilt\",n,\"items\")"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "git-status-after-rebuild",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"status",
+				"--short"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "commit-push-dedup-display-layer",
+			"type": "shell",
+			"command": "git",
+			"args": [
+				"add",
+				"scripts/auto_news.py",
+				"scripts/rss_builder.py",
+				"news/index.html",
+				"rss.xml",
+				";",
+				"git",
+				"commit",
+				"-m",
+				"feat(content-quality): 展示层与RSS近似去重，折叠历史重复稿",
+				";",
+				"git",
+				"push",
+				"origin",
+				"main"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "commit-push-sitemap-lastmod-refresh",
+			"type": "shell",
+			"command": "git add sitemap.xml ; git commit -m \"fix(seo): refresh sitemap lastmod for blog/news/insights/cities\" ; git push origin main"
+		},
+		{
+			"label": "commit-push-sitemap-lastmod-refresh-v2",
+			"type": "shell",
+			"command": "git add sitemap.xml ; git commit -m \"refresh sitemap lastmod\" ; git push origin main"
+		},
+		{
+			"label": "commit-push-sitemap-lastmod-refresh-v3",
+			"type": "shell",
+			"command": "git add sitemap.xml ; git commit -m refresh_sitemap_lastmod ; git push origin main"
+		}
+	]
+}
