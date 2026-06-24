@@ -1,4 +1,4 @@
-﻿# 生成 34 个省/直辖市/自治区/特别行政区的婚俗文章
+# 生成 34 个省/直辖市/自治区/特别行政区的婚俗文章
 # 用法：在仓库根目录运行 powershell -File scripts/generate-blog.ps1
 # 输出：blog/{slug}.html
 
@@ -76,7 +76,6 @@ foreach ($r in $REGIONS) {
 <meta property="og:url" content="$url" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📚</text></svg>" />
 <script type="application/ld+json">

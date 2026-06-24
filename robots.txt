@@ -1,7 +1,10 @@
 # robots.txt for wedding-tv.cn
 User-agent: *
 Allow: /
-Disallow:
+Disallow: /*-en.html
+Disallow: /en.html
+Disallow: /tools-en.html
+Disallow: /blog-global-en.html
 
 User-agent: Googlebot
 Allow: /

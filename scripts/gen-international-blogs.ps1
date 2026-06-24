@@ -1,4 +1,4 @@
-﻿# 生成 4 个国际婚俗 blog 页面
+# 生成 4 个国际婚俗 blog 页面
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot\..
 
@@ -282,7 +282,6 @@ foreach ($p in $pages) {
 <meta name="twitter:description" content="$($p.desc)" />
 <meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
 <script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <script type="application/ld+json">$faqJsonLd</script>
 <script type="application/ld+json">$articleJsonLd</script>
