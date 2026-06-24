@@ -269,7 +269,7 @@ foreach ($p in $pages) {
 <title>$title</title>
 <meta name="description" content="$($p.desc)" />
 <meta name="keywords" content="$($p.keywords)" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="$url" />
 <link rel="manifest" href="/manifest.webmanifest" />
 <meta property="og:title" content="$titleNoSite" />
@@ -282,7 +282,6 @@ foreach ($p in $pages) {
 <meta name="twitter:description" content="$($p.desc)" />
 <meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <script type="application/ld+json">$faqJsonLd</script>
 <script type="application/ld+json">$articleJsonLd</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>$($p.emoji)</text></svg>" />
