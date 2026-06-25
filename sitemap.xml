@@ -8,7 +8,7 @@
   </url>
   <url>
     <loc>https://wedding-tv.cn/blog.html</loc>
-    <lastmod>2026-06-24</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -825,6 +825,18 @@
   <url>
     <loc>https://wedding-tv.cn/blog/cities/dali.html</loc>
     <lastmod>2026-06-24</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/blog/cities/lijiang.html</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://wedding-tv.cn/blog/cities/xishuangbanna.html</loc>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.75</priority>
   </url>
