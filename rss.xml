@@ -6,70 +6,22 @@
   <atom:link href="https://wedding-tv.cn/rss.xml" rel="self" type="application/rss+xml" />
   <description>每日婚礼热点、每周行业洞察、全国婚俗及地级市婚俗完全指南</description>
   <language>zh-CN</language>
-  <lastBuildDate>Sat, 27 Jun 2026 07:03:48 +0000</lastBuildDate>
+  <lastBuildDate>Sat, 27 Jun 2026 12:26:14 +0000</lastBuildDate>
   <generator>wedding-tv.cn rss_builder</generator>
-  <item>
-    <title><![CDATA[西藏婚俗完全手册 - 献哈达、喝青稞酒与神圣的藏族婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/xizang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/xizang.html</guid>
-    <description><![CDATA[西藏婚俗完全手册：献哈达、喝青稞酒与神圣的藏族婚礼详解。含拉萨婚俗、藏传佛教仪式、白色哈达文化、酥油茶宴席、高原风俗、现代拉萨新人的婚礼选择与创新。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[云南婚俗完全指南 - 白族掐新娘、傣族拴线与25民族婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/yunnan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/yunnan.html</guid>
-    <description><![CDATA[云南婚俗完全指南：白族掐新娘、傣族拴线与25民族婚礼融合。详解白族三道茶、傣族泼水、彝族传统、哈尼梯田文化、云南美食宴席、彩云之南的多民族婚礼。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[浙江婚俗完全手册 - 十里红妆、女儿酒与江南传统婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/zhejiang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/zhejiang.html</guid>
-    <description><![CDATA[浙江婚俗完全手册：十里红妆、女儿酒与江南传统婚礼详解。含绍兴婚俗、宁波特色、杭州风尚、浙菜宴席、女儿酒文化、钱塘江两岸的婚礼创新实践。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[新疆婚俗完全指南 - 维吾尔尼卡哈、麦西热甫与多民族婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/xinjiang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/xinjiang.html</guid>
-    <description><![CDATA[新疆婚俗完全指南：维吾尔尼卡哈、麦西热甫与多民族婚礼融合。含维吾尔服饰、伊斯兰仪式、哈萨克传统、柯尔克孜风俗、丝路美食宴席、新疆多民族婚礼文化融合。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[香港婚俗完全手册 - 过大礼、大妗姐与中西合璧的维港婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/xianggang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/xianggang.html</guid>
-    <description><![CDATA[香港婚俗完全手册：过大礼、大妗姐与中西合璧的维港婚礼融合。详解香港特色、英文誓词、中式敬茶、粤菜宴席、大妗姐传统角色、现代国际化香港婚礼新风尚。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[青海婚俗完全手册 - 藏族献哈达、土族婚礼歌与多民族融合]]></title>
-    <link>https://wedding-tv.cn/blog/qinghai.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/qinghai.html</guid>
-    <description><![CDATA[青海婚俗完全手册：藏族献哈达、土族婚礼歌与多民族融合详解。含青藏高原特色、藏传佛教影响、土族新娘歌、格萨尔文化、高原美食宴席、多民族婚礼创意融合。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[吉林婚俗完全手册 - 朝鲜族传统、延边特色与现代吉林婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/jilin.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/jilin.html</guid>
-    <description><![CDATA[吉林婚俗完全手册：朝鲜族传统、延边特色与现代吉林婚礼融合。详解长春婚俗、朝鲜族服饰与仪式、延边美食文化、东北特色习俗、满族遗风、当代吉林新人的婚礼选择。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
   <item>
     <title><![CDATA[天津婚俗完全指南 - 换盅仪式、子孙桶与八大碗婚宴文化]]></title>
     <link>https://wedding-tv.cn/blog/tianjin.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/tianjin.html</guid>
     <description><![CDATA[天津婚俗完全指南：换盅仪式、子孙桶与八大碗婚宴文化详解。含津味美食宴席、传统习俗、京津冀融合特色、改口礼仪、天津人的婚礼讲究、现代天津新人的创新选择。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[西藏婚俗完全手册 - 献哈达、喝青稞酒与神圣的藏族婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/xizang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/xizang.html</guid>
+    <description><![CDATA[西藏婚俗完全手册：献哈达、喝青稞酒与神圣的藏族婚礼详解。含拉萨婚俗、藏传佛教仪式、白色哈达文化、酥油茶宴席、高原风俗、现代拉萨新人的婚礼选择与创新。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -77,15 +29,15 @@
     <link>https://wedding-tv.cn/blog/taiwan.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/taiwan.html</guid>
     <description><![CDATA[台湾婚俗完全手册：闽南传统、六礼仪式与现代台北婚礼融合。详解台北台中高雄差异、闽南传统保留、日本文化影响、台菜宴席、创意小型婚礼、海峡两岸婚俗对比。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[陕西婚俗完全指南 - 周礼遗风、唢呐迎亲与陕北传统婚俗]]></title>
-    <link>https://wedding-tv.cn/blog/shaanxi.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/shaanxi.html</guid>
-    <description><![CDATA[陕西婚俗完全指南：周礼遗风、唢呐迎亲与陕北传统婚俗详解。含陕西黄土地风俗、唢呐八音、秦腔文化、陕西菜宴席、陕北婚礼特色、当代西安新人的创新选择。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[云南婚俗完全指南 - 白族掐新娘、傣族拴线与25民族婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/yunnan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/yunnan.html</guid>
+    <description><![CDATA[云南婚俗完全指南：白族掐新娘、傣族拴线与25民族婚礼融合。详解白族三道茶、傣族泼水、彝族传统、哈尼梯田文化、云南美食宴席、彩云之南的多民族婚礼。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -93,7 +45,7 @@
     <link>https://wedding-tv.cn/blog/vietnam.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/vietnam.html</guid>
     <description><![CDATA[越南婚俗完全手册：传统三书六礼、áo dài 国服、Lễ Dạm Ngõ 问名礼、Lễ Hỏi 订婚、Lễ Rước Dâu 迎亲、敬祖宗（Lễ Gia Tiên）与河内、胡志明市的现代婚礼实践。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -101,7 +53,7 @@
     <link>https://wedding-tv.cn/blog/thailand.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/thailand.html</guid>
     <description><![CDATA[泰国婚俗完全手册：佛教僧侣祝福、洒圣水（Rod Nam Sang）、聘金 Sin Sod 议价、九对长老牵手仪式（Sai Monkhol）、传统泰服 Chut Thai 与现代度假婚礼指南。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -109,7 +61,7 @@
     <link>https://wedding-tv.cn/blog/shanxi.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/shanxi.html</guid>
     <description><![CDATA[山西婚俗完全手册：晋商文化、八碟八碗与传统山西婚礼详解。含晋中特色、晋商宴席文化、煤矿区习俗、山西彩礼讲究、当代太原婚俗、晋人婚礼的商业文化特质。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -117,15 +69,15 @@
     <link>https://wedding-tv.cn/blog/sichuan.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/sichuan.html</guid>
     <description><![CDATA[四川婚俗完全指南：坝坝宴、闹洞房与蜀绣秀禾传统详解。含成都新都婚俗、川菜宴席特色、川西民族风俗、蜀绣婚服、闹洞房传统、现代蜀人的婚礼创新实践。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[宁夏婚俗完全指南 - 回族尼卡哈、撒喜仪式与清真婚宴文化]]></title>
-    <link>https://wedding-tv.cn/blog/ningxia.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/ningxia.html</guid>
-    <description><![CDATA[宁夏婚俗完全指南：回族尼卡哈、撒喜仪式与清真婚宴文化详解。含阿拉伯传统影响、清真宴席特色、改口仪式、多民族融合、银川婚俗特色、回族新人的婚礼禁忌与创新。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[浙江婚俗完全手册 - 十里红妆、女儿酒与江南传统婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/zhejiang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/zhejiang.html</guid>
+    <description><![CDATA[浙江婚俗完全手册：十里红妆、女儿酒与江南传统婚礼详解。含绍兴婚俗、宁波特色、杭州风尚、浙菜宴席、女儿酒文化、钱塘江两岸的婚礼创新实践。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -133,23 +85,15 @@
     <link>https://wedding-tv.cn/blog/shanghai.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/shanghai.html</guid>
     <description><![CDATA[上海婚俗完全指南：海派风俗、十里红妆与现代摩登婚礼融合。详解石库门文化、租界特色、上海滩彩礼、淮扬菜宴席、时尚都市婚礼、海派创意与传统的碰撞融合。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[内蒙古婚俗完全手册 - 蒙古族传统、拜火仪式与全羊宴文化]]></title>
-    <link>https://wedding-tv.cn/blog/neimenggu.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/neimenggu.html</guid>
-    <description><![CDATA[内蒙古婚俗完全手册：蒙古族传统、拜火仪式与全羊宴文化详解。含草原婚礼特色、白马献礼、敬酒仪式、骑马迎亲、蒙古包宴席、牧区与城市婚礼融合创新。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[辽宁婚俗完全指南 - 满族旗袍、酸菜白肉与东北传统婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/liaoning.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/liaoning.html</guid>
-    <description><![CDATA[辽宁婚俗完全指南：满族旗袍、酸菜白肉与东北传统婚礼详解。含沈阳彩礼讲究、旗袍文化、萨满仪式影响、东北菜宴席特色、辽河流域习俗、现代沈阳婚礼趋势。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[新疆婚俗完全指南 - 维吾尔尼卡哈、麦西热甫与多民族婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/xinjiang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/xinjiang.html</guid>
+    <description><![CDATA[新疆婚俗完全指南：维吾尔尼卡哈、麦西热甫与多民族婚礼融合。含维吾尔服饰、伊斯兰仪式、哈萨克传统、柯尔克孜风俗、丝路美食宴席、新疆多民族婚礼文化融合。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -157,7 +101,39 @@
     <link>https://wedding-tv.cn/blog/shandong.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/shandong.html</guid>
     <description><![CDATA[山东婚俗完全手册：儒家传统、万紫千红与胶东压床习俗详解。含烟台威海沿海特色、胶东风俗、山东彩礼讲究、鲁菜宴席、儒文化影响、现代山东婚礼新风尚。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[香港婚俗完全手册 - 过大礼、大妗姐与中西合璧的维港婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/xianggang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/xianggang.html</guid>
+    <description><![CDATA[香港婚俗完全手册：过大礼、大妗姐与中西合璧的维港婚礼融合。详解香港特色、英文誓词、中式敬茶、粤菜宴席、大妗姐传统角色、现代国际化香港婚礼新风尚。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[青海婚俗完全手册 - 藏族献哈达、土族婚礼歌与多民族融合]]></title>
+    <link>https://wedding-tv.cn/blog/qinghai.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/qinghai.html</guid>
+    <description><![CDATA[青海婚俗完全手册：藏族献哈达、土族婚礼歌与多民族融合详解。含青藏高原特色、藏传佛教影响、土族新娘歌、格萨尔文化、高原美食宴席、多民族婚礼创意融合。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[吉林婚俗完全手册 - 朝鲜族传统、延边特色与现代吉林婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/jilin.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/jilin.html</guid>
+    <description><![CDATA[吉林婚俗完全手册：朝鲜族传统、延边特色与现代吉林婚礼融合。详解长春婚俗、朝鲜族服饰与仪式、延边美食文化、东北特色习俗、满族遗风、当代吉林新人的婚礼选择。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[江西婚俗完全指南 - 赣南客家、瓦罐汤与传统抹黑脸习俗详解]]></title>
+    <link>https://wedding-tv.cn/blog/jiangxi.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/jiangxi.html</guid>
+    <description><![CDATA[江西婚俗完全指南：赣南客家、瓦罐汤与传统抹黑脸习俗详解。含提亲到回门流程、客家拜祠堂、抹黑脸驱邪、三朝回门看七日、彩礼讲究、赣式秀禾特色。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -165,7 +141,7 @@
     <link>https://wedding-tv.cn/blog/jiangsu.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/jiangsu.html</guid>
     <description><![CDATA[江苏婚俗完全手册：江南古礼、苏州传统与现代南京婚礼融合。详解十里红妆文化、苏州园林婚礼、金陵彩礼讲究、苏帮菜宴席、江南水乡特色、当代江浙沪差异化婚礼。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -173,7 +149,7 @@
     <link>https://wedding-tv.cn/blog/heilongjiang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/heilongjiang.html</guid>
     <description><![CDATA[黑龙江婚俗完全手册：东北豪爽、满族传统与现代冰城婚礼融合。详解哈尔滨婚俗、东北二人转文化、满族服饰与礼仪、冰城特色宴席、东北婚礼热情特色与现代创新。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -181,15 +157,7 @@
     <link>https://wedding-tv.cn/blog/hebei.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/hebei.html</guid>
     <description><![CDATA[河北婚俗完全指南：燕赵风俗、京冀差异与传统婚礼流程详解。含石家庄彩礼讲究、张家口塞外风俗、沿海婚俗、南北方融合特色、河北新人的婚礼禁忌与创新。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[贵州婚俗完全指南 - 苗侗彝布的传统婚礼与民族特色习俗]]></title>
-    <link>https://wedding-tv.cn/blog/guizhou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/guizhou.html</guid>
-    <description><![CDATA[贵州婚俗完全指南：苗侗彝布的传统婚礼与民族特色习俗。详解黔东苗族姊妹饭、黔西彝族传统、侗族风俗、布依族文化、婚礼服饰与歌舞传统、多民族融合特色。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -197,15 +165,15 @@
     <link>https://wedding-tv.cn/blog/hubei.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/hubei.html</guid>
     <description><![CDATA[湖北婚俗完全手册：荆楚古礼、鄂西民俗与现代武汉婚礼融合。详解武汉三镇婚俗、鄂西土家族特色、宜昌美食文化、江汉平原习俗、荆楚文化的婚礼新演绎。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[广东婚俗完全指南 - 粤式传统婚礼、过大礼与回门习俗详解]]></title>
-    <link>https://wedding-tv.cn/blog/guangdong.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/guangdong.html</guid>
-    <description><![CDATA[广东婚俗完全指南：粤式传统婚礼、过大礼仪式、回门文化详解。含大妗姐角色、潮汕婚宴十二碗、聘金讲究、秀禾服传统、当代港澳广深差异化婚礼。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[宁夏婚俗完全指南 - 回族尼卡哈、撒喜仪式与清真婚宴文化]]></title>
+    <link>https://wedding-tv.cn/blog/ningxia.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/ningxia.html</guid>
+    <description><![CDATA[宁夏婚俗完全指南：回族尼卡哈、撒喜仪式与清真婚宴文化详解。含阿拉伯传统影响、清真宴席特色、改口仪式、多民族融合、银川婚俗特色、回族新人的婚礼禁忌与创新。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -213,47 +181,31 @@
     <link>https://wedding-tv.cn/blog/indonesia.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/indonesia.html</guid>
     <description><![CDATA[印尼婚俗完全手册：爪哇 Siraman 沐浴礼、Midodareni 守夜、巴厘岛印度教 Mekala-kalaan 仪式、伊斯兰 Akad Nikah 婚约、Adat 传统服饰与多民族跨宗教婚礼实践。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[甘肃婚俗完全手册 - 丝路文化中的传统婚礼与多民族融合]]></title>
-    <link>https://wedding-tv.cn/blog/gansu.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/gansu.html</guid>
-    <description><![CDATA[甘肃婚俗完全手册：丝路文化中的传统婚礼与多民族融合。详解兰州婚俗、陇东彩礼、藏传佛教影响、回族尼卡哈仪式、丝路商道婚礼特色、现代甘肃新人的选择。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[内蒙古婚俗完全手册 - 蒙古族传统、拜火仪式与全羊宴文化]]></title>
+    <link>https://wedding-tv.cn/blog/neimenggu.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/neimenggu.html</guid>
+    <description><![CDATA[内蒙古婚俗完全手册：蒙古族传统、拜火仪式与全羊宴文化详解。含草原婚礼特色、白马献礼、敬酒仪式、骑马迎亲、蒙古包宴席、牧区与城市婚礼融合创新。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
-    <title><![CDATA[海南婚俗完全手册 - 黎苗传统、海派风俗与现代海南婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/hainan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/hainan.html</guid>
-    <description><![CDATA[海南婚俗完全手册：黎苗传统、海派风俗与现代海南婚礼融合。详解海口婚宴特色、三亚旅游婚礼、黎苗服饰文化、椰乡美食宴席、海派创意婚礼、度假目的地婚礼新趋势。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[辽宁婚俗完全指南 - 满族旗袍、酸菜白肉与东北传统婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/liaoning.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/liaoning.html</guid>
+    <description><![CDATA[辽宁婚俗完全指南：满族旗袍、酸菜白肉与东北传统婚礼详解。含沈阳彩礼讲究、旗袍文化、萨满仪式影响、东北菜宴席特色、辽河流域习俗、现代沈阳婚礼趋势。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
-  </item>
-  <item>
-    <title><![CDATA[漳州婚俗指南：闽南古礼与滨海新风交融的婚礼全解析]]></title>
-    <link>https://wedding-tv.cn/blog/cities/zhangzhou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhangzhou.html</guid>
-    <description><![CDATA[漳州婚俗以‘三书六礼’活态传承、‘红龟粿敬祖’仪式感强、‘芗剧迎亲’独具地方戏曲韵味为三大鲜明特色。方言‘呷茶’贯穿提亲全程，婚宴必上卤面与五香卷，土楼群与古城街巷成为热门实景婚礼地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
   </item>
   <item>
     <title><![CDATA[遵义婚俗完全指南：黔北山地婚仪的烟火气与仪式感]]></title>
     <link>https://wedding-tv.cn/blog/cities/zunyi.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zunyi.html</guid>
     <description><![CDATA[遵义婚俗融合黔北屯堡遗风、仡佬族元素与川黔移民文化，三大特色鲜明：一是‘三茶六礼’提亲制保留明代古礼骨架；二是迎亲必经湘江河畔‘过桥踩红毯’象征渡厄纳吉；三是婚宴必备‘遵义羊肉粉+豆花面’双主食配‘茅台镇酱香酒’敬宾。方言称新郎为‘新姑爷’，新娘称‘细妹子’，‘打发钱’用红纸裹五角硬币寓意‘五福临门’。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[湛江婚俗指南：红绸系海风，雷州话讲嫁娶]]></title>
-    <link>https://wedding-tv.cn/blog/cities/zhanjiang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhanjiang.html</guid>
-    <description><![CDATA[湛江婚俗融合雷州文化、疍家传统与滨海民俗：提亲必带‘三样礼’（白糖、桂圆、荔枝干），迎亲用‘红绸牵船’象征疍家上岸，婚宴必备白切鸡配硇洲鲍鱼汤。方言祝福语‘新郎新娘，好命到老’贯穿全程，雷祖祠祈福、金沙湾观日出成新兴仪式节点。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -261,15 +213,7 @@
     <link>https://wedding-tv.cn/blog/cities/zhuhai.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhuhai.html</guid>
     <description><![CDATA[珠海婚俗融合广府传统与滨海侨乡特色：讲求‘好意头’的粤语吉祥话贯穿全程；彩礼以‘六六大顺’‘八发八福’为数理逻辑，实物多含金器与本地海味；迎亲必经情侣路、渔女雕像打卡，婚宴必备横琴蚝、斗门重壳蟹与沙虫粥。方言‘逗利是’‘添丁发财’高频出现，仪式兼具务实与诗意。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[中山婚俗指南：岭南水乡的礼乐婚典]]></title>
-    <link>https://wedding-tv.cn/blog/cities/zhongshan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhongshan.html</guid>
-    <description><![CDATA[中山婚俗融合广府传统与侨乡特色，突出‘三茶六礼’简化传承、‘金猪游街’巡游祈福、‘沙溪扣肉+石岐乳鸽’双主菜婚宴格局。方言中‘掂过碌蔗’（万事顺遂）贯穿仪式全程，小榄菊花会、孙文西路骑楼常作婚礼背景，彩礼以‘五金+利是封’为主流，务实而不失体面。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -277,15 +221,7 @@
     <link>https://wedding-tv.cn/blog/cities/zibo.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zibo.html</guid>
     <description><![CDATA[淄博婚俗以‘三书六礼’根基深厚、‘火盆跨马鞍’仪式庄重、‘周村烧饼作喜饼’独具地域标识著称。方言中‘俺们淄川人讲‘礼数’’贯穿全程；婚宴必上博山酥锅与清梅居酱肘子；临淄故城、周村古商城常作婚摄取景地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[郑州婚俗完全指南：中原礼序与现代烟火的交融]]></title>
-    <link>https://wedding-tv.cn/blog/cities/zhengzhou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhengzhou.html</guid>
-    <description><![CDATA[郑州婚俗以‘三书六礼’为骨、豫剧锣鼓为韵、烩面汤香为魂。特色鲜明：①提亲必携‘枣栗子’谐音‘早立子’，配登封柿饼表‘事事如意’；②迎亲车队绕二七广场一圈讨‘二七吉祥’彩头；③婚宴必上黄河鲤鱼焙面+焖子，寓意‘鱼跃龙门、根脉绵长’。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -293,7 +229,7 @@
     <link>https://wedding-tv.cn/blog/fujian.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/fujian.html</guid>
     <description><![CDATA[福建婚俗完全指南：闽南古礼、闽西客家、闽北风俗的婚礼传统汇总。详解三地婚俗差异、海岛婚礼特色、妆糖文化、走亲习俗、臼鲜鱼宴、海派婚礼新风尚。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
   </item>
   <item>
@@ -301,39 +237,71 @@
     <link>https://wedding-tv.cn/blog/dubai.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/dubai.html</guid>
     <description><![CDATA[迪拜婚俗完全手册：Mahr 聘金、Katb Al-Kitab 婚约仪式、Henna 海娜彩绘之夜、男女分席宴会、阿联酋传统服饰 Abaya 与 Kandura、七星帆船酒店目的地婚礼实践。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[贵州婚俗完全指南 - 苗侗彝布的传统婚礼与民族特色习俗]]></title>
+    <link>https://wedding-tv.cn/blog/guizhou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/guizhou.html</guid>
+    <description><![CDATA[贵州婚俗完全指南：苗侗彝布的传统婚礼与民族特色习俗。详解黔东苗族姊妹饭、黔西彝族传统、侗族风俗、布依族文化、婚礼服饰与歌舞传统、多民族融合特色。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[广东婚俗完全指南 - 粤式传统婚礼、过大礼与回门习俗详解]]></title>
+    <link>https://wedding-tv.cn/blog/guangdong.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/guangdong.html</guid>
+    <description><![CDATA[广东婚俗完全指南：粤式传统婚礼、过大礼仪式、回门文化详解。含大妗姐角色、潮汕婚宴十二碗、聘金讲究、秀禾服传统、当代港澳广深差异化婚礼。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[甘肃婚俗完全手册 - 丝路文化中的传统婚礼与多民族融合]]></title>
+    <link>https://wedding-tv.cn/blog/gansu.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/gansu.html</guid>
+    <description><![CDATA[甘肃婚俗完全手册：丝路文化中的传统婚礼与多民族融合。详解兰州婚俗、陇东彩礼、藏传佛教影响、回族尼卡哈仪式、丝路商道婚礼特色、现代甘肃新人的选择。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[海南婚俗完全手册 - 黎苗传统、海派风俗与现代海南婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/hainan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/hainan.html</guid>
+    <description><![CDATA[海南婚俗完全手册：黎苗传统、海派风俗与现代海南婚礼融合。详解海口婚宴特色、三亚旅游婚礼、黎苗服饰文化、椰乡美食宴席、海派创意婚礼、度假目的地婚礼新趋势。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>婚俗指南</category>
+  </item>
+  <item>
+    <title><![CDATA[漳州婚俗指南：闽南古礼与滨海新风交融的婚礼全解析]]></title>
+    <link>https://wedding-tv.cn/blog/cities/zhangzhou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhangzhou.html</guid>
+    <description><![CDATA[漳州婚俗以‘三书六礼’活态传承、‘红龟粿敬祖’仪式感强、‘芗剧迎亲’独具地方戏曲韵味为三大鲜明特色。方言‘呷茶’贯穿提亲全程，婚宴必上卤面与五香卷，土楼群与古城街巷成为热门实景婚礼地。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
   </item>
   <item>
     <title><![CDATA[宜宾婚俗完全指南：长江首城的麻辣浪漫与竹文化婚礼]]></title>
     <link>https://wedding-tv.cn/blog/cities/yibin.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yibin.html</guid>
     <description><![CDATA[宜宾婚俗融合川南山地、长江码头与僰人遗风：提亲必带五粮液和筠连苦丁茶；迎亲用竹编‘喜箩’盛嫁妆，谐音‘喜落’；婚宴必上李庄白肉、南溪豆腐干配黄粑酒酿汤圆。方言‘讨八字’‘发轿不回头’仍鲜活传承。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[延安婚俗完全指南：黄土高原上的红色婚典与信天游婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/cities/yanan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yanan.html</guid>
-    <description><![CDATA[延安婚俗融合陕北民风、革命传统与黄土文化：一是‘拦门酒’与‘信天游对唱’迎亲仪式，二是彩礼多以‘三金一银’加粮囤（小米、红枣、黄豆）象征丰足，三是婚宴必上‘延安炖羊肉’‘油糕’‘抿节’三道主食，体现‘甜、香、韧’的婚庆寓意。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[湛江婚俗指南：红绸系海风，雷州话讲嫁娶]]></title>
+    <link>https://wedding-tv.cn/blog/cities/zhanjiang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhanjiang.html</guid>
+    <description><![CDATA[湛江婚俗融合雷州文化、疍家传统与滨海民俗：提亲必带‘三样礼’（白糖、桂圆、荔枝干），迎亲用‘红绸牵船’象征疍家上岸，婚宴必备白切鸡配硇洲鲍鱼汤。方言祝福语‘新郎新娘，好命到老’贯穿全程，雷祖祠祈福、金沙湾观日出成新兴仪式节点。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[咸阳婚俗完全指南：秦风古韵里的现代婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/cities/xianyang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xianyang.html</guid>
-    <description><![CDATA[咸阳婚俗以‘秦地礼法为骨、渭北民俗为肉、舌尖乡味为魂’著称：一讲‘三书六礼’在乡村仍具实操性，二重‘压箱钱’与‘拴娃娃’等祈福仪式，三兴‘臊子面定亲’‘甑糕坐帐’等食俗嵌入仪程。方言中‘嫽扎咧’‘婆家屋’高频出现，乾陵、咸阳湖、袁家村常作婚拍背景。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[西双版纳婚俗指南：傣族风情与热带仪式的当代融合]]></title>
-    <link>https://wedding-tv.cn/blog/cities/xishuangbanna.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xishuangbanna.html</guid>
-    <description><![CDATA[西双版纳婚俗以傣族‘拴线礼’为核心，强调佛寺祈福、竹楼迎亲与孔雀舞助兴；彩礼多以银器、织锦、茶山份额等非现金形式体现；婚宴必上酸笋煮鱼、香茅烤鸡、糯米饭团等傣味三宝，并常于澜沧江畔或告庄西双景竹楼举办。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[中山婚俗指南：岭南水乡的礼乐婚典]]></title>
+    <link>https://wedding-tv.cn/blog/cities/zhongshan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhongshan.html</guid>
+    <description><![CDATA[中山婚俗融合广府传统与侨乡特色，突出‘三茶六礼’简化传承、‘金猪游街’巡游祈福、‘沙溪扣肉+石岐乳鸽’双主菜婚宴格局。方言中‘掂过碌蔗’（万事顺遂）贯穿仪式全程，小榄菊花会、孙文西路骑楼常作婚礼背景，彩礼以‘五金+利是封’为主流，务实而不失体面。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -341,7 +309,7 @@
     <link>https://wedding-tv.cn/blog/cities/yantai.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yantai.html</guid>
     <description><![CDATA[烟台婚俗以‘三书六礼’胶东活态传承为根基，突出‘海蛎子味儿’彩礼（含鲅鱼、海参、虾酱）、‘过门三道火’迎亲仪式（跨火盆、踩瓦片、绕渔船），婚宴必上蓬莱小面与长岛海胆蒸蛋。方言‘俺们烟台人讲‘实诚’’贯穿提亲到回门全过程。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -349,7 +317,7 @@
     <link>https://wedding-tv.cn/blog/cities/yangzhou.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yangzhou.html</guid>
     <description><![CDATA[扬州婚俗以‘文雅讲礼、食为媒妁、水韵仪程’著称：提亲必携‘四色礼’（魁圆、长生果、冰糖、糕团），迎亲用‘三桥三亭’水路绕行瘦西湖，婚宴必上三丁包、拆烩鲢鱼头、清炖狮子头三道‘婚宴定鼎菜’。方言中‘好日子’称‘好日脚’，‘订婚’唤作‘过帖’，处处透出淮扬文气。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -357,15 +325,15 @@
     <link>https://wedding-tv.cn/blog/cities/yichang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yichang.html</guid>
     <description><![CDATA[宜昌婚俗融合巴楚遗韵与土家族风情，特色鲜明：一是‘哭嫁’习俗在长阳、五峰等土家聚居区仍存活态传承；二是提亲必带‘三叠礼’（秭归脐橙、宜都蜜橘、枝江白酒）；三是迎亲路线常绕行夷陵大桥或葛洲坝船闸，取‘一坝锁江、百年同心’吉意。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[徐州婚俗完全指南：彭城六礼、辣汤迎亲与云龙山下红妆]]></title>
-    <link>https://wedding-tv.cn/blog/cities/xuzhou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xuzhou.html</guid>
-    <description><![CDATA[徐州婚俗以‘彭城六礼’为根基，保留提亲必带‘八样礼’、迎亲必喝辣汤、婚宴必上‘霸王肘子’三大特色；方言中‘过门’称‘进门’，‘拜堂’唤‘磕头’；融合楚汉文化符号与苏北豪爽气质，云龙湖、户部山、回龙窝常成婚礼取景地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[郑州婚俗完全指南：中原礼序与现代烟火的交融]]></title>
+    <link>https://wedding-tv.cn/blog/cities/zhengzhou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/zhengzhou.html</guid>
+    <description><![CDATA[郑州婚俗以‘三书六礼’为骨、豫剧锣鼓为韵、烩面汤香为魂。特色鲜明：①提亲必携‘枣栗子’谐音‘早立子’，配登封柿饼表‘事事如意’；②迎亲车队绕二七广场一圈讨‘二七吉祥’彩头；③婚宴必上黄河鲤鱼焙面+焖子，寓意‘鱼跃龙门、根脉绵长’。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -373,7 +341,23 @@
     <link>https://wedding-tv.cn/blog/cities/yueyang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yueyang.html</guid>
     <description><![CDATA[岳阳婚俗融合楚文化遗韵与洞庭湖地域特色：提亲必携‘三牲四果’（含君山银针茶）、迎亲用‘八抬花轿’复刻清代巴陵旧制、婚宴必上‘洞庭全鱼席’。方言‘讨八字’‘发轿’仍广泛使用，平江、汨罗等地保留‘哭嫁歌’非遗活态传承。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[延安婚俗完全指南：黄土高原上的红色婚典与信天游婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/cities/yanan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/yanan.html</guid>
+    <description><![CDATA[延安婚俗融合陕北民风、革命传统与黄土文化：一是‘拦门酒’与‘信天游对唱’迎亲仪式，二是彩礼多以‘三金一银’加粮囤（小米、红枣、黄豆）象征丰足，三是婚宴必上‘延安炖羊肉’‘油糕’‘抿节’三道主食，体现‘甜、香、韧’的婚庆寓意。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[咸阳婚俗完全指南：秦风古韵里的现代婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/cities/xianyang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xianyang.html</guid>
+    <description><![CDATA[咸阳婚俗以‘秦地礼法为骨、渭北民俗为肉、舌尖乡味为魂’著称：一讲‘三书六礼’在乡村仍具实操性，二重‘压箱钱’与‘拴娃娃’等祈福仪式，三兴‘臊子面定亲’‘甑糕坐帐’等食俗嵌入仪程。方言中‘嫽扎咧’‘婆家屋’高频出现，乾陵、咸阳湖、袁家村常作婚拍背景。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -381,15 +365,15 @@
     <link>https://wedding-tv.cn/blog/cities/xiangyang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xiangyang.html</guid>
     <description><![CDATA[襄阳婚俗以‘三书六礼’活态传承为根，融合汉水码头文化与三国遗风；提亲必携‘枣栗糕’取‘早立高’吉意；婚宴必上牛肉面、宜城大虾与孔明菜，席间‘闹房不闹心’讲分寸。方言‘结发’称‘拢头发’，‘拜堂’唤作‘行大礼’，处处透着古城的温厚与筋道。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[武汉婚俗完全指南：江城婚礼的烟火气与仪式感]]></title>
-    <link>https://wedding-tv.cn/blog/cities/wuhan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wuhan.html</guid>
-    <description><![CDATA[武汉婚俗以‘过早定亲’‘三书六礼不减’‘鱼圆藕带必上席’为三大特色。方言中‘讨喜’‘打发’等词贯穿全程；热干面、豆皮常入订婚茶点；黄鹤楼、东湖绿道成新人取景热地。既有汉口老租界西式融合，又守武昌‘拜天地不过午’古训。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[西双版纳婚俗指南：傣族风情与热带仪式的当代融合]]></title>
+    <link>https://wedding-tv.cn/blog/cities/xishuangbanna.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xishuangbanna.html</guid>
+    <description><![CDATA[西双版纳婚俗以傣族‘拴线礼’为核心，强调佛寺祈福、竹楼迎亲与孔雀舞助兴；彩礼多以银器、织锦、茶山份额等非现金形式体现；婚宴必上酸笋煮鱼、香茅烤鸡、糯米饭团等傣味三宝，并常于澜沧江畔或告庄西双景竹楼举办。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -397,7 +381,7 @@
     <link>https://wedding-tv.cn/blog/cities/xiangtan.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xiangtan.html</guid>
     <description><![CDATA[湘潭婚俗以‘三书六礼’活态传承、‘辣味宴席’地域鲜明、‘红绸绕井’祈福仪式独树一帜。方言‘呷喜酒’贯穿全程，婚宴必上剁椒鱼头与莲子糕，迎亲路线常经万楼、窑湾与毛泽东故居景区，体现湖湘文化与红色基因交融。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -405,7 +389,7 @@
     <link>https://wedding-tv.cn/blog/cities/wuxi.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wuxi.html</guid>
     <description><![CDATA[无锡婚俗以‘三茶六礼’活态传承、彩礼重‘意头’轻数额、婚宴必上‘梁溪脆鳝’为三大鲜明特色。方言中‘淴浴’（婚前净身）、‘淴淴头’（迎亲洒水驱邪）等仪式细节鲜活留存；鼋头渚、惠山古镇常作外景取景地；锡帮菜宴席讲究‘八冷八热十六道’，尤重鱼鲜与时令。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -413,7 +397,7 @@
     <link>https://wedding-tv.cn/blog/cities/xiamen.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xiamen.html</guid>
     <description><![CDATA[厦门婚俗以闽南语‘好呷’（好吃）婚宴、‘送头鬃’提亲古礼、‘漆器六礼’彩礼体系为三大特色。融合鼓浪屿中西建筑、沙坡尾渔港风情与鹭岛海风意象，婚俗既守《闽南风俗志》所载‘三茶六礼’框架，又创新融入南音伴奏、蚵壳厝布景、土笋冻开席等在地表达。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -421,23 +405,15 @@
     <link>https://wedding-tv.cn/blog/cities/xian.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xian.html</guid>
     <description><![CDATA[西安婚俗融合周礼遗韵、秦风豪气与关中烟火气：提亲必携‘六礼’简化版礼单，彩礼讲‘三金一银一书’（金镯、金戒、金链+银元+《家训》手抄本），迎亲用秦腔锣鼓队绕钟楼巡街；婚宴必上葫芦鸡、甑糕、凉皮卷馍三道‘长安三叠’；新人拜堂行‘三叩九拜’古礼，但洞房改设在书院门仿唐院落或曲江池畔民宿。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[温州婚俗完全指南：红纸包、拦轿歌与瓯越喜宴]]></title>
-    <link>https://wedding-tv.cn/blog/cities/wenzhou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wenzhou.html</guid>
-    <description><![CDATA[温州婚俗以‘红纸包’替代红包、拦轿时必唱《拦轿歌》方言俚曲、婚宴必上‘六圆八碗’瓯菜定式为三大标志。永嘉楠溪江古村仍存‘抬花杠’迎亲，洞头渔家有‘讨海添福’纳彩礼俗，瑞安方言‘讨老婆’至今活跃于提亲语境。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[芜湖婚俗完全指南：从鸠兹提亲到镜湖喜宴]]></title>
-    <link>https://wedding-tv.cn/blog/cities/wuhu.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wuhu.html</guid>
-    <description><![CDATA[芜湖婚俗融合皖南水乡柔韧与徽商务实精神：提亲必携‘四色礼’（酥糖、麻饼、酒、糕），迎亲船队曾穿青弋江，镜湖畔‘撒五谷’驱邪祈福；彩礼趋理性，多为12.8–18.8万元‘吉利数’；婚宴必上虾籽面、无为板鸭、小洲酱鸭三道硬菜。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[徐州婚俗完全指南：彭城六礼、辣汤迎亲与云龙山下红妆]]></title>
+    <link>https://wedding-tv.cn/blog/cities/xuzhou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/xuzhou.html</guid>
+    <description><![CDATA[徐州婚俗以‘彭城六礼’为根基，保留提亲必带‘八样礼’、迎亲必喝辣汤、婚宴必上‘霸王肘子’三大特色；方言中‘过门’称‘进门’，‘拜堂’唤‘磕头’；融合楚汉文化符号与苏北豪爽气质，云龙湖、户部山、回龙窝常成婚礼取景地。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -445,7 +421,7 @@
     <link>https://wedding-tv.cn/blog/cities/shijiazhuang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shijiazhuang.html</guid>
     <description><![CDATA[石家庄婚俗以‘三书六礼’为骨、方言吉语为魂、井陉拉花伴迎亲为韵。彩礼讲‘实诚不虚高’，多为10–18万元加‘三金一银’；婚宴必上金凤扒鸡与藁城宫面，席间‘闹房不越界、敬茶讲辈分’；正定古城、鹿泉抱犊寨成新兴户外婚礼热选地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -453,7 +429,7 @@
     <link>https://wedding-tv.cn/blog/cities/weifang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/weifang.html</guid>
     <description><![CDATA[潍坊婚俗融合齐文化礼制、鲁中农耕传统与风筝之乡的巧思：提亲必携‘高密剪纸’压帖，彩礼流行‘五金+六万六’现金组合，迎亲车队绕白浪河三圈取‘长流永续’吉意。婚宴必上潍县萝卜咸菜配朝天锅，青州古城南门常设‘拦门诗’互动环节。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -461,15 +437,15 @@
     <link>https://wedding-tv.cn/blog/cities/taiyuan.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/taiyuan.html</guid>
     <description><![CDATA[太原婚俗以‘三书六礼’晋中变体为骨，面食聘礼（如‘喜馍双鱼’）为魂，迎亲必经晋祠或双塔寺祈福；方言中‘过门儿’‘拜花堂’仍鲜活使用；婚宴主打剔尖配羊杂割、油糕叠成‘步步高’造型，兼具古韵与烟火气。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[绍兴婚俗完全指南：水乡礼韵与越地婚仪]]></title>
-    <link>https://wedding-tv.cn/blog/cities/shaoxing.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shaoxing.html</guid>
-    <description><![CDATA[绍兴婚俗以‘三书六礼’活态传承、‘酒坛担’彩礼仪式感强、婚宴必上‘绍式三鲜’与女儿红封坛为三大特色。方言‘讨亲’‘发轿’仍高频使用，安昌古镇、东湖、沈园常作婚摄取景地，越剧《梁祝》选段常入迎亲环节。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[武汉婚俗完全指南：江城婚礼的烟火气与仪式感]]></title>
+    <link>https://wedding-tv.cn/blog/cities/wuhan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wuhan.html</guid>
+    <description><![CDATA[武汉婚俗以‘过早定亲’‘三书六礼不减’‘鱼圆藕带必上席’为三大特色。方言中‘讨喜’‘打发’等词贯穿全程；热干面、豆皮常入订婚茶点；黄鹤楼、东湖绿道成新人取景热地。既有汉口老租界西式融合，又守武昌‘拜天地不过午’古训。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -477,15 +453,7 @@
     <link>https://wedding-tv.cn/blog/cities/shenzhen.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shenzhen.html</guid>
     <description><![CDATA[深圳婚俗兼具广府传统底色、客家围屋礼俗与深港跨境新风。三大特色：①提亲多用‘双份’吉数（如6666元茶仪+6样饼食）；②迎亲必过‘深圳湾大桥’象征跨域圆满；③婚宴流行‘一桌两制’——粤菜主席+潮汕/客家小炒台。本地方言‘靓’‘得闲饮茶’融入仪式台词，大鹏所城、华侨城创意园成热门场地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[三亚婚俗完全指南：热带滨海婚礼的仪式感与烟火气]]></title>
-    <link>https://wedding-tv.cn/blog/cities/sanya.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/sanya.html</guid>
-    <description><![CDATA[三亚婚俗融合黎苗传统、疍家渔俗与现代旅拍文化。特色有三：订婚必送‘椰香四宝’（椰青、椰糖、椰壳雕、椰棕绳）；迎亲需跨火盆+踩槟榔叶，取‘红火、长青’双吉意；婚宴必备酸鱼汤、抱罗粉配冰镇椰青酒，宴席多设于椰林沙滩或崖州古城院落。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -493,15 +461,23 @@
     <link>https://wedding-tv.cn/blog/cities/tangshan.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/tangshan.html</guid>
     <description><![CDATA[唐山婚俗以‘三书六礼’活态传承、方言讨彩头（如‘馉馇’谐音‘骨扎’喻姻缘扎实）、‘饹馇宴’婚宴特色著称；丰润提亲必带饹馇盒，迁西迎亲用桲椤叶包喜饼，南湖周边成为新派婚礼热门目的地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[汕头婚俗完全指南：潮汕礼俗、食俗与当代婚庆实践]]></title>
-    <link>https://wedding-tv.cn/blog/cities/shantou.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shantou.html</guid>
-    <description><![CDATA[汕头婚俗以‘四点金’聘礼结构、‘哭嫁’遗风与‘十二碗’全席宴为三大标识。方言中‘好命’‘顺顺’等吉语贯穿全程；迎亲必经小公园开埠区老骑楼，婚宴必上达濠鱼丸与西胪乌酥杨梅酒；彩礼多以‘万元整数+吉祥尾数’（如8.8万、16.8万）呈现，现金为主、金饰为辅。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[温州婚俗完全指南：红纸包、拦轿歌与瓯越喜宴]]></title>
+    <link>https://wedding-tv.cn/blog/cities/wenzhou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wenzhou.html</guid>
+    <description><![CDATA[温州婚俗以‘红纸包’替代红包、拦轿时必唱《拦轿歌》方言俚曲、婚宴必上‘六圆八碗’瓯菜定式为三大标志。永嘉楠溪江古村仍存‘抬花杠’迎亲，洞头渔家有‘讨海添福’纳彩礼俗，瑞安方言‘讨老婆’至今活跃于提亲语境。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[芜湖婚俗完全指南：从鸠兹提亲到镜湖喜宴]]></title>
+    <link>https://wedding-tv.cn/blog/cities/wuhu.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/wuhu.html</guid>
+    <description><![CDATA[芜湖婚俗融合皖南水乡柔韧与徽商务实精神：提亲必携‘四色礼’（酥糖、麻饼、酒、糕），迎亲船队曾穿青弋江，镜湖畔‘撒五谷’驱邪祈福；彩礼趋理性，多为12.8–18.8万元‘吉利数’；婚宴必上虾籽面、无为板鸭、小洲酱鸭三道硬菜。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -509,7 +485,7 @@
     <link>https://wedding-tv.cn/blog/cities/suzhou.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/suzhou.html</guid>
     <description><![CDATA[苏州婚俗以‘三书六礼’活态传承、‘姑苏十二时辰’式迎亲节奏、‘甜而不腻’的苏帮婚宴为三大标识。方言中‘结发’称‘扎发辫’，平江路提亲需备‘苏式四色礼’，金鸡湖畔新人流行‘评弹证婚’。婚俗细节深嵌于园林空间、吴侬软语与时令物产之中。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -517,7 +493,7 @@
     <link>https://wedding-tv.cn/blog/cities/qingdao.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/qingdao.html</guid>
     <description><![CDATA[青岛婚俗融合胶东半岛传统与海洋文化特质：一是‘过门三礼’（压箱、照镜、撒谷豆）在老城里院仍存；二是彩礼多以‘整数+吉利尾数’（如18.8万）搭配海产干货礼盒；三是婚宴必上‘辣炒蛤蜊’‘鲅鱼水饺’‘海菜凉粉’三道海味硬菜，配崂山白花蛇草水敬客。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -525,7 +501,15 @@
     <link>https://wedding-tv.cn/blog/cities/ningbo.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/ningbo.html</guid>
     <description><![CDATA[宁波婚俗融合浙东山海气韵与明清商帮遗风：一讲‘三书六礼’的严谨存续，二重‘镴器压箱’‘百子被’等实物吉兆，三兴‘咸齑㸆肉’‘㸆㸆鱼’等咸鲜婚宴风味。方言‘讨亲’‘淴浴酒’、东钱湖龙舟迎亲、慈城古县城纳采场景，皆具不可替代的在地性。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[绍兴婚俗完全指南：水乡礼韵与越地婚仪]]></title>
+    <link>https://wedding-tv.cn/blog/cities/shaoxing.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shaoxing.html</guid>
+    <description><![CDATA[绍兴婚俗以‘三书六礼’活态传承、‘酒坛担’彩礼仪式感强、婚宴必上‘绍式三鲜’与女儿红封坛为三大特色。方言‘讨亲’‘发轿’仍高频使用，安昌古镇、东湖、沈园常作婚摄取景地，越剧《梁祝》选段常入迎亲环节。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -533,7 +517,7 @@
     <link>https://wedding-tv.cn/blog/cities/nanning.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanning.html</guid>
     <description><![CDATA[南宁婚俗融合壮族传统与粤桂文化，三大特色鲜明：一是‘哭嫁歌’与‘拦门对歌’并存的仪式性互动；二是彩礼以‘五金+吉利数现金’为主流，普遍接受‘零彩礼’新共识；三是婚宴必上柠檬鸭、粉饺、五色糯米饭，青秀山、南湖畔成热门户外婚礼地标。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -541,7 +525,7 @@
     <link>https://wedding-tv.cn/blog/cities/pingyao.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/pingyao.html</guid>
     <description><![CDATA[平遥婚俗以‘三书六礼’活态传承为根基，突出‘醋坛子订亲’‘抬阁迎亲绕南门’‘八碗八碟摆满堂’三大特色。方言中‘合卺’称‘交杯酒’，‘拜天地’必在日头正南时；婚宴必上油糕、碗托、平遥牛肉，仪式全程穿插秧歌小调与推光漆器嫁妆展示。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -549,15 +533,7 @@
     <link>https://wedding-tv.cn/blog/cities/quanzhou.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/quanzhou.html</guid>
     <description><![CDATA[泉州婚俗以‘送灯’祈子、‘过门三礼’（茶礼、酒礼、粿礼）和‘四果六斋’供奉妈祖为三大核心特色；方言中‘好命’‘顺遂’贯穿全程；婚宴必上润饼、海蛎煎、醋肉；仪式多在开元寺、西街或五店市传统街区举行。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[南昌婚俗完全指南：赣味礼俗与江右烟火里的婚礼]]></title>
-    <link>https://wedding-tv.cn/blog/cities/nanchang.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanchang.html</guid>
-    <description><![CDATA[南昌婚俗以‘三茶六礼’为骨、‘煨汤定亲’为魂、‘鲤鱼跳龙门’迎亲为趣。方言中‘讨喜’‘发嫁’等词承载礼义，婚宴必上瓦罐煨汤与藜蒿炒腊肉，滕王阁、万寿宫、艾溪湖畔成热门仪式地标。礼俗既守明代《豫章志》遗风，又融现代都市节奏。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -565,23 +541,23 @@
     <link>https://wedding-tv.cn/blog/cities/nanyang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanyang.html</guid>
     <description><![CDATA[南阳婚俗以‘三书六礼’活态传承、‘压箱钱’与‘麸子馍’双象征体系、‘白河迎亲’水陆并行仪式为三大鲜明特色。方言称新郎为‘新女婿’，婚宴必上博望锅盔与新野板面，伏牛山脚下的古村祠堂与白河湿地公园成为新兴婚礼目的地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[南京婚俗完全指南：六朝古都的礼韵与烟火]]></title>
-    <link>https://wedding-tv.cn/blog/cities/nanjing.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanjing.html</guid>
-    <description><![CDATA[南京婚俗融合金陵文脉与江南务实精神：提亲必携雨花石与桂花鸭作‘四色礼’；迎亲车队绕明城墙一周取‘城门纳吉’吉意；婚宴必备‘双喜八宝饭’与‘盐水鸭拼盘’，方言中‘鸭’谐音‘压’，寓意压住邪祟、稳住家运。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[三亚婚俗完全指南：热带滨海婚礼的仪式感与烟火气]]></title>
+    <link>https://wedding-tv.cn/blog/cities/sanya.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/sanya.html</guid>
+    <description><![CDATA[三亚婚俗融合黎苗传统、疍家渔俗与现代旅拍文化。特色有三：订婚必送‘椰香四宝’（椰青、椰糖、椰壳雕、椰棕绳）；迎亲需跨火盆+踩槟榔叶，取‘红火、长青’双吉意；婚宴必备酸鱼汤、抱罗粉配冰镇椰青酒，宴席多设于椰林沙滩或崖州古城院落。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[乐山婚俗完全指南：嘉州红事的烟火气与老礼数]]></title>
-    <link>https://wedding-tv.cn/blog/cities/leshan.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/leshan.html</guid>
-    <description><![CDATA[乐山婚俗以‘三茶六礼’活态传承、‘咡嘞’方言贯穿全程、‘跷脚牛肉+甜皮鸭’双味婚宴为鲜明特色。提亲必带‘犍为茉莉花茶’，迎亲绕峨眉山脚取‘福禄延绵’意，彩礼多以‘现金+金器+茶饼’组合呈现，不尚虚高但重情义分量。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[汕头婚俗完全指南：潮汕礼俗、食俗与当代婚庆实践]]></title>
+    <link>https://wedding-tv.cn/blog/cities/shantou.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/shantou.html</guid>
+    <description><![CDATA[汕头婚俗以‘四点金’聘礼结构、‘哭嫁’遗风与‘十二碗’全席宴为三大标识。方言中‘好命’‘顺顺’等吉语贯穿全程；迎亲必经小公园开埠区老骑楼，婚宴必上达濠鱼丸与西胪乌酥杨梅酒；彩礼多以‘万元整数+吉祥尾数’（如8.8万、16.8万）呈现，现金为主、金饰为辅。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -589,7 +565,7 @@
     <link>https://wedding-tv.cn/blog/cities/linyi.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/linyi.html</guid>
     <description><![CDATA[临沂婚俗以‘三书六礼’活态传承、‘沂蒙大花轿’迎亲仪式和‘煎饼卷肉’婚宴主食为三大鲜明特色。方言中‘过门’称‘进门儿’，‘提亲’叫‘说媒儿’；婚宴必上莒南煎饼卷五香牛肉、沂水粉条炖鸡、郯城黑猪肉馉饳；蒙山云蒙峰、沂河滨河大道、沂南竹泉村成为新晋婚礼目的地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -597,15 +573,7 @@
     <link>https://wedding-tv.cn/blog/cities/meizhou.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/meizhou.html</guid>
     <description><![CDATA[梅州婚俗以‘三书六礼’为骨、客家山歌为魂、围龙屋为境，凸显三大特色：提亲必携‘八样礼’（含娘酒、柿饼、龙眼干等）、迎亲队伍必经祖祠焚香告祖、婚宴必备‘五福宴’（酿豆腐、梅菜扣肉等五道吉祥菜）。方言称新郎为‘新郎哥’、新娘为‘新妇仔’，全程贯穿客家话祝福语。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
-    <category>地级市婚俗</category>
-  </item>
-  <item>
-    <title><![CDATA[昆明婚俗完全指南：山茶映红妆，滇池畔的云岭婚仪]]></title>
-    <link>https://wedding-tv.cn/blog/cities/kunming.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/kunming.html</guid>
-    <description><![CDATA[昆明婚俗融合汉彝白多民族传统与现代都市气质：一为‘过小礼’重心意轻排场，常以鲜花、普洱茶、火腿代金；二为迎亲必经滇池海埂大坝或翠湖观鸥点，寓意‘鸥鹭同心’；三为婚宴必备汽锅鸡、烧饵块、玫瑰鲜花饼三道‘滇味定情菜’，席间唱《小河淌水》即兴对歌成风。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -613,7 +581,15 @@
     <link>https://wedding-tv.cn/blog/cities/luoyang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/luoyang.html</guid>
     <description><![CDATA[洛阳婚俗以‘三书六礼’活态传承为根基，突出‘奠雁礼复原’‘牡丹嫁妆’‘伊水迎亲’三大特色；方言中‘过礼’代指纳征，婚宴必上浆面条与牡丹银丝酥；龙门石窟、洛浦公园、隋唐城遗址植物园成热门婚礼目的地。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[南昌婚俗完全指南：赣味礼俗与江右烟火里的婚礼]]></title>
+    <link>https://wedding-tv.cn/blog/cities/nanchang.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanchang.html</guid>
+    <description><![CDATA[南昌婚俗以‘三茶六礼’为骨、‘煨汤定亲’为魂、‘鲤鱼跳龙门’迎亲为趣。方言中‘讨喜’‘发嫁’等词承载礼义，婚宴必上瓦罐煨汤与藜蒿炒腊肉，滕王阁、万寿宫、艾溪湖畔成热门仪式地标。礼俗既守明代《豫章志》遗风，又融现代都市节奏。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -621,15 +597,15 @@
     <link>https://wedding-tv.cn/blog/cities/lijiang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/lijiang.html</guid>
     <description><![CDATA[丽江婚俗以纳西族‘三朵节’祈福传统、东巴经文证婚、‘披星戴月’嫁衣为三大标识；提亲必携‘酥油茶+火腿’双礼，迎亲队伍绕玉河三圈，婚宴必上鸡豆凉粉与琵琶肉；当代新人热衷在白沙古镇东巴纸坊手写婚书，在蓝月谷畔举行无证婚礼。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
-    <title><![CDATA[拉萨婚俗指南：藏式婚礼全流程与当代实践]]></title>
-    <link>https://wedding-tv.cn/blog/cities/lasa.html</link>
-    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/lasa.html</guid>
-    <description><![CDATA[拉萨婚俗融合藏传佛教仪轨、高原地域文化与现代生活节奏。三大鲜明特色：神圣性——佛前献哈达、活佛赐福或僧人诵经加持；地域性——青稞酒敬客、酥油花装饰、藏装婚服（如‘邦典’围裙与金饰头冠）；互动性——‘谐钦’集体歌舞贯穿迎亲与宴席，新人需共饮‘三口一杯’青稞酒。仪式时间多择藏历吉日，布达拉宫、八廓街、色拉寺周边为传统动线核心区。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <title><![CDATA[南京婚俗完全指南：六朝古都的礼韵与烟火]]></title>
+    <link>https://wedding-tv.cn/blog/cities/nanjing.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/nanjing.html</guid>
+    <description><![CDATA[南京婚俗融合金陵文脉与江南务实精神：提亲必携雨花石与桂花鸭作‘四色礼’；迎亲车队绕明城墙一周取‘城门纳吉’吉意；婚宴必备‘双喜八宝饭’与‘盐水鸭拼盘’，方言中‘鸭’谐音‘压’，寓意压住邪祟、稳住家运。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -637,7 +613,7 @@
     <link>https://wedding-tv.cn/blog/cities/liuzhou.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/liuzhou.html</guid>
     <description><![CDATA[柳州婚俗以‘三茶六礼’为骨架，融合壮、汉、苗、瑶多民族文化；彩礼讲‘意头不讲数字’，常见螺蛳粉礼盒、油茶套装等本土符号；迎亲必过柳江铁桥，婚宴必上鸭脚煲与紫苏炒田螺——酸辣鲜香是柳州婚礼的味觉灵魂。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
   <item>
@@ -645,7 +621,31 @@
     <link>https://wedding-tv.cn/blog/cities/mianyang.html</link>
     <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/mianyang.html</guid>
     <description><![CDATA[绵阳婚俗融合三国文化、羌汉交融底色与现代科技城气质：提亲必带‘三色礼’（红糖、醪糟、剑门火腿），迎亲车队绕越王楼祈福，婚宴必备‘涪城八宝鸭’与‘北川腊肉蒸鲊’。方言中‘过门’称‘进屋’，‘敬茶’唤‘端茶’，仪式感浓烈而质朴。]]></description>
-    <pubDate>Sat, 27 Jun 2026 07:02:46 +0000</pubDate>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[乐山婚俗完全指南：嘉州红事的烟火气与老礼数]]></title>
+    <link>https://wedding-tv.cn/blog/cities/leshan.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/leshan.html</guid>
+    <description><![CDATA[乐山婚俗以‘三茶六礼’活态传承、‘咡嘞’方言贯穿全程、‘跷脚牛肉+甜皮鸭’双味婚宴为鲜明特色。提亲必带‘犍为茉莉花茶’，迎亲绕峨眉山脚取‘福禄延绵’意，彩礼多以‘现金+金器+茶饼’组合呈现，不尚虚高但重情义分量。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[昆明婚俗完全指南：山茶映红妆，滇池畔的云岭婚仪]]></title>
+    <link>https://wedding-tv.cn/blog/cities/kunming.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/kunming.html</guid>
+    <description><![CDATA[昆明婚俗融合汉彝白多民族传统与现代都市气质：一为‘过小礼’重心意轻排场，常以鲜花、普洱茶、火腿代金；二为迎亲必经滇池海埂大坝或翠湖观鸥点，寓意‘鸥鹭同心’；三为婚宴必备汽锅鸡、烧饵块、玫瑰鲜花饼三道‘滇味定情菜’，席间唱《小河淌水》即兴对歌成风。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
+    <category>地级市婚俗</category>
+  </item>
+  <item>
+    <title><![CDATA[拉萨婚俗指南：藏式婚礼全流程与当代实践]]></title>
+    <link>https://wedding-tv.cn/blog/cities/lasa.html</link>
+    <guid isPermaLink="true">https://wedding-tv.cn/blog/cities/lasa.html</guid>
+    <description><![CDATA[拉萨婚俗融合藏传佛教仪轨、高原地域文化与现代生活节奏。三大鲜明特色：神圣性——佛前献哈达、活佛赐福或僧人诵经加持；地域性——青稞酒敬客、酥油花装饰、藏装婚服（如‘邦典’围裙与金饰头冠）；互动性——‘谐钦’集体歌舞贯穿迎亲与宴席，新人需共饮‘三口一杯’青稞酒。仪式时间多择藏历吉日，布达拉宫、八廓街、色拉寺周边为传统动线核心区。]]></description>
+    <pubDate>Sat, 27 Jun 2026 12:25:19 +0000</pubDate>
     <category>地级市婚俗</category>
   </item>
 </channel>
