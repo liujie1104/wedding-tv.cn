@@ -7,7 +7,7 @@ wedding-tv.cn 每周行业洞察长文自动生成器
   1. 从预定义主题池中随机/轮转选 1 个本周未发布主题
   2. 调通义千问 qwen-plus-latest 生成 4000-5000 字深度长文（JSON）
   3. 渲染为 insights/YYYYMMDD-slug.html（与站点风格一致 + Article Schema）
-  4. 更新 sitemap.xml、insights/index.html、rss.xml
+  4. 更新 insights/index.html；审核期不写入 sitemap/rss
   5. 写回 insights_state.json
 
 环境变量：
@@ -160,7 +160,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <title>{title_esc} | wedding-tv.cn 行业洞察</title>
 <meta name="description" content="{summary_esc}" />
 <meta name="keywords" content="{keywords_csv}" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/insights/{slug}.html" />
 <meta property="og:title" content="{title_esc}" />
 <meta property="og:description" content="{summary_esc}" />
@@ -169,7 +169,6 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="theme-color" content="#0e0a14" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📊</text></svg>" />
 <script type="application/ld+json">
 {article_ld}
@@ -442,34 +441,7 @@ def rebuild_index() -> None:
 
 
 def update_sitemap(slug: str, pub_date: str) -> None:
-    if not SITEMAP.exists():
-        return
-    xml = SITEMAP.read_text("utf-8")
-    url = f"https://wedding-tv.cn/insights/{slug}.html"
-    if url not in xml:
-        xml = xml.replace(
-            "</urlset>",
-            "  <url>\n"
-            f"    <loc>{url}</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>yearly</changefreq>\n"
-            "    <priority>0.8</priority>\n"
-            "  </url>\n</urlset>",
-        )
-
-    # 刷新核心索引页 lastmod，提升抓取时效信号
-    for loc in [
-        "https://wedding-tv.cn/blog.html",
-    ]:
-        xml = re.sub(
-            rf"(<loc>{re.escape(loc)}</loc>\s*<lastmod>)([^<]+)(</lastmod>)",
-            rf"\g<1>{pub_date}\g<3>",
-            xml,
-            count=1,
-        )
-
-    SITEMAP.write_text(xml, "utf-8")
-    log("  ✓ sitemap.xml 已更新")
+    log("  · 行业洞察页审核期为 noindex，跳过 sitemap 写入")
 
 
 def main() -> int:
@@ -501,8 +473,7 @@ def main() -> int:
     save_state(state)
     update_sitemap(slug, pub_dt.strftime("%Y-%m-%d"))
     rebuild_index()
-    n = build_rss()
-    log(f"  ✓ rss.xml 重建（{n} 条）")
+    log("  · 审核期跳过 rss.xml 重建")
     log("完成")
     return 0
 

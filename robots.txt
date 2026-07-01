@@ -5,6 +5,9 @@ Disallow: /*-en.html
 Disallow: /en.html
 Disallow: /tools-en.html
 Disallow: /blog-global-en.html
+Disallow: /news/
+Disallow: /insights/
+Disallow: /blog/cities/
 
 User-agent: Googlebot
 Allow: /

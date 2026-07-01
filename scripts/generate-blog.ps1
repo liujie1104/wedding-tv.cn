@@ -76,7 +76,6 @@ foreach ($r in $REGIONS) {
 <meta property="og:url" content="$url" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📚</text></svg>" />
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Article","headline":"$title","author":{"@type":"Organization","name":"wedding-tv.cn"},"publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"},"datePublished":"2025-01-15","mainEntityOfPage":"$url","image":"https://wedding-tv.cn/og.png"}
@@ -202,7 +201,7 @@ footer{border-top:1px solid var(--line);margin-top:48px;padding:24px 22px;color:
 </div>
 
 </main>
-<footer>© wedding-tv.cn · <a href="/">首页</a> · <a href="/blog.html">博客</a> · <a href="/sitemap.xml">Sitemap</a><br>婚礼行业品牌域名 <a href="/#contact">议价出售中 →</a></footer>
+<footer>© wedding-tv.cn · <a href="/">首页</a> · <a href="/blog.html">博客</a> · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a></footer>
 <script>
 (function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1df8fda3d25e8df34a5c8e08f945e9fb";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}

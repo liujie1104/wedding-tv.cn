@@ -681,11 +681,7 @@ def main() -> int:
     update_sitemap(new_slugs, pub_date_str)
     rebuild_news_index()
     ensure_blog_index_entry()
-    try:
-        n = build_rss()
-        log(f"  ✓ rss.xml 重建（{n} 条）")
-    except Exception as e:
-        log(f"  ⚠ rss 重建失败：{e}")
+    log("  · 审核期跳过 rss.xml 重建")
     log(f"完成：本次生成 {success} 篇")
     return 0
 

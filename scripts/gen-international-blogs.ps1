@@ -367,10 +367,6 @@ $relatedHtml
   <a href="/calculator.html">💰 婚礼预算计算器 →</a>
 </div>
 
-<div class="ad-slot" style="margin:28px auto;max-width:920px;padding:0 16px">
-  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-6560247681968502" data-ad-slot="9615775370" data-ad-format="auto" data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 </main>
 <footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a> · <a href="/sitemap.xml">Sitemap</a></footer>
 <script>

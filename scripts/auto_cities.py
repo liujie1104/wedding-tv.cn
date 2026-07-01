@@ -7,7 +7,7 @@ wedding-tv.cn 地级市婚俗页面自动生成器
   1. 从城市池中挑选未发布的城市（按周序号轮转）
   2. 调通义千问 qwen-plus-latest 生成 1800-2400 字本地婚俗指南（JSON）
   3. 渲染 blog/cities/<pinyin>.html（与省份页风格一致 + Article+FAQ Schema）
-  4. 更新 sitemap.xml、blog/cities/index.html、rss.xml
+  4. 更新 blog/cities/index.html；审核期不写入 sitemap/rss
   5. 写回 cities_state.json
 
 环境变量：
@@ -184,7 +184,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <title>{title_esc} | wedding-tv.cn</title>
 <meta name="description" content="{summary_esc}" />
 <meta name="keywords" content="{keywords_csv}" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/blog/cities/{slug}.html" />
 <meta property="og:title" content="{title_esc}" />
 <meta property="og:description" content="{summary_esc}" />
@@ -192,7 +192,6 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta property="og:url" content="https://wedding-tv.cn/blog/cities/{slug}.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<script async fetchpriority="low" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🏙️</text></svg>" />
 <script type="application/ld+json">
 {article_ld}
@@ -551,36 +550,7 @@ def rebuild_index() -> None:
 
 
 def update_sitemap(slugs: list[str], pub_date: str) -> None:
-    if not slugs or not SITEMAP.exists():
-        return
-    xml = SITEMAP.read_text("utf-8")
-    for slug in slugs:
-        url = f"https://wedding-tv.cn/blog/cities/{slug}.html"
-        if url in xml:
-            continue
-        xml = xml.replace(
-            "</urlset>",
-            "  <url>\n"
-            f"    <loc>{url}</loc>\n"
-            f"    <lastmod>{pub_date}</lastmod>\n"
-            "    <changefreq>yearly</changefreq>\n"
-            "    <priority>0.75</priority>\n"
-            "  </url>\n</urlset>",
-        )
-
-    # 刷新核心索引页 lastmod，提升抓取时效信号
-    for loc in [
-        "https://wedding-tv.cn/blog.html",
-    ]:
-        xml = re.sub(
-            rf"(<loc>{re.escape(loc)}</loc>\s*<lastmod>)([^<]+)(</lastmod>)",
-            rf"\g<1>{pub_date}\g<3>",
-            xml,
-            count=1,
-        )
-
-    SITEMAP.write_text(xml, "utf-8")
-    log(f"  ✓ sitemap.xml 已写入 {len(slugs)} 条")
+    log("  · 地级市婚俗页审核期为 noindex，跳过 sitemap 写入")
 
 
 def main() -> int:
@@ -617,11 +587,7 @@ def main() -> int:
     save_state(state)
     update_sitemap(new_slugs, pub_date_str)
     rebuild_index()
-    try:
-        n = build_rss()
-        log(f"  ✓ rss.xml 重建（{n} 条）")
-    except Exception as e:
-        log(f"  ⚠ rss 重建失败：{e}")
+    log("  · 审核期跳过 rss.xml 重建")
     log(f"完成：本次生成 {len(new_slugs)} 篇")
     return 0
 
