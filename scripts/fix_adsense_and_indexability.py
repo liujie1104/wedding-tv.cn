@@ -1,54 +1,24 @@
 import os
-import shutil
 import re
+import xml.etree.ElementTree as ET
 
 PROJECT_ROOT = r"d:\Liu JIE\wedding-tv.cn"
 
-def clean_and_normalize_adsense():
-    # 1. Delete news/ directory if it exists
-    news_dir = os.path.join(PROJECT_ROOT, "news")
-    if os.path.exists(news_dir):
-        shutil.rmtree(news_dir)
-        print("Deleted news/ directory and all AI news files.")
-
-    # 2. Delete English stub files
-    en_stub_files = [
-        "en.html", "tools-en.html", "blog-global-en.html", "about-en.html",
-        "privacy-en.html", "terms-en.html", "guide-en.html", "calculator-en.html",
-        "checklist-en.html", "poster-en.html", "invitation-en.html", "timeline-en.html",
-        os.path.join("blog", "blog-global-india-en.html"),
-        os.path.join("blog", "blog-global-japan-en.html"),
-        os.path.join("blog", "blog-global-korea-en.html"),
-        os.path.join("blog", "blog-global-western-en.html")
-    ]
-    
-    # Also find any remaining *-en.html files in root or subdirectories
-    for root_dir, _, files in os.walk(PROJECT_ROOT):
-        if '.git' in root_dir or '.gemini' in root_dir or 'node_modules' in root_dir:
-            continue
-        for f in files:
-            if f.endswith('-en.html') or f.endswith('_en.html'):
-                full_p = os.path.join(root_dir, f)
-                if full_p not in en_stub_files:
-                    en_stub_files.append(full_p)
-
-    for ef in en_stub_files:
-        fp = ef if os.path.isabs(ef) else os.path.join(PROJECT_ROOT, ef)
-        if os.path.exists(fp):
-            os.remove(fp)
-            print(f"Deleted English stub file: {ef}")
-
-    # 3. Regular expressions and tags
+def fix_all():
     meta_tag_str = '<meta name="google-adsense-account" content="ca-pub-6560247681968502" />'
     script_tag_str = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>'
     
     meta_pattern = re.compile(r'\s*<meta\s+name=["\']google-adsense-account["\']\s+content=["\']ca-pub-6560247681968502["\']\s*/?>', re.IGNORECASE)
     script_pattern = re.compile(r'<script\s+async\s+(?:fetchpriority=["\']low["\']\s+)?src=["\']https://pagead2\.googlesyndication\.com/pagead/js/adsbygoogle\.js\?client=ca-pub-6560247681968502["\']\s+crossorigin=["\']anonymous["\']></script>', re.IGNORECASE)
+    robots_noindex_pattern = re.compile(r'<meta\s+name=["\']robots["\']\s+content=["\']noindex,\s*follow["\']\s*/?>', re.IGNORECASE)
 
+    # Pages that should remain noindex (internal/error pages)
+    noindex_pages = {'404.html', 'i.html', 'live.html'}
+
+    fixed_robots_count = 0
     cleaned_meta_count = 0
     added_script_count = 0
 
-    # 4. Scan all remaining HTML files
     for root_dir, _, files in os.walk(PROJECT_ROOT):
         if '.git' in root_dir or '.gemini' in root_dir or 'node_modules' in root_dir:
             continue
@@ -62,19 +32,31 @@ def clean_and_normalize_adsense():
 
                 orig = content
                 is_homepage = (rel_path == 'index.html')
+                is_noindex_page = (rel_path in noindex_pages)
 
+                # 1. Fix Robots Meta Tag
+                # If it's a city article, insights article, blog page, or tool page (not in noindex_pages), set to index,follow
+                if not is_noindex_page and robots_noindex_pattern.search(content):
+                    content = robots_noindex_pattern.sub('<meta name="robots" content="index,follow" />', content)
+                    fixed_robots_count += 1
+
+                # 2. Fix AdSense Meta & Script Tags
                 if is_homepage:
                     # Homepage MUST have meta verification tag AND script tag
                     if not meta_pattern.search(content):
                         content = content.replace('</head>', f'  {meta_tag_str}\n</head>')
                     if not script_pattern.search(content):
                         content = content.replace('</head>', f'  {script_tag_str}\n</head>')
+                elif is_noindex_page:
+                    # Noindex internal pages: strip meta and script
+                    content = meta_pattern.sub('', content)
+                    content = script_pattern.sub('', content)
                 else:
-                    # Subpages MUST NOT have meta verification tag
+                    # Subpages: strip meta verification tag
                     if meta_pattern.search(content):
                         content = meta_pattern.sub('', content)
                         cleaned_meta_count += 1
-                    # Subpages SHOULD have the script tag for AdSense rendering
+                    # Subpages: add script tag for AdSense rendering
                     if not script_pattern.search(content):
                         content = content.replace('</head>', f'  {script_tag_str}\n</head>')
                         added_script_count += 1
@@ -83,9 +65,10 @@ def clean_and_normalize_adsense():
                     with open(filepath, 'w', encoding='utf-8') as file_obj:
                         file_obj.write(content)
 
-    print("AdSense cleanup & normalization complete!")
+    print("Indexability & AdSense normalization complete:")
+    print(f"- Changed robots tag to 'index,follow' on {fixed_robots_count} articles/pages.")
     print(f"- Cleaned meta verification tags from {cleaned_meta_count} subpages.")
     print(f"- Ensured AdSense script tag on {added_script_count} pages.")
 
 if __name__ == '__main__':
-    clean_and_normalize_adsense()
+    fix_all()
