@@ -24,6 +24,8 @@ CORE_PAGES = [
     ("checklist.html", "0.9", "weekly"),
     ("countdown.html", "0.85", "monthly"),
     ("calculator.html", "0.9", "weekly"),
+    ("quote-comparison.html", "0.95", "weekly"),
+    ("emergency-plan-generator.html", "0.95", "weekly"),
     ("budget-reference.html", "0.85", "monthly"),
     ("mv-style.html", "0.8", "monthly"),
     ("guide.html", "0.9", "monthly"),
@@ -39,6 +41,7 @@ CORE_PAGES = [
     ("blog.html", "0.9", "weekly"),
     ("about.html", "0.7", "monthly"),
     ("editorial-policy.html", "0.7", "monthly"),
+    ("authors.html", "0.7", "monthly"),
     ("privacy.html", "0.7", "monthly"),
     ("terms.html", "0.7", "monthly"),
 ]

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>婚礼应急预案生成器｜天气、交通、设备与宾客安全清单</title>
+<meta name="description" content="免费生成婚礼当天应急预案，覆盖天气、交通、停电、音响、直播网络、老人儿童照护和关键物品，支持复制、打印与CSV导出。" />
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+<meta name="author" content="wedding-tv.cn 编辑组" />
+<meta name="theme-color" content="#0e0a14" />
+<link rel="canonical" href="https://wedding-tv.cn/emergency-plan-generator.html" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"婚礼应急预案生成器","url":"https://wedding-tv.cn/emergency-plan-generator.html","applicationCategory":"LifestyleApplication","operatingSystem":"Web","inLanguage":"zh-CN","description":"根据婚礼场地、时段、路程和宾客情况生成天气、交通、设备与安全应急清单。","author":{"@type":"Organization","name":"wedding-tv.cn 编辑组","url":"https://wedding-tv.cn/authors.html"},"publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}
+</script>
+<style>
+:root{--bg:#0e0a14;--panel:#19131f;--panel2:#110c16;--ink:#f5f1ea;--sub:#b9b1a3;--accent:#d4a574;--line:#302638;--ok:#86c89a;--warn:#e1b56e;--bad:#e58b86}
+*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}.top{position:sticky;top:0;z-index:5;background:#09060d;border-bottom:1px solid var(--line)}.top .inner{max-width:1120px;margin:auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-weight:750;color:var(--ink)}nav{display:flex;gap:16px}nav a{color:var(--sub);font-size:14px}.wrap{max-width:1120px;margin:auto;padding:34px 20px 64px}h1{font-size:30px;line-height:1.3;margin:0 0 8px}h2{font-size:21px;margin:32px 0 12px}.lead{max-width:860px;color:var(--sub);margin:0 0 22px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px}.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.field{display:grid;gap:5px}.field label{font-size:12px;color:var(--sub)}select,input{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:9px 10px}input:focus,select:focus{outline:2px solid rgba(212,165,116,.35);border-color:var(--accent)}.checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}.check{display:flex;gap:8px;align-items:flex-start;padding:9px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;font-size:13px}.check input{width:auto;margin-top:4px;accent-color:var(--accent)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.btn{border:1px solid var(--line);border-radius:6px;background:var(--panel2);color:var(--ink);padding:9px 13px;cursor:pointer}.btn:hover{border-color:var(--accent)}.btn.primary{background:var(--accent);color:#211506;border-color:var(--accent);font-weight:750}.btn.danger{color:var(--bad)}.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:13px}.stat strong{display:block;font-size:23px;color:var(--accent)}.stat span{color:var(--sub);font-size:13px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}table{width:100%;border-collapse:collapse;min-width:960px;background:var(--panel)}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#211828;color:var(--accent);white-space:nowrap}.priority{font-weight:750}.priority.high{color:var(--bad)}.priority.medium{color:var(--warn)}.priority.normal{color:var(--ok)}.empty{padding:30px;text-align:center;color:var(--sub);background:var(--panel);border:1px dashed var(--line);border-radius:8px}.note{color:var(--sub);font-size:13px}.method{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px}.method p,.method li{color:var(--sub)}footer{border-top:1px solid var(--line);padding:24px;text-align:center;color:var(--sub);font-size:13px}@media(max-width:760px){.form-grid,.checks{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){nav{display:none}.wrap{padding:24px 14px 48px}h1{font-size:25px}.form-grid,.checks,.summary{grid-template-columns:1fr}.actions .btn{flex:1}}@media print{.top,.actions,footer,.method{display:none!important}body{background:#fff;color:#111}.wrap{max-width:none;padding:0}.panel,.stat,.table-wrap,table{background:#fff;color:#111;border-color:#bbb}input,select{background:#fff;color:#111;border-color:#bbb}th{background:#eee;color:#111}.note{color:#444}}
+</style>
+</head>
+<body>
+<header class="top"><div class="inner"><a class="brand" href="/">wedding-tv.cn</a><nav><a href="/checklist.html">筹备清单</a><a href="/wedding-emergency-plan-guide.html">应急指南</a><a href="/blog.html">指南中心</a></nav></div></header>
+<main class="wrap">
+<h1>婚礼应急预案生成器</h1>
+<p class="lead">根据婚礼实际条件生成一份可分工、可核对的当天预案。工具提供筹备参考，不替代场地方、医疗机构、消防部门或专业技术人员的现场判断。</p>
+<section class="panel" aria-labelledby="conditionsTitle">
+  <h2 id="conditionsTitle" style="margin-top:0">填写现场条件</h2>
+  <div class="form-grid">
+    <div class="field"><label for="venue">主要场地</label><select id="venue"><option value="outdoor">户外或半户外</option><option value="hotel">酒店或室内宴会厅</option><option value="home">家中或小型场地</option></select></div>
+    <div class="field"><label for="meal">婚宴时段</label><select id="meal"><option value="lunch">午宴</option><option value="dinner">晚宴</option></select></div>
+    <div class="field"><label for="travel">主要转场车程（分钟）</label><input id="travel" type="number" min="0" max="300" value="45" /></div>
+    <div class="field"><label for="guests">预计宾客人数</label><input id="guests" type="number" min="1" max="5000" value="120" /></div>
+    <div class="field"><label for="coordinator">总协调人（可选）</label><input id="coordinator" maxlength="30" placeholder="例如：婚礼管家小周" /></div>
+    <div class="field"><label for="venueContact">场地方联系人（可选）</label><input id="venueContact" maxlength="30" placeholder="例如：宴会经理王老师" /></div>
+  </div>
+  <div class="checks">
+    <label class="check"><input id="livestream" type="checkbox" checked />安排婚礼直播或远程连线</label>
+    <label class="check"><input id="elderly" type="checkbox" checked />有老人、孕妇或行动不便宾客</label>
+    <label class="check"><input id="children" type="checkbox" />有较多儿童到场</label>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="generate" type="button">生成预案</button>
+    <button class="btn" id="copyPlan" type="button">复制摘要</button>
+    <button class="btn" id="exportCsv" type="button">导出 CSV</button>
+    <button class="btn" id="printPlan" type="button">打印</button>
+    <button class="btn danger" id="reset" type="button">恢复默认</button>
+  </div>
+</section>
+<section aria-live="polite">
+  <h2>生成结果</h2>
+  <div id="summary" class="summary" hidden></div>
+  <div id="output" class="empty">填写现场条件后点击“生成预案”。</div>
+  <p class="note">建议在婚礼前 7 天、前 1 天和当天开场前分别复核，并把最终版本发给总协调人、场地方和关键供应商。</p>
+</section>
+<section class="method">
+  <h2 style="margin-top:0">使用边界与复核方法</h2>
+  <ul>
+    <li>“高优先级”表示需要提前明确负责人和替代方案，不表示事故一定会发生。</li>
+    <li>涉及用电、燃气、搭建、医疗和消防的事项，应服从场地规则并由合格人员处理。</li>
+    <li>联系方式、集合地点和关键时间应在导出后补全；不要在公开群聊发送身份证件等敏感信息。</li>
+    <li>更完整的判断依据见<a href="/wedding-emergency-plan-guide.html">《婚礼应急预案指南》</a>。</li>
+  </ul>
+</section>
+</main>
+<footer><a href="/authors.html">作者与审校</a> · <a href="/editorial-policy.html">编辑规范</a> · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a></footer>
+<script>
+(() => {
+  const ids = ["venue","meal","travel","guests","coordinator","venueContact","livestream","elderly","children"];
+  const $ = id => document.getElementById(id);
+  const stateKey = "weddingEmergencyPlanV1";
+  let rows = [];
+  const owner = (value, fallback) => value.trim() || fallback;
+  function read() {
+    return Object.fromEntries(ids.map(id => [id, $(id).type === "checkbox" ? $(id).checked : $(id).value]));
+  }
+  function save() { localStorage.setItem(stateKey, JSON.stringify(read())); }
+  function restore() {
+    try {
+      const data = JSON.parse(localStorage.getItem(stateKey));
+      if (!data) return;
+      ids.forEach(id => { if (id in data) $(id).type === "checkbox" ? $(id).checked = data[id] : $(id).value = data[id]; });
+    } catch (_) {}
+  }
+  function add(priority, category, risk, trigger, action, assigned) { rows.push({priority, category, risk, trigger, action, owner: assigned}); }
+  function build() {
+    const s = read();
+    const coordinator = owner(s.coordinator, "总协调人");
+    const venueContact = owner(s.venueContact, "场地方负责人");
+    const travel = Math.max(0, Number(s.travel) || 0);
+    const guests = Math.max(1, Number(s.guests) || 1);
+    const mealText = s.meal === "lunch" ? "午宴" : "晚宴";
+    rows = [];
+    add("高", "指挥与通信", "多人同时下达指令，版本不一致", "流程调整、供应商迟到或现场出现争议", "由总协调人统一确认变更；建立包含场地、主持、摄影摄像、车队的核心联络群；纸质备份一份。", coordinator);
+    add("高", "关键物品", "戒指、证件、礼金或致辞稿遗漏", "出发前最后一次点验未通过", "按“物品—保管人—交接时间”逐项签收；戒指和证件分别指定主保管人与替补。", coordinator);
+    add("高", "用电与设备", "停电、跳闸、话筒或播放设备失效", "设备无信号、异常发热或连续断电", "立即停止非必要设备；场地方排查电路；切换备用话筒、播放设备和离线音频，禁止非专业人员拆修。", venueContact);
+    add("高", "宾客健康", "宾客突发不适或跌倒", "出现胸痛、呼吸困难、意识异常、严重出血等情况", "立即联系急救并听从专业指引；留出通道；指定人员陪同，不围观、不擅自喂药。", coordinator);
+    add("中", "流程时间", `${mealText}开场延误`, "关键人员或物料较计划晚到 15 分钟", "主持人与场地方启动压缩版流程，先保留仪式核心环节，再调整互动和拍摄顺序。", coordinator);
+    if (s.venue === "outdoor") {
+      add("高", "天气", "降雨、高温、大风或雷电影响户外活动", "达到场地方停办阈值，或气象预警、现场雷声等风险信号出现", "立即转入已确认的室内备选区；停止金属搭建和带电设备操作；由总协调人发布单一通知。", coordinator);
+      add("高", "户外搭建", "背景板、灯架或装饰受风倾倒", "结构晃动、地面松软或风力明显增强", "封锁周边区域并联系搭建方加固或拆除；不得让宾客或非专业人员扶持结构。", venueContact);
+    }
+    if (travel >= 30) {
+      add("高", "交通转场", `主要转场约 ${travel} 分钟，遇拥堵可能误场`, "导航预计到达时间晚于最迟到场时间", "提前确认主备路线和最晚出发点；新人、证件和关键物品优先同车；必要时跳过非核心停靠点。", coordinator);
+    } else {
+      add("中", "交通转场", "短途仍可能因停车或入口不清延误", "车辆到达场地附近但无法进入或落客", "提前发送准确入口、停车点和联系人；预留步行与电梯时间。", coordinator);
+    }
+    if (s.livestream) {
+      add("高", "直播网络", "主网络不稳定导致直播中断", "连续丢帧、上行带宽不足或延迟快速上升", "切换备用运营商网络；本地同步录制完整视频；无法恢复时先保证录制并向远程宾客说明。", "直播负责人");
+      add("中", "直播隐私", "镜头拍到不愿公开的宾客或敏感画面", "宾客提出避镜要求，或画面出现礼金、证件信息", "调整机位并停止公开推流相关画面；链接设置访问范围，结束后按约定保存或删除回放。", "直播负责人");
+    }
+    if (s.elderly) {
+      add("高", "无障碍与照护", "老人、孕妇或行动不便宾客通行和休息困难", "长时间站立、楼梯通行或身体不适", "预留近出口座位和无障碍路线；安排陪同人；提前确认电梯、洗手间和临时休息区。", "宾客接待负责人");
+    }
+    if (s.children) {
+      add("中", "儿童安全", "儿童靠近舞台、电线、热源或出入口", "儿童离开监护人视线或进入设备区", "明确监护人，不把看护职责交给工作人员；隔离线缆、热源与搭建区域，及时广播寻找监护人。", "宾客接待负责人");
+    }
+    if (guests >= 300) {
+      add("高", "大客流", `${guests} 人规模可能造成签到、疏散和电梯拥堵`, "入口排队超过 10 分钟或主要通道被占用", "签到分组并设置引导员；保持消防通道畅通；与场地方确认分批入场和紧急集合点。", venueContact);
+    }
+    save();
+    render(s);
+  }
+  function esc(value) { return String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char])); }
+  function render(s) {
+    const high = rows.filter(row => row.priority === "高").length;
+    $("summary").hidden = false;
+    $("summary").innerHTML = `<div class="stat"><strong>${rows.length}</strong><span>预案事项</span></div><div class="stat"><strong>${high}</strong><span>高优先级事项</span></div><div class="stat"><strong>${esc(s.meal === "lunch" ? "午宴" : "晚宴")}</strong><span>${esc(s.venue === "outdoor" ? "户外或半户外" : s.venue === "hotel" ? "酒店或室内" : "家中或小型场地")}</span></div>`;
+    $("output").className = "table-wrap";
+    $("output").innerHTML = `<table><thead><tr><th>优先级</th><th>类别</th><th>风险</th><th>启动条件</th><th>处理动作</th><th>负责人</th></tr></thead><tbody>${rows.map(row => `<tr><td class="priority ${row.priority === "高" ? "high" : row.priority === "中" ? "medium" : "normal"}">${esc(row.priority)}</td><td>${esc(row.category)}</td><td>${esc(row.risk)}</td><td>${esc(row.trigger)}</td><td>${esc(row.action)}</td><td>${esc(row.owner)}</td></tr>`).join("")}</tbody></table>`;
+  }
+  function textPlan() {
+    if (!rows.length) build();
+    return ["婚礼当天应急预案", `生成时间：${new Date().toLocaleString("zh-CN", {hour12:false})}`, ...rows.map((row, index) => `${index + 1}. [${row.priority}] ${row.category}｜风险：${row.risk}｜启动：${row.trigger}｜行动：${row.action}｜负责人：${row.owner}`)].join("\n");
+  }
+  async function copyPlan() {
+    try { await navigator.clipboard.writeText(textPlan()); $("copyPlan").textContent = "已复制"; setTimeout(() => $("copyPlan").textContent = "复制摘要", 1500); }
+    catch (_) { alert("浏览器未允许复制，请使用打印或 CSV 导出。"); }
+  }
+  function csvCell(value) { return `"${String(value).replace(/"/g, '""')}"`; }
+  function exportCsv() {
+    if (!rows.length) build();
+    const lines = [["优先级","类别","风险","启动条件","处理动作","负责人"], ...rows.map(row => [row.priority,row.category,row.risk,row.trigger,row.action,row.owner])];
+    const blob = new Blob(["\ufeff" + lines.map(line => line.map(csvCell).join(",")).join("\r\n")], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "婚礼应急预案.csv"; a.click(); setTimeout(() => URL.revokeObjectURL(url), 500);
+  }
+  $("generate").addEventListener("click", build);
+  $("copyPlan").addEventListener("click", copyPlan);
+  $("exportCsv").addEventListener("click", exportCsv);
+  $("printPlan").addEventListener("click", () => { if (!rows.length) build(); window.print(); });
+  $("reset").addEventListener("click", () => { localStorage.removeItem(stateKey); location.reload(); });
+  ids.forEach(id => $(id).addEventListener("change", save));
+  restore(); build();
+})();
+</script>
+</body>
+</html>
