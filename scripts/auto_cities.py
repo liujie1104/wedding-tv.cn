@@ -184,7 +184,7 @@ PAGE_TEMPLATE = """<!doctype html>
 <title>{title_esc} | wedding-tv.cn</title>
 <meta name="description" content="{summary_esc}" />
 <meta name="keywords" content="{keywords_csv}" />
-<meta name="robots" content="index,follow" />
+<meta name="robots" content="noindex,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/blog/cities/{slug}.html" />
 <meta property="og:title" content="{title_esc}" />
 <meta property="og:description" content="{summary_esc}" />
@@ -192,7 +192,6 @@ PAGE_TEMPLATE = """<!doctype html>
 <meta property="og:url" content="https://wedding-tv.cn/blog/cities/{slug}.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🏙️</text></svg>" />
 <script type="application/ld+json">
 {article_ld}

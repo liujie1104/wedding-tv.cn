@@ -9,25 +9,4 @@ Disallow: /news/
 Disallow: /insights/
 Disallow: /blog/cities/
 
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Baiduspider
-Allow: /
-
-User-agent: 360Spider
-Allow: /
-
-User-agent: Sogou web spider
-Allow: /
-
-User-agent: YisouSpider
-Allow: /
-
-User-agent: Bytespider
-Allow: /
-
 Sitemap: https://wedding-tv.cn/sitemap.xml
