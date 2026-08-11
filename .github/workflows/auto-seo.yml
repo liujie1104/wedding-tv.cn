@@ -1,62 +1,38 @@
-name: Auto SEO - Refresh Sitemap & Ping Search Engines
+name: Validate and Submit Sitemap
 
 on:
-  schedule:
-    # 每天 UTC 02:00 = 北京时间 10:00
-    - cron: '0 2 * * *'
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - 'blog/**'
-      - 'sitemap.xml'
+      - sitemap.xml
+      - robots.txt
+      - scripts/audit-static-content.js
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  refresh-sitemap:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Audit indexed content
+        run: node scripts/audit-static-content.js
 
-      - name: Update sitemap lastmod to today
-        run: |
-          TODAY=$(date -u +%Y-%m-%d)
-          sed -i -E "s|<lastmod>[0-9]{4}-[0-9]{2}-[0-9]{2}</lastmod>|<lastmod>${TODAY}</lastmod>|g" sitemap.xml
-          echo "�?Sitemap lastmod updated to $TODAY"
-
-      - name: Regenerate RSS feed
-        run: node scripts/gen-rss.js
-
-      - name: Commit if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet sitemap.xml rss.xml; then
-            echo "No changes"
-          else
-            git add sitemap.xml rss.xml
-            git commit -m "chore(seo): auto-refresh sitemap & rss [skip ci]"
-            git push
-          fi
-
-  notify-search-engines:
+  submit-indexnow:
     runs-on: ubuntu-latest
-    needs: refresh-sitemap
+    needs: validate
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: main
 
       - name: Extract URLs from sitemap
         id: urls
         run: |
           grep -oP '(?<=<loc>)[^<]+' sitemap.xml > urls.txt
-          echo "count=$(wc -l < urls.txt)" >> $GITHUB_OUTPUT
-          echo "提取�?$(wc -l < urls.txt) �?URL"
+          echo "count=$(wc -l < urls.txt)" >> "$GITHUB_OUTPUT"
 
-      - name: Submit to IndexNow (Bing/Yandex/Naver/Seznam)
+      - name: Submit to IndexNow
         run: |
           KEY=$(cat .indexnow-key)
           URLS_JSON=$(jq -R . urls.txt | jq -s .)
@@ -66,37 +42,24 @@ jobs:
             --arg keyLoc "https://wedding-tv.cn/${KEY}.txt" \
             --argjson urls "$URLS_JSON" \
             '{host: $host, key: $key, keyLocation: $keyLoc, urlList: $urls}')
-          
-          echo "Submitting to IndexNow API..."
-          curl -X POST "https://api.indexnow.org/IndexNow" \
+          curl --fail-with-body -X POST "https://api.indexnow.org/IndexNow" \
             -H "Content-Type: application/json; charset=utf-8" \
-            -d "$PAYLOAD" \
-            -w "\nHTTP: %{http_code}\n"
+            -d "$PAYLOAD"
 
-      - name: Ping Google sitemap
-        run: |
-          curl -s "https://www.google.com/ping?sitemap=https://wedding-tv.cn/sitemap.xml" \
-            -w "Google ping: %{http_code}\n" || true
-
-      - name: Ping Bing sitemap
-        run: |
-          curl -s "https://www.bing.com/ping?sitemap=https://wedding-tv.cn/sitemap.xml" \
-            -w "Bing ping: %{http_code}\n" || true
-
-      - name: Submit to Baidu (if token configured)
-        if: ${{ env.BAIDU_PUSH_TOKEN != '' }}
+      - name: Submit to Baidu when configured
         env:
           BAIDU_PUSH_TOKEN: ${{ secrets.BAIDU_PUSH_TOKEN }}
         run: |
-          curl -X POST "http://data.zz.baidu.com/urls?site=https://wedding-tv.cn&token=${BAIDU_PUSH_TOKEN}" \
+          if [ -z "$BAIDU_PUSH_TOKEN" ]; then
+            echo "BAIDU_PUSH_TOKEN is not configured; skipping."
+            exit 0
+          fi
+          curl --fail-with-body -X POST "https://data.zz.baidu.com/urls?site=https://wedding-tv.cn&token=${BAIDU_PUSH_TOKEN}" \
             -H "Content-Type: text/plain" \
-            --data-binary @urls.txt \
-            -w "\nBaidu push: %{http_code}\n"
+            --data-binary @urls.txt
 
       - name: Summary
         run: |
-          echo "### 🤖 Auto SEO 提交完成" >> $GITHUB_STEP_SUMMARY
-          echo "- �?Sitemap 已刷�?lastmod" >> $GITHUB_STEP_SUMMARY
-          echo "- �?已提�?${{ steps.urls.outputs.count }} �?URL �?IndexNow" >> $GITHUB_STEP_SUMMARY
-          echo "- �?�?ping Google / Bing" >> $GITHUB_STEP_SUMMARY
-          echo "- 时间�?(date -u +%Y-%m-%d\ %H:%M\ UTC)" >> $GITHUB_STEP_SUMMARY
+          echo "### Sitemap validation and submission complete" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Validated indexed pages before submission" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Submitted ${{ steps.urls.outputs.count }} URLs to IndexNow" >> "$GITHUB_STEP_SUMMARY"

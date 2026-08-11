@@ -4,44 +4,51 @@
   <title>wedding-tv.cn 婚礼工具与指南</title>
   <link>https://wedding-tv.cn/</link>
   <atom:link href="https://wedding-tv.cn/rss.xml" rel="self" type="application/rss+xml" />
-  <description>免费婚礼工具、婚礼视频直播指南、预算参考和内容规范。</description>
+  <description>免费婚礼工具，以及预算、合同、影像交付和视频直播指南。</description>
   <language>zh-CN</language>
-  <lastBuildDate>Wed, 01 Jul 2026 07:56:10 +0000</lastBuildDate>
+  <lastBuildDate>Tue, 11 Aug 2026 10:15:51 +0000</lastBuildDate>
   <generator>wedding-tv.cn rss_builder review mode</generator>
   <item>
     <title>免费 AI 婚礼策划工具</title>
     <link>https://wedding-tv.cn/ai-planner.html</link>
     <guid>https://wedding-tv.cn/ai-planner.html</guid>
     <description>按城市、预算、人数和风格生成婚礼方案、婚俗清单与请帖文案。</description>
-    <pubDate>Wed, 01 Jul 2026 07:56:10 +0000</pubDate>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
   </item>
   <item>
-    <title>2026 婚礼视频与直播行业指南</title>
+    <title>婚礼视频与直播行业指南</title>
     <link>https://wedding-tv.cn/guide.html</link>
     <guid>https://wedding-tv.cn/guide.html</guid>
-    <description>婚礼视频、直播、MV 报价参考与服务商评估清单。</description>
-    <pubDate>Wed, 01 Jul 2026 07:56:10 +0000</pubDate>
+    <description>婚礼视频、直播、MV 需求拆分、报价核对与服务商评估清单。</description>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
   </item>
   <item>
     <title>婚礼云直播服务商怎么选</title>
     <link>https://wedding-tv.cn/guide-livestream.html</link>
     <guid>https://wedding-tv.cn/guide-livestream.html</guid>
     <description>码率、延迟、机位、价格和避坑清单。</description>
-    <pubDate>Wed, 01 Jul 2026 07:56:10 +0000</pubDate>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
   </item>
   <item>
-    <title>城市婚礼预算参考库</title>
-    <link>https://wedding-tv.cn/budget-reference.html</link>
-    <guid>https://wedding-tv.cn/budget-reference.html</guid>
-    <description>按城市查看婚礼预算区间和中位数参考。</description>
-    <pubDate>Wed, 01 Jul 2026 07:56:10 +0000</pubDate>
+    <title>婚礼预算分配与记账指南</title>
+    <link>https://wedding-tv.cn/wedding-budget-planning-guide.html</link>
+    <guid>https://wedding-tv.cn/wedding-budget-planning-guide.html</guid>
+    <description>按总额、优先级、备用金和付款节点建立可复算的婚礼预算。</description>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
+  </item>
+  <item>
+    <title>婚庆合同签约核对指南</title>
+    <link>https://wedding-tv.cn/wedding-vendor-contract-guide.html</link>
+    <guid>https://wedding-tv.cn/wedding-vendor-contract-guide.html</guid>
+    <description>核对服务范围、人员、交付、付款、改期、版权和违约责任。</description>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
   </item>
   <item>
     <title>内容编辑规范与数据来源</title>
     <link>https://wedding-tv.cn/editorial-policy.html</link>
     <guid>https://wedding-tv.cn/editorial-policy.html</guid>
-    <description>说明本站内容来源、AI 辅助边界和纠错流程。</description>
-    <pubDate>Wed, 01 Jul 2026 07:56:10 +0000</pubDate>
+    <description>说明本站内容责任、来源要求、AI 辅助边界和纠错流程。</description>
+    <pubDate>Tue, 11 Aug 2026 10:15:51 +0000</pubDate>
   </item>
 </channel>
 </rss>

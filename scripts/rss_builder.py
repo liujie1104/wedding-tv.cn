@@ -22,9 +22,9 @@ CORE_ITEMS = [
         "desc": "按城市、预算、人数和风格生成婚礼方案、婚俗清单与请帖文案。",
     },
     {
-        "title": "2026 婚礼视频与直播行业指南",
+        "title": "婚礼视频与直播行业指南",
         "link": f"{SITE}/guide.html",
-        "desc": "婚礼视频、直播、MV 报价参考与服务商评估清单。",
+        "desc": "婚礼视频、直播、MV 需求拆分、报价核对与服务商评估清单。",
     },
     {
         "title": "婚礼云直播服务商怎么选",
@@ -32,14 +32,19 @@ CORE_ITEMS = [
         "desc": "码率、延迟、机位、价格和避坑清单。",
     },
     {
-        "title": "城市婚礼预算参考库",
-        "link": f"{SITE}/budget-reference.html",
-        "desc": "按城市查看婚礼预算区间和中位数参考。",
+        "title": "婚礼预算分配与记账指南",
+        "link": f"{SITE}/wedding-budget-planning-guide.html",
+        "desc": "按总额、优先级、备用金和付款节点建立可复算的婚礼预算。",
+    },
+    {
+        "title": "婚庆合同签约核对指南",
+        "link": f"{SITE}/wedding-vendor-contract-guide.html",
+        "desc": "核对服务范围、人员、交付、付款、改期、版权和违约责任。",
     },
     {
         "title": "内容编辑规范与数据来源",
         "link": f"{SITE}/editorial-policy.html",
-        "desc": "说明本站内容来源、AI 辅助边界和纠错流程。",
+        "desc": "说明本站内容责任、来源要求、AI 辅助边界和纠错流程。",
     },
 ]
 
@@ -54,7 +59,7 @@ def build_rss(max_items: int = 80) -> int:
         "  <title>wedding-tv.cn 婚礼工具与指南</title>",
         f"  <link>{SITE}/</link>",
         f'  <atom:link href="{SITE}/rss.xml" rel="self" type="application/rss+xml" />',
-        "  <description>免费婚礼工具、婚礼视频直播指南、预算参考和内容规范。</description>",
+        "  <description>免费婚礼工具，以及预算、合同、影像交付和视频直播指南。</description>",
         "  <language>zh-CN</language>",
         f"  <lastBuildDate>{last_build}</lastBuildDate>",
         "  <generator>wedding-tv.cn rss_builder review mode</generator>",

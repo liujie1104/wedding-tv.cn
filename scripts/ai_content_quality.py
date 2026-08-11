@@ -58,7 +58,10 @@ def call_bailian(key: str, base_url: str, model: str, page: str, text: str) -> d
     prompt = {
         "role": "user",
         "content": (
-            "请以 Google AdSense 审核、SEO 点击率和用户价值为标准，审查下面页面。"
+            "请审查下面页面的内容真实性、任务完成度、可读性、标题摘要和可索引性。"
+            "只能依据所给页面文本指出可观察的问题；不要虚构 Google 或 AdSense 的强制要求，"
+            "不要把常规 SEO 建议描述为政策违规，也不要编造流量、来源、作者或结构化数据。"
+            "每个问题必须包含页面中的简短证据；证据不足时应明确标为待人工核对。"
             "只输出 JSON，不要 Markdown。字段：score(0-100), risk_level(low/medium/high), "
             "indexable(true/false), title_advice, description_advice, issues(数组), improvements(数组)。\n\n"
             f"文件：{page}\n\n页面文本：\n{text}"
@@ -70,7 +73,7 @@ def call_bailian(key: str, base_url: str, model: str, page: str, text: str) -> d
             "messages": [
                 {
                     "role": "system",
-                    "content": "你是严谨的网站内容质量审核员，输出必须是可解析 JSON。",
+                    "content": "你是谨慎的网站内容审校助手，不是政策裁决者。输出必须是可解析 JSON。",
                 },
                 prompt,
             ],

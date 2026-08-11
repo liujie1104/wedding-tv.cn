@@ -1,6 +1,6 @@
 // Service Worker: cache static resources for offline fallback; API requests always use the network.
 // v4: content-quality review release. A new cache name removes legacy AI article snapshots.
-const CACHE = "wt-v4-2026-08-11-content-audit";
+const CACHE = "wt-v5-2026-08-11-content-retirement";
 const PRECACHE = ["/404.html", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

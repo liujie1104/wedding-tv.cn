@@ -6,11 +6,11 @@
 <title>工具计算方法与数据边界｜wedding-tv.cn</title>
 <meta name="description" content="公开 wedding-tv.cn 婚礼影像估算、供应商报价完整度评分和应急预案生成规则，以及本地存储、AI辅助和版本修订边界。" />
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
-<meta name="author" content="wedding-tv.cn 编辑组" />
+<meta name="author" content="wedding-tv.cn 内容维护" />
 <meta name="theme-color" content="#0e0a14" />
 <link rel="canonical" href="https://wedding-tv.cn/tool-methodology.html" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"工具计算方法与数据边界","url":"https://wedding-tv.cn/tool-methodology.html","inLanguage":"zh-CN","dateModified":"2026-08-11","author":{"@type":"Organization","name":"wedding-tv.cn 编辑组","url":"https://wedding-tv.cn/authors.html"},"reviewedBy":{"@type":"Organization","name":"wedding-tv.cn 编辑组","url":"https://wedding-tv.cn/editorial-policy.html"},"isPartOf":{"@type":"WebSite","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"工具计算方法与数据边界","url":"https://wedding-tv.cn/tool-methodology.html","inLanguage":"zh-CN","dateModified":"2026-08-11","author":{"@type":"Organization","name":"wedding-tv.cn 内容维护","url":"https://wedding-tv.cn/authors.html"},"reviewedBy":{"@type":"Organization","name":"wedding-tv.cn 内容维护","url":"https://wedding-tv.cn/editorial-policy.html"},"isPartOf":{"@type":"WebSite","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"}}
 </script>
 <style>
 :root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}*{box-sizing:border-box}body{margin:0;font:16px/1.82 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:940px;margin:0 auto;padding:38px 22px}header{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:3}header .wrap{padding:14px 22px;display:flex;justify-content:space-between;gap:18px;align-items:center}nav a{margin-left:16px;color:var(--mute);font-size:14px}.brand{font-weight:700;color:var(--fg)}h1{font-size:32px;line-height:1.35;margin:0 0 10px}h2{font-size:23px;margin:42px 0 12px;border-left:4px solid var(--accent);padding-left:12px}h3{font-size:18px;margin:25px 0 8px;color:var(--accent)}.meta,.note{color:var(--mute);font-size:14px}.toc,.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:17px 19px;margin:20px 0}code{background:#211828;border:1px solid var(--line);border-radius:4px;padding:2px 5px;color:var(--accent)}table{width:100%;border-collapse:collapse;background:var(--card);margin:16px 0}th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:14px}th{color:var(--accent);background:#201729}.cta{display:inline-block;margin:8px 8px 0 0;background:var(--accent);color:#1a0f00;padding:9px 15px;border-radius:7px;font-weight:700}footer{border-top:1px solid var(--line);margin-top:56px;padding:24px;text-align:center;color:var(--mute);font-size:13px}@media(max-width:650px){nav{display:none}.wrap{padding:28px 15px}.table-wrap{overflow:auto}table{min-width:720px}h1{font-size:28px}}
@@ -20,7 +20,7 @@
 <header><div class="wrap"><a class="brand" href="/">wedding-tv.cn</a><nav><a href="/blog.html">指南中心</a><a href="/authors.html">作者与审校</a><a href="/editorial-policy.html">编辑规范</a></nav></div></header>
 <main class="wrap">
 <h1>工具计算方法与数据边界</h1>
-<p class="meta">维护：<a href="/authors.html" rel="author">wedding-tv.cn 编辑组</a> · <a href="/editorial-policy.html">已按编辑规范审校</a> · 最近实质更新：2026-08-11</p>
+<p class="meta">维护：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · <a href="/editorial-policy.html">已按编辑规范审校</a> · 最近实质更新：2026-08-11</p>
 <p>本页公开核心婚礼工具如何产生结果、哪些字段会改变结果、数据保存在哪里，以及结果不能代表什么。目的是让用户可以复算和质疑，而不是把输出包装成“智能推荐”或“行业权威结论”。</p>
 <div class="toc"><strong>目录</strong><ol><li><a href="#video">婚礼影像报价估算</a></li><li><a href="#quote">供应商报价完整度评分</a></li><li><a href="#emergency">应急预案生成规则</a></li><li><a href="#storage">本地数据与导出</a></li><li><a href="#ai">AI 辅助工具边界</a></li><li><a href="#review">测试与修订</a></li></ol></div>
 
@@ -36,7 +36,7 @@
 <tr><td>结果区间</td><td>模型值的 85% 至 125%</td><td>展示不确定性，不代表置信区间</td></tr>
 </tbody></table></div>
 <div class="box"><strong>计算顺序：</strong><code>机位基础值 × 时长系数 + 附加服务 + 宾客增量</code>，然后整体乘城市系数。页面显示的区间为结果乘 0.85 和 1.25。</div>
-<p>这些参数由编辑组作为前期沟通模型维护，当前没有独立、可复核的全国成交数据库，因此页面不会再称其为“真实成交均价”或“市场中位价”。使用者应拿到至少两份当地书面报价后再比较。</p>
+<p>这些参数由网站维护者作为前期沟通模型维护，当前没有独立、可复核的全国成交数据库，因此页面不会再称其为“真实成交均价”或“市场中位价”。使用者应拿到至少两份当地书面报价后再比较。</p>
 
 <h2 id="quote">2. 供应商报价完整度评分</h2>
 <p><a href="/quote-comparison.html">供应商报价对比器</a>判断一份报价是否包含足够的可核对信息。它不读取评价、不搜索商家，也不预测服务质量。</p>
@@ -62,7 +62,7 @@
 
 <h2 id="ai">5. AI 辅助工具边界</h2>
 <p>AI 婚礼策划、请帖、誓词和致辞等页面可能调用配置的生成服务形成初稿。输出取决于用户输入、模型和服务状态，可能存在遗漏或不准确。涉及当地婚俗、价格、档期、合同、法律和安全的内容需要人工再次确认。</p>
-<p>AI 不用于给本页三个规则工具生成评分，也不用于伪造使用人数、用户评价、专家身份或客户案例。内容生产中的 AI 辅助披露见<a href="/authors.html">作者与审校团队</a>。</p>
+<p>AI 不用于给本页三个规则工具生成评分，也不用于伪造使用人数、用户评价、专家身份或客户案例。内容生产中的 AI 辅助披露见<a href="/authors.html">内容责任与审校说明</a>。</p>
 
 <h2 id="review">6. 测试与修订</h2>
 <ul><li>2026-08-11：公开影像预算公式，删除预算页中与实际功能不一致的 12 大类和 Excel 导出说明。</li><li>2026-08-11：公开报价完整度 100 分构成和空报价处理规则。</li><li>2026-08-11：公开应急预案的条件触发规则和专业判断边界。</li><li>2026-08-10：两个 CSV 导出工具加入 UTF-8 BOM，并完成桌面和 390px 移动端检查。</li></ul>

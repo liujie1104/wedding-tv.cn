@@ -2,14 +2,13 @@ import os
 import subprocess
 from datetime import datetime, timedelta, timezone
 
-PROJECT_ROOT = r"d:\Liu JIE\wedding-tv.cn"
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITEMAP_PATH = os.path.join(PROJECT_ROOT, "sitemap.xml")
 TODAY_STR = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
 
 # Review-mode sitemap:
 # keep only durable tools, reviewed guides and policy pages indexed.
-# Programmatic city, regional customs and insights pages are intentionally
-# excluded while their sources and editorial scope are being reviewed.
+# Unreviewed city, regional customs and insight pages have been removed.
 CORE_PAGES = [
     ("", "1.0", "daily"),
     ("ai-planner.html", "0.95", "weekly"),
@@ -86,6 +85,8 @@ def build_urls() -> list[tuple[str, str, str, str]]:
     ]
 
     return urls
+
+
 def main() -> None:
     urls = build_urls()
     xml_lines = [

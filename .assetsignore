@@ -1,6 +1,9 @@
 # 不上传为公开静态资源的文件/目录
 functions/
 src/
+scripts/
+.github/
+.vscode/
 node_modules/
 .embedder/
 .git/
@@ -11,5 +14,11 @@ package-lock.json
 .assetsignore
 _redirects
 README.md
+adsense_improvement_plan.md
+SEO-TITLES-OPTIMIZATION-REPORT.md
+seo-titles-optimization.csv
+seo-titles-optimization.json
+update-seo-titles.ps1
 *.log
 _tail_summary.txt
+_audit*.txt
