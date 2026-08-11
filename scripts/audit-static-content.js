@@ -50,6 +50,18 @@ if (/SITE_STATS|st-(?:views|inquiries|cities)|useDailyJitter/.test(home)) {
   errors.push("index.html: contains unverifiable visitor or usage counters");
 }
 
+const privacy = fs.readFileSync(path.join(root, "privacy.html"), "utf8");
+for (const provider of ["阿里云百炼", "Google Gemini", "Cloudflare Workers AI"]) {
+  if (!privacy.includes(provider)) errors.push(`privacy.html: missing AI provider disclosure (${provider})`);
+}
+if (!/电子请帖与上传图片[\s\S]{0,160}365 天自动过期/.test(privacy)) {
+  errors.push("privacy.html: missing invitation and image retention disclosure");
+}
+for (const sourcePath of ["functions/api/save.js", "functions/api/upload.js"]) {
+  const source = fs.readFileSync(path.join(root, sourcePath), "utf8");
+  if (!/expirationTtl/.test(source)) errors.push(`${sourcePath}: public data has no expiration`);
+}
+
 const workflows = fs.readdirSync(path.join(root, ".github", "workflows"))
   .filter((name) => /auto-(?:cities|insights|news)\.ya?ml$/i.test(name));
 if (workflows.length) errors.push(`workflows: unreviewed AI publishing is enabled (${workflows.join(", ")})`);

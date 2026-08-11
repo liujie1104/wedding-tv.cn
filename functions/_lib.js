@@ -1,4 +1,4 @@
-// Cloudflare Pages Functions 共用工具
+// Cloudflare Worker API 共用工具
 export function shortId(len = 8) {
   const alphabet = "abcdefghjkmnpqrstuvwxyz23456789";
   let s = "";

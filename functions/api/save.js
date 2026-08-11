@@ -1,6 +1,8 @@
 // POST /api/save  body: { invitation: {...} } -> { ok, id }
 import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
+const PUBLIC_INVITATION_TTL = 60 * 60 * 24 * 365;
+
 export const onRequestPost = async ({ request, env }) => {
   if (!rateLimit(getIp(request), 20)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV binding WEDDING not configured");
@@ -26,7 +28,7 @@ export const onRequestPost = async ({ request, env }) => {
       if (!exists) break;
       id = shortId(8);
     }
-    await env.WEDDING.put("inv:" + id, JSON.stringify(inv));
+    await env.WEDDING.put("inv:" + id, JSON.stringify(inv), { expirationTtl: PUBLIC_INVITATION_TTL });
     return json(200, { ok: true, id });
   } catch (e) {
     return serverError(String(e?.message || e));

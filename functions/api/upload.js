@@ -1,6 +1,8 @@
 // POST /api/upload  body: { dataUrl } -> { ok, key, url }
 import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
+const PUBLIC_IMAGE_TTL = 60 * 60 * 24 * 365;
+
 export const onRequestPost = async ({ request, env }) => {
   if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV not configured");
@@ -24,7 +26,10 @@ export const onRequestPost = async ({ request, env }) => {
   try {
     const ext = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";
     const key = `${shortId(10)}.${ext}`;
-    await env.WEDDING.put("img:" + key, bytes.buffer, { metadata: { mime } });
+    await env.WEDDING.put("img:" + key, bytes.buffer, {
+      metadata: { mime },
+      expirationTtl: PUBLIC_IMAGE_TTL,
+    });
     return json(200, { ok: true, key, url: `/api/img?key=${encodeURIComponent(key)}` });
   } catch (e) {
     return serverError(String(e?.message || e));
