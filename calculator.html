@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>婚礼报价计算器 2026 — 婚礼视频/直播/MV/跟拍预算估算 | wedding-tv.cn</title>
-<meta name="description" content="2026 婚礼报价计算器：选择机位、时长、是否直播、是否快剪、是否MV，立即估算婚礼视频预算区间。基于真实行业基准，免费使用。" />
-<meta name="keywords" content="婚礼报价,婚礼报价计算器,婚礼视频报价,婚礼跟拍报价,婚礼直播报价,婚礼MV报价,婚礼预算,婚礼快剪报价,wedding budget calculator,wedding videography pricing" />
+<title>婚礼影像报价估算器｜机位、直播与MV预算</title>
+<meta name="description" content="婚礼影像报价估算工具：按机位、时长、城市系数、宾客人数和直播、快剪、MV等附加服务计算参考区间，并公开完整公式。" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <meta name="theme-color" content="#0e0a14" />
 <meta name="author" content="wedding-tv.cn" />
@@ -15,7 +14,7 @@
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/calculator.html" />
 
 <meta property="og:site_name" content="wedding-tv.cn" />
-<meta property="og:title" content="婚礼报价计算器 2026 — 估算婚礼视频/直播/MV预算" />
+<meta property="og:title" content="婚礼影像报价估算器｜机位、直播与MV预算" />
 <meta property="og:description" content="选择机位、时长、是否直播、是否MV，立即估算婚礼视频预算区间。" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wedding-tv.cn/calculator.html" />
@@ -23,7 +22,7 @@
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="婚礼报价计算器 2026" />
+<meta name="twitter:title" content="婚礼影像报价估算器" />
 <meta name="twitter:description" content="一键估算婚礼视频/直播/MV/跟拍预算。" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
 
@@ -36,7 +35,8 @@
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Any",
   "inLanguage": "zh-CN",
-  "description": "2026 婚礼视频/直播/MV/跟拍预算在线估算工具。",
+  "description": "按机位、时长、城市系数、宾客人数和附加服务计算婚礼影像报价参考区间的工具。",
+  "author": { "@type": "Organization", "name": "wedding-tv.cn 编辑组", "url": "https://wedding-tv.cn/authors.html" },
   "publisher": { "@type": "Organization", "name": "wedding-tv.cn", "url": "https://wedding-tv.cn/" }
 }
 </script>
@@ -106,7 +106,7 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
 
 <main class="wrap">
 
-<h1>婚礼报价计算器 2026</h1>
+<h1>婚礼影像报价估算器</h1>
 <p class="lead">选一选、点一点，快速估算 <strong>婚礼视频 / 婚礼直播 / 婚礼MV / 婚礼跟拍</strong> 的整体预算区间。结果用于前期比较，最终金额以当地服务商的完整报价和合同为准。</p>
 
 <form id="calc" class="calc" onsubmit="return false">
@@ -161,7 +161,7 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
   <div class="share">
     <button onclick="copyResult()">📋 复制结果</button>
     <button onclick="shareResult()">🔗 分享链接</button>
-    <a class="cta" href="/#contact" style="margin-top:0;padding:8px 16px;font-size:13px">询底价 →</a>
+    <a class="cta" href="/quote-comparison.html" style="margin-top:0;padding:8px 16px;font-size:13px">对比报价 →</a>
   </div>
 </div>
 
@@ -172,25 +172,33 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
   </table>
 </div>
 
-<p class="note">⚠️ 本工具的预算为 <strong>2026 年国内行业基准的中位值估算</strong>，实际价格受档期、季节、品牌溢价、定制程度影响。建议以本结果作为与服务商沟通时的参考锚点。</p>
+<p class="note">本工具使用页面公开的固定模型参数，不代表全国真实成交均价或市场中位价。实际价格受城市、日期、档期、团队经验和交付范围影响，请至少取得两份当地书面报价。</p>
 
 <!-- AdSense ad3 -->
 
 <h2>怎么用这个预算和供应商谈？</h2>
 <ul class="tips">
-  <li>把估算结果当 <strong>"市场中位价"</strong> 锚点，要求供应商解释每一档差异。</li>
+  <li>把估算结果当作<strong>需求拆分起点</strong>，要求供应商逐项解释实际报价差异。</li>
   <li>问清楚是否包含 <strong>原片交付、调色版本、备份责任、超时费</strong>。</li>
-  <li>叠加 <strong>婚礼云直播</strong> 时，确认机位是否独立、码率是否 ≥ 4 Mbps。</li>
+  <li>叠加 <strong>婚礼云直播</strong> 时，确认机位是否独立、目标画质、主备网络和本地录制。</li>
   <li>当日快剪要明确 <strong>交付时间窗口</strong>（仪式后 2 小时 / 4 小时 / 当晚）。</li>
   <li>如明确约定为<strong>定金</strong>，依法不得超过主合同标的额的 <strong>20%</strong>；付款与交付节点写入合同。</li>
 </ul>
 
 <h2>想看更详细的行业基准？</h2>
-<p>👉 阅读 <a href="/guide.html">《婚礼视频 / 直播 / MV 行业指南 2026》</a>、<a href="/guide-livestream.html">《婚礼云直播服务商怎么选 2026》</a>或<a href="/wedding-vendor-contract-guide.html">《婚庆合同怎么签》</a>。</p>
+<p>阅读<a href="/tool-methodology.html#video">工具公式与数据边界</a>、<a href="/wedding-quote-comparison-case.html">三份报价对比演练</a>、<a href="/guide-livestream.html">婚礼云直播选型指南</a>或<a href="/wedding-vendor-contract-guide.html">婚庆合同签约指南</a>。</p>
 
 </main>
 
 
+<section class="seo-tool-info" style="max-width:780px;margin:48px auto 24px;padding:28px 24px;background:#1a1320;border:1px solid #2a2030;border-radius:12px;color:#f5f1ea;font:16px/1.85 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
+  <h2 style="font-size:22px;margin:0 0 14px;color:#d4a574;border-left:4px solid #d4a574;padding-left:12px">计算范围与公式</h2>
+  <p style="margin:0 0 14px">本页只估算婚礼摄影摄像及附加影像服务，不计算婚宴、婚庆布置、礼服、彩礼、首饰和蜜月。计算顺序为：机位基础值乘时长系数，加上已选附加服务和超过 100 人后的宾客增量，再整体乘城市系数。</p>
+  <p style="margin:0 0 14px;color:#b9b1a3">显示区间为模型结果的 85% 至 125%，用于表达价格不确定性，不是统计学置信区间。所有参数、分值和修订记录可在<a href="/tool-methodology.html#video" style="color:#d4a574">工具计算方法页</a>复核。</p>
+  <p style="margin:0"><a href="/quote-comparison.html" style="color:#d4a574">继续对比真实供应商报价</a> · <a href="/wedding-quote-comparison-case.html" style="color:#d4a574">查看三份虚拟报价演练</a></p>
+</section>
+
+<!-- Retired 2026-08-11: the following legacy SEO block described features and data sources that this tool does not have.
 <section class="seo-tool-info" style="max-width:780px;margin:48px auto 24px;padding:28px 24px;background:#1a1320;border:1px solid #2a2030;border-radius:12px;color:#f5f1ea;font:16px/1.85 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
   <h2 style="font-size:22px;margin:0 0 14px;color:#d4a574;border-left:4px solid #d4a574;padding-left:12px">💰 关于"婚礼预算计算器"</h2>
   <p style="margin:0 0 14px">免费在线婚礼预算计算器，按城市等级（一线/新一线/二线/三线及县城）和宾客规模（30-500 人）自动估算 12 大类婚礼开销：场地、餐饮、婚纱礼服、摄影摄像、婚庆策划、车队、化妆、花艺、伴手礼、蜜月、首饰彩礼、其他杂项。基于 2026 年最新行业均价。</p>
@@ -245,6 +253,7 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
 </section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"2026 年办婚礼大概要多少钱？","acceptedAnswer":{"@type":"Answer","text":"①一线城市 30 桌品质婚礼：25-40 万；②新一线 30 桌：18-28 万；③二线 30 桌：12-20 万；④三线/县城 30 桌：6-12 万。以上不含彩礼三金、蜜月旅行、婚房装修。本工具可精确到你所在城市的数字。"}},{"@type":"Question","name":"婚礼预算如何分配比例最合理？","acceptedAnswer":{"@type":"Answer","text":"行业标杆比例：场地+餐饮 45%、婚庆策划 15%、婚纱礼服 10%、摄影摄像 12%、化妆造型 5%、花艺布置含 in 策划、车队 3%、伴手礼喜糖 5%、首饰金器 单算（5-15 万）、其他杂项 5%。本工具默认按此分配。"}},{"@type":"Question","name":"婚礼预算最容易超支的项目是什么？","acceptedAnswer":{"@type":"Answer","text":"①摄影摄像（容易\"加机位\"\"加航拍\"\"加快剪\"）；②花艺（婚礼布置临时加品）；③酒水（亲友带来意外的多）；④伴娘伴郎礼服+化妆（数量被低估）。本工具会在这些项强制预留 15% 缓冲。"}},{"@type":"Question","name":"经济婚礼能省到多少？","acceptedAnswer":{"@type":"Answer","text":"10 桌（100 人）三线城市极简：3-5 万可以办下来。秘诀：①自办场地（家中院子或小区会所）；②外卖配套自助；③简化婚纱（一套即可）；④省掉策划师，找朋友主持。但极简婚礼对新人精力要求极高。"}},{"@type":"Question","name":"彩礼算在婚礼预算里吗？","acceptedAnswer":{"@type":"Answer","text":"传统观念彩礼是男方给女方家庭的\"聘金\"，不算婚礼开销而是单独项目。但现代多数家庭\"彩礼回流\"——女方把彩礼当陪嫁带回新家。本工具把彩礼单列为可选项，按你的家庭情况决定是否计入。"}}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"如何使用婚礼预算计算器","step":[{"@type":"HowToStep","position":1,"name":"选择城市等级（一线/新一线/二线/三线及县城）"},{"@type":"HowToStep","position":2,"name":"输入宾客桌数（每桌按 10 人计）"},{"@type":"HowToStep","position":3,"name":"选择档次：经济（约 5-8 万）、标准（10-18 万）、品质（20-40 万）、豪华（50 万+）"},{"@type":"HowToStep","position":4,"name":"系统输出 12 大类明细预算 + 总预算"},{"@type":"HowToStep","position":5,"name":"可单独调整某项（如\"摄影预算翻倍\"），系统自动重算"}]}</script>
+-->
 <footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a></footer>
 
 <script>

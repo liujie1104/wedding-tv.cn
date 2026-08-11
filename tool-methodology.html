@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>工具计算方法与数据边界｜wedding-tv.cn</title>
+<meta name="description" content="公开 wedding-tv.cn 婚礼影像估算、供应商报价完整度评分和应急预案生成规则，以及本地存储、AI辅助和版本修订边界。" />
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+<meta name="author" content="wedding-tv.cn 编辑组" />
+<meta name="theme-color" content="#0e0a14" />
+<link rel="canonical" href="https://wedding-tv.cn/tool-methodology.html" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"工具计算方法与数据边界","url":"https://wedding-tv.cn/tool-methodology.html","inLanguage":"zh-CN","dateModified":"2026-08-11","author":{"@type":"Organization","name":"wedding-tv.cn 编辑组","url":"https://wedding-tv.cn/authors.html"},"reviewedBy":{"@type":"Organization","name":"wedding-tv.cn 编辑组","url":"https://wedding-tv.cn/editorial-policy.html"},"isPartOf":{"@type":"WebSite","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"}}
+</script>
+<style>
+:root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030}*{box-sizing:border-box}body{margin:0;font:16px/1.82 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}.wrap{max-width:940px;margin:0 auto;padding:38px 22px}header{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:3}header .wrap{padding:14px 22px;display:flex;justify-content:space-between;gap:18px;align-items:center}nav a{margin-left:16px;color:var(--mute);font-size:14px}.brand{font-weight:700;color:var(--fg)}h1{font-size:32px;line-height:1.35;margin:0 0 10px}h2{font-size:23px;margin:42px 0 12px;border-left:4px solid var(--accent);padding-left:12px}h3{font-size:18px;margin:25px 0 8px;color:var(--accent)}.meta,.note{color:var(--mute);font-size:14px}.toc,.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:17px 19px;margin:20px 0}code{background:#211828;border:1px solid var(--line);border-radius:4px;padding:2px 5px;color:var(--accent)}table{width:100%;border-collapse:collapse;background:var(--card);margin:16px 0}th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:14px}th{color:var(--accent);background:#201729}.cta{display:inline-block;margin:8px 8px 0 0;background:var(--accent);color:#1a0f00;padding:9px 15px;border-radius:7px;font-weight:700}footer{border-top:1px solid var(--line);margin-top:56px;padding:24px;text-align:center;color:var(--mute);font-size:13px}@media(max-width:650px){nav{display:none}.wrap{padding:28px 15px}.table-wrap{overflow:auto}table{min-width:720px}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="brand" href="/">wedding-tv.cn</a><nav><a href="/blog.html">指南中心</a><a href="/authors.html">作者与审校</a><a href="/editorial-policy.html">编辑规范</a></nav></div></header>
+<main class="wrap">
+<h1>工具计算方法与数据边界</h1>
+<p class="meta">维护：<a href="/authors.html" rel="author">wedding-tv.cn 编辑组</a> · <a href="/editorial-policy.html">已按编辑规范审校</a> · 最近实质更新：2026-08-11</p>
+<p>本页公开核心婚礼工具如何产生结果、哪些字段会改变结果、数据保存在哪里，以及结果不能代表什么。目的是让用户可以复算和质疑，而不是把输出包装成“智能推荐”或“行业权威结论”。</p>
+<div class="toc"><strong>目录</strong><ol><li><a href="#video">婚礼影像报价估算</a></li><li><a href="#quote">供应商报价完整度评分</a></li><li><a href="#emergency">应急预案生成规则</a></li><li><a href="#storage">本地数据与导出</a></li><li><a href="#ai">AI 辅助工具边界</a></li><li><a href="#review">测试与修订</a></li></ol></div>
+
+<h2 id="video">1. 婚礼影像报价估算</h2>
+<p><a href="/calculator.html">婚礼报价计算器</a>只估算摄影摄像、直播、快剪、婚礼 MV、航拍、长纪录片和电子请帖等影像相关服务，<strong>不计算婚宴、婚庆布置、礼服、彩礼、首饰或蜜月</strong>。</p>
+<h3>当前基础值</h3>
+<div class="table-wrap"><table><thead><tr><th>变量</th><th>当前值</th><th>解释</th></tr></thead><tbody>
+<tr><td>机位基础值</td><td>单机位 ¥2,500；双机位 ¥6,000；三机位加摇臂 ¥13,000；四机位加导演 ¥22,000</td><td>用于模型起点，不是任何城市的保证成交价</td></tr>
+<tr><td>时长系数</td><td>4 小时 0.7；8 小时 1.0；10 小时以上 1.5；含次日 1.9</td><td>与机位基础值相乘</td></tr>
+<tr><td>附加服务</td><td>直播 3,500；快剪 1,200；MV 9,000；航拍 1,500；长片 2,800；电子请帖 800</td><td>勾选后加入小计</td></tr>
+<tr><td>宾客规模</td><td>超过 100 人的部分，每人增加 15 元模型值</td><td>用于模拟较大现场的沟通和执行增量</td></tr>
+<tr><td>城市系数</td><td>县城 0.85；普通地级市 1.0；省会/强二线 1.15；一线 1.35</td><td>应用于所有已选项目的小计</td></tr>
+<tr><td>结果区间</td><td>模型值的 85% 至 125%</td><td>展示不确定性，不代表置信区间</td></tr>
+</tbody></table></div>
+<div class="box"><strong>计算顺序：</strong><code>机位基础值 × 时长系数 + 附加服务 + 宾客增量</code>，然后整体乘城市系数。页面显示的区间为结果乘 0.85 和 1.25。</div>
+<p>这些参数由编辑组作为前期沟通模型维护，当前没有独立、可复核的全国成交数据库，因此页面不会再称其为“真实成交均价”或“市场中位价”。使用者应拿到至少两份当地书面报价后再比较。</p>
+
+<h2 id="quote">2. 供应商报价完整度评分</h2>
+<p><a href="/quote-comparison.html">供应商报价对比器</a>判断一份报价是否包含足够的可核对信息。它不读取评价、不搜索商家，也不预测服务质量。</p>
+<div class="table-wrap"><table><thead><tr><th>评分字段</th><th>分值</th><th>得到分数的条件</th></tr></thead><tbody>
+<tr><td>供应商名称</td><td>5</td><td>填写名称</td></tr><tr><td>总报价</td><td>15</td><td>填写大于 0 的金额</td></tr><tr><td>服务时长</td><td>8</td><td>填写大于 0 的小时数</td></tr><tr><td>现场人员</td><td>8</td><td>填写大于 0 的人数</td></tr><tr><td>交付周期</td><td>8</td><td>填写天数，允许当天交付为 0</td></tr><tr><td>修改次数</td><td>6</td><td>填写次数，允许不含修改为 0</td></tr><tr><td>六类合同字段</td><td>每项 6，共 36</td><td>原始文件、备份、人员替换、改期取消、额外费用、版权隐私已明确</td></tr><tr><td>交付说明</td><td>8</td><td>不少于 12 个字符</td></tr><tr><td>备注</td><td>6</td><td>不少于 6 个字符</td></tr>
+</tbody></table></div>
+<p>低价不会增加完整度分数。工具只把正数报价中的最低值标为“当前最低报价”；空报价显示“等待填写报价”。如果款项明确使用“定金”名称且比例超过 20%，工具提示复核款项性质，但不提供个案法律判断。</p>
+
+<h2 id="emergency">3. 应急预案生成规则</h2>
+<p><a href="/emergency-plan-generator.html">应急预案生成器</a>采用固定规则组合，不调用 AI，也不根据用户身份自动作出安全决策。每次都会包含指挥通信、关键物品、用电设备、宾客健康和流程时间五类基础事项。</p>
+<div class="table-wrap"><table><thead><tr><th>输入条件</th><th>增加的规则</th><th>目的</th></tr></thead><tbody>
+<tr><td>户外或半户外</td><td>天气切换、户外搭建与带电设备风险</td><td>提前定义室内备选和停止操作边界</td></tr>
+<tr><td>转场不少于 30 分钟</td><td>主备路线、最晚出发、关键物品同车</td><td>减少拥堵导致的连锁延误</td></tr>
+<tr><td>安排直播</td><td>备用网络、本地录制和隐私控制</td><td>网络中断时优先保留完整记录</td></tr>
+<tr><td>有老人、孕妇或行动不便宾客</td><td>无障碍路线、近出口座位和陪同</td><td>改善通行、休息和突发情况响应</td></tr>
+<tr><td>有较多儿童</td><td>监护、设备区、线缆和热源隔离</td><td>明确监护责任和现场边界</td></tr>
+<tr><td>宾客不少于 300 人</td><td>分组签到、通道与分批入场</td><td>应对入口、电梯和疏散压力</td></tr>
+</tbody></table></div>
+<p>“高优先级”表示需要在婚礼前明确负责人和替代方案，不表示风险发生概率。所有专业安全判断均应由场地方、医疗机构、消防部门或合格技术人员作出。</p>
+
+<h2 id="storage">4. 本地数据与导出</h2>
+<ul><li>报价对比器和应急预案生成器将输入保存到当前浏览器的 <code>localStorage</code>，用于刷新后恢复；页面代码不会主动把这些输入发送到本站服务器。</li><li>用户清除浏览器站点数据或使用页面“清空/恢复默认”后，本地记录会删除。</li><li>CSV 文件在内容开头加入 UTF-8 BOM，并使用 UTF-8 编码，以提高中文表格在常见桌面软件中的兼容性。</li><li>不要在工具中填写身份证号、银行卡号、详细病史等不必要的敏感信息。</li></ul>
+
+<h2 id="ai">5. AI 辅助工具边界</h2>
+<p>AI 婚礼策划、请帖、誓词和致辞等页面可能调用配置的生成服务形成初稿。输出取决于用户输入、模型和服务状态，可能存在遗漏或不准确。涉及当地婚俗、价格、档期、合同、法律和安全的内容需要人工再次确认。</p>
+<p>AI 不用于给本页三个规则工具生成评分，也不用于伪造使用人数、用户评价、专家身份或客户案例。内容生产中的 AI 辅助披露见<a href="/authors.html">作者与审校团队</a>。</p>
+
+<h2 id="review">6. 测试与修订</h2>
+<ul><li>2026-08-11：公开影像预算公式，删除预算页中与实际功能不一致的 12 大类和 Excel 导出说明。</li><li>2026-08-11：公开报价完整度 100 分构成和空报价处理规则。</li><li>2026-08-11：公开应急预案的条件触发规则和专业判断边界。</li><li>2026-08-10：两个 CSV 导出工具加入 UTF-8 BOM，并完成桌面和 390px 移动端检查。</li></ul>
+<p>发现计算结果与本页不一致时，请把工具地址、输入条件、预期结果和实际结果发送至 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>。</p>
+<p><a class="cta" href="/wedding-budget-scenarios-case.html">预算演练</a><a class="cta" href="/wedding-quote-comparison-case.html">报价演练</a><a class="cta" href="/outdoor-wedding-emergency-case.html">应急演练</a></p>
+</main>
+<footer>© wedding-tv.cn · <a href="/authors.html">作者与审校</a> · <a href="/editorial-policy.html">编辑规范</a> · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a></footer>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import os
+import subprocess
 from datetime import datetime, timedelta, timezone
 
 PROJECT_ROOT = r"d:\Liu JIE\wedding-tv.cn"
@@ -38,6 +39,10 @@ CORE_PAGES = [
     ("wedding-photo-video-delivery-guide.html", "0.9", "monthly"),
     ("wedding-live-stream-technical-guide.html", "0.9", "monthly"),
     ("wedding-emergency-plan-guide.html", "0.9", "monthly"),
+    ("wedding-budget-scenarios-case.html", "0.9", "monthly"),
+    ("wedding-quote-comparison-case.html", "0.9", "monthly"),
+    ("outdoor-wedding-emergency-case.html", "0.9", "monthly"),
+    ("tool-methodology.html", "0.8", "monthly"),
     ("blog.html", "0.9", "weekly"),
     ("about.html", "0.7", "monthly"),
     ("editorial-policy.html", "0.7", "monthly"),
@@ -82,9 +87,28 @@ PROVINCE_PAGES = [
     "yunnan.html",
     "zhejiang.html",
 ]
+
+
+def last_modified(relative_path: str) -> str:
+    result = subprocess.run(
+        ["git", "log", "-1", "--format=%cs", "--", relative_path],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    return result.stdout.strip() or TODAY_STR
+
+
 def build_urls() -> list[tuple[str, str, str, str]]:
     urls = [
-        (f"https://wedding-tv.cn/{path}", TODAY_STR, freq, priority)
+        (
+            f"https://wedding-tv.cn/{path}",
+            last_modified(path or "index.html"),
+            freq,
+            priority,
+        )
         for path, priority, freq in CORE_PAGES
     ]
 
@@ -95,7 +119,7 @@ def build_urls() -> list[tuple[str, str, str, str]]:
             urls.append(
                 (
                     f"https://wedding-tv.cn/blog/{filename}",
-                    TODAY_STR,
+                    last_modified(os.path.join("blog", filename)),
                     "monthly",
                     "0.8",
                 )
