@@ -65,6 +65,10 @@ const worker = fs.readFileSync(path.join(root, "src/worker.js"), "utf8");
 if (!/cloudflare-cdn-cache-control["']\s*,\s*["']no-store/i.test(worker)) {
   errors.push("src/worker.js: indexable documents can remain stale in Cloudflare cache");
 }
+const wrangler = fs.readFileSync(path.join(root, "wrangler.jsonc"), "utf8");
+if (!/"run_worker_first"\s*:\s*true/.test(wrangler)) {
+  errors.push("wrangler.jsonc: static documents bypass Worker cache controls");
+}
 
 const workflows = fs.readdirSync(path.join(root, ".github", "workflows"))
   .filter((name) => /auto-(?:cities|insights|news)\.ya?ml$/i.test(name));
