@@ -1,6 +1,6 @@
-// Service Worker：仅缓存静态资源 + 离线 fallback；API 请求一律走网络
-// v2 (2026-05-14b)：移除根路径预缓存（避免坏响应被缓存），强制清旧缓存
-const CACHE = "wt-v3-2026-05-14-ba19447";
+// Service Worker: cache static resources for offline fallback; API requests always use the network.
+// v4: content-quality review release. A new cache name removes legacy AI article snapshots.
+const CACHE = "wt-v4-2026-08-11-content-audit";
 const PRECACHE = ["/404.html", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
@@ -24,7 +24,7 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/api/")) return; // never cache API
   const isNav = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
 
-  // 导航请求优先取 /index.html，避免根路径偶发 404 被用户感知。
+  // Navigation is network-first so reviewed content replaces old cached pages.
   if (isNav) {
     e.respondWith(
       fetch(req)
@@ -49,7 +49,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // network first，仅在网络完全失败（离线）时才用缓存兜底
+  // Network-first; use cache only when the network fails.
   e.respondWith(
     fetch(req)
       .then((res) => {

@@ -8,7 +8,7 @@ $hash = "manual"
 try {
   $hash = (git -C $root rev-parse --short HEAD).Trim()
 } catch {}
-$ver = "wt-v3-{0}-{1}" -f (Get-Date -Format "yyyy-MM-dd"), $hash
+$ver = "wt-v4-{0}-{1}" -f (Get-Date -Format "yyyy-MM-dd"), $hash
 
 $text = Get-Content -Path $sw -Raw -Encoding UTF8
 $replacement = 'const CACHE = "' + $ver + '";'

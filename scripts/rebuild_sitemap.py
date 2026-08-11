@@ -7,9 +7,9 @@ SITEMAP_PATH = os.path.join(PROJECT_ROOT, "sitemap.xml")
 TODAY_STR = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
 
 # Review-mode sitemap:
-# keep only durable tool, guide, policy and province pages indexed.
-# Programmatic city and insights pages remain crawlable from the site, but are
-# intentionally excluded while AdSense is rejecting the site for low-value content.
+# keep only durable tools, reviewed guides and policy pages indexed.
+# Programmatic city, regional customs and insights pages are intentionally
+# excluded while their sources and editorial scope are being reviewed.
 CORE_PAGES = [
     ("", "1.0", "daily"),
     ("ai-planner.html", "0.95", "weekly"),
@@ -27,7 +27,6 @@ CORE_PAGES = [
     ("calculator.html", "0.9", "weekly"),
     ("quote-comparison.html", "0.95", "weekly"),
     ("emergency-plan-generator.html", "0.95", "weekly"),
-    ("budget-reference.html", "0.85", "monthly"),
     ("mv-style.html", "0.8", "monthly"),
     ("guide.html", "0.9", "monthly"),
     ("guide-livestream.html", "0.85", "monthly"),
@@ -39,6 +38,7 @@ CORE_PAGES = [
     ("wedding-photo-video-delivery-guide.html", "0.9", "monthly"),
     ("wedding-live-stream-technical-guide.html", "0.9", "monthly"),
     ("wedding-emergency-plan-guide.html", "0.9", "monthly"),
+    ("wedding-customs-verification-guide.html", "0.9", "monthly"),
     ("wedding-budget-scenarios-case.html", "0.9", "monthly"),
     ("wedding-quote-comparison-case.html", "0.9", "monthly"),
     ("outdoor-wedding-emergency-case.html", "0.9", "monthly"),
@@ -51,45 +51,18 @@ CORE_PAGES = [
     ("terms.html", "0.7", "monthly"),
 ]
 
-PROVINCE_PAGES = [
-    "anhui.html",
-    "aomen.html",
-    "beijing.html",
-    "chongqing.html",
-    "fujian.html",
-    "gansu.html",
-    "guangdong.html",
-    "guangxi.html",
-    "guizhou.html",
-    "hainan.html",
-    "hebei.html",
-    "heilongjiang.html",
-    "henan.html",
-    "hubei.html",
-    "hunan.html",
-    "jiangsu.html",
-    "jiangxi.html",
-    "jilin.html",
-    "liaoning.html",
-    "neimenggu.html",
-    "ningxia.html",
-    "qinghai.html",
-    "shaanxi.html",
-    "shandong.html",
-    "shanghai.html",
-    "shanxi.html",
-    "sichuan.html",
-    "taiwan.html",
-    "tianjin.html",
-    "xianggang.html",
-    "xinjiang.html",
-    "xizang.html",
-    "yunnan.html",
-    "zhejiang.html",
-]
-
-
 def last_modified(relative_path: str) -> str:
+    working_tree = subprocess.run(
+        ["git", "status", "--porcelain", "--", relative_path],
+        cwd=PROJECT_ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        check=False,
+    )
+    if working_tree.stdout.strip():
+        return TODAY_STR
+
     result = subprocess.run(
         ["git", "log", "-1", "--format=%cs", "--", relative_path],
         cwd=PROJECT_ROOT,
@@ -112,18 +85,6 @@ def build_urls() -> list[tuple[str, str, str, str]]:
         for path, priority, freq in CORE_PAGES
     ]
 
-    blog_dir = os.path.join(PROJECT_ROOT, "blog")
-    for filename in PROVINCE_PAGES:
-        path = os.path.join(blog_dir, filename)
-        if os.path.exists(path):
-            urls.append(
-                (
-                    f"https://wedding-tv.cn/blog/{filename}",
-                    last_modified(os.path.join("blog", filename)),
-                    "monthly",
-                    "0.8",
-                )
-            )
     return urls
 def main() -> None:
     urls = build_urls()

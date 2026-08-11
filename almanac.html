@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>婚期吉日查询 2026 · 嫁娶黄道吉日万年历 | wedding-tv.cn</title>
-<meta name="description" content="2026-2027 婚期吉日免费查询：基于传统老黄历宜嫁娶/不宜嫁娶判断，避开三娘煞、杨公忌、四绝四离日。可按月份浏览全年嫁娶吉日。" />
-<meta name="keywords" content="婚期吉日,结婚吉日查询,嫁娶吉日,黄道吉日,2026结婚吉日,2027结婚吉日,老黄历,婚期" />
+<title>传统婚期日期参考工具 | wedding-tv.cn</title>
+<meta name="description" content="按页面公开的简化民俗规则查看婚期日期标签，用于家庭沟通；不提供权威黄历、生辰八字或专业择日结论。" />
+<meta name="author" content="wedding-tv.cn 内容维护" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <link rel="canonical" href="https://wedding-tv.cn/almanac.html" />
 <link rel="manifest" href="/manifest.webmanifest" />
-<meta property="og:title" content="婚期吉日查询 2026 · 嫁娶黄道吉日万年历" />
-<meta property="og:description" content="基于传统老黄历宜嫁娶判断，免费查询 2026-2027 全年结婚吉日。" />
+<meta property="og:title" content="传统婚期日期参考工具" />
+<meta property="og:description" content="查看简化民俗日期标签，并结合现实档期与家庭意见选择婚期。" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wedding-tv.cn/almanac.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>📅</text></svg>" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"婚期吉日查询","url":"https://wedding-tv.cn/almanac.html","applicationCategory":"LifestyleApplication","operatingSystem":"Web","inLanguage":"zh-CN","description":"结合传统黄历宜忌为你查询 2026/2027 年最佳结婚吉日。","dateModified":"2026-05-18","publisher":{"url":"https://wedding-tv.cn/","name":"wedding-tv.cn","@type":"Organization"},"offers":{"price":"0","priceCurrency":"CNY","@type":"Offer"}}
+{"@context":"https://schema.org","@type":"WebApplication","name":"传统婚期日期参考工具","url":"https://wedding-tv.cn/almanac.html","applicationCategory":"LifestyleApplication","operatingSystem":"Web","inLanguage":"zh-CN","description":"按公开代码中的简化民俗规则标记日期，仅供家庭沟通参考。","dateModified":"2026-08-11","author":{"@type":"Organization","name":"wedding-tv.cn 内容维护","url":"https://wedding-tv.cn/authors.html"},"publisher":{"url":"https://wedding-tv.cn/","name":"wedding-tv.cn","@type":"Organization"},"offers":{"price":"0","priceCurrency":"CNY","@type":"Offer"}}
 </script>
 <style>
 :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
@@ -69,33 +69,31 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
     <a href="/timeline.html">⏱️ 流程</a>
     <a href="/playlist.html">🎵 歌单</a>
   </nav>
-  <h1>📅 婚期吉日查询 · 万年历嫁娶宜忌</h1>
-  <p class="lead">基于传统老黄历推算 2026-2030 年宜嫁娶吉日。已自动避开<strong>三娘煞</strong>（每月初三、初七、十三、十八、廿二、廿七）、<strong>杨公十三忌日</strong>、<strong>四绝四离日</strong>。</p>
+  <h1>传统婚期日期参考</h1>
+  <p class="lead">按本站公开的简化民俗规则标记部分日期，方便与家人讨论。标签不是科学结论，也不代表权威黄历或专业择日意见。</p>
 
   <div class="controls">
     <label>年：<select id="year"></select></label>
     <label>月：<select id="month"></select></label>
     <button class="primary" onclick="render()">查询</button>
-    <span class="legend"><span class="pill good">宜嫁娶</span><span class="pill warn">不宜</span></span>
+    <span class="legend"><span class="pill good">传统参考</span><span class="pill warn">规则避开</span></span>
   </div>
 
   <div class="cal" id="cal"></div>
 
   <div class="list">
-    <h2 id="listTitle">本月推荐婚期</h2>
+    <h2 id="listTitle">本月传统参考日期</h2>
     <ul id="list"></ul>
   </div>
 
   <div class="notes">
-    <h3>关于婚期吉日的说明</h3>
-    <p>中国传统嫁娶择日讲究"<strong>避凶就吉</strong>"，主要参考以下几条：</p>
+    <h3>先确认现实条件，再讨论传统习惯</h3>
+    <p>同一日期在不同黄历、地区和家庭中可能有不同解释。本页只依据农历日期和少量固定规则生成标签，未计算生肖、生辰、宗教要求或地方习惯。</p>
     <ul>
-      <li><strong>三娘煞</strong>：相传月老不为三娘牵线，三娘报复月老所选定的吉日。每月初三、初七、十三、十八、廿二、廿七共六天忌嫁娶。</li>
-      <li><strong>杨公十三忌</strong>：杨公祖师所定全年 13 个不宜动土、嫁娶的日子（正月十三、二月十一、三月初九、四月初七、五月初五、六月初三、七月初一、七月廿九、八月廿七、九月廿五、十月廿三、冬月廿一、腊月十九）。</li>
-      <li><strong>四绝四离</strong>：立春、立夏、立秋、立冬前一天为"四绝"；春分、秋分、夏至、冬至前一天为"四离"，传统不宜婚嫁。</li>
-      <li><strong>避开父母生辰、丧期</strong>、农历七月（鬼月）多数地区也不办喜事。</li>
+      <li>先确认登记安排、场地档期、亲友出行、天气和供应商可用时间。</li>
+      <li>如果双方家庭重视传统择日，请把候选日期交由双方认可的人另行核对。</li>
+      <li>不要因属相、性别、婚史、孕育状况等标签排斥任何宾客或参与者。</li>
     </ul>
-    <p>本工具仅供参考，最终请结合双方生辰八字、家庭习俗及实际档期决定。</p>
   </div>
 
   <h3 style="margin-top:30px">配套免费工具</h3>
@@ -110,61 +108,17 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
     <a href="/calculator.html">💰 预算计算</a>
     <a href="/blog.html">📚 各地婚俗</a>
   </div>
-
-<section class="seo-tool-info" style="max-width:780px;margin:48px auto 24px;padding:28px 24px;background:#1a1320;border:1px solid #2a2030;border-radius:12px;color:#f5f1ea;font:16px/1.85 -apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif">
-  <h2 style="font-size:22px;margin:0 0 14px;color:#d4a574;border-left:4px solid #d4a574;padding-left:12px">📅 关于"婚礼吉日查询（在线黄历）"</h2>
-  <p style="margin:0 0 14px">免费在线婚礼吉日查询工具，基于中国传统黄历（《协纪辨方书》）算法，查询任意年份的"宜嫁娶"日。支持避开生肖冲煞、属相相冲、节气禁忌（清明、七月、冬至）等专业过滤。覆盖未来 5 年的每日宜忌。</p>
-  <p style="margin:0 0 20px;color:#b9b1a3">中国传统婚礼讲究"挑日子"，旧时由本地堪舆师查"通胜"，现在多数年轻人不知如何挑选。本工具把黄历的"宜嫁娶/不将日/三合日/天德日"等专业术语转化为可视化日历，并自动避开属相冲煞日。</p>
-  
-  <h3 style="font-size:18px;margin:24px 0 10px;color:#d4a574">✨ 使用步骤</h3>
-  <ol style="padding-left:24px;margin:0">
-    <li style="margin:8px 0">选择新郎、新娘的属相（用于过滤"日冲"日子）</li>
-    <li style="margin:8px 0">选择目标月份范围（建议提前 3-12 个月规划）</li>
-    <li style="margin:8px 0">系统列出该月所有「宜嫁娶」日，标注吉时段、忌讳事项</li>
-    <li style="margin:8px 0">点击任一日期查看详细黄历（建除十二神、二十八宿、彭祖百忌）</li>
-    <li style="margin:8px 0">保存或导出心仪日期到时间轴工具规划当天流程</li>
-  </ol>
-  
-  <h3 style="font-size:18px;margin:24px 0 10px;color:#d4a574">💡 工具特点</h3>
-  <ul style="padding-left:24px;margin:0">
-    <li style="margin:6px 0">基于《协纪辨方书》正统黄历算法，非民间简化版</li>
-    <li style="margin:6px 0">自动过滤新郎新娘属相相冲日</li>
-    <li style="margin:6px 0">标注「三合日」「六合日」「天德日」等上等吉日</li>
-    <li style="margin:6px 0">避开清明、中元、冬至等大忌日</li>
-    <li style="margin:6px 0">支持公历/农历双显示，跨年也能查</li>
+<section class="content-boundary" style="max-width:780px;margin:44px auto 24px;padding:24px;background:#171121;border:1px solid rgba(255,255,255,.12);border-radius:8px;line-height:1.8">
+  <h2 style="font-size:22px;margin:0 0 12px;color:#d4a574">日期标签如何理解</h2>
+  <p style="margin:0 0 12px">本页按代码中公开的简化民俗规则，把部分农历日期标记为传统参考。它未接入权威黄历数据库，不读取新人生肖或生辰，也不提供专业择日结论。</p>
+  <p style="margin:0 0 12px">传统说法在地区和家庭之间可能不同。选择婚期时，应优先确认场地档期、亲友时间、天气交通和登记安排，再与双方家庭讨论是否保留特定习惯。</p>
+  <ul style="margin:0 0 12px;padding-left:22px">
+    <li style="margin:6px 0">页面中的“宜”表示符合本站简化规则，不表示客观上更适合结婚。</li>
+    <li style="margin:6px 0">日期计算和民俗标签都可能存在误差，重要安排请另行核对。</li>
   </ul>
-  
-  <h3 style="font-size:18px;margin:28px 0 12px;color:#d4a574">❓ 常见问题</h3>
-    <details style="margin:12px 0;padding:12px 14px;background:#0e0a14;border:1px solid #2a2030;border-radius:8px">
-      <summary style="cursor:pointer;font-weight:600;color:#d4a574">2026 年最适合结婚的月份有哪些？</summary>
-      <p style="margin:10px 0 0;line-height:1.85">2026 年公历 3、5、6、9、10、11、12 月有较多上等吉日，其中 5 月（农历四月）和 10 月（农历九月）天气适宜+吉日密集，最受婚庆行业推荐。避开 7 月（农历六月「绝命月」民间避讳）和 8 月（农历七月「鬼月」）。</p>
-    </details>
-    <details style="margin:12px 0;padding:12px 14px;background:#0e0a14;border:1px solid #2a2030;border-radius:8px">
-      <summary style="cursor:pointer;font-weight:600;color:#d4a574">属相相冲一定要避开吗？</summary>
-      <p style="margin:10px 0 0;line-height:1.85">传统讲究新郎、新娘的属相与日子的「日冲」不可同日（如"申日冲虎"，属虎新人不宜在猴日办婚礼）。现代年轻人若不在意可忽略，但若双方父母在意，建议遵循。本工具会自动过滤。</p>
-    </details>
-    <details style="margin:12px 0;padding:12px 14px;background:#0e0a14;border:1px solid #2a2030;border-radius:8px">
-      <summary style="cursor:pointer;font-weight:600;color:#d4a574">为什么有些日子标"宜嫁娶"又标"忌嫁娶"？</summary>
-      <p style="margin:10px 0 0;line-height:1.85">这是因为黄历有多套体系（建除、十二值、二十八宿、神煞）同时运行，偶尔会冲突。本工具采用"主流综合判定法"——以《协纪辨方书》的最终结论为准。如果某日仍冲突，会显示"中平"。</p>
-    </details>
-    <details style="margin:12px 0;padding:12px 14px;background:#0e0a14;border:1px solid #2a2030;border-radius:8px">
-      <summary style="cursor:pointer;font-weight:600;color:#d4a574">农历七月真的不能办婚礼吗？</summary>
-      <p style="margin:10px 0 0;line-height:1.85">民间俗称"鬼月"，传统避忌。但实际上农历七月初七（七夕）反而是西式吉日（中国情人节）。如果只是民俗禁忌、家中长辈不在意，七月办婚礼不影响法律和宗教效力。</p>
-    </details>
-    <details style="margin:12px 0;padding:12px 14px;background:#0e0a14;border:1px solid #2a2030;border-radius:8px">
-      <summary style="cursor:pointer;font-weight:600;color:#d4a574">我已经定好日子了，工具还能用吗？</summary>
-      <p style="margin:10px 0 0;line-height:1.85">可以反查。输入你定好的日期，工具会显示当日宜忌、吉时（最佳迎亲时辰、敬茶时辰）、彭祖百忌（如「丙不修灶」），帮你规划当天流程避开小忌讳。</p>
-    </details>
-
-  <div style="margin-top:28px;padding-top:18px;border-top:1px solid #2a2030;color:#b9b1a3;font-size:13px">
-    📚 相关阅读：<a href="/blog.html" style="color:#d4a574">婚俗百科</a> ·
-    <a href="/blog.html#regions" style="color:#d4a574">34 地婚俗</a> ·
-    <a href="/blog.html#international" style="color:#d4a574">国际婚俗</a> ·
-    <a href="/guide.html" style="color:#d4a574">行业指南</a>
-  </div>
+  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：2026-08-11 · <a href="/editorial-policy.html">编辑与 AI 使用说明</a></p>
 </section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"2026 年最适合结婚的月份有哪些？","acceptedAnswer":{"@type":"Answer","text":"2026 年公历 3、5、6、9、10、11、12 月有较多上等吉日，其中 5 月（农历四月）和 10 月（农历九月）天气适宜+吉日密集，最受婚庆行业推荐。避开 7 月（农历六月「绝命月」民间避讳）和 8 月（农历七月「鬼月」）。"}},{"@type":"Question","name":"属相相冲一定要避开吗？","acceptedAnswer":{"@type":"Answer","text":"传统讲究新郎、新娘的属相与日子的「日冲」不可同日（如\"申日冲虎\"，属虎新人不宜在猴日办婚礼）。现代年轻人若不在意可忽略，但若双方父母在意，建议遵循。本工具会自动过滤。"}},{"@type":"Question","name":"为什么有些日子标\"宜嫁娶\"又标\"忌嫁娶\"？","acceptedAnswer":{"@type":"Answer","text":"这是因为黄历有多套体系（建除、十二值、二十八宿、神煞）同时运行，偶尔会冲突。本工具采用\"主流综合判定法\"——以《协纪辨方书》的最终结论为准。如果某日仍冲突，会显示\"中平\"。"}},{"@type":"Question","name":"农历七月真的不能办婚礼吗？","acceptedAnswer":{"@type":"Answer","text":"民间俗称\"鬼月\"，传统避忌。但实际上农历七月初七（七夕）反而是西式吉日（中国情人节）。如果只是民俗禁忌、家中长辈不在意，七月办婚礼不影响法律和宗教效力。"}},{"@type":"Question","name":"我已经定好日子了，工具还能用吗？","acceptedAnswer":{"@type":"Answer","text":"可以反查。输入你定好的日期，工具会显示当日宜忌、吉时（最佳迎亲时辰、敬茶时辰）、彭祖百忌（如「丙不修灶」），帮你规划当天流程避开小忌讳。"}}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","name":"如何使用婚礼吉日查询（在线黄历）","step":[{"@type":"HowToStep","position":1,"name":"选择新郎、新娘的属相（用于过滤\"日冲\"日子）"},{"@type":"HowToStep","position":2,"name":"选择目标月份范围（建议提前 3-12 个月规划）"},{"@type":"HowToStep","position":3,"name":"系统列出该月所有「宜嫁娶」日，标注吉时段、忌讳事项"},{"@type":"HowToStep","position":4,"name":"点击任一日期查看详细黄历（建除十二神、二十八宿、彭祖百忌）"},{"@type":"HowToStep","position":5,"name":"保存或导出心仪日期到时间轴工具规划当天流程"}]}</script>
+
 <footer>
     由 <a href="/">wedding-tv.cn</a> 提供 · 免费婚礼工具与婚俗指南
   </footer>
@@ -259,14 +213,14 @@ function render(){
     const good=isGood(date);
     const cell=document.createElement("div");
     cell.className="day"+(good?" good":(rs.length?" warn":""))+(date.getDay()===0||date.getDay()===6?" weekend":"");
-    cell.innerHTML=`<div><div class="num">${d}</div><div class="lab">${LMN[lun.lm-1]}月${LDN[lun.ld-1]}</div></div><div class="lab">${good?"宜":(rs[0]||"")}</div>`;
+    cell.innerHTML=`<div><div class="num">${d}</div><div class="lab">${LMN[lun.lm-1]}月${LDN[lun.ld-1]}</div></div><div class="lab">${good?"参考":(rs[0]||"")}</div>`;
     cal.appendChild(cell);
     if(good)goodDays.push({date,lun,dow:date.getDay()});
   }
-  $("listTitle").textContent=`${y}年${m}月推荐婚期（${goodDays.length} 天）`;
+  $("listTitle").textContent=`${y}年${m}月传统参考日期（${goodDays.length} 天）`;
   const ul=$("list");ul.innerHTML="";
   if(!goodDays.length){
-    ul.innerHTML='<li><span style="color:var(--sub)">本月吉日较少，建议查看相邻月份</span></li>';
+    ul.innerHTML='<li><span style="color:var(--sub)">本月符合简化规则的参考日期较少，可查看相邻月份</span></li>';
   }else{
     const dn=["周日","周一","周二","周三","周四","周五","周六"];
     goodDays.forEach(g=>{
