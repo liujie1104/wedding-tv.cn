@@ -25,6 +25,38 @@ const API = {
   "/api/track":     { POST: trackPost, GET: trackGet },
 };
 
+function staticResponse(response, path) {
+  if (response.status !== 200) return response;
+  const headers = new Headers(response.headers);
+  const isHtml = path === "/" || path.endsWith("/") || path.endsWith(".html");
+  const mustStayFresh = isHtml || [
+    "/robots.txt",
+    "/sitemap.xml",
+    "/rss.xml",
+    "/ads.txt",
+    "/sw.js",
+    "/manifest.webmanifest",
+  ].includes(path);
+
+  if (isHtml) headers.set("content-type", "text/html; charset=utf-8");
+  if (mustStayFresh) {
+    headers.set("cache-control", "no-store");
+    headers.set("cloudflare-cdn-cache-control", "no-store");
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function notFoundResponse(response) {
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", "no-store");
+  headers.set("cloudflare-cdn-cache-control", "no-store");
+  return new Response(response.body, { status: 404, headers });
+}
+
 function corsPreflight() {
   return new Response(null, {
     status: 204,
@@ -46,7 +78,8 @@ export default {
     const m = /^\/i\/([a-z0-9]{4,16})$/i.exec(path);
     if (m) {
       const newUrl = new URL(`/i.html?id=${encodeURIComponent(m[1])}`, url.origin);
-      return env.ASSETS.fetch(new Request(newUrl, request));
+      const response = await env.ASSETS.fetch(new Request(newUrl, request));
+      return staticResponse(response, "/i.html");
     }
 
     // /api/* 路由
@@ -78,19 +111,14 @@ export default {
     // 其它路径 -> 静态资源；html_handling=auto-trailing-slash 会让 ASSETS 自动将 /dir/ 映射到 dir/index.html
     if (path === "/" || path.endsWith("/")) {
       const res = await env.ASSETS.fetch(request);
-      if (res.status === 200) {
-        const newHeaders = new Headers(res.headers);
-        newHeaders.set("content-type", "text/html; charset=utf-8");
-        return new Response(res.body, { status: 200, headers: newHeaders });
-      }
-      return res;
+      return staticResponse(res, path);
     }
     const res = await env.ASSETS.fetch(request);
     // 404 fallback：HTML 请求失败时返回自定义 404 页面
     if (res.status === 404 && (request.headers.get("accept") || "").includes("text/html")) {
       const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin).href));
-      return new Response(notFound.body, { status: 404, headers: notFound.headers });
+      return notFoundResponse(notFound);
     }
-    return res;
+    return staticResponse(res, path);
   },
 };

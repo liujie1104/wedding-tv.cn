@@ -61,6 +61,10 @@ for (const sourcePath of ["functions/api/save.js", "functions/api/upload.js"]) {
   const source = fs.readFileSync(path.join(root, sourcePath), "utf8");
   if (!/expirationTtl/.test(source)) errors.push(`${sourcePath}: public data has no expiration`);
 }
+const worker = fs.readFileSync(path.join(root, "src/worker.js"), "utf8");
+if (!/cloudflare-cdn-cache-control["']\s*,\s*["']no-store/i.test(worker)) {
+  errors.push("src/worker.js: indexable documents can remain stale in Cloudflare cache");
+}
 
 const workflows = fs.readdirSync(path.join(root, ".github", "workflows"))
   .filter((name) => /auto-(?:cities|insights|news)\.ya?ml$/i.test(name));
