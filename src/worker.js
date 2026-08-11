@@ -1,4 +1,4 @@
-// Cloudflare Worker 入口：路由 /api/* 到对应处理函数；其它请求交给静态资源
+// Cloudflare Worker 入口：wrangler 启用 run_worker_first，所有静态文档先在此处设置缓存策略。
 import { onRequestPost as savePost } from "../functions/api/save.js";
 import { onRequestGet as loadGet } from "../functions/api/load.js";
 import { onRequestPost as uploadPost } from "../functions/api/upload.js";
