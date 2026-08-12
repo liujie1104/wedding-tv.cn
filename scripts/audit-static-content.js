@@ -58,7 +58,13 @@ for (const relativePath of reviewedRegionPages) {
   }
   const html = fs.readFileSync(fullPath, "utf8");
   const sourceCount = [...html.matchAll(/<a\b[^>]*\bdata-source\b/gi)].length;
+  const sectionCount = [...html.matchAll(/<h2\b/gi)].length;
+  const tableCount = [...html.matchAll(/<table\b/gi)].length;
+  const textLength = visibleText(html).length;
   if (sourceCount < 3) errors.push(`${relativePath}: fewer than 3 traceable sources (${sourceCount})`);
+  if (textLength < 3000) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
+  if (sectionCount < 9) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
+  if (tableCount < 2) errors.push(`${relativePath}: reviewed regional longform needs more executable comparison tables (${tableCount})`);
   if (!/AI 辅助说明/.test(html)) errors.push(`${relativePath}: missing AI assistance disclosure`);
   if (!/(?:适用边界|范围声明|阅读原则|本页定位|特别提示)/.test(html)) {
     errors.push(`${relativePath}: missing locality and applicability boundary`);
@@ -67,6 +73,8 @@ for (const relativePath of reviewedRegionPages) {
     errors.push(`${relativePath}: missing family verification checklist`);
   }
   if (!/(?:争议|简化)/.test(html)) errors.push(`${relativePath}: missing dispute or simplification guidance`);
+  if (!/假设情境/.test(html)) errors.push(`${relativePath}: missing clearly disclosed planning scenario`);
+  if (!/(?:供应商|主持人|婚庆)/.test(html)) errors.push(`${relativePath}: missing vendor handoff guidance`);
   if (!/wedding-tv\.cn 内容维护/.test(html) || !/authors\.html/.test(html)) {
     errors.push(`${relativePath}: missing organization responsibility statement`);
   }
