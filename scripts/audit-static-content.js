@@ -43,6 +43,11 @@ const reviewedRegionPages = new Set([
   "blog/jiangxi.html",
   "blog/shaanxi.html",
   "blog/guizhou.html",
+  "blog/hainan.html",
+  "blog/yunnan.html",
+  "blog/guangxi.html",
+  "blog/ningxia.html",
+  "blog/xinjiang.html",
 ]);
 const requiredConcreteSignals = new Map([
   ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
@@ -70,6 +75,11 @@ const requiredConcreteSignals = new Map([
   ["blog/jiangxi.html", [/扎庚/, /睄节/, /祖宗纱代/, /踩红筷子/, /同心餐/]],
   ["blog/shaanxi.html", [/择亲、提亲、订亲、商话/, /稳根鞋/, /长命带/, /结缘发/, /参厨/]],
   ["blog/guizhou.html", [/夜间对歌/, /拦门酒/, /糯米、喜糖、鸭和猪肉/, /第一担井水/, /行歌坐月/]],
+  ["blog/hainan.html", [/黎族传统婚礼/, /海南三亚回族婚礼/, /三米多长的木杆/, /山栏糯米酒/, /尼卡哈/]],
+  ["blog/yunnan.html", [/雷响茶/, /核桃仁与红糖/, /蜂蜜和少量花椒、桂皮/, /25首章哈习俗歌/, /彝族（花腰）婚嫁习俗/]],
+  ["blog/guangxi.html", [/卢瑞明/, /头峒/, /乜相/, /拦路关/, /两句一顿，每句七字/]],
+  ["blog/ningxia.html", [/提亲、看家道、相亲、道喜/, /念尼卡哈/, /唱家子/, /表针线/, /酒曲子/]],
+  ["blog/xinjiang.html", [/送订亲礼.*送大礼/s, /阿吉萨林/, /安巴萨林/, /击鼓祝福/, /盐水.*馕/s]],
 ]);
 const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 
