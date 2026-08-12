@@ -172,7 +172,8 @@ footer{padding:34px 0 48px;border-top:1px solid var(--line);color:var(--sub);fon
 @media(max-width:640px){
   .wrap{width:min(100% - 28px,var(--max))}
   .site-header{position:relative}
-  .site-nav nav a{padding:7px 9px}
+  .site-nav nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:4px}
+  .site-nav nav a{padding:7px 5px;text-align:center}
   .hero{min-height:620px;background-position:69% center}
   .hero::before{background:linear-gradient(90deg,rgba(18,13,18,.97),rgba(18,13,18,.78))}
   .hero-content{padding:62px 0 92px}
