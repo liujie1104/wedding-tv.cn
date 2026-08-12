@@ -24,6 +24,13 @@ const reviewedRegionPages = new Set([
   "blog/sichuan.html",
   "blog/zhejiang.html",
 ]);
+const requiredConcreteSignals = new Map([
+  ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /划桨迎亲|划桨舞蹈/]],
+  ["blog/fujian.html", [/杉刺拦路求对歌/, /伴娘妈、送嫁嫂或佬嫂/]],
+  ["blog/hunan.html", [/哭开声/, /赶边边场/]],
+  ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/]],
+  ["blog/zhejiang.html", [/定情、做媒、相亲、备嫁妆、迎嫁妆/, /踩米筛/]],
+]);
 
 function filesUnder(dir, extension) {
   if (!fs.existsSync(dir)) return [];
@@ -75,6 +82,9 @@ for (const relativePath of reviewedRegionPages) {
   if (!/(?:争议|简化)/.test(html)) errors.push(`${relativePath}: missing dispute or simplification guidance`);
   if (!/假设情境/.test(html)) errors.push(`${relativePath}: missing clearly disclosed planning scenario`);
   if (!/(?:供应商|主持人|婚庆)/.test(html)) errors.push(`${relativePath}: missing vendor handoff guidance`);
+  for (const signal of requiredConcreteSignals.get(relativePath) || []) {
+    if (!signal.test(html)) errors.push(`${relativePath}: missing a required source-specific fact (${signal})`);
+  }
   if (!/wedding-tv\.cn 内容维护/.test(html) || !/authors\.html/.test(html)) {
     errors.push(`${relativePath}: missing organization responsibility statement`);
   }
