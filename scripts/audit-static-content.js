@@ -193,6 +193,9 @@ const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
 if (/SITE_STATS|st-(?:views|inquiries|cities)|useDailyJitter/.test(home)) {
   errors.push("index.html: contains unverifiable visitor or usage counters");
 }
+if (!home.includes('/assets/hero-wedding-planning.webp') || !fs.existsSync(path.join(root, "assets", "hero-wedding-planning.webp"))) {
+  errors.push("index.html: wedding planning hero image is missing");
+}
 
 for (const retiredEndpoint of ["functions/api/debug-env.js", "functions/api/track.js"]) {
   if (fs.existsSync(path.join(root, retiredEndpoint))) {
@@ -264,6 +267,9 @@ const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const navigationCacheBlock = serviceWorker.split("if (isNav) {")[1]?.split("const cacheableAsset")[0] || "";
 if (/\.put\s*\(/.test(navigationCacheBlock)) {
   errors.push("sw.js: navigation responses are persisted and can hide reviewed content");
+}
+if (/\/index\.html/.test(navigationCacheBlock)) {
+  errors.push("sw.js: missing navigation URLs must not be replaced with the homepage");
 }
 
 const saveSource = fs.readFileSync(path.join(root, "functions", "api", "save.js"), "utf8");

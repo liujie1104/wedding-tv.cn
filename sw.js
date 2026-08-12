@@ -1,6 +1,6 @@
 // Cache only versioned/static media. Documents and API responses always use the network.
-const CACHE = "wt-v6-2026-08-12-privacy-security";
-const PRECACHE = ["/404.html", "/manifest.webmanifest"];
+const CACHE = "wt-v7-2026-08-12-home-refresh";
+const PRECACHE = ["/manifest.webmanifest", "/assets/hero-wedding-planning.webp"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(() => {}));
@@ -26,14 +26,10 @@ self.addEventListener("fetch", (e) => {
   // Never persist documents: editorial, policy and SEO updates must be visible immediately.
   if (isNav) {
     e.respondWith(
-      fetch(req)
-        .then((res) => {
-          if (res && res.status === 404) {
-            return fetch(new Request("/index.html", { cache: "reload" }));
-          }
-          return res;
-        })
-        .catch(() => caches.match("/404.html"))
+      fetch(req).catch(() => new Response(
+        "页面暂时无法访问，请检查网络连接后重试。",
+        { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } }
+      ))
     );
     return;
   }
@@ -55,9 +51,6 @@ self.addEventListener("fetch", (e) => {
       .catch(() =>
         caches.match(req).then((cached) => {
           if (cached) return cached;
-          if ((req.headers.get("accept") || "").includes("text/html")) {
-            return caches.match("/404.html");
-          }
           return new Response("offline", { status: 503 });
         })
       )
