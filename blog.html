@@ -297,30 +297,8 @@ footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var
 
 <footer>© wedding-tv.cn · <a href="/privacy.html">隐私</a> · <a href="/terms.html">条款</a> · <a href="/about.html">关于</a> · <a href="/authors.html">作者与审校</a> · <a href="/sitemap.xml">Sitemap</a></footer>
 
-<!-- Baidu Tongji -->
 <script>
-(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1df8fda3d25e8df34a5c8e08f945e9fb";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
-
-function trackEvent(event, extra) {
-  try {
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      keepalive: true,
-      body: JSON.stringify(Object.assign({ event, page: location.pathname, ref: document.referrer || '' }, extra || {}))
-    }).catch(()=>{});
-  } catch(_) {}
-}
-
-(function trackClicks(){
-  document.querySelectorAll('a.card').forEach((a)=>{
-    a.addEventListener('click', ()=>{
-      const href = a.getAttribute('href') || '';
-      trackEvent('open_content', { href });
-    });
-  });
-})();
 </script>
 
 </body>

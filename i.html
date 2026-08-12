@@ -174,10 +174,19 @@ function showErr(msg){
 
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
+function safeImageUrl(value){
+  try{
+    const u = new URL(String(value||''), location.origin);
+    return u.origin === location.origin && u.pathname === '/api/img' &&
+      /^[a-z0-9]{4,16}\.(?:jpg|png|webp)$/i.test(u.searchParams.get('key')||'') ? u.href : '';
+  }catch(_){ return ''; }
+}
+
 function render(inv){
   document.body.classList.add('tpl-' + (inv.template || 'gold'));
   // 封面
-  if(inv.cover?.url) $('cover').style.backgroundImage = `url('${inv.cover.url}')`;
+  const coverUrl = safeImageUrl(inv.cover?.url);
+  if(coverUrl) $('cover').style.backgroundImage = `url("${coverUrl}")`;
   // 名字
   $('namesEn').textContent = `${inv.groom} & ${inv.bride}`;
   $('namesCn').textContent = `${inv.groom}  ❤  ${inv.bride}`;
@@ -196,15 +205,27 @@ function render(inv){
   if(inv.story){ $('story').textContent = inv.story; $('story').classList.remove('hidden'); }
   // 头像
   if(Array.isArray(inv.avatars) && inv.avatars.length){
-    $('avatars').innerHTML = inv.avatars.map(a => `
-      <div class="av"><img src="${a.url}" alt=""><small>${({cartoon:'卡通',oil:'油画',hk:'港风',line:'线稿'}[a.style]||'')}</small></div>
-    `).join('');
-    $('avatars').classList.remove('hidden');
+    const avatars = $('avatars');
+    avatars.replaceChildren();
+    inv.avatars.slice(0,3).forEach((avatar) => {
+      const src = safeImageUrl(avatar?.url);
+      if(!src) return;
+      const box = document.createElement('div');
+      box.className = 'av';
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      const label = document.createElement('small');
+      label.textContent = ({cartoon:'卡通',oil:'油画',hk:'港风',line:'线稿'}[avatar?.style]||'');
+      box.append(img,label);
+      avatars.append(box);
+    });
+    if(avatars.children.length) avatars.classList.remove('hidden');
   }
   // 倒计时
   startCountdown(d);
   // 音乐
-  if(inv.music){ setupMusic(inv.music); }
+  if(/^(?:0[1-9]|10)$/.test(inv.music||'')){ setupMusic(inv.music); }
   // 二维码：库就绪后渲染；若所有 CDN 都失败，回落到外部 QR 图片服务
   renderQR(location.href);
   // 标题

@@ -203,7 +203,7 @@ textarea{resize:vertical;min-height:80px}
 
       <fieldset>
         <legend>6 · AI 数字大头贴（可选 · 可做社交头像）</legend>
-        <div class="tip" style="margin-bottom:8px;color:#5b4a35">上传一张你们的合照，我们将生成一对极简线稿风格的两人婚礼头像（一男一女）。首次生成需 15–40 秒。</div>
+        <div class="tip" style="margin-bottom:8px;color:#5b4a35">上传一张你们的合照，我们将生成一对极简线稿风格的两人婚礼头像（一男一女）。处理时间取决于 AI 服务负载。</div>
         <label>上传一张你们的合照 *</label>
         <input id="avatarSrc" type="file" accept="image/*">
         <input type="hidden" id="avatarStyle" value="line">
@@ -330,7 +330,7 @@ $('cover').addEventListener('change', async e => {
 $('aiStory').addEventListener('click', async () => {
   const brief = $('brief').value.trim();
   if(brief.length < 5){ $('storyStatus').textContent = '请先写一两句相识简介'; return; }
-  $('aiStory').disabled = true; $('storyStatus').textContent = '✨ 生成中（约 5 秒）…';
+  $('aiStory').disabled = true; $('storyStatus').textContent = '✨ 生成中…';
   try{
     const r = await fetch('/api/story',{method:'POST',headers:{'content-type':'application/json'},
       body:JSON.stringify({brief, groom:state.groom, bride:state.bride})});

@@ -37,7 +37,6 @@
 <meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
 
 <meta name="google-adsense-account" content="ca-pub-6560247681968502" />
-<link rel="preconnect" href="https://hm.baidu.com" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
 
 <!-- JSON-LD: WebSite + Organization + WebApplication + Breadcrumb -->
@@ -170,19 +169,6 @@
     70%{box-shadow:0 0 0 10px rgba(92,255,168,0)}
     100%{box-shadow:0 0 0 0 rgba(92,255,168,0)}
   }
-
-  .ticker{position:fixed;left:18px;bottom:18px;max-width:300px;z-index:50;
-    background:rgba(23,17,33,.95);backdrop-filter:blur(8px);
-    border:1px solid var(--line);border-radius:14px;padding:12px 14px;
-    color:var(--ink);font-size:13px;line-height:1.4;
-    box-shadow:0 12px 32px rgba(0,0,0,.4);
-    transform:translateY(120%);opacity:0;transition:transform .4s ease,opacity .4s ease}
-  .ticker.show{transform:translateY(0);opacity:1}
-  .ticker .who{color:var(--gold);font-weight:600}
-  .ticker .ago{color:var(--sub);font-size:11px;margin-top:4px}
-  .ticker .x{position:absolute;top:6px;right:8px;cursor:pointer;color:var(--sub);
-    background:transparent;border:0;font-size:14px;line-height:1}
-  @media (max-width:640px){.ticker{left:10px;right:10px;bottom:10px;max-width:none}}
 
   .contact-float{position:fixed;right:14px;bottom:14px;z-index:60;display:none}
   .contact-float.show{display:block}
@@ -637,31 +623,10 @@
   </div>
 </footer>
 
-<div class="ticker" id="ticker" role="status" aria-live="polite">
-  <button class="x" onclick="document.getElementById('ticker').classList.remove('show')" aria-label="close">×</button>
-  <div><span class="who" id="ticker-who">-</span> <span lang="zh">正在使用工具</span><span lang="en">is using the tools</span></div>
-  <div class="ago" id="ticker-ago">-</div>
-</div>
-
-<div class="contact-float" id="contactFloat"><a id="contactFloatLink" href="#contact">联系反馈</a></div>
+<div class="contact-float show" id="contactFloat"><a id="contactFloatLink" href="#contact">联系反馈</a></div>
 
 <script>
   const OWNER_EMAIL = '1396656381@qq.com';
-
-  function trackEvent(event, extra) {
-    try {
-      fetch('/api/track', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        keepalive: true,
-        body: JSON.stringify(Object.assign({
-          event,
-          page: location.pathname,
-          ref: document.referrer || ''
-        }, extra || {}))
-      }).catch(()=>{});
-    } catch(_) {}
-  }
 
   document.getElementById('y').textContent = new Date().getFullYear();
   const zh = document.getElementById('zhBtn');
@@ -695,66 +660,12 @@
       '【反馈类型】' + budget + '\n' +
       '【具体说明】\n' + message + '\n\n' +
       '— 来自 https://wedding-tv.cn 联系表单';
-    trackEvent('submit_offer');
     window.location.href = 'mailto:' + OWNER_EMAIL +
       '?subject=' + encodeURIComponent(subject) +
       '&body=' + encodeURIComponent(body);
     return false;
   }
 
-  (function bindTrackClicks(){
-    const bind = (id, ev, extra) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('click', () => trackEvent(ev, extra));
-    };
-    bind('ctaInvite', 'open_tool', { tool: 'ai_planner' });
-    bind('ctaInviteEn', 'open_tool', { tool: 'invitation' });
-    bind('ctaBlogTop', 'click_blog_top');
-    bind('ctaBlogTopEn', 'click_blog_top');
-    bind('ctaOffer', 'click_offer');
-    bind('ctaOfferEn', 'click_offer');
-    bind('pathBuyer', 'click_scene_buyer');
-    bind('pathBuyerEn', 'click_scene_buyer');
-    bind('pathUser', 'click_scene_user');
-    bind('pathUserEn', 'click_scene_user');
-  })();
-
-  (function abFloatContact(){
-    const key = 'ab-contact-v1';
-    let v = localStorage.getItem(key);
-    if (!v) {
-      v = Math.random() < 0.5 ? 'A' : 'B';
-      localStorage.setItem(key, v);
-    }
-    const box = document.getElementById('contactFloat');
-    const a = document.getElementById('contactFloatLink');
-    if (!box || !a) return;
-    if (v === 'A') {
-      a.textContent = '联系反馈';
-      a.href = '#contact';
-    } else {
-      a.textContent = '先看工具';
-      a.href = '/blog.html';
-    }
-    box.classList.add('show');
-    a.addEventListener('click', function(){
-      trackEvent('ab_contact_click', { variant: v });
-    });
-  })();
-</script>
-
-<script>
-(function(){
-  var BAIDU_ID = '1df8fda3d25e8df34a5c8e08f945e9fb';
-  if (BAIDU_ID && BAIDU_ID.indexOf('YOUR_') !== 0) {
-    var hm = document.createElement('script');
-    hm.src = 'https://hm.baidu.com/hm.js?' + BAIDU_ID;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(hm, s);
-    window._hmt = window._hmt || [];
-  }
-})();
 </script>
 <script>
 // PWA Service Worker

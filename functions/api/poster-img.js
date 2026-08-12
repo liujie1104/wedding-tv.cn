@@ -23,12 +23,18 @@ export const onRequestGet = async ({ request }) => {
   const r = await fetch(u.toString(), { cf: { cacheTtl: 3600, cacheEverything: true } });
   if (!r.ok) return new Response("upstream error", { status: 502 });
 
+  const contentType = (r.headers.get("content-type") || "").split(";", 1)[0].toLowerCase();
+  if (!["image/png", "image/jpeg", "image/webp"].includes(contentType)) {
+    return new Response("upstream did not return a supported image", { status: 502 });
+  }
+
   const headers = new Headers();
-  headers.set("content-type", r.headers.get("content-type") || "image/png");
+  headers.set("content-type", contentType);
   headers.set("cache-control", "public, max-age=3600");
-  headers.set("access-control-allow-origin", "*");
+  headers.set("x-content-type-options", "nosniff");
   // 用作下载文件名
-  const filename = url.searchParams.get("name") || `wedding-poster-${Date.now()}.png`;
+  const requestedName = url.searchParams.get("name") || `wedding-poster-${Date.now()}.png`;
+  const filename = requestedName.replace(/[^a-z0-9._-]/gi, "_").slice(0, 80) || "wedding-poster.png";
   if (url.searchParams.get("dl") === "1") {
     headers.set("content-disposition", `attachment; filename="${filename}"`);
   }

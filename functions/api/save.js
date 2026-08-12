@@ -2,6 +2,66 @@
 import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
 const PUBLIC_INVITATION_TTL = 60 * 60 * 24 * 365;
+const TEMPLATES = new Set(["gold", "cream", "morandi", "hk"]);
+const MUSIC = new Set(["", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"]);
+const AVATAR_STYLES = new Set(["line", "cartoon", "oil", "hk"]);
+
+function cleanText(value, max) {
+  return String(value || "")
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "")
+    .trim()
+    .slice(0, max);
+}
+
+function cleanLine(value, max) {
+  return cleanText(value, max).replace(/\s+/g, " ");
+}
+
+function isValidDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function imageRef(value) {
+  const key = cleanLine(value?.key, 24);
+  if (!/^[a-z0-9]{4,16}\.(?:jpg|png|webp)$/i.test(key)) return null;
+  return { key, url: `/api/img?key=${encodeURIComponent(key)}` };
+}
+
+function normalizeInvitation(value) {
+  const date = cleanLine(value?.date, 10);
+  const time = cleanLine(value?.time, 5);
+  const template = cleanLine(value?.template, 16);
+  const music = cleanLine(value?.music, 2);
+  const invitation = {
+    template: TEMPLATES.has(template) ? template : "gold",
+    groom: cleanLine(value?.groom, 20),
+    bride: cleanLine(value?.bride, 20),
+    date: isValidDate(date) ? date : "",
+    time: /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time) ? time : "11:58",
+    city: cleanLine(value?.city, 20),
+    venue: cleanLine(value?.venue, 60),
+    greeting: cleanText(value?.greeting, 120),
+    story: cleanText(value?.story, 2000),
+    music: MUSIC.has(music) ? music : "",
+    cover: imageRef(value?.cover),
+    avatars: [],
+    createdAt: Date.now(),
+    v: 2,
+  };
+
+  if (Array.isArray(value?.avatars)) {
+    invitation.avatars = value.avatars.slice(0, 3).flatMap((avatar) => {
+      const image = imageRef(avatar);
+      if (!image) return [];
+      const style = cleanLine(avatar?.style, 12);
+      return [{ ...image, style: AVATAR_STYLES.has(style) ? style : "line" }];
+    });
+  }
+  return invitation;
+}
 
 export const onRequestPost = async ({ request, env }) => {
   if (!rateLimit(getIp(request), 20)) return json(429, { ok: false, error: "too many requests" });
@@ -15,11 +75,10 @@ export const onRequestPost = async ({ request, env }) => {
   } catch {
     return badRequest("invalid json");
   }
-  const inv = payload?.invitation;
-  if (!inv || typeof inv !== "object") return badRequest("missing invitation");
+  if (!payload?.invitation || typeof payload.invitation !== "object") return badRequest("missing invitation");
+  const inv = normalizeInvitation(payload.invitation);
   if (!inv.groom || !inv.bride) return badRequest("missing names");
-  inv.createdAt = Date.now();
-  inv.v = 1;
+  if (!inv.date) return badRequest("invalid date");
 
   try {
     let id = shortId(8);

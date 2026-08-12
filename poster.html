@@ -4,18 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AI 婚礼海报生成器 · 一键生成婚礼请帖封面/Save the Date | wedding-tv.cn</title>
-<meta name="description" content="免费 AI 婚礼海报生成器：填入你们的名字与风格，1 分钟由通义万相 AI 生成婚礼海报，支持竖版/横版/方形，可下载高清原图。" />
+<meta name="description" content="AI 婚礼海报生成器：选择风格、色彩和尺寸生成背景，再在浏览器中叠加新人姓名、婚期、场地与自选照片。" />
 <meta name="author" content="wedding-tv.cn 内容维护" />
 <meta name="robots" content="index,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/poster.html" />
 <link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/poster.html" />
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/poster.html" />
 <meta property="og:title" content="AI 婚礼海报生成器 — wedding-tv.cn" />
-<meta property="og:description" content="1 分钟生成婚礼海报，免费下载高清原图" />
+<meta property="og:description" content="生成婚礼海报背景，并在浏览器中叠加姓名、婚期和自选照片" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>🖼️</text></svg>" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"AI 婚礼海报生成器","url":"https://wedding-tv.cn/poster.html","applicationCategory":"DesignApplication","operatingSystem":"Web"}
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI 婚礼海报生成器","url":"https://wedding-tv.cn/poster.html","applicationCategory":"DesignApplication","operatingSystem":"Web","inLanguage":"zh-CN","description":"使用 AI 生成婚礼海报背景，并在浏览器中叠加用户填写的文字和照片。","dateModified":"2026-08-12","publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}
 </script>
 <style>
   :root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
@@ -66,7 +66,7 @@
 
 <div class="wrap">
   <h1>🖼️ AI 婚礼海报生成器</h1>
-  <p class="lead">由通义万相 AI 驱动，1 分钟生成婚礼海报。新人姓名/婚期/场地由本站叠加为清晰中文。可用作 Save the Date、请帖封面、朋友圈预告。完全免费。</p>
+  <p class="lead">由通义万相 AI 生成婚礼背景，新人姓名、婚期、场地和自选照片在浏览器中叠加。生成时间取决于服务负载，结果可用于制作 Save the Date、请帖封面或朋友圈预告。</p>
 
   <div class="card">
     <div class="row">
@@ -119,8 +119,8 @@
     </div>
     <div id="dragHint" style="display:none;color:#c9a85a;font-size:12px;margin-top:-4px">代“自定义”模式：直接在右侧预览里拖动照片到任意位置</div>
 
-    <button class="btn" id="go">✨ 生成海报（约 30-60 秒）</button>
-    <div class="meta">完全免费 · 由通义万相 wanx2.1-turbo 驱动 · 每分钟最多 5 次</div>
+    <button class="btn" id="go">✨ 生成海报</button>
+    <div class="meta">当前不收取费用 · 风格、色彩和尺寸会发送给通义万相；姓名、日期、场地和照片仅在浏览器叠加 · 请求过多时需稍后重试</div>
 
     <div class="examples" style="margin-top:18px">
       <button data-ex="rose">🌹 浪漫玫瑰金</button>
@@ -156,7 +156,7 @@
     <li style="margin:6px 0">不要上传无权使用的照片、商标或受版权保护素材。</li>
     <li style="margin:6px 0">生成结果不保证独占，也不保证适合商用。</li>
   </ul>
-  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：2026-08-11 · <a href="/editorial-policy.html">编辑与 AI 使用说明</a></p>
+  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：2026-08-12 · <a href="/editorial-policy.html">编辑与 AI 使用说明</a></p>
 </section>
 
 <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 免费婚礼工具与婚俗指南</footer>
@@ -195,7 +195,7 @@ async function gen() {
     const r = await fetch("/api/poster", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ style: body.style, color: body.color, size: body.size }),
     });
     const d = await r.json();
     if (!d.ok) throw new Error(d.error || "提交失败");
@@ -205,7 +205,7 @@ async function gen() {
   } catch(e) {
     STAGE.innerHTML = `<div style="color:#ff6b9d;text-align:center">❌ ${e.message}<br><small>请稍后重试</small></div>`;
   } finally {
-    btn.disabled = false; btn.textContent = "✨ 生成海报（约 30-60 秒）";
+    btn.disabled = false; btn.textContent = "✨ 生成海报";
   }
 }
 

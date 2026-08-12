@@ -14,7 +14,6 @@ export function json(status, body, extra = {}) {
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
-      "access-control-allow-origin": "*",
       ...extra,
     },
   });

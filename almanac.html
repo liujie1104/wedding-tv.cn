@@ -244,16 +244,6 @@ function render(){
 init();
 </script>
 <script>
-(function(){
-  var BAIDU_ID = '1df8fda3d25e8df34a5c8e08f945e9fb';
-  if (BAIDU_ID && BAIDU_ID.indexOf('YOUR_') !== 0) {
-    var hm = document.createElement('script');
-    hm.src = 'https://hm.baidu.com/hm.js?' + BAIDU_ID;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(hm, s);
-    window._hmt = window._hmt || [];
-  }
-})();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}))}
 </script>
 </body>

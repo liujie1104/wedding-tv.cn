@@ -1,6 +1,5 @@
-// Service Worker: cache static resources for offline fallback; API requests always use the network.
-// v4: content-quality review release. A new cache name removes legacy AI article snapshots.
-const CACHE = "wt-v5-2026-08-11-content-retirement";
+// Cache only versioned/static media. Documents and API responses always use the network.
+const CACHE = "wt-v6-2026-08-12-privacy-security";
 const PRECACHE = ["/404.html", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
@@ -24,30 +23,23 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/api/")) return; // never cache API
   const isNav = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
 
-  // Navigation is network-first so reviewed content replaces old cached pages.
+  // Never persist documents: editorial, policy and SEO updates must be visible immediately.
   if (isNav) {
     e.respondWith(
       fetch(req)
         .then((res) => {
-          if (res && res.status === 200 && res.type === "basic") {
-            const clone = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, clone)).catch(() => {});
-            return res;
-          }
           if (res && res.status === 404) {
             return fetch(new Request("/index.html", { cache: "reload" }));
           }
           return res;
         })
-        .catch(() =>
-          caches.match(req).then((cached) => {
-            if (cached) return cached;
-            return caches.match("/index.html").then((idx) => idx || caches.match("/404.html"));
-          })
-        )
+        .catch(() => caches.match("/404.html"))
     );
     return;
   }
+
+  const cacheableAsset = /\.(?:css|js|png|jpe?g|webp|svg|ico|woff2?|mp3)$/i.test(url.pathname);
+  if (!cacheableAsset) return;
 
   // Network-first; use cache only when the network fails.
   e.respondWith(

@@ -8,8 +8,6 @@ import { onRequestPost as avatarPost } from "../functions/api/avatar.js";
 import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as posterPost, onRequestGet as posterGet } from "../functions/api/poster.js";
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
-import { onRequestGet as debugGet } from "../functions/api/debug-env.js";
-import { onRequestPost as trackPost, onRequestGet as trackGet } from "../functions/api/track.js";
 
 const API = {
   "/api/save":      { POST: savePost },
@@ -21,9 +19,22 @@ const API = {
   "/api/ai":        { POST: aiPost },
   "/api/poster":    { POST: posterPost, GET: posterGet },
   "/api/poster-img":{ GET:  posterImgGet },
-  "/api/debug-env": { GET:  debugGet },
-  "/api/track":     { POST: trackPost, GET: trackGet },
 };
+
+let legacyTrackingCleanupStarted = false;
+
+async function deleteLegacyTracking(env) {
+  const marker = "migration:legacy-tracking-removed-v1";
+  if (await env.WEDDING.get(marker)) return;
+  let cursor;
+  do {
+    const options = cursor ? { prefix: "track:", cursor } : { prefix: "track:" };
+    const page = await env.WEDDING.list(options);
+    await Promise.all(page.keys.map(({ name }) => env.WEDDING.delete(name)));
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  await env.WEDDING.put(marker, "1");
+}
 
 function staticResponse(response, path) {
   if (response.status !== 200) return response;
@@ -39,6 +50,12 @@ function staticResponse(response, path) {
   ].includes(path);
 
   if (isHtml) headers.set("content-type", "text/html; charset=utf-8");
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  if (isHtml) {
+    headers.set("x-frame-options", "SAMEORIGIN");
+    headers.set("permissions-policy", "camera=(), microphone=(), geolocation=()");
+  }
   if (mustStayFresh) {
     headers.set("cache-control", "no-store");
     headers.set("cloudflare-cdn-cache-control", "no-store");
@@ -57,22 +74,21 @@ function notFoundResponse(response) {
   return new Response(response.body, { status: 404, headers });
 }
 
-function corsPreflight() {
-  return new Response(null, {
-    status: 204,
-    headers: {
-      "access-control-allow-origin": "*",
-      "access-control-allow-methods": "GET,POST,OPTIONS",
-      "access-control-allow-headers": "content-type",
-      "access-control-max-age": "86400",
-    },
-  });
+function isCrossSite(request, origin) {
+  const requestOrigin = request.headers.get("origin");
+  return requestOrigin !== null && requestOrigin !== origin;
 }
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+
+    // Remove data created by the retired first-party click tracker.
+    if (!legacyTrackingCleanupStarted && env.WEDDING?.list) {
+      legacyTrackingCleanupStarted = true;
+      ctx.waitUntil(deleteLegacyTracking(env).catch(() => {}));
+    }
 
     // 短链 /i/abc12345 -> /i.html?id=abc12345（在 Worker 内重写后交给静态资源）
     const m = /^\/i\/([a-z0-9]{4,16})$/i.exec(path);
@@ -85,7 +101,13 @@ export default {
     // /api/* 路由
     const route = API[path];
     if (route) {
-      if (request.method === "OPTIONS") return corsPreflight();
+      if (isCrossSite(request, url.origin)) {
+        return new Response("cross-site request denied", {
+          status: 403,
+          headers: { "cache-control": "no-store" },
+        });
+      }
+      if (request.method === "OPTIONS") return new Response(null, { status: 204 });
       const handler = route[request.method];
       if (!handler) {
         return new Response(JSON.stringify({ ok: false, error: "method not allowed" }), {

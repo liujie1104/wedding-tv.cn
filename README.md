@@ -13,7 +13,7 @@
 
 ```
 src/worker.js          Worker 入口，路由 /api/* 到 functions/api/*.js
-functions/api/         后端处理函数（save/load/upload/img/story/avatar/ai/poster/poster-img/debug-env）
+functions/api/         后端处理函数（save/load/upload/img/story/avatar/ai/poster/poster-img）
 functions/_lib.js      公共工具
 *.html                 首页 + 各工具/落地页（被 ASSETS 直接服务）
 wrangler.jsonc         Cloudflare 配置（KV/AI/vars）
@@ -55,7 +55,15 @@ wrangler dev
 
 ## 自检
 
-部署后访问 `/api/debug-env` 应返回所有项 ✅。
+不要通过公开接口输出 Secret 的内容、长度或片段。部署前运行静态审计，部署后只检查公开页面、响应头和不包含配置详情的正常错误响应：
+
+```powershell
+node scripts/audit-static-content.js
+curl.exe -I https://wedding-tv.cn/
+curl.exe "https://wedding-tv.cn/api/load?id=missing"
+```
+
+首页应返回 `200`，无效请帖应返回通用的 `404` JSON，任何响应都不应泄露环境变量或密钥信息。
 
 ## AI 内容质量审查
 

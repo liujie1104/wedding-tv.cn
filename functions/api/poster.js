@@ -20,7 +20,7 @@ const STYLES = {
   cyber:     "futuristic, neon purple and cyan",
 };
 
-function buildPrompt({ groom, bride, date, venue, style, color }) {
+function buildPrompt({ style, color }) {
   const palette = STYLES[style] || STYLES.rose;
   const parts = [
     "elegant wedding poster background, ultra-detailed, romantic atmosphere, professional photography composition,",
@@ -28,7 +28,7 @@ function buildPrompt({ groom, bride, date, venue, style, color }) {
     "soft bokeh background, floral decoration, gold foil details,",
     "IMPORTANT: leave the bottom 40% of the image clean and uncluttered for text overlay (no faces, no important details there),",
     "do NOT render any text or letters or chinese characters in the image,",
-    "high resolution, 8k, masterpiece, award-winning design, symmetrical composition",
+    "high-quality detailed background, balanced symmetrical composition",
   ];
   return parts.filter(Boolean).join(" ");
 }
@@ -45,7 +45,13 @@ async function createTask({ request, env }) {
   try { body = await request.json(); } catch { return badRequest("invalid json"); }
 
   const size = SIZES[body?.size] || SIZES.portrait;
-  const prompt = buildPrompt(body || {});
+  const style = Object.hasOwn(STYLES, body?.style) ? body.style : "rose";
+  const color = String(body?.color || "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 60);
+  const prompt = buildPrompt({ style, color });
 
   const r = await fetch(
     "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
