@@ -25,12 +25,13 @@ const reviewedRegionPages = new Set([
   "blog/zhejiang.html",
 ]);
 const requiredConcreteSignals = new Map([
-  ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /划桨迎亲|划桨舞蹈/]],
-  ["blog/fujian.html", [/杉刺拦路求对歌/, /伴娘妈、送嫁嫂或佬嫂/]],
-  ["blog/hunan.html", [/哭开声/, /赶边边场/]],
-  ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/]],
-  ["blog/zhejiang.html", [/定情、做媒、相亲、备嫁妆、迎嫁妆/, /踩米筛/]],
+  ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
+  ["blog/fujian.html", [/杉刺拦路求对歌/, /伴娘妈、送嫁嫂或佬嫂/, /线须/, /赤郎子/, /歌桌怎样开席/]],
+  ["blog/hunan.html", [/哭开声/, /包席/, /赶边边场/, /插花日/, /媒公/, /打蹈/]],
+  ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/, /咪哆/, /蝴蝶妈妈纹/, /史尔俄特/]],
+  ["blog/zhejiang.html", [/定情、做媒、相亲、备嫁妆、迎嫁妆/, /送糯米/, /踏路牛/, /车郎/, /doi/]],
 ]);
+const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 
 function filesUnder(dir, extension) {
   if (!fs.existsSync(dir)) return [];
@@ -69,19 +70,16 @@ for (const relativePath of reviewedRegionPages) {
   const tableCount = [...html.matchAll(/<table\b/gi)].length;
   const textLength = visibleText(html).length;
   if (sourceCount < 3) errors.push(`${relativePath}: fewer than 3 traceable sources (${sourceCount})`);
-  if (textLength < 3000) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
-  if (sectionCount < 9) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
-  if (tableCount < 2) errors.push(`${relativePath}: reviewed regional longform needs more executable comparison tables (${tableCount})`);
+  if (textLength < 2500) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
+  if (sectionCount < 8) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
+  if (tableCount < 1) errors.push(`${relativePath}: reviewed regional longform needs at least one factual structure table (${tableCount})`);
   if (!/AI 辅助说明/.test(html)) errors.push(`${relativePath}: missing AI assistance disclosure`);
   if (!/(?:适用边界|范围声明|阅读原则|本页定位|特别提示)/.test(html)) {
     errors.push(`${relativePath}: missing locality and applicability boundary`);
   }
-  if (!/(?:双方家庭核对表|家庭访谈清单|家庭核对表)/.test(html)) {
-    errors.push(`${relativePath}: missing family verification checklist`);
+  if (forbiddenRegionBoilerplate.test(html)) {
+    errors.push(`${relativePath}: generic planning boilerplate remains in a factual regional article`);
   }
-  if (!/(?:争议|简化)/.test(html)) errors.push(`${relativePath}: missing dispute or simplification guidance`);
-  if (!/假设情境/.test(html)) errors.push(`${relativePath}: missing clearly disclosed planning scenario`);
-  if (!/(?:供应商|主持人|婚庆)/.test(html)) errors.push(`${relativePath}: missing vendor handoff guidance`);
   for (const signal of requiredConcreteSignals.get(relativePath) || []) {
     if (!signal.test(html)) errors.push(`${relativePath}: missing a required source-specific fact (${signal})`);
   }
