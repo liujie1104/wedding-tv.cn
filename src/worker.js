@@ -21,6 +21,37 @@ const API = {
   "/api/poster-img":{ GET:  posterImgGet },
 };
 
+const LEGACY_REDIRECTS = new Map([
+  ["/blog/aomen", "/blog/macao.html"],
+  ["/blog/aomen.html", "/blog/macao.html"],
+  ["/blog/neimenggu", "/blog/inner-mongolia.html"],
+  ["/blog/neimenggu.html", "/blog/inner-mongolia.html"],
+  ["/blog/xianggang", "/blog/hong-kong.html"],
+  ["/blog/xianggang.html", "/blog/hong-kong.html"],
+  ["/blog/xizang", "/blog/tibet.html"],
+  ["/blog/xizang.html", "/blog/tibet.html"],
+]);
+
+const RETIRED_PREFIXES = ["/news", "/insights", "/blog/cities"];
+const RETIRED_PATHS = new Set([
+  "/budget-reference", "/budget-reference.html",
+  "/about-en", "/about-en.html",
+  "/calculator-en", "/calculator-en.html",
+  "/checklist-en", "/checklist-en.html",
+  "/en", "/en.html",
+  "/guide-en", "/guide-en.html",
+  "/invitation-en", "/invitation-en.html",
+  "/blog-global-en", "/blog-global-en.html",
+  "/blog-global-india-en", "/blog-global-india-en.html",
+  "/blog-global-japan-en", "/blog-global-japan-en.html",
+  "/blog-global-korea-en", "/blog-global-korea-en.html",
+  "/blog-global-western-en", "/blog-global-western-en.html",
+  "/blog/dubai", "/blog/dubai.html",
+  "/blog/indonesia", "/blog/indonesia.html",
+  "/blog/thailand", "/blog/thailand.html",
+  "/blog/vietnam", "/blog/vietnam.html",
+]);
+
 let legacyTrackingCleanupStarted = false;
 
 async function deleteLegacyTracking(env) {
@@ -72,6 +103,26 @@ function notFoundResponse(response) {
   headers.set("cache-control", "no-store");
   headers.set("cloudflare-cdn-cache-control", "no-store");
   return new Response(response.body, { status: 404, headers });
+}
+
+function isRetiredPath(path) {
+  return RETIRED_PATHS.has(path) || RETIRED_PREFIXES.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
+}
+
+function retiredResponse() {
+  const body = `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="robots" content="noindex,follow"><meta name="viewport" content="width=device-width,initial-scale=1"><title>内容已永久撤下</title></head><body><main><h1>内容已永久撤下</h1><p>该页面未通过本站当前的来源与审校标准，已永久删除。</p><p><a href="/blog.html">查看已审校的婚礼指南</a></p></main></body></html>`;
+  return new Response(body, {
+    status: 410,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "cloudflare-cdn-cache-control": "no-store",
+      "x-robots-tag": "noindex, follow",
+      "x-content-type-options": "nosniff",
+    },
+  });
 }
 
 function isCrossSite(request, origin) {
@@ -160,6 +211,12 @@ export default {
       const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin).href));
       return notFoundResponse(notFound);
     }
+
+    const legacyTarget = LEGACY_REDIRECTS.get(path);
+    if (legacyTarget) return permanentRedirect(url, legacyTarget);
+
+    // Permanently retired generated pages must not linger as ambiguous soft 404s.
+    if (isRetiredPath(path)) return retiredResponse();
 
     // sitemap、canonical 与站内链接统一使用 .html；旧的无扩展名和尾斜杠地址永久归一。
     const canonicalRedirect = await canonicalHtmlRedirect(request, env, url);

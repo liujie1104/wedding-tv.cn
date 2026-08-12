@@ -254,6 +254,24 @@ if (!worker.includes("canonicalHtmlRedirect") || !worker.includes("status: 301")
 if (!worker.includes('new URL("/index.html", url.origin)')) {
   errors.push("src/worker.js: root path must explicitly serve index.html when HTML handling is disabled");
 }
+if (!worker.includes("status: 410") || !worker.includes('"x-robots-tag": "noindex, follow"') || !worker.includes("isRetiredPath(path)")) {
+  errors.push("src/worker.js: permanently retired generated pages must return 410 with noindex");
+}
+for (const [legacyPath, reviewedPath] of [
+  ["/blog/aomen.html", "/blog/macao.html"],
+  ["/blog/neimenggu.html", "/blog/inner-mongolia.html"],
+  ["/blog/xianggang.html", "/blog/hong-kong.html"],
+  ["/blog/xizang.html", "/blog/tibet.html"],
+]) {
+  if (!worker.includes(`["${legacyPath}", "${reviewedPath}"]`)) {
+    errors.push(`src/worker.js: missing reviewed legacy redirect ${legacyPath}`);
+  }
+}
+
+const notFoundHtml = fs.readFileSync(path.join(root, "404.html"), "utf8");
+if ((notFoundHtml.match(/<\/body>/gi) || []).length !== 1 || (notFoundHtml.match(/<\/html>/gi) || []).length !== 1) {
+  errors.push("404.html: document must contain exactly one body and html closing tag");
+}
 
 const editorialPolicy = fs.readFileSync(path.join(root, "editorial-policy.html"), "utf8");
 if (/必须包含双方家庭核对表/.test(editorialPolicy) || /还须包含家庭访谈方法、供应商交底/.test(editorialPolicy)) {
