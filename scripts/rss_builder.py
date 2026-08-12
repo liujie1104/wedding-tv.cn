@@ -146,6 +146,31 @@ CORE_ITEMS = [
         "link": f"{SITE}/blog/shandong.html",
         "desc": "黄县龙凤花轿婚俗、胶东花饽饽和荣成渔家文化的使用边界。",
     },
+    {
+        "title": "河南婚俗具体指南：嵩山婚俗与开封婚船",
+        "link": f"{SITE}/blog/henan.html",
+        "desc": "登封嵩山婚俗七项流程、开封婚船展演，以及传统六礼与现代登记的边界。",
+    },
+    {
+        "title": "湖北婚俗具体指南：孙桥女婚男嫁",
+        "link": f"{SITE}/blog/hubei.html",
+        "desc": "京山孙桥女婚男嫁、娶新郎与丈母娘抬软轿，并区分土家婚俗舞台展演。",
+    },
+    {
+        "title": "江西婚俗具体指南：龙南客家婚俗",
+        "link": f"{SITE}/blog/jiangxi.html",
+        "desc": "龙南客家婚俗十二阶段、祖宗纱代、公婆灯、凤眼珍珠汤与同心餐。",
+    },
+    {
+        "title": "陕西婚俗具体指南：陕北与米脂婚俗",
+        "link": f"{SITE}/blog/shaanxi.html",
+        "desc": "陕北择亲至婚礼六段、稳根鞋和长命带，以及米脂十九项流程。",
+    },
+    {
+        "title": "贵州婚俗具体指南：苗族与侗族村寨实例",
+        "link": f"{SITE}/blog/guizhou.html",
+        "desc": "雷山苗族夜间对歌与拦门酒、肇兴侗寨订婚礼物、小黄婚礼第一担井水。",
+    },
 ]
 
 
