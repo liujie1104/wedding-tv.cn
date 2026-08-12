@@ -248,6 +248,9 @@ if (!wrangler.includes('"html_handling": "none"')) {
 if (!worker.includes("canonicalHtmlRedirect") || !worker.includes("status: 301")) {
   errors.push("src/worker.js: extensionless document variants need a permanent redirect to .html canonical URLs");
 }
+if (!worker.includes('new URL("/index.html", url.origin)')) {
+  errors.push("src/worker.js: root path must explicitly serve index.html when HTML handling is disabled");
+}
 
 const editorialPolicy = fs.readFileSync(path.join(root, "editorial-policy.html"), "utf8");
 if (/必须包含双方家庭核对表/.test(editorialPolicy) || /还须包含家庭访谈方法、供应商交底/.test(editorialPolicy)) {

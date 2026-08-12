@@ -165,6 +165,14 @@ export default {
     const canonicalRedirect = await canonicalHtmlRedirect(request, env, url);
     if (canonicalRedirect) return canonicalRedirect;
 
+    // html_handling=none 不再自动把根路径映射到 index.html，因此在 Worker 内显式重写。
+    if (path === "/") {
+      const indexUrl = new URL("/index.html", url.origin);
+      indexUrl.search = url.search;
+      const indexResponse = await env.ASSETS.fetch(new Request(indexUrl.href, request));
+      return staticResponse(indexResponse, "/");
+    }
+
     // 其它路径直接交给静态资源。html_handling=none 保证 .html canonical 本身返回 200。
     const res = await env.ASSETS.fetch(request);
     // 404 fallback：HTML 请求失败时返回自定义 404 页面
