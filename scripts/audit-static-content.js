@@ -23,6 +23,11 @@ const reviewedRegionPages = new Set([
   "blog/hunan.html",
   "blog/sichuan.html",
   "blog/zhejiang.html",
+  "blog/inner-mongolia.html",
+  "blog/gansu.html",
+  "blog/qinghai.html",
+  "blog/heilongjiang.html",
+  "blog/jilin.html",
 ]);
 const requiredConcreteSignals = new Map([
   ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
@@ -30,6 +35,11 @@ const requiredConcreteSignals = new Map([
   ["blog/hunan.html", [/哭开声/, /包席/, /赶边边场/, /插花日/, /媒公/, /打蹈/]],
   ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/, /咪哆/, /蝴蝶妈妈纹/, /史尔俄特/]],
   ["blog/zhejiang.html", [/定情、做媒、相亲、备嫁妆、迎嫁妆/, /送糯米/, /踏路牛/, /车郎/, /doi/]],
+  ["blog/inner-mongolia.html", [/祝赞词家/, /勒勒车/, /阿日奔苏木/, /长调民歌/]],
+  ["blog/gansu.html", [/28个礼节/, /杜苏尔池/, /阿斯哈斯/, /总东/, /戴头面/]],
+  ["blog/qinghai.html", [/纳什金/, /白母羊/, /花儿.*对歌/s, /安昭/, /婚姻自由/]],
+  ["blog/heilongjiang.html", [/彩船.*彩橇/s, /芦苇杖/, /戒语/, /做福/, /三乡两村/]],
+  ["blog/jilin.html", [/议婚.*大礼.*后礼/s, /礼装函/, /奠雁礼/, /三个鸡蛋/, /回婚礼/]],
 ]);
 const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 

@@ -71,6 +71,31 @@ CORE_ITEMS = [
         "link": f"{SITE}/blog/zhejiang.html",
         "desc": "宁海红妆器物，以及景宁送糯米、踏路牛、赤郎行郎和 doi 彩带信物。",
     },
+    {
+        "title": "内蒙古婚俗具体指南：阿日奔苏木婚礼",
+        "link": f"{SITE}/blog/inner-mongolia.html",
+        "desc": "阿鲁科尔沁旗阿日奔苏木婚礼中的祝赞词家、蒙古包、勒勒车与长调。",
+    },
+    {
+        "title": "甘肃婚俗具体指南：肃南裕固族婚礼",
+        "link": f"{SITE}/blog/gansu.html",
+        "desc": "肃南裕固族婚礼的28项礼节，以及戴头面、打尖和阿斯哈斯。",
+    },
+    {
+        "title": "青海婚俗具体指南：互助土族婚礼",
+        "link": f"{SITE}/blog/qinghai.html",
+        "desc": "互助土族婚礼的纳什金、花儿对歌、敬献哈达与安昭。",
+    },
+    {
+        "title": "黑龙江婚俗具体指南：同江赫哲族婚俗",
+        "link": f"{SITE}/blog/heilongjiang.html",
+        "desc": "同江赫哲族婚俗的彩船彩橇、戒语、祝福歌、做福及展演边界。",
+    },
+    {
+        "title": "吉林婚俗具体指南：延边朝鲜族传统婚礼",
+        "link": f"{SITE}/blog/jilin.html",
+        "desc": "延边朝鲜族婚礼的议婚、大礼、后礼、礼装函与双方家庭大桌。",
+    },
 ]
 
 
