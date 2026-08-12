@@ -79,6 +79,36 @@ function isCrossSite(request, origin) {
   return requestOrigin !== null && requestOrigin !== origin;
 }
 
+function permanentRedirect(url, pathname) {
+  const target = new URL(url);
+  target.pathname = pathname;
+  return new Response(null, {
+    status: 301,
+    headers: {
+      location: target.href,
+      "cache-control": "public, max-age=3600",
+    },
+  });
+}
+
+async function canonicalHtmlRedirect(request, env, url) {
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
+
+  const path = url.pathname;
+  if (["/index", "/index.html", "/live", "/live.html"].includes(path)) {
+    return permanentRedirect(url, "/");
+  }
+  if (path === "/" || path.endsWith(".html")) return null;
+
+  const basePath = path.endsWith("/") ? path.slice(0, -1) : path;
+  if (!basePath || /\.[^/]+$/.test(basePath)) return null;
+
+  const canonicalPath = `${basePath}.html`;
+  const probeUrl = new URL(canonicalPath, url.origin);
+  const probe = await env.ASSETS.fetch(new Request(probeUrl.href, { method: "HEAD" }));
+  return probe.status === 200 ? permanentRedirect(url, canonicalPath) : null;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -125,16 +155,17 @@ export default {
       }
     }
 
-    // live.html -> 首页 301（避免重复内容）
-    if (path === "/live.html") {
-      return Response.redirect(new URL("/", url.origin).href, 301);
+    // 404 文档只能作为真实 404 响应返回，不能成为可索引的 200 页面。
+    if (path === "/404" || path === "/404.html") {
+      const notFound = await env.ASSETS.fetch(new Request(new URL("/404.html", url.origin).href));
+      return notFoundResponse(notFound);
     }
 
-    // 其它路径 -> 静态资源；html_handling=auto-trailing-slash 会让 ASSETS 自动将 /dir/ 映射到 dir/index.html
-    if (path === "/" || path.endsWith("/")) {
-      const res = await env.ASSETS.fetch(request);
-      return staticResponse(res, path);
-    }
+    // sitemap、canonical 与站内链接统一使用 .html；旧的无扩展名和尾斜杠地址永久归一。
+    const canonicalRedirect = await canonicalHtmlRedirect(request, env, url);
+    if (canonicalRedirect) return canonicalRedirect;
+
+    // 其它路径直接交给静态资源。html_handling=none 保证 .html canonical 本身返回 200。
     const res = await env.ASSETS.fetch(request);
     // 404 fallback：HTML 请求失败时返回自定义 404 页面
     if (res.status === 404 && (request.headers.get("accept") || "").includes("text/html")) {

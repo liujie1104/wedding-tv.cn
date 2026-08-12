@@ -242,6 +242,12 @@ const wrangler = fs.readFileSync(path.join(root, "wrangler.jsonc"), "utf8");
 if (!/"run_worker_first"\s*:\s*true/.test(wrangler)) {
   errors.push("wrangler.jsonc: static documents bypass Worker cache controls");
 }
+if (!wrangler.includes('"html_handling": "none"')) {
+  errors.push("wrangler.jsonc: .html canonical URLs must not be redirected by Cloudflare HTML handling");
+}
+if (!worker.includes("canonicalHtmlRedirect") || !worker.includes("status: 301")) {
+  errors.push("src/worker.js: extensionless document variants need a permanent redirect to .html canonical URLs");
+}
 
 const editorialPolicy = fs.readFileSync(path.join(root, "editorial-policy.html"), "utf8");
 if (/必须包含双方家庭核对表/.test(editorialPolicy) || /还须包含家庭访谈方法、供应商交底/.test(editorialPolicy)) {
@@ -304,11 +310,17 @@ for (const relativePath of urls) {
   const description = html.match(/<meta name="description" content="([^"]*)"/i)?.[1].trim();
   const robots = html.match(/<meta name="robots" content="([^"]*)"/i)?.[1] || "";
   const canonical = html.match(/<link rel="canonical" href="([^"]*)"/i)?.[1];
+  const expectedCanonical = relativePath === "index.html"
+    ? "https://wedding-tv.cn/"
+    : `https://wedding-tv.cn/${relativePath}`;
   const text = visibleText(html);
 
   if (!title) errors.push(`${relativePath}: missing title`);
   if (!description) errors.push(`${relativePath}: missing description`);
   if (!canonical) errors.push(`${relativePath}: missing canonical`);
+  if (canonical && canonical !== expectedCanonical) {
+    errors.push(`${relativePath}: canonical ${canonical} does not match sitemap URL ${expectedCanonical}`);
+  }
   if (/noindex/i.test(robots)) errors.push(`${relativePath}: noindex page is in sitemap`);
   if (!/authors\.html|name="author"/i.test(html)) warnings.push(`${relativePath}: no organization author/responsibility link`);
   if (text.length < 500) warnings.push(`${relativePath}: visible text is short (${text.length})`);

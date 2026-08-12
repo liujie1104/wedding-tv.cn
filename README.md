@@ -22,8 +22,10 @@ wrangler.jsonc         Cloudflare 配置（KV/AI/vars）
 
 ## 路由策略
 
-- `live.html` 已在 Worker 中做 301 永久重定向到首页 `/`，避免重复内容。
-- 保留文件仅用于历史兼容；线上访问以 Worker 路由规则为准。
+- 首页以 `/` 为 canonical，其余公开静态文档以 `.html` URL 为 canonical；sitemap、RSS 与站内链接保持一致。
+- Cloudflare Static Assets 使用 `html_handling: "none"`，确保 `.html` canonical 直接返回 `200`，不被平台自动改写。
+- 无扩展名和尾斜杠旧地址由 Worker 以 `301` 永久重定向到对应 `.html`；`index.html` 与 `live.html` 重定向到首页。
+- `404.html` 只作为真实 `404` 响应返回，不能作为可索引的 `200` 页面。
 
 ## 本地开发
 

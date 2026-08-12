@@ -8,6 +8,8 @@ on:
       - sitemap.xml
       - robots.txt
       - scripts/audit-static-content.js
+      - src/worker.js
+      - wrangler.jsonc
 
 permissions:
   contents: read
