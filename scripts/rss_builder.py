@@ -121,6 +121,31 @@ CORE_ITEMS = [
         "link": f"{SITE}/blog/jiangsu.html",
         "desc": "周庄六礼、婚船彩棚、摇快船、铺米袋、走三桥及文旅演出边界。",
     },
+    {
+        "title": "河北婚俗具体指南：昌黎地秧歌与当代婚礼",
+        "link": f"{SITE}/blog/hebei.html",
+        "desc": "昌黎地秧歌四类行当、民歌、迎亲演出与河北婚俗改革边界。",
+    },
+    {
+        "title": "山西婚俗具体指南：过帖、花馍与各地回门",
+        "link": f"{SITE}/blog/shanxi.html",
+        "desc": "过帖地区称谓、许口面、闻喜上头糕和各地不同回门日期。",
+    },
+    {
+        "title": "辽宁婚俗具体指南：蒙古勒津、满族与朝鲜族项目",
+        "link": f"{SITE}/blog/liaoning.html",
+        "desc": "阜新蒙古勒津婚礼、新宾满族和铁岭朝鲜族项目的地域与展演边界。",
+    },
+    {
+        "title": "安徽婚俗具体指南：徽州九步与宁国畲族婚嫁",
+        "link": f"{SITE}/blog/anhui.html",
+        "desc": "徽州送担、开脸、回门，以及宁国畲族得定、送日和迎亲。",
+    },
+    {
+        "title": "山东婚俗具体指南：胶东花饽饽与龙凤花轿",
+        "link": f"{SITE}/blog/shandong.html",
+        "desc": "黄县龙凤花轿婚俗、胶东花饽饽和荣成渔家文化的使用边界。",
+    },
 ]
 
 

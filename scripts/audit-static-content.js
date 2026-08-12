@@ -33,6 +33,11 @@ const reviewedRegionPages = new Set([
   "blog/shanghai.html",
   "blog/chongqing.html",
   "blog/jiangsu.html",
+  "blog/hebei.html",
+  "blog/shanxi.html",
+  "blog/liaoning.html",
+  "blog/anhui.html",
+  "blog/shandong.html",
 ]);
 const requiredConcreteSignals = new Map([
   ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
@@ -50,6 +55,11 @@ const requiredConcreteSignals = new Map([
   ["blog/shanghai.html", [/百子大礼轿/, /1952年12月/, /海派旗袍/, /婚姻文化展示馆/, /奉贤/]],
   ["blog/chongqing.html", [/花园酒/, /巴巴髻/, /头嘎.*二嘎.*摸米/s, /拦门礼/, /哭嫁歌/]],
   ["blog/jiangsu.html", [/婚船彩棚/, /摇快船/, /铺米袋/, /走三桥/, /张厅有囍/]],
+  ["blog/hebei.html", [/妞、㧟、丑、公子/, /排街秧歌/, /场子秧歌/, /傻柱子接媳妇/, /田寨村/]],
+  ["blog/shanxi.html", [/过帖.*换帖/s, /许口面/, /散喜馍/, /上头糕/, /出十二/]],
+  ["blog/liaoning.html", [/蒙古勒津婚礼/, /红帽子镇/, /武国强/, /蒙古贞之恋/, /朝鲜族传统婚礼/]],
+  ["blog/anhui.html", [/说媒、行聘、请期/, /送担/, /搬行嫁/, /得定/, /借镬/]],
+  ["blog/shandong.html", [/黄县龙凤花轿婚俗/, /胶东花饽饽/, /龙凤呈祥/, /开洋谢洋/, /鲅鱼水饺/]],
 ]);
 const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 

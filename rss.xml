@@ -6,154 +6,189 @@
   <atom:link href="https://wedding-tv.cn/rss.xml" rel="self" type="application/rss+xml" />
   <description>免费婚礼工具，以及预算、合同、影像交付和视频直播指南。</description>
   <language>zh-CN</language>
-  <lastBuildDate>Wed, 12 Aug 2026 04:27:52 +0000</lastBuildDate>
+  <lastBuildDate>Wed, 12 Aug 2026 04:50:33 +0000</lastBuildDate>
   <generator>wedding-tv.cn rss_builder review mode</generator>
   <item>
     <title>免费 AI 婚礼策划工具</title>
     <link>https://wedding-tv.cn/ai-planner.html</link>
     <guid>https://wedding-tv.cn/ai-planner.html</guid>
     <description>按城市、预算、人数和风格生成婚礼方案、婚俗清单与请帖文案。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>婚礼视频与直播行业指南</title>
     <link>https://wedding-tv.cn/guide.html</link>
     <guid>https://wedding-tv.cn/guide.html</guid>
     <description>婚礼视频、直播、MV 需求拆分、报价核对与服务商评估清单。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>婚礼云直播服务商怎么选</title>
     <link>https://wedding-tv.cn/guide-livestream.html</link>
     <guid>https://wedding-tv.cn/guide-livestream.html</guid>
     <description>码率、延迟、机位、价格和避坑清单。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>婚礼预算分配与记账指南</title>
     <link>https://wedding-tv.cn/wedding-budget-planning-guide.html</link>
     <guid>https://wedding-tv.cn/wedding-budget-planning-guide.html</guid>
     <description>按总额、优先级、备用金和付款节点建立可复算的婚礼预算。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>婚庆合同签约核对指南</title>
     <link>https://wedding-tv.cn/wedding-vendor-contract-guide.html</link>
     <guid>https://wedding-tv.cn/wedding-vendor-contract-guide.html</guid>
     <description>核对服务范围、人员、交付、付款、改期、版权和违约责任。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>内容编辑规范与数据来源</title>
     <link>https://wedding-tv.cn/editorial-policy.html</link>
     <guid>https://wedding-tv.cn/editorial-policy.html</guid>
     <description>说明本站内容责任、来源要求、AI 辅助边界和纠错流程。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>广东婚俗具体指南：连南八排瑶与盐田疍家婚礼</title>
     <link>https://wedding-tv.cn/blog/guangdong.html</link>
     <guid>https://wedding-tv.cn/blog/guangdong.html</guid>
     <description>连南东三排夜间迎亲、先生公与洗脸认亲，以及盐田划旱船、咸茶和大碗疍。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>福建婚俗具体指南：霞浦畲族五关与福安喜娘</title>
     <link>https://wedding-tv.cn/blog/fujian.html</link>
     <guid>https://wedding-tv.cn/blog/fujian.html</guid>
     <description>霞浦迎亲五关、凤凰装，以及赤郎、接姑、赤郎子参与的三天迎亲和歌桌。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>湖南婚俗具体指南：湘西土家哭嫁与凤凰苗族婚俗</title>
     <link>https://wedding-tv.cn/blog/hunan.html</link>
     <guid>https://wedding-tv.cn/blog/hunan.html</guid>
     <description>土家哭嫁席位、泸溪插花日迎亲队，以及花瑶媒公、拦门酒和挑花。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>四川婚俗具体指南：美姑彝族与古蔺苗族婚俗</title>
     <link>https://wedding-tv.cn/blog/sichuan.html</link>
     <guid>https://wedding-tv.cn/blog/sichuan.html</guid>
     <description>美姑婚俗史诗与口头演述，以及古蔺咪哆、咪彩、碰芦笙、腰带和苗服纹样。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>浙江婚俗具体指南：宁海十里红妆与景宁畲族婚礼</title>
     <link>https://wedding-tv.cn/blog/zhejiang.html</link>
     <guid>https://wedding-tv.cn/blog/zhejiang.html</guid>
     <description>宁海红妆器物，以及景宁送糯米、踏路牛、赤郎行郎和 doi 彩带信物。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>内蒙古婚俗具体指南：阿日奔苏木婚礼</title>
     <link>https://wedding-tv.cn/blog/inner-mongolia.html</link>
     <guid>https://wedding-tv.cn/blog/inner-mongolia.html</guid>
     <description>阿鲁科尔沁旗阿日奔苏木婚礼中的祝赞词家、蒙古包、勒勒车与长调。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>甘肃婚俗具体指南：肃南裕固族婚礼</title>
     <link>https://wedding-tv.cn/blog/gansu.html</link>
     <guid>https://wedding-tv.cn/blog/gansu.html</guid>
     <description>肃南裕固族婚礼的28项礼节，以及戴头面、打尖和阿斯哈斯。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>青海婚俗具体指南：互助土族婚礼</title>
     <link>https://wedding-tv.cn/blog/qinghai.html</link>
     <guid>https://wedding-tv.cn/blog/qinghai.html</guid>
     <description>互助土族婚礼的纳什金、花儿对歌、敬献哈达与安昭。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>黑龙江婚俗具体指南：同江赫哲族婚俗</title>
     <link>https://wedding-tv.cn/blog/heilongjiang.html</link>
     <guid>https://wedding-tv.cn/blog/heilongjiang.html</guid>
     <description>同江赫哲族婚俗的彩船彩橇、戒语、祝福歌、做福及展演边界。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>吉林婚俗具体指南：延边朝鲜族传统婚礼</title>
     <link>https://wedding-tv.cn/blog/jilin.html</link>
     <guid>https://wedding-tv.cn/blog/jilin.html</guid>
     <description>延边朝鲜族婚礼的议婚、大礼、后礼、礼装函与双方家庭大桌。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>北京婚俗具体指南：小定大定与天地桌</title>
     <link>https://wedding-tv.cn/blog/beijing.html</link>
     <guid>https://wedding-tv.cn/blog/beijing.html</guid>
     <description>老北京相看、合婚、小定大定、雁酒、天地桌及晚清民国婚礼变化。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>天津婚俗具体指南：下午婚礼与搭棚落座</title>
     <link>https://wedding-tv.cn/blog/tianjin.html</link>
     <guid>https://wedding-tv.cn/blog/tianjin.html</guid>
     <description>旧天津下午婚礼、搭大棚落座、街坊帮忙、家请厨师与八大碗。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>上海婚俗具体指南：百子大礼轿与海派旗袍</title>
     <link>https://wedding-tv.cn/blog/shanghai.html</link>
     <guid>https://wedding-tv.cn/blog/shanghai.html</guid>
     <description>上海婚姻制度变化、民国百子大礼轿、海派旗袍及现代婚俗展示。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>重庆婚俗具体指南：黔江土家婚俗</title>
     <link>https://wedding-tv.cn/blog/chongqing.html</link>
     <guid>https://wedding-tv.cn/blog/chongqing.html</guid>
     <description>黔江土家花园酒、开脸、头嘎二嘎摸米、拦门礼和哭嫁。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
   <item>
     <title>江苏婚俗具体指南：周庄水乡婚礼</title>
     <link>https://wedding-tv.cn/blog/jiangsu.html</link>
     <guid>https://wedding-tv.cn/blog/jiangsu.html</guid>
     <description>周庄六礼、婚船彩棚、摇快船、铺米袋、走三桥及文旅演出边界。</description>
-    <pubDate>Wed, 12 Aug 2026 04:27:52 +0000</pubDate>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
+  </item>
+  <item>
+    <title>河北婚俗具体指南：昌黎地秧歌与当代婚礼</title>
+    <link>https://wedding-tv.cn/blog/hebei.html</link>
+    <guid>https://wedding-tv.cn/blog/hebei.html</guid>
+    <description>昌黎地秧歌四类行当、民歌、迎亲演出与河北婚俗改革边界。</description>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
+  </item>
+  <item>
+    <title>山西婚俗具体指南：过帖、花馍与各地回门</title>
+    <link>https://wedding-tv.cn/blog/shanxi.html</link>
+    <guid>https://wedding-tv.cn/blog/shanxi.html</guid>
+    <description>过帖地区称谓、许口面、闻喜上头糕和各地不同回门日期。</description>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
+  </item>
+  <item>
+    <title>辽宁婚俗具体指南：蒙古勒津、满族与朝鲜族项目</title>
+    <link>https://wedding-tv.cn/blog/liaoning.html</link>
+    <guid>https://wedding-tv.cn/blog/liaoning.html</guid>
+    <description>阜新蒙古勒津婚礼、新宾满族和铁岭朝鲜族项目的地域与展演边界。</description>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
+  </item>
+  <item>
+    <title>安徽婚俗具体指南：徽州九步与宁国畲族婚嫁</title>
+    <link>https://wedding-tv.cn/blog/anhui.html</link>
+    <guid>https://wedding-tv.cn/blog/anhui.html</guid>
+    <description>徽州送担、开脸、回门，以及宁国畲族得定、送日和迎亲。</description>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
+  </item>
+  <item>
+    <title>山东婚俗具体指南：胶东花饽饽与龙凤花轿</title>
+    <link>https://wedding-tv.cn/blog/shandong.html</link>
+    <guid>https://wedding-tv.cn/blog/shandong.html</guid>
+    <description>黄县龙凤花轿婚俗、胶东花饽饽和荣成渔家文化的使用边界。</description>
+    <pubDate>Wed, 12 Aug 2026 04:50:33 +0000</pubDate>
   </item>
 </channel>
 </rss>
