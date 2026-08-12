@@ -89,6 +89,14 @@ const requiredConcreteSignals = new Map([
   ["blog/hong-kong.html", [/出嫁前两天/, /叹歌/, /咸水歌/, /鹤佬渔民/, /龙凤/]],
   ["blog/macao.html", [/纳采请婚、问名相亲/, /过大礼/, /嫁喜礼饼制作技艺/, /歌堂酒/, /九十日/]],
 ]);
+const flagshipEvidencePages = new Set([
+  "blog/guangdong.html",
+  "blog/fujian.html",
+  "blog/sichuan.html",
+  "blog/tibet.html",
+  "blog/taiwan.html",
+  "blog/hong-kong.html",
+]);
 const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 
 function filesUnder(dir, extension) {
@@ -143,6 +151,18 @@ for (const relativePath of reviewedRegionPages) {
   }
   if (!/wedding-tv\.cn 内容维护/.test(html) || !/authors\.html/.test(html)) {
     errors.push(`${relativePath}: missing organization responsibility statement`);
+  }
+  if (flagshipEvidencePages.has(relativePath)) {
+    const evidenceFlowCount = [...html.matchAll(/\bdata-evidence-flow\b/gi)].length;
+    const evidenceSourceCount = [...html.matchAll(/\bdata-evidence-source\b/gi)].length;
+    const evidenceTableHtml = html.match(/<table class="evidence-table">[\s\S]*?<\/table>/i)?.[0] || "";
+    const evidenceDateCount = [...evidenceTableHtml.matchAll(/<td>\d{4}-\d{2}-\d{2}<\/td>/gi)].length;
+    if (evidenceFlowCount !== 1) errors.push(`${relativePath}: flagship page needs one original evidence flow (${evidenceFlowCount})`);
+    if (evidenceSourceCount < 4) errors.push(`${relativePath}: flagship page needs at least 4 claim-to-source records (${evidenceSourceCount})`);
+    if (evidenceDateCount < evidenceSourceCount) errors.push(`${relativePath}: evidence records need a verification date`);
+    if (!/本站采用的关键事实/.test(html) || !/适用范围/.test(html)) {
+      errors.push(`${relativePath}: evidence table is missing claim or applicability fields`);
+    }
   }
   for (const unsupportedLegacyClaim of [/彩礼一般多少钱/, /城市常见区间/, /婚宴一桌/, /单去双回/, /新娘脚不能沾/]) {
     if (unsupportedLegacyClaim.test(html)) {
@@ -221,6 +241,14 @@ if (!/cloudflare-cdn-cache-control["']\s*,\s*["']no-store/i.test(worker)) {
 const wrangler = fs.readFileSync(path.join(root, "wrangler.jsonc"), "utf8");
 if (!/"run_worker_first"\s*:\s*true/.test(wrangler)) {
   errors.push("wrangler.jsonc: static documents bypass Worker cache controls");
+}
+
+const editorialPolicy = fs.readFileSync(path.join(root, "editorial-policy.html"), "utf8");
+if (/必须包含双方家庭核对表/.test(editorialPolicy) || /还须包含家庭访谈方法、供应商交底/.test(editorialPolicy)) {
+  errors.push("editorial-policy.html: superseded regional article template requirements remain");
+}
+if (!/不使用可以复制到任何地区的家庭核对表/.test(editorialPolicy) || !/事实—来源—范围/.test(editorialPolicy)) {
+  errors.push("editorial-policy.html: current source-specific regional review standard is missing");
 }
 
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
