@@ -7,8 +7,8 @@ SITEMAP_PATH = os.path.join(PROJECT_ROOT, "sitemap.xml")
 TODAY_STR = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
 
 # Review-mode sitemap:
-# keep only durable tools, reviewed guides and policy pages indexed.
-# Unreviewed city, regional customs and insight pages have been removed.
+# keep only durable tools, reviewed guides, policy pages and explicitly approved
+# regional articles indexed. Unreviewed city and regional pages stay excluded.
 CORE_PAGES = [
     ("", "1.0", "daily"),
     ("ai-planner.html", "0.95", "weekly"),
@@ -38,6 +38,11 @@ CORE_PAGES = [
     ("wedding-live-stream-technical-guide.html", "0.9", "monthly"),
     ("wedding-emergency-plan-guide.html", "0.9", "monthly"),
     ("wedding-customs-verification-guide.html", "0.9", "monthly"),
+    ("blog/guangdong.html", "0.85", "monthly"),
+    ("blog/fujian.html", "0.85", "monthly"),
+    ("blog/hunan.html", "0.85", "monthly"),
+    ("blog/sichuan.html", "0.85", "monthly"),
+    ("blog/zhejiang.html", "0.85", "monthly"),
     ("wedding-budget-scenarios-case.html", "0.9", "monthly"),
     ("wedding-quote-comparison-case.html", "0.9", "monthly"),
     ("outdoor-wedding-emergency-case.html", "0.9", "monthly"),

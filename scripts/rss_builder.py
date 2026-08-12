@@ -3,7 +3,7 @@
 """
 wedding-tv.cn 审核期 RSS 重建器。
 
-只输出核心工具、指南和透明度页面，避免把自动新闻、洞察和程序化城市页重新推到公开订阅入口。
+只输出核心工具、指南、透明度页面和逐篇审校的地区文章，避免把自动新闻、洞察和程序化城市页重新推到公开订阅入口。
 """
 from __future__ import annotations
 
@@ -45,6 +45,31 @@ CORE_ITEMS = [
         "title": "内容编辑规范与数据来源",
         "link": f"{SITE}/editorial-policy.html",
         "desc": "说明本站内容责任、来源要求、AI 辅助边界和纠错流程。",
+    },
+    {
+        "title": "广东婚俗筹备核验指南",
+        "link": f"{SITE}/blog/guangdong.html",
+        "desc": "基于政府与国家非遗资料说明广东地方婚俗差异，并提供家庭核对清单。",
+    },
+    {
+        "title": "福建婚俗筹备核验指南",
+        "link": f"{SITE}/blog/fujian.html",
+        "desc": "区分闽东畲族、福安地方习俗及闽南、客家家庭差异。",
+    },
+    {
+        "title": "湖南婚俗筹备核验指南",
+        "link": f"{SITE}/blog/hunan.html",
+        "desc": "核对隆回花瑶、湘西民族文化与现代家庭执行边界。",
+    },
+    {
+        "title": "四川婚俗筹备核验指南",
+        "link": f"{SITE}/blog/sichuan.html",
+        "desc": "区分凉山彝族、洛带客家、历史资料与现代简化实践。",
+    },
+    {
+        "title": "浙江婚俗筹备核验指南",
+        "link": f"{SITE}/blog/zhejiang.html",
+        "desc": "说明宁海十里红妆的地域边界，并提供现代家庭财物与流程核对方法。",
     },
 ]
 

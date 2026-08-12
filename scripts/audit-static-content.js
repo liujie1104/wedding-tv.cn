@@ -17,6 +17,13 @@ const errors = [];
 const warnings = [];
 const seenTitles = new Map();
 const seenDescriptions = new Map();
+const reviewedRegionPages = new Set([
+  "blog/guangdong.html",
+  "blog/fujian.html",
+  "blog/hunan.html",
+  "blog/sichuan.html",
+  "blog/zhejiang.html",
+]);
 
 function filesUnder(dir, extension) {
   if (!fs.existsSync(dir)) return [];
@@ -31,9 +38,42 @@ if (new Set(urls).size !== urls.length) errors.push("sitemap.xml: duplicate URL"
 if (/^\s*Disallow:\s*\/(?:news|insights|blog\/cities)\//im.test(robots)) {
   errors.push("robots.txt: retired URLs must remain crawlable so noindex/404 can be observed");
 }
-for (const retiredDir of ["blog", "insights", "news"]) {
+for (const retiredDir of ["insights", "news"]) {
   if (fs.existsSync(path.join(root, retiredDir))) {
     errors.push(`${retiredDir}: unreviewed generated content directory still exists`);
+  }
+}
+const publishedRegionPages = filesUnder(path.join(root, "blog"), ".html")
+  .map((fullPath) => path.relative(root, fullPath).replaceAll("\\", "/"));
+for (const relativePath of publishedRegionPages) {
+  if (!reviewedRegionPages.has(relativePath)) {
+    errors.push(`${relativePath}: region page has not been added to the reviewed publication allowlist`);
+  }
+}
+for (const relativePath of reviewedRegionPages) {
+  const fullPath = path.join(root, relativePath);
+  if (!fs.existsSync(fullPath)) {
+    errors.push(`${relativePath}: reviewed region page is missing`);
+    continue;
+  }
+  const html = fs.readFileSync(fullPath, "utf8");
+  const sourceCount = [...html.matchAll(/<a\b[^>]*\bdata-source\b/gi)].length;
+  if (sourceCount < 3) errors.push(`${relativePath}: fewer than 3 traceable sources (${sourceCount})`);
+  if (!/AI 辅助说明/.test(html)) errors.push(`${relativePath}: missing AI assistance disclosure`);
+  if (!/(?:适用边界|范围声明|阅读原则|本页定位|特别提示)/.test(html)) {
+    errors.push(`${relativePath}: missing locality and applicability boundary`);
+  }
+  if (!/(?:双方家庭核对表|家庭访谈清单|家庭核对表)/.test(html)) {
+    errors.push(`${relativePath}: missing family verification checklist`);
+  }
+  if (!/(?:争议|简化)/.test(html)) errors.push(`${relativePath}: missing dispute or simplification guidance`);
+  if (!/wedding-tv\.cn 内容维护/.test(html) || !/authors\.html/.test(html)) {
+    errors.push(`${relativePath}: missing organization responsibility statement`);
+  }
+  for (const unsupportedLegacyClaim of [/彩礼一般多少钱/, /城市常见区间/, /婚宴一桌/, /单去双回/, /新娘脚不能沾/]) {
+    if (unsupportedLegacyClaim.test(html)) {
+      errors.push(`${relativePath}: contains unsupported claim from the retired regional template ${unsupportedLegacyClaim}`);
+    }
   }
 }
 
