@@ -48,6 +48,10 @@ const reviewedRegionPages = new Set([
   "blog/guangxi.html",
   "blog/ningxia.html",
   "blog/xinjiang.html",
+  "blog/tibet.html",
+  "blog/taiwan.html",
+  "blog/hong-kong.html",
+  "blog/macao.html",
 ]);
 const requiredConcreteSignals = new Map([
   ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
@@ -80,6 +84,10 @@ const requiredConcreteSignals = new Map([
   ["blog/guangxi.html", [/卢瑞明/, /头峒/, /乜相/, /拦路关/, /两句一顿，每句七字/]],
   ["blog/ningxia.html", [/提亲、看家道、相亲、道喜/, /念尼卡哈/, /唱家子/, /表针线/, /酒曲子/]],
   ["blog/xinjiang.html", [/送订亲礼.*送大礼/s, /阿吉萨林/, /安巴萨林/, /击鼓祝福/, /盐水.*馕/s]],
+  ["blog/tibet.html", [/三次提亲/, /彩箭.*达塔/s, /门赞/, /巴地赞/, /陈塘夏尔巴婚俗/]],
+  ["blog/taiwan.html", [/吃姊妹桌/, /二礼/, /送采薪礼/, /tokang/, /tmlung qsiya msdhug/]],
+  ["blog/hong-kong.html", [/出嫁前两天/, /叹歌/, /咸水歌/, /鹤佬渔民/, /龙凤/]],
+  ["blog/macao.html", [/纳采请婚、问名相亲/, /过大礼/, /嫁喜礼饼制作技艺/, /歌堂酒/, /九十日/]],
 ]);
 const forbiddenRegionBoilerplate = /<h2>[^<]*(?:家庭核对表|家庭访谈|供应商交底|供应商的执行|婚庆.*交底|假设情境|建议执行步骤|建议确认流程|争议事项)[^<]*<\/h2>/;
 

@@ -196,6 +196,26 @@ CORE_ITEMS = [
         "link": f"{SITE}/blog/xinjiang.html",
         "desc": "维吾尔、锡伯、塔吉克与哈萨克四套婚俗流程和各自地域边界。",
     },
+    {
+        "title": "西藏婚俗具体指南：拉萨三次提亲与婚礼赞词",
+        "link": f"{SITE}/blog/tibet.html",
+        "desc": "拉萨三次提亲、彩箭达塔、门赞、马赞、巴地赞及地方项目边界。",
+    },
+    {
+        "title": "台湾地区婚俗具体指南：台南二礼与原住民族婚礼",
+        "link": f"{SITE}/blog/taiwan.html",
+        "desc": "台南二礼、吃姊妹桌与排湾、鲁凯、泰雅、太鲁阁资料边界。",
+    },
+    {
+        "title": "香港婚俗具体指南：鹤佬渔民叹歌与裙褂",
+        "link": f"{SITE}/blog/hong-kong.html",
+        "desc": "鹤佬渔民婚嫁叹歌、咸水歌、裙褂制作及拟结婚通知期限。",
+    },
+    {
+        "title": "澳门婚俗具体指南：过大礼与嫁喜礼饼",
+        "link": f"{SITE}/blog/macao.html",
+        "desc": "过大礼、嫁喜礼饼、裙褂、中西双礼及现行结婚登记期限。",
+    },
 ]
 
 
