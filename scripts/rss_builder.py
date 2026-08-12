@@ -96,6 +96,31 @@ CORE_ITEMS = [
         "link": f"{SITE}/blog/jilin.html",
         "desc": "延边朝鲜族婚礼的议婚、大礼、后礼、礼装函与双方家庭大桌。",
     },
+    {
+        "title": "北京婚俗具体指南：小定大定与天地桌",
+        "link": f"{SITE}/blog/beijing.html",
+        "desc": "老北京相看、合婚、小定大定、雁酒、天地桌及晚清民国婚礼变化。",
+    },
+    {
+        "title": "天津婚俗具体指南：下午婚礼与搭棚落座",
+        "link": f"{SITE}/blog/tianjin.html",
+        "desc": "旧天津下午婚礼、搭大棚落座、街坊帮忙、家请厨师与八大碗。",
+    },
+    {
+        "title": "上海婚俗具体指南：百子大礼轿与海派旗袍",
+        "link": f"{SITE}/blog/shanghai.html",
+        "desc": "上海婚姻制度变化、民国百子大礼轿、海派旗袍及现代婚俗展示。",
+    },
+    {
+        "title": "重庆婚俗具体指南：黔江土家婚俗",
+        "link": f"{SITE}/blog/chongqing.html",
+        "desc": "黔江土家花园酒、开脸、头嘎二嘎摸米、拦门礼和哭嫁。",
+    },
+    {
+        "title": "江苏婚俗具体指南：周庄水乡婚礼",
+        "link": f"{SITE}/blog/jiangsu.html",
+        "desc": "周庄六礼、婚船彩棚、摇快船、铺米袋、走三桥及文旅演出边界。",
+    },
 ]
 
 
