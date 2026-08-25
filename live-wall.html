@@ -283,8 +283,12 @@ body, html {
   </div>
 
   <div class="form-group">
-    <label>房间代号 (Room ID)</label>
-    <input type="text" id="cfgRoom" value="wedding888" placeholder="用于宾客扫码关联" />
+    <label>专属婚礼房间代号 (Room ID)</label>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="cfgRoom" value="" placeholder="专属房间号" />
+      <button type="button" class="ctrl-btn" id="btnNewRoom" style="padding:0 14px;white-space:nowrap;font-size:13px;">🎲 生成新房间</button>
+    </div>
+    <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">每对新人拥有唯一独立房间，弹幕、抽奖与设置互不干扰</small>
   </div>
 
   <div class="form-group">
@@ -351,9 +355,27 @@ body, html {
 <script>
 const $ = id => document.getElementById(id);
 
-// 默认配置（默认恢复为高雅星河黑金背景）
+function generateRoomCode() {
+  const chars = "23456789abcdefghjkmnpqrstuvwxyz";
+  let code = "w";
+  for (let i = 0; i < 5; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+// 读取 URL 中的 room 参数，如无则自动分配唯一专属房间
+const urlParams = new URLSearchParams(window.location.search);
+let initialRoom = urlParams.get("room");
+if (!initialRoom) {
+  initialRoom = generateRoomCode();
+  const newUrl = `${window.location.pathname}?room=${initialRoom}`;
+  window.history.replaceState({}, "", newUrl);
+}
+
+// 默认配置（每个房间独立）
 let config = {
-  room: "wedding888",
+  room: initialRoom,
   groom: "张明",
   bride: "李婷",
   title: "婚礼现场大屏互动",
@@ -373,9 +395,9 @@ const BG_PRESETS = {
   champagne: "radial-gradient(circle at center, #302414 0%, #1f160b 60%, #0d0904 100%)"
 };
 
-// 立即读取本地存储
+// 读取该房间持久化配置
 try {
-  const saved = localStorage.getItem("wedding_wall_cfg_v5");
+  const saved = localStorage.getItem("wedding_wall_cfg_" + config.room);
   if (saved) {
     config = { ...config, ...JSON.parse(saved) };
   }
@@ -705,10 +727,36 @@ $("cfgCustomBg").onchange = (e) => {
   reader.readAsDataURL(file);
 };
 
+// 随机生成全新独立房间
+$("btnNewRoom").onclick = () => {
+  const newRoom = generateRoomCode();
+  $("cfgRoom").value = newRoom;
+  config.room = newRoom;
+  const newUrl = `${window.location.pathname}?room=${newRoom}`;
+  window.history.replaceState({}, "", newUrl);
+  applyConfig();
+  showToast(`🎉 已创建专属新房间：${newRoom}`);
+  lastTimestamp = 0;
+  seenMsgIds.clear();
+  pollMessages();
+};
+
+$("cfgRoom").addEventListener("change", () => {
+  const r = $("cfgRoom").value.trim() || generateRoomCode();
+  $("cfgRoom").value = r;
+  config.room = r;
+  const newUrl = `${window.location.pathname}?room=${r}`;
+  window.history.replaceState({}, "", newUrl);
+  applyConfig();
+  lastTimestamp = 0;
+  seenMsgIds.clear();
+  pollMessages();
+});
+
 // 实时输入监听预览
 ["cfgGroom", "cfgBride", "cfgTitle", "cfgSubtitle", "cfgDate", "cfgVenue"].forEach(id => {
   $(id).addEventListener("input", () => {
-    config.room = $("cfgRoom").value.trim() || "wedding888";
+    config.room = $("cfgRoom").value.trim() || generateRoomCode();
     config.groom = $("cfgGroom").value.trim() || "张明";
     config.bride = $("cfgBride").value.trim() || "李婷";
     config.title = $("cfgTitle").value.trim() || "婚礼现场大屏互动";
@@ -720,7 +768,7 @@ $("cfgCustomBg").onchange = (e) => {
 });
 
 $("btnSaveCfg").onclick = () => {
-  config.room = $("cfgRoom").value.trim() || "wedding888";
+  config.room = $("cfgRoom").value.trim() || generateRoomCode();
   config.groom = $("cfgGroom").value.trim() || "张明";
   config.bride = $("cfgBride").value.trim() || "李婷";
   config.title = $("cfgTitle").value.trim() || "婚礼现场大屏互动";
@@ -730,8 +778,11 @@ $("btnSaveCfg").onclick = () => {
   config.speed = Number($("cfgSpeed").value) || 8;
 
   try {
-    localStorage.setItem("wedding_wall_cfg_v5", JSON.stringify(config));
+    localStorage.setItem("wedding_wall_cfg_" + config.room, JSON.stringify(config));
   } catch(e){}
+
+  const newUrl = `${window.location.pathname}?room=${config.room}`;
+  window.history.replaceState({}, "", newUrl);
 
   applyConfig();
   $("settingsDrawer").classList.remove("open");
