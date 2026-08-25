@@ -184,12 +184,28 @@ body, html {
   border-radius: 8px; color: #fff; font-size: 14px; outline: none;
 }
 .form-group input:focus { border-color: var(--gold); }
-.preset-bg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+.preset-bg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
 .preset-bg-btn {
   padding: 10px 6px; border-radius: 8px; border: 1px solid var(--line);
   background: #0e0a14; color: #e2d9eb; font-size: 12px; cursor: pointer; text-align: center;
 }
 .preset-bg-btn.active { border-color: var(--gold); color: var(--gold); background: #261933; font-weight: bold; }
+
+/* 进度条组件 */
+#uploadProgressBox {
+  display: none; margin-top: 10px; padding: 10px; background: #0e0a14;
+  border: 1px solid var(--line); border-radius: 8px;
+}
+.progress-meta {
+  display: flex; justify-content: space-between; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 600;
+}
+.progress-track {
+  width: 100%; height: 8px; background: #1a1226; border-radius: 999px; overflow: hidden;
+}
+.progress-bar-fill {
+  width: 0%; height: 100%; background: linear-gradient(90deg, #ff6b9d 0%, #ffd28a 100%);
+  transition: width 0.15s ease;
+}
 
 /* 提示气泡 */
 #toastBox {
@@ -292,19 +308,32 @@ body, html {
   </div>
 
   <div class="form-group">
-    <label>大屏背景主题</label>
+    <label>大屏预设背景主题</label>
     <div class="preset-bg-grid">
-      <div class="preset-bg-btn active" data-bg="photo">📸 浪漫婚纱实景</div>
-      <div class="preset-bg-btn" data-bg="midnight">🌌 星河黑金</div>
+      <div class="preset-bg-btn active" data-bg="midnight">🌌 星河黑金</div>
       <div class="preset-bg-btn" data-bg="rose">🌸 浪漫樱粉</div>
       <div class="preset-bg-btn" data-bg="champagne">✨ 香槟优雅</div>
     </div>
   </div>
 
   <div class="form-group">
-    <label>🖼️ 自定义上传大屏背景图 (婚纱照/现场海报)</label>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <label style="margin-bottom:0;">🖼️ 自定义上传婚纱照背景</label>
+      <button id="btnClearCustomBg" style="display:none;background:none;border:none;color:#ff6b9d;font-size:12px;cursor:pointer;">🗑️ 清除图片</button>
+    </div>
     <input type="file" id="cfgCustomBg" accept="image/*" />
     <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">支持任意高清横版婚纱照或酒店舞台海报</small>
+
+    <!-- 上传进度条 -->
+    <div id="uploadProgressBox">
+      <div class="progress-meta">
+        <span id="progressStatus">正在加载高清背景...</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar-fill" id="progressBarFill"></div>
+      </div>
+    </div>
   </div>
 
   <div class="form-group">
@@ -322,7 +351,7 @@ body, html {
 <script>
 const $ = id => document.getElementById(id);
 
-// 状态配置
+// 默认配置（默认恢复为高雅星河黑金背景）
 let config = {
   room: "wedding888",
   groom: "张明",
@@ -331,15 +360,14 @@ let config = {
   subtitle: "欢迎各位亲朋好友莅临见证 · 微信扫码发弹幕送祝福",
   date: "2026.08.28",
   venue: "喜来登大酒店 · 凡尔赛宴会厅",
-  bgTheme: "photo",
+  bgTheme: "midnight",
   speed: 8
 };
 
 let currentCustomBgUrl = "";
 
-// 预设背景
+// 预设经典背景
 const BG_PRESETS = {
-  photo: "linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.65)), url('/demo_wedding_bg.jpg') center/cover no-repeat",
   midnight: "radial-gradient(circle at center, #261633 0%, #150d1e 60%, #09060d 100%)",
   rose: "radial-gradient(circle at center, #3d1727 0%, #240c17 60%, #12050b 100%)",
   champagne: "radial-gradient(circle at center, #302414 0%, #1f160b 60%, #0d0904 100%)"
@@ -347,14 +375,14 @@ const BG_PRESETS = {
 
 // 立即读取本地存储
 try {
-  const saved = localStorage.getItem("wedding_wall_cfg_v4");
+  const saved = localStorage.getItem("wedding_wall_cfg_v5");
   if (saved) {
     config = { ...config, ...JSON.parse(saved) };
   }
 } catch(e){}
 
-// IndexedDB 存储大图
-const DB_NAME = "WeddingWallDB_v5";
+// IndexedDB 存储自定义大图
+const DB_NAME = "WeddingWallDB_v6";
 function openDB() {
   return new Promise((resolve) => {
     const req = indexedDB.open(DB_NAME, 1);
@@ -404,6 +432,7 @@ function syncInputs() {
   document.querySelectorAll(".preset-bg-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.bg === config.bgTheme && !currentCustomBgUrl);
   });
+  $("btnClearCustomBg").style.display = currentCustomBgUrl ? "inline-block" : "none";
 }
 
 function showToast(msg) {
@@ -425,8 +454,10 @@ function applyConfig() {
   const bgEl = $("screenBg");
   if (currentCustomBgUrl) {
     bgEl.style.background = `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.65)), url("${currentCustomBgUrl}") center/cover no-repeat`;
+    $("btnClearCustomBg").style.display = "inline-block";
   } else {
-    bgEl.style.background = BG_PRESETS[config.bgTheme] || BG_PRESETS.photo;
+    bgEl.style.background = BG_PRESETS[config.bgTheme] || BG_PRESETS.midnight;
+    $("btnClearCustomBg").style.display = "none";
   }
 
   // 渲染二维码
@@ -503,7 +534,7 @@ function escapeHtml(str) {
 }
 
 // 实时轮询 /api/load?wall=room&since=timestamp
-let lastTimestamp = 0; // 从0开始拉取该房间所有历史祝福
+let lastTimestamp = 0;
 let seenMsgIds = new Set();
 
 async function pollMessages() {
@@ -599,19 +630,79 @@ document.querySelectorAll(".preset-bg-btn").forEach(btn => {
   };
 });
 
+// 清除自定义背景
+$("btnClearCustomBg").onclick = () => {
+  currentCustomBgUrl = "";
+  saveBgToDB("");
+  $("cfgCustomBg").value = "";
+  document.querySelectorAll(".preset-bg-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.bg === config.bgTheme);
+  });
+  applyConfig();
+  showToast("🗑️ 已恢复预设背景！");
+};
+
+// 高性能图片快速处理与进度条驱动
 $("cfgCustomBg").onchange = (e) => {
   const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      currentCustomBgUrl = evt.target.result;
-      saveBgToDB(currentCustomBgUrl);
+  if (!file) return;
+
+  const pBox = $("uploadProgressBox");
+  const pFill = $("progressBarFill");
+  const pStatus = $("progressStatus");
+  const pPercent = $("progressPercent");
+
+  pBox.style.display = "block";
+  pFill.style.width = "15%";
+  pPercent.textContent = "15%";
+  pStatus.textContent = "正在读取图片数据...";
+
+  const reader = new FileReader();
+  reader.onprogress = (evt) => {
+    if (evt.lengthComputable) {
+      const pct = Math.round((evt.loaded / evt.total) * 50);
+      pFill.style.width = pct + "%";
+      pPercent.textContent = pct + "%";
+    }
+  };
+
+  reader.onload = (evt) => {
+    pFill.style.width = "75%";
+    pPercent.textContent = "75%";
+    pStatus.textContent = "正在自适应优化大屏分辨率...";
+
+    const img = new Image();
+    img.onload = () => {
+      // 客户端智能缩放（最大 2560 宽，确保超清且毫秒级响应）
+      const maxW = 2560;
+      let w = img.width;
+      let h = img.height;
+      if (w > maxW) {
+        h = Math.round((h * maxW) / w);
+        w = maxW;
+      }
+      const cvs = document.createElement("canvas");
+      cvs.width = w;
+      cvs.height = h;
+      const ctx = cvs.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, h);
+      const optimizedDataUrl = cvs.toDataURL("image/jpeg", 0.9);
+
+      pFill.style.width = "100%";
+      pPercent.textContent = "100%";
+      pStatus.textContent = "✅ 高清背景已就绪！";
+
+      currentCustomBgUrl = optimizedDataUrl;
+      saveBgToDB(optimizedDataUrl);
       document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
       applyConfig();
-      showToast("🖼️ 自定义图片已实时应用！");
+      showToast("🖼️ 自定义婚纱照背景已实时应用！");
+
+      setTimeout(() => { pBox.style.display = "none"; }, 2000);
     };
-    reader.readAsDataURL(file);
-  }
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
 };
 
 // 实时输入监听预览
@@ -639,7 +730,7 @@ $("btnSaveCfg").onclick = () => {
   config.speed = Number($("cfgSpeed").value) || 8;
 
   try {
-    localStorage.setItem("wedding_wall_cfg_v4", JSON.stringify(config));
+    localStorage.setItem("wedding_wall_cfg_v5", JSON.stringify(config));
   } catch(e){}
 
   applyConfig();
