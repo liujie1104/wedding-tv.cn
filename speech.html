@@ -77,17 +77,25 @@
   </div>
 
   <!-- 卡片预览弹窗 -->
-  <div id="cardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;overflow-y:auto;padding:20px;text-align:center;">
-    <div style="max-width:420px;margin:30px auto;background:#171121;border:1px solid rgba(255,210,138,.3);border-radius:16px;padding:20px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <span style="font-weight:700;color:var(--gold);font-size:15px;">🎤 小红书/朋友圈专属致辞卡</span>
-        <button id="closeModal" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">✕</button>
+  <div id="cardModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:999;overflow-y:auto;padding:20px;text-align:center;">
+    <div style="max-width:440px;margin:20px auto;background:#171121;border:1px solid rgba(255,210,138,.3);border-radius:18px;padding:22px;box-shadow:0 12px 36px rgba(0,0,0,.6);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span style="font-weight:700;color:var(--gold);font-size:16px;">🎤 小红书/朋友圈精美致辞卡</span>
+        <button id="closeModal" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">✕</button>
       </div>
-      <img id="cardImg" style="width:100%;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);display:block;margin-bottom:16px;" alt="婚礼致辞美图" />
+
+      <!-- 风格主题切换 -->
+      <div style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;" id="themeSelector">
+        <button class="t-btn" data-theme="rose" style="padding:6px 14px;border-radius:999px;border:1px solid #ff6b9d;background:#2d1522;color:#ffadc9;font-size:13px;cursor:pointer;font-weight:600;">🌸 浪漫樱粉</button>
+        <button class="t-btn" data-theme="champagne" style="padding:6px 14px;border-radius:999px;border:1px solid #ffd28a;background:#2b2214;color:#ffe2b3;font-size:13px;cursor:pointer;font-weight:600;">✨ 法式香槟</button>
+        <button class="t-btn" data-theme="midnight" style="padding:6px 14px;border-radius:999px;border:1px solid #c4b5fd;background:#1e1430;color:#e9d5ff;font-size:13px;cursor:pointer;font-weight:600;">🌌 暗夜星河</button>
+      </div>
+
+      <img id="cardImg" style="width:100%;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.6);display:block;margin-bottom:16px;" alt="婚礼致辞美图" />
       <div style="display:flex;gap:10px;">
-        <a id="downloadCard" download="婚礼致辞.png" style="flex:1;padding:12px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px;display:inline-block;">⬇️ 保存高清美图</a>
+        <a id="downloadCard" download="婚礼致辞.png" style="flex:1;padding:13px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border-radius:999px;font-weight:700;text-decoration:none;font-size:15px;display:inline-block;box-shadow:0 4px 15px rgba(255,107,157,.3);">⬇️ 保存高清美图</a>
       </div>
-      <div style="font-size:12px;color:var(--sub);margin-top:10px;">手机长按上方图片即可直接保存或发送给好友</div>
+      <div style="font-size:12px;color:var(--sub);margin-top:12px;">手机端可长按图片直接存入相册或分享至小红书</div>
     </div>
   </div>
 
@@ -329,116 +337,221 @@ $("shareBtn").onclick = async () => {
   }
 };
 
+let currentSpeechCardTheme = "rose";
+
+function renderSpeechCanvas() {
+  const text = $("out").textContent.trim();
+  if (!text || text.startsWith("正在") || text.startsWith("❌")) return;
+  
+  const title = KINDS[currentKind].title;
+  const T = THEMES[currentSpeechCardTheme] || THEMES.rose;
+
+  const cv = document.createElement("canvas");
+  const W = 750;
+  const ctx = cv.getContext("2d");
+
+  // Calculate text wrapping
+  ctx.font = "26px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  const maxLineW = W - 140;
+  const words = text.split("");
+  let line = "";
+  const lines = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const char = words[i];
+    if (char === "\n") {
+      lines.push(line);
+      line = "";
+      continue;
+    }
+    const testLine = line + char;
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxLineW && i > 0) {
+      lines.push(line);
+      line = char;
+    } else {
+      line = testLine;
+    }
+  }
+  if (line) lines.push(line);
+
+  const lineH = 46;
+  const headerH = 260;
+  const footerH = 170;
+  const H = Math.max(960, headerH + (lines.length * lineH) + footerH);
+  cv.width = W;
+  cv.height = H;
+
+  // 1. Background Gradient
+  const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, H * 0.7);
+  bgGrad.addColorStop(0, T.bg2);
+  bgGrad.addColorStop(0.6, T.bg1);
+  bgGrad.addColorStop(1, T.bg3);
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. Star dust & Bokeh Particles
+  const seed = [
+    [0.15,0.12,4,0.3],[0.82,0.14,6,0.25],[0.2,0.85,5,0.2],[0.85,0.88,8,0.3],
+    [0.08,0.45,3,0.15],[0.92,0.55,4,0.18],[0.3,0.25,7,0.2],[0.7,0.75,5,0.22],
+    [0.5,0.08,9,0.35],[0.5,0.92,6,0.25],[0.12,0.68,4,0.15],[0.88,0.32,5,0.2]
+  ];
+  seed.forEach(([rx, ry, r, a]) => {
+    ctx.beginPath();
+    ctx.arc(rx * W, ry * H, r, 0, Math.PI * 2);
+    ctx.fillStyle = T.particleColor + a + ")";
+    ctx.fill();
+  });
+
+  // 3. Vintage Double Borders with Gold Filigree Corner Accents
+  ctx.strokeStyle = T.border1;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(32, 32, W - 64, H - 64);
+
+  ctx.strokeStyle = T.border2;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(42, 42, W - 84, H - 84);
+
+  // Corner floral flourishes
+  function drawCornerFloral(cx, cy, flipX, flipY) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(flipX, flipY);
+    
+    // Corner diamond
+    ctx.fillStyle = T.titleColor;
+    ctx.beginPath();
+    ctx.moveTo(0, 10); ctx.lineTo(10, 0); ctx.lineTo(0, -10); ctx.lineTo(-10, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // Floral vine branches
+    ctx.strokeStyle = T.leafColor1;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(10, 0);
+    ctx.quadraticCurveTo(35, 5, 55, 25);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.quadraticCurveTo(5, 35, 25, 55);
+    ctx.stroke();
+
+    // Small leaves & petals
+    ctx.fillStyle = T.leafColor2;
+    ctx.beginPath();
+    ctx.ellipse(38, 12, 6, 3, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(12, 38, 6, 3, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(55, 25, 3, 0, Math.PI * 2);
+    ctx.arc(25, 55, 3, 0, Math.PI * 2);
+    ctx.fillStyle = T.titleColor;
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  drawCornerFloral(42, 42, 1, 1);
+  drawCornerFloral(W - 42, 42, -1, 1);
+  drawCornerFloral(42, H - 42, 1, -1);
+  drawCornerFloral(W - 42, H - 42, -1, -1);
+
+  // 4. Giant Watermark Quotes
+  ctx.font = "italic bold 100px serif";
+  ctx.fillStyle = T.quoteColor;
+  ctx.fillText("“", 55, headerH + 30);
+  ctx.fillText("”", W - 110, H - footerH + 30);
+
+  // 5. Header: Badge, Title, Subtitle
+  ctx.textAlign = "center";
+  
+  // Badge Pill
+  ctx.fillStyle = T.tagBg;
+  ctx.beginPath();
+  ctx.roundRect(W / 2 - 130, 65, 260, 36, 18);
+  ctx.fill();
+  ctx.strokeStyle = T.tagBorder;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = T.tagColor;
+  ctx.font = "bold 15px sans-serif";
+  ctx.fillText("🎤 WEDDING SPEECH · 婚礼致辞", W / 2, 89);
+
+  // Speech Category Title
+  ctx.fillStyle = T.namesColor;
+  ctx.font = "bold 36px 'Songti SC', 'SimSun', serif";
+  ctx.fillText(title, W / 2, 150);
+
+  // Divider Line with diamond center
+  ctx.strokeStyle = T.border1;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - 140, 185); ctx.lineTo(W / 2 - 15, 185);
+  ctx.moveTo(W / 2 + 15, 185); ctx.lineTo(W / 2 + 140, 185);
+  ctx.stroke();
+
+  ctx.fillStyle = T.titleColor;
+  ctx.beginPath();
+  ctx.arc(W / 2, 185, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Romantic subtitle
+  ctx.fillStyle = T.subColor;
+  ctx.font = "italic 20px 'Songti SC', serif";
+  ctx.fillText("「 诚挚所言 · 满座生辉 」", W / 2, 225);
+
+  // 6. Body Text
+  ctx.textAlign = "left";
+  ctx.fillStyle = T.bodyColor;
+  ctx.font = "26px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  let startY = headerH + 20;
+  for (let i = 0; i < lines.length; i++) {
+    ctx.fillText(lines[i], 72, startY + (i * lineH));
+  }
+
+  // 7. Footer: Decorative divider and branding
+  const footerY = H - 90;
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+  ctx.beginPath();
+  ctx.moveTo(80, footerY - 20);
+  ctx.lineTo(W - 80, footerY - 20);
+  ctx.stroke();
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = T.footerColor;
+  ctx.font = "16px sans-serif";
+  ctx.fillText("wedding-tv.cn · 记录爱与承诺", W / 2, footerY + 15);
+
+  // Output to image
+  const dataUrl = cv.toDataURL("image/png");
+  $("cardImg").src = dataUrl;
+  $("downloadCard").href = dataUrl;
+}
+
 $("cardBtn").onclick = () => {
   const text = $("out").textContent.trim();
   if (!text || text.startsWith("正在") || text.startsWith("❌")) {
     alert("请先生成致辞内容");
     return;
   }
-  const title = KINDS[currentKind].title;
-  
-  // Create offscreen canvas (High DPI: 750px width)
-  const cv = document.createElement("canvas");
-  const W = 750;
-  const ctx = cv.getContext("2d");
-  
-  // Calculate text wrapping
-  ctx.font = "28px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif";
-  const maxLineW = W - 140;
-  const words = text.split("");
-  let line = "";
-  const lines = [];
-  
-  for (let i = 0; i < words.length; i++) {
-    const testLine = line + words[i];
-    if (words[i] === "\n") {
-      lines.push(line);
-      line = "";
-      continue;
-    }
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxLineW && i > 0) {
-      lines.push(line);
-      line = words[i];
-    } else {
-      line = testLine;
-    }
-  }
-  if (line) lines.push(line);
-  
-  const lineH = 46;
-  const headerH = 240;
-  const footerH = 160;
-  const H = Math.max(900, headerH + (lines.length * lineH) + footerH);
-  cv.width = W;
-  cv.height = H;
-  
-  // 1. Background Gradient
-  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-  bgGrad.addColorStop(0, "#160f1e");
-  bgGrad.addColorStop(0.5, "#1f152b");
-  bgGrad.addColorStop(1, "#120c18");
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, W, H);
-  
-  // 2. Elegant Dual Borders
-  ctx.strokeStyle = "rgba(255, 210, 138, 0.4)";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(30, 30, W - 60, H - 60);
-  
-  ctx.strokeStyle = "rgba(255, 107, 157, 0.25)";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(40, 40, W - 80, H - 80);
-  
-  // 3. Header Text & Badges
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#ffd28a";
-  ctx.font = "bold 20px sans-serif";
-  ctx.fillText("🎤 WEDDING SPEECH · 婚礼致辞", W / 2, 90);
-  
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 34px 'Songti SC', 'SimSun', serif";
-  ctx.fillText(title, W / 2, 145);
-  
-  ctx.strokeStyle = "rgba(255, 210, 138, 0.3)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(W / 2 - 120, 180);
-  ctx.lineTo(W / 2 + 120, 180);
-  ctx.stroke();
-  
-  ctx.fillStyle = "#ff6b9d";
-  ctx.font = "italic 18px sans-serif";
-  ctx.fillText("「 诚挚所言 · 满座生辉 」", W / 2, 215);
-  
-  // 4. Content Body
-  ctx.textAlign = "left";
-  ctx.fillStyle = "#f3edf7";
-  ctx.font = "26px -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif";
-  let startY = headerH + 20;
-  for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], 70, startY + (i * lineH));
-  }
-  
-  // 5. Footer
-  const footerY = H - 85;
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  ctx.beginPath();
-  ctx.moveTo(70, footerY - 20);
-  ctx.lineTo(W - 70, footerY - 20);
-  ctx.stroke();
-  
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#b9aed1";
-  ctx.font = "16px sans-serif";
-  ctx.fillText("wedding-tv.cn · 记录爱与承诺", W / 2, footerY + 15);
-  
-  // Export image
-  const dataUrl = cv.toDataURL("image/png");
-  $("cardImg").src = dataUrl;
-  $("downloadCard").href = dataUrl;
+  renderSpeechCanvas();
   $("cardModal").style.display = "block";
 };
+
+// Theme switcher buttons
+document.querySelectorAll("#themeSelector .t-btn").forEach(btn => {
+  btn.onclick = () => {
+    currentSpeechCardTheme = btn.dataset.theme;
+    renderSpeechCanvas();
+  };
+});
 
 $("closeModal").onclick = () => {
   $("cardModal").style.display = "none";
