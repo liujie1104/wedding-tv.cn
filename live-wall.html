@@ -417,12 +417,14 @@ function showToast(msg) {
 }
 
 function applyConfig() {
-  $("dispGroom").textContent = config.groom;
-  $("dispBride").textContent = config.bride;
-  $("dispTitle").innerHTML = `🤵 <span>${escapeHtml(config.groom)}</span> & 👰 <span>${escapeHtml(config.bride)}</span> · ${escapeHtml(config.title)}`;
-  $("dispSubtitle").textContent = config.subtitle;
-  $("dispDate").textContent = config.date;
-  $("dispVenue").textContent = config.venue;
+  const g = escapeHtml(config.groom || "新郎");
+  const b = escapeHtml(config.bride || "新娘");
+  const t = escapeHtml(config.title || "婚礼互动大屏");
+
+  $("dispTitle").innerHTML = `🤵 <span>${g}</span> & 👰 <span>${b}</span> · ${t}`;
+  $("dispSubtitle").textContent = config.subtitle || "";
+  $("dispDate").textContent = config.date || "";
+  $("dispVenue").textContent = config.venue || "";
 
   // 渲染背景
   const customImg = $("customBgImg");
