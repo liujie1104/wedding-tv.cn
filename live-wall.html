@@ -203,22 +203,6 @@ body, html {
 }
 .preset-bg-btn.active { border-color: var(--gold); color: var(--gold); background: #261933; font-weight: bold; }
 
-/* 进度条组件 */
-#uploadProgressBox {
-  display: none; margin-top: 10px; padding: 10px; background: #0e0a14;
-  border: 1px solid var(--line); border-radius: 8px;
-}
-.progress-meta {
-  display: flex; justify-content: space-between; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 600;
-}
-.progress-track {
-  width: 100%; height: 8px; background: #1a1226; border-radius: 999px; overflow: hidden;
-}
-.progress-bar-fill {
-  width: 0%; height: 100%; background: linear-gradient(90deg, #ff6b9d 0%, #ffd28a 100%);
-  transition: width 0.15s ease;
-}
-
 /* 提示气泡 */
 #toastBox {
   position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999;
@@ -342,18 +326,7 @@ body, html {
       <button id="btnClearCustomBg" style="display:none;background:none;border:none;color:#ff6b9d;font-size:12px;cursor:pointer;">🗑️ 清除图片</button>
     </div>
     <input type="file" id="cfgCustomBg" accept="image/*" />
-    <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">支持任意高清横版婚纱照或酒店舞台海报</small>
-
-    <!-- 上传进度条 -->
-    <div id="uploadProgressBox">
-      <div class="progress-meta">
-        <span id="progressStatus">正在加载高清背景...</span>
-        <span id="progressPercent">0%</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-bar-fill" id="progressBarFill"></div>
-      </div>
-    </div>
+    <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">选择任意婚纱照或舞台海报，立即生效</small>
   </div>
 
   <div class="form-group">
@@ -419,43 +392,6 @@ try {
   }
 } catch(e){}
 
-// IndexedDB 存储自定义大图
-const DB_NAME = "WeddingWallDB_v7";
-function openDB() {
-  return new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onupgradeneeded = (e) => {
-      e.target.result.createObjectStore("assets");
-    };
-    req.onsuccess = (e) => resolve(e.target.result);
-    req.onerror = () => resolve(null);
-  });
-}
-
-async function saveBgToDB(dataUrl) {
-  try {
-    const db = await openDB();
-    if (!db) return;
-    const tx = db.transaction("assets", "readwrite");
-    tx.objectStore("assets").put(dataUrl, "custom_bg_" + config.room);
-  } catch(e) {}
-}
-
-async function loadBgFromDB() {
-  try {
-    const db = await openDB();
-    if (!db) return null;
-    return new Promise((resolve) => {
-      const tx = db.transaction("assets", "readonly");
-      const req = tx.objectStore("assets").get("custom_bg_" + config.room);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => resolve(null);
-    });
-  } catch(e) {
-    return null;
-  }
-}
-
 // 同步到表单
 function syncInputs() {
   $("cfgRoom").value = config.room || initialRoom;
@@ -498,14 +434,14 @@ function applyConfig() {
     customImg.style.display = "block";
     overlay.style.display = "block";
     presetLayer.style.display = "none";
-    $("btnClearCustomBg").style.display = "inline-block";
+    if ($("btnClearCustomBg")) $("btnClearCustomBg").style.display = "inline-block";
   } else {
     customImg.src = "";
     customImg.style.display = "none";
     overlay.style.display = "none";
     presetLayer.style.display = "block";
     presetLayer.style.background = BG_PRESETS[config.bgTheme] || BG_PRESETS.midnight;
-    $("btnClearCustomBg").style.display = "none";
+    if ($("btnClearCustomBg")) $("btnClearCustomBg").style.display = "none";
   }
 
   // 渲染二维码
@@ -673,7 +609,14 @@ document.querySelectorAll(".preset-bg-btn").forEach(btn => {
     btn.classList.add("active");
     config.bgTheme = btn.dataset.bg;
     currentCustomBgUrl = "";
-    saveBgToDB("");
+    try {
+      const req = indexedDB.open("WeddingWallAssets", 1);
+      req.onsuccess = ev => {
+        const db = ev.target.result;
+        const tx = db.transaction("images", "readwrite");
+        tx.objectStore("images").delete("bg_" + config.room);
+      };
+    } catch(e){}
     applyConfig();
   };
 });
@@ -681,7 +624,14 @@ document.querySelectorAll(".preset-bg-btn").forEach(btn => {
 // 清除自定义背景
 $("btnClearCustomBg").onclick = () => {
   currentCustomBgUrl = "";
-  saveBgToDB("");
+  try {
+    const req = indexedDB.open("WeddingWallAssets", 1);
+    req.onsuccess = ev => {
+      const db = ev.target.result;
+      const tx = db.transaction("images", "readwrite");
+      tx.objectStore("images").delete("bg_" + config.room);
+    };
+  } catch(e){}
   $("cfgCustomBg").value = "";
   document.querySelectorAll(".preset-bg-btn").forEach(b => {
     b.classList.toggle("active", b.dataset.bg === config.bgTheme);
@@ -690,69 +640,37 @@ $("btnClearCustomBg").onclick = () => {
   showToast("🗑️ 已恢复预设背景！");
 };
 
-// 极速图片上传预览与优化
+// 极速图片上传与显示
 $("cfgCustomBg").onchange = (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  const pBox = $("uploadProgressBox");
-  const pFill = $("progressBarFill");
-  const pStatus = $("progressStatus");
-  const pPercent = $("progressPercent");
-
-  pBox.style.display = "block";
-  pFill.style.width = "25%";
-  pPercent.textContent = "25%";
-  pStatus.textContent = "正在读取图片...";
-
-  // 0毫秒瞬间呈现
-  const instantUrl = URL.createObjectURL(file);
-  currentCustomBgUrl = instantUrl;
-  applyConfig();
-
   const reader = new FileReader();
-  reader.onprogress = (evt) => {
-    if (evt.lengthComputable) {
-      const pct = Math.round((evt.loaded / evt.total) * 50) + 25;
-      pFill.style.width = pct + "%";
-      pPercent.textContent = pct + "%";
-    }
-  };
-
   reader.onload = (evt) => {
-    pFill.style.width = "85%";
-    pPercent.textContent = "85%";
-    pStatus.textContent = "正在自适应优化大屏分辨率...";
-
-    const img = new Image();
-    img.onload = () => {
-      const maxW = 2048;
-      let w = img.width;
-      let h = img.height;
-      if (w > maxW) {
-        h = Math.round((h * maxW) / w);
-        w = maxW;
-      }
-      const cvs = document.createElement("canvas");
-      cvs.width = w;
-      cvs.height = h;
-      const ctx = cvs.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
-      const optimizedDataUrl = cvs.toDataURL("image/jpeg", 0.88);
-
-      currentCustomBgUrl = optimizedDataUrl;
-      saveBgToDB(optimizedDataUrl);
-      document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
-      applyConfig();
-
-      pFill.style.width = "100%";
-      pPercent.textContent = "100%";
-      pStatus.textContent = "✅ 高清背景已就绪！";
-      showToast("🖼️ 自定义婚纱照背景已实时应用！");
-
-      setTimeout(() => { pBox.style.display = "none"; }, 1500);
-    };
-    img.src = evt.target.result;
+    const dataUrl = evt.target.result;
+    currentCustomBgUrl = dataUrl;
+    document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
+    applyConfig();
+    
+    // 存入本地数据库
+    try {
+      const req = indexedDB.open("WeddingWallAssets", 1);
+      req.onupgradeneeded = ev => ev.target.result.createObjectStore("images");
+      req.onsuccess = ev => {
+        const db = ev.target.result;
+        const tx = db.transaction("images", "readwrite");
+        tx.objectStore("images").put(dataUrl, "bg_" + config.room);
+      };
+    } catch(err){}
+    
+    showToast("🖼️ 婚纱照背景已实时应用！");
+  };
+  reader.onerror = () => {
+    const objUrl = URL.createObjectURL(file);
+    currentCustomBgUrl = objUrl;
+    document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
+    applyConfig();
+    showToast("🖼️ 婚纱照背景已应用！");
   };
   reader.readAsDataURL(file);
 };
@@ -887,16 +805,26 @@ function drawParticles() {
 drawParticles();
 
 // 初始化载入
-async function init() {
+function init() {
   syncInputs();
   applyConfig();
 
   // 读取持久化自定义背景
-  const savedBg = await loadBgFromDB();
-  if (savedBg) {
-    currentCustomBgUrl = savedBg;
-    applyConfig();
-  }
+  try {
+    const req = indexedDB.open("WeddingWallAssets", 1);
+    req.onupgradeneeded = ev => ev.target.result.createObjectStore("images");
+    req.onsuccess = ev => {
+      const db = ev.target.result;
+      const tx = db.transaction("images", "readonly");
+      const getReq = tx.objectStore("images").get("bg_" + config.room);
+      getReq.onsuccess = () => {
+        if (getReq.result) {
+          currentCustomBgUrl = getReq.result;
+          applyConfig();
+        }
+      };
+    };
+  } catch(e){}
 
   pollMessages();
 }
