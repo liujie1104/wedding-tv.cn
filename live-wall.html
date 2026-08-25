@@ -7,7 +7,15 @@
 <meta name="description" content="免费婚礼大屏互动软件，支持酒店LED投屏、微信扫码发送弹幕、大屏祝福墙、现场照片滚动与幸运抽奖，支持自定义新人姓名、欢迎语与自定义背景图。" />
 <link rel="canonical" href="https://wedding-tv.cn/live-wall.html" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+
+<!-- 多 CDN 兜底加载 QRCode 库 -->
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+if (typeof QRCode === "undefined") {
+  document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"><\/script>');
+}
+</script>
+
 <style>
 :root {
   --gold: #ffd28a;
@@ -29,7 +37,7 @@ body, html {
 #screenBg {
   position: fixed; inset: 0; z-index: 0;
   background-size: cover; background-position: center; background-repeat: no-repeat;
-  transition: background 0.5s ease;
+  transition: background 0.4s ease;
 }
 #particleCanvas {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
@@ -44,11 +52,11 @@ body, html {
   text-shadow: 0 2px 10px rgba(0,0,0,0.8);
 }
 .header-main h1 {
-  font-size: 38px; font-weight: 800; color: var(--gold);
-  letter-spacing: 2px; display: flex; align-items: center; gap: 14px;
+  font-size: 36px; font-weight: 800; color: var(--gold);
+  letter-spacing: 1px; display: flex; align-items: center; gap: 12px;
 }
 .header-main .subtitle {
-  font-size: 18px; color: #e2d9eb; margin-top: 6px; font-weight: 500;
+  font-size: 17px; color: #e2d9eb; margin-top: 6px; font-weight: 500;
 }
 .header-meta {
   text-align: right; font-size: 15px; color: var(--gold);
@@ -63,7 +71,7 @@ body, html {
 .danmaku-item {
   position: absolute; white-space: nowrap;
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 8px 20px; border-radius: 999px;
+  padding: 8px 22px; border-radius: 999px;
   font-size: 24px; font-weight: 700;
   box-shadow: 0 4px 18px rgba(0,0,0,0.6);
   backdrop-filter: blur(8px);
@@ -75,24 +83,28 @@ body, html {
 }
 
 /* 颜色风格 */
-.dm-gold { background: rgba(36, 26, 15, 0.85); color: #ffe2b3; border: 1.5px solid #ffd28a; }
-.dm-rose { background: rgba(43, 18, 29, 0.85); color: #ffd6e4; border: 1.5px solid #ff6b9d; }
-.dm-purple { background: rgba(28, 18, 48, 0.85); color: #e9d5ff; border: 1.5px solid #c4b5fd; }
-.dm-red { background: rgba(50, 12, 18, 0.85); color: #ffe4e6; border: 1.5px solid #f43f5e; }
+.dm-gold { background: rgba(36, 26, 15, 0.88); color: #ffe2b3; border: 1.5px solid #ffd28a; }
+.dm-rose { background: rgba(43, 18, 29, 0.88); color: #ffd6e4; border: 1.5px solid #ff6b9d; }
+.dm-purple { background: rgba(28, 18, 48, 0.88); color: #e9d5ff; border: 1.5px solid #c4b5fd; }
+.dm-red { background: rgba(50, 12, 18, 0.88); color: #ffe4e6; border: 1.5px solid #f43f5e; }
 
 /* 右下角扫码区域 */
 .qr-corner {
   position: fixed; right: 30px; bottom: 25px; z-index: 20;
-  background: rgba(23, 17, 33, 0.92); border: 2px solid var(--gold);
-  border-radius: 16px; padding: 14px 18px; text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  background: rgba(23, 17, 33, 0.95); border: 2px solid var(--gold);
+  border-radius: 16px; padding: 12px 16px; text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.85);
   display: flex; align-items: center; gap: 14px;
 }
-.qr-corner canvas {
+.qr-wrap {
   width: 100px; height: 100px; border-radius: 8px; background: #fff; padding: 4px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.qr-wrap canvas, .qr-wrap img {
+  width: 92px; height: 92px; display: block;
 }
 .qr-info h4 { font-size: 16px; color: var(--gold); margin-bottom: 4px; font-weight: 700; }
-.qr-info p { font-size: 12px; color: #b9aed1; }
+.qr-info p { font-size: 12px; color: #b9aed1; line-height: 1.4; }
 
 /* 底部操作控制条 */
 .control-bar {
@@ -100,7 +112,7 @@ body, html {
   display: flex; gap: 10px;
 }
 .ctrl-btn {
-  background: rgba(23, 17, 33, 0.85); border: 1px solid var(--line);
+  background: rgba(23, 17, 33, 0.88); border: 1px solid var(--line);
   color: var(--text); padding: 10px 18px; border-radius: 999px;
   font-size: 14px; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; gap: 6px;
@@ -135,29 +147,39 @@ body, html {
 
 /* 设置抽屉 */
 #settingsDrawer {
-  position: fixed; top: 0; left: -420px; bottom: 0; width: 400px; z-index: 100;
+  position: fixed; top: 0; left: -440px; bottom: 0; width: 420px; z-index: 100;
   background: #171121; border-right: 1px solid var(--line);
   box-shadow: 10px 0 40px rgba(0,0,0,0.8);
-  padding: 30px 24px; overflow-y: auto;
+  padding: 26px 22px; overflow-y: auto;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #settingsDrawer.open { left: 0; }
-.form-group { margin-bottom: 18px; }
+.form-group { margin-bottom: 16px; }
 .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 6px; font-weight: 600; }
 .form-group input, .form-group select {
-  width: 100%; padding: 10px 14px; background: #0e0a14; border: 1px solid var(--line);
+  width: 100%; padding: 10px 12px; background: #0e0a14; border: 1px solid var(--line);
   border-radius: 8px; color: #fff; font-size: 14px; outline: none;
 }
 .form-group input:focus { border-color: var(--gold); }
 .preset-bg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
 .preset-bg-btn {
-  padding: 12px 6px; border-radius: 8px; border: 1px solid var(--line);
+  padding: 10px 6px; border-radius: 8px; border: 1px solid var(--line);
   background: #0e0a14; color: #e2d9eb; font-size: 12px; cursor: pointer; text-align: center;
 }
-.preset-bg-btn.active { border-color: var(--gold); color: var(--gold); background: #261933; }
+.preset-bg-btn.active { border-color: var(--gold); color: var(--gold); background: #261933; font-weight: bold; }
+
+/* 提示气泡 */
+#toastBox {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 999;
+  background: rgba(30, 20, 45, 0.95); border: 1px solid var(--gold); color: var(--gold);
+  padding: 10px 24px; border-radius: 999px; font-size: 15px; font-weight: 700;
+  display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+}
 </style>
 </head>
 <body>
+
+<div id="toastBox">✅ 设置已生效！</div>
 
 <!-- 动态背景 -->
 <div id="screenBg"></div>
@@ -180,11 +202,14 @@ body, html {
 
 <!-- 右下角常驻互动二维码 -->
 <div class="qr-corner" id="qrBox">
-  <canvas id="qrCanvas"></canvas>
+  <div class="qr-wrap">
+    <canvas id="qrCanvas"></canvas>
+    <img id="qrImgFallback" style="display:none;" alt="互动二维码" />
+  </div>
   <div class="qr-info">
     <h4>📱 微信扫码</h4>
     <p>现场发弹幕 / 签到</p>
-    <p style="color:var(--rose);margin-top:2px;">实时上大屏</p>
+    <p style="color:var(--rose);margin-top:2px;font-weight:bold;">实时飞越大屏</p>
   </div>
 </div>
 
@@ -255,7 +280,7 @@ body, html {
   <div class="form-group">
     <label>🖼️ 自定义上传大屏背景图 (婚纱照/现场海报)</label>
     <input type="file" id="cfgCustomBg" accept="image/*" />
-    <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">支持高清横版 16:9 婚纱照或酒店背景图</small>
+    <small style="color:#b9aed1;font-size:11px;display:block;margin-top:4px;">支持任意高清横版婚纱照或酒店舞台海报</small>
   </div>
 
   <div class="form-group">
@@ -267,13 +292,13 @@ body, html {
     </select>
   </div>
 
-  <button class="ctrl-btn active" id="btnSaveCfg" style="width:100%;justify-content:center;margin-top:14px;padding:12px;">💾 保存并应用设置</button>
+  <button class="ctrl-btn active" id="btnSaveCfg" style="width:100%;justify-content:center;margin-top:14px;padding:12px;font-size:15px;">💾 保存并应用设置</button>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 
-// 状态与配置
+// 状态配置
 let config = {
   room: "wedding888",
   groom: "张明",
@@ -283,9 +308,11 @@ let config = {
   date: "2026.08.28",
   venue: "喜来登大酒店 · 凡尔赛宴会厅",
   bgTheme: "midnight",
-  customBgUrl: "",
   speed: 8
 };
+
+// 自定义背景缓存（内存/ObjectURL）
+let currentCustomBgUrl = "";
 
 // 预设背景
 const BG_PRESETS = {
@@ -294,11 +321,59 @@ const BG_PRESETS = {
   champagne: "radial-gradient(circle at center, #302414 0%, #1f160b 60%, #0d0904 100%)"
 };
 
-// 本地存储同步
+// 读取本地文字设置
 try {
-  const saved = localStorage.getItem("wedding_wall_cfg");
-  if (saved) config = { ...config, ...JSON.parse(saved) };
+  const saved = localStorage.getItem("wedding_wall_cfg_v2");
+  if (saved) {
+    config = { ...config, ...JSON.parse(saved) };
+    $("cfgRoom").value = config.room;
+    $("cfgGroom").value = config.groom;
+    $("cfgBride").value = config.bride;
+    $("cfgTitle").value = config.title;
+    $("cfgSubtitle").value = config.subtitle;
+    $("cfgDate").value = config.date;
+    $("cfgVenue").value = config.venue;
+    $("cfgSpeed").value = config.speed;
+  }
 } catch(e){}
+
+// IndexedDB 存储大图背景
+const DB_NAME = "WeddingWallDB";
+function openDB() {
+  return new Promise((resolve) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      e.target.result.createObjectStore("assets");
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function saveBgToDB(blob) {
+  const db = await openDB();
+  if (!db) return;
+  const tx = db.transaction("assets", "readwrite");
+  tx.objectStore("assets").put(blob, "custom_bg");
+}
+
+async function loadBgFromDB() {
+  const db = await openDB();
+  if (!db) return null;
+  return new Promise((resolve) => {
+    const tx = db.transaction("assets", "readonly");
+    const req = tx.objectStore("assets").get("custom_bg");
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  });
+}
+
+function showToast(msg) {
+  const t = $("toastBox");
+  t.textContent = msg;
+  t.style.display = "block";
+  setTimeout(() => { t.style.display = "none"; }, 2500);
+}
 
 function applyConfig() {
   $("dispGroom").textContent = config.groom;
@@ -308,24 +383,36 @@ function applyConfig() {
   $("dispDate").textContent = config.date;
   $("dispVenue").textContent = config.venue;
 
-  // 背景
-  if (config.customBgUrl) {
-    $("screenBg").style.background = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url("${config.customBgUrl}") center/cover no-repeat`;
+  // 渲染背景
+  if (currentCustomBgUrl) {
+    $("screenBg").style.background = `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.65)), url("${currentCustomBgUrl}") center/cover no-repeat`;
   } else {
     $("screenBg").style.background = BG_PRESETS[config.bgTheme] || BG_PRESETS.midnight;
   }
 
-  // 生成二维码
+  // 渲染二维码
   renderQRCode();
 }
 
 function renderQRCode() {
   const joinUrl = `https://wedding-tv.cn/blessing.html?room=${encodeURIComponent(config.room)}&g=${encodeURIComponent(config.groom)}&b=${encodeURIComponent(config.bride)}`;
-  if (typeof QRCode !== "undefined") {
+  
+  if (typeof QRCode !== "undefined" && QRCode.toCanvas) {
     QRCode.toCanvas($("qrCanvas"), joinUrl, {
-      width: 100, margin: 0, color: { dark: "#0e0a14", light: "#ffffff" }
+      width: 92, margin: 0, color: { dark: "#0e0a14", light: "#ffffff" }
+    }, (err) => {
+      if (err) fallbackQR(joinUrl);
     });
+  } else {
+    fallbackQR(joinUrl);
   }
+}
+
+function fallbackQR(url) {
+  const img = $("qrImgFallback");
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=1&data=${encodeURIComponent(url)}`;
+  img.style.display = "block";
+  $("qrCanvas").style.display = "none";
 }
 
 // 弹幕引擎
@@ -339,7 +426,7 @@ function spawnDanmaku(name, identity, message, color = "gold") {
   const el = document.createElement("div");
   const colorClass = `dm-${color}` || "dm-gold";
   el.className = `danmaku-item ${colorClass}`;
-  el.innerHTML = `<span class="badge">${identity || "现场宾客"} · ${name}</span> <span>${message}</span>`;
+  el.innerHTML = `<span class="badge">${escapeHtml(identity || "现场宾客")} · ${escapeHtml(name)}</span> <span>${escapeHtml(message)}</span>`;
   
   // 选择较为空闲的轨道
   const now = Date.now();
@@ -379,7 +466,13 @@ function spawnDanmaku(name, identity, message, color = "gold") {
   requestAnimationFrame(animate);
 }
 
-// 实时轮询 / API
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+// 实时轮询
 let lastTimestamp = Date.now() - 3600000;
 async function pollMessages() {
   try {
@@ -462,19 +555,18 @@ document.querySelectorAll(".preset-bg-btn").forEach(btn => {
     document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     config.bgTheme = btn.dataset.bg;
-    config.customBgUrl = ""; // 重置自定义图片
+    currentCustomBgUrl = ""; // 重置自定义图片
+    saveBgToDB(null);
   };
 });
 
 $("cfgCustomBg").onchange = (e) => {
   const file = e.target.files[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      config.customBgUrl = evt.target.result;
-      document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
-    };
-    reader.readAsDataURL(file);
+    currentCustomBgUrl = URL.createObjectURL(file);
+    saveBgToDB(file);
+    document.querySelectorAll(".preset-bg-btn").forEach(b => b.classList.remove("active"));
+    showToast("🖼️ 自定义图片已加载！");
   }
 };
 
@@ -488,9 +580,13 @@ $("btnSaveCfg").onclick = () => {
   config.venue = $("cfgVenue").value.trim();
   config.speed = Number($("cfgSpeed").value) || 8;
 
-  try { localStorage.setItem("wedding_wall_cfg", JSON.stringify(config)); } catch(e){}
+  try {
+    localStorage.setItem("wedding_wall_cfg_v2", JSON.stringify(config));
+  } catch(e){}
+
   applyConfig();
   $("settingsDrawer").classList.remove("open");
+  showToast("✅ 设置已生效并保存！");
 };
 
 // 全屏与清屏
@@ -551,8 +647,16 @@ function drawParticles() {
 }
 drawParticles();
 
-// 初始化加载
-applyConfig();
+// 初始化载入
+async function init() {
+  const savedBlob = await loadBgFromDB();
+  if (savedBlob instanceof Blob) {
+    currentCustomBgUrl = URL.createObjectURL(savedBlob);
+  }
+  applyConfig();
+}
+init();
+window.addEventListener("load", renderQRCode);
 </script>
 </body>
 </html>
