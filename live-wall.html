@@ -280,8 +280,9 @@ body, html {
 
   <div class="form-group">
     <label>大屏背景主题</label>
-    <div class="preset-bg-grid">
-      <div class="preset-bg-btn active" data-bg="midnight">🌌 星河黑金</div>
+    <div class="preset-bg-grid" style="grid-template-columns: repeat(2, 1fr);">
+      <div class="preset-bg-btn active" data-bg="photo">📸 浪漫婚纱实景</div>
+      <div class="preset-bg-btn" data-bg="midnight">🌌 星河黑金</div>
       <div class="preset-bg-btn" data-bg="rose">🌸 浪漫樱粉</div>
       <div class="preset-bg-btn" data-bg="champagne">✨ 香槟优雅</div>
     </div>
@@ -317,7 +318,7 @@ let config = {
   subtitle: "欢迎各位亲朋好友莅临见证 · 微信扫码发弹幕送祝福",
   date: "2026.08.28",
   venue: "喜来登大酒店 · 凡尔赛宴会厅",
-  bgTheme: "midnight",
+  bgTheme: "photo",
   speed: 8
 };
 
@@ -325,6 +326,7 @@ let currentCustomBgUrl = "";
 
 // 预设背景
 const BG_PRESETS = {
+  photo: "linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.65)), url('/img/demo_wedding_bg.jpg')",
   midnight: "radial-gradient(circle at center, #261633 0%, #150d1e 60%, #09060d 100%)",
   rose: "radial-gradient(circle at center, #3d1727 0%, #240c17 60%, #12050b 100%)",
   champagne: "radial-gradient(circle at center, #302414 0%, #1f160b 60%, #0d0904 100%)"
