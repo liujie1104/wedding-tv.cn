@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>婚礼现场送祝福 · 弹幕上大屏</title>
+<meta name="description" content="婚礼现场微信扫码发送弹幕祝福，实时飞向舞台LED大屏幕，送上你对新人的诚挚祝福与签到。" />
+<link rel="canonical" href="https://wedding-tv.cn/blessing.html" />
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
+<style>
+:root {
+  --gold: #ffd28a;
+  --rose: #ff6b9d;
+  --bg: #0e0a14;
+  --panel: #171121;
+  --line: rgba(255, 210, 138, 0.22);
+  --text: #f7f3ff;
+  --sub: #b9aed1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.6; padding-bottom: 50px;
+}
+.wrap {
+  max-width: 540px; margin: 0 auto; padding: 20px 16px;
+}
+
+/* 顶部新人横幅 */
+.hero-card {
+  background: linear-gradient(135deg, #24142f 0%, #171121 100%);
+  border: 1px solid var(--line); border-radius: 16px;
+  padding: 24px 18px; text-align: center; margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+}
+.hero-card:before {
+  content: "❤"; position: absolute; right: -10px; bottom: -20px;
+  font-size: 110px; color: rgba(255,107,157,0.06); pointer-events: none;
+}
+.hero-title {
+  font-size: 22px; font-weight: 800; color: var(--gold);
+}
+.hero-sub {
+  font-size: 13px; color: var(--sub); margin-top: 6px;
+}
+
+/* 表单卡片 */
+.form-card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 16px; padding: 20px; margin-bottom: 20px;
+}
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 6px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 12px 14px; background: #0e0a14;
+  border: 1px solid var(--line); border-radius: 10px;
+  color: #fff; font-size: 15px; outline: none; transition: border-color 0.2s;
+}
+.field input:focus, .field textarea:focus { border-color: var(--gold); }
+.field textarea { height: 84px; resize: none; }
+
+/* 快捷祝福气泡 */
+.quick-tags {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+}
+.q-tag {
+  background: #0e0a14; border: 1px solid var(--line);
+  padding: 6px 12px; border-radius: 999px; font-size: 12px;
+  color: #e2d9eb; cursor: pointer; transition: all 0.2s;
+}
+.q-tag:active {
+  background: var(--gold); color: #1a0f1f; border-color: var(--gold);
+}
+
+/* 颜色选择 */
+.color-selector {
+  display: flex; gap: 8px; margin-top: 6px;
+}
+.col-btn {
+  flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--line);
+  background: #0e0a14; color: var(--sub); font-size: 12px; font-weight: 600;
+  text-align: center; cursor: pointer;
+}
+.col-btn.active {
+  border-color: var(--gold); color: #1a0f1f; background: var(--gold);
+}
+
+/* 发送按钮 */
+.submit-btn {
+  width: 100%; padding: 14px; margin-top: 10px;
+  background: linear-gradient(90deg, #ff6b9d 0%, #ffd28a 100%);
+  border: none; border-radius: 999px; color: #1a0f1f;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(255,107,157,0.35); transition: transform 0.1s;
+}
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* 实时状态提示 */
+#sendNotice {
+  display: none; padding: 12px; border-radius: 10px;
+  background: rgba(159, 201, 173, 0.15); border: 1px solid #9fc9ad;
+  color: #9fc9ad; font-size: 13px; text-align: center; margin-top: 14px;
+}
+
+/* 现场祝福动态 */
+.feed-card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 16px; padding: 20px;
+}
+.feed-card h3 {
+  font-size: 16px; color: var(--gold); margin-bottom: 14px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.feed-list {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.feed-item {
+  background: #0e0a14; border: 1px solid var(--line);
+  border-radius: 10px; padding: 12px 14px;
+}
+.feed-meta {
+  display: flex; justify-content: space-between; font-size: 12px; color: var(--sub); margin-bottom: 4px;
+}
+.feed-meta strong { color: var(--gold); }
+.feed-text { font-size: 14px; color: #f3edf7; }
+
+/* 底部工具推荐 */
+.related-box {
+  margin-top: 24px; text-align: center; font-size: 12px; color: var(--sub);
+}
+.related-box a {
+  color: var(--gold); text-decoration: none; margin: 0 6px;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- 顶部新人信息 -->
+  <div class="hero-card">
+    <div class="hero-title">🤵 <span id="txtGroom">新郎</span> & 👰 <span id="txtBride">新娘</span></div>
+    <div class="hero-sub">婚礼现场互动 · 发送祝福实时上大屏幕</div>
+  </div>
+
+  <!-- 发送祝福表单 -->
+  <div class="form-card">
+    <div class="field">
+      <label>你的姓名 / 昵称</label>
+      <input type="text" id="guestName" placeholder="例如：陈浩、张雨" maxlength="12" />
+    </div>
+
+    <div class="field">
+      <label>身份或桌号（选填）</label>
+      <input type="text" id="guestIdentity" placeholder="例如：大学同学 · 6号桌 / 伴娘团" maxlength="16" />
+    </div>
+
+    <div class="field">
+      <label>你的祝福语</label>
+      <textarea id="guestMsg" placeholder="写下对新人的真挚祝福..." maxlength="100"></textarea>
+      
+      <!-- 快捷标签 -->
+      <div class="quick-tags">
+        <span class="q-tag">🎉 百年好合，永结同心！</span>
+        <span class="q-tag">❤️ 愿有岁月可回首，且以深情共白头！</span>
+        <span class="q-tag">✨ 最美的新娘，最帅的新郎！</span>
+        <span class="q-tag">👶 早生贵子，三年抱俩！</span>
+        <span class="q-tag">🥂 祝你们朝暮与岁月并往，白首偕老！</span>
+        <span class="q-tag">🍻 新郎今晚不醉不归！</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>弹幕气泡颜色</label>
+      <div class="color-selector">
+        <div class="col-btn active" data-color="gold">✨ 奢华金</div>
+        <div class="col-btn" data-color="rose">🌸 浪漫粉</div>
+        <div class="col-btn" data-color="purple">💜 梦幻紫</div>
+        <div class="col-btn" data-color="red">❤️ 喜庆红</div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="btnSubmit">🚀 发送祝福上大屏</button>
+    <div id="sendNotice">✅ 祝福已飞向大屏幕！</div>
+  </div>
+
+  <!-- 现场祝福列表 -->
+  <div class="feed-card">
+    <h3>
+      <span>💌 现场祝福墙</span>
+      <small style="font-size:12px;color:var(--sub);font-weight:normal;" id="feedCount">共 0 条</small>
+    </h3>
+    <div class="feed-list" id="feedList">
+      <div style="text-align:center;color:var(--sub);font-size:13px;padding:16px;">
+        还没有人发祝福，快来抢沙发上大屏吧！✨
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部导流 -->
+  <div class="related-box">
+    <p>由 <a href="/">wedding-tv.cn</a> 提供 · 免费婚礼大屏互动</p>
+    <p style="margin-top:6px;">
+      <a href="/vows.html">💍 AI 婚礼誓词</a> · 
+      <a href="/speech.html">🎤 婚礼致辞</a> · 
+      <a href="/checklist.html">📋 备婚清单</a>
+    </p>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// 解析 URL 参数
+const params = new URLSearchParams(location.search);
+const room = params.get("room") || "wedding888";
+const groom = params.get("g") || "新郎";
+const bride = params.get("b") || "新娘";
+
+$("txtGroom").textContent = groom;
+$("txtBride").textContent = bride;
+
+// 颜色选择
+let selectedColor = "gold";
+document.querySelectorAll(".col-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".col-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedColor = btn.dataset.color;
+  };
+});
+
+// 快捷祝福点击
+document.querySelectorAll(".q-tag").forEach(tag => {
+  tag.onclick = () => {
+    $("guestMsg").value = tag.textContent.trim();
+  };
+});
+
+// 本地存储最近使用的姓名与身份
+try {
+  const savedName = localStorage.getItem("guest_name");
+  const savedIden = localStorage.getItem("guest_iden");
+  if (savedName) $("guestName").value = savedName;
+  if (savedIden) $("guestIdentity").value = savedIden;
+} catch(e){}
+
+// 发送祝福
+let isSending = false;
+$("btnSubmit").onclick = async () => {
+  if (isSending) return;
+  const name = $("guestName").value.trim();
+  const identity = $("guestIdentity").value.trim() || "现场宾客";
+  const message = $("guestMsg").value.trim();
+
+  if (!name) { alert("请填写您的姓名"); return; }
+  if (!message) { alert("请写下您的祝福语"); return; }
+
+  try {
+    localStorage.setItem("guest_name", name);
+    localStorage.setItem("guest_iden", identity);
+  } catch(e){}
+
+  isSending = true;
+  $("btnSubmit").disabled = true;
+  $("btnSubmit").textContent = "正在发送上大屏…";
+
+  try {
+    const res = await fetch("/api/wall", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ room, name, identity, message, color: selectedColor })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "发送失败");
+
+    // 成功提示
+    $("sendNotice").style.display = "block";
+    $("guestMsg").value = "";
+    setTimeout(() => { $("sendNotice").style.display = "none"; }, 3000);
+
+    // 立即刷新列表
+    loadFeed();
+  } catch(e) {
+    alert("发送失败：" + e.message);
+  } finally {
+    isSending = false;
+    $("btnSubmit").disabled = false;
+    $("btnSubmit").textContent = "🚀 发送祝福上大屏";
+  }
+};
+
+// 实时加载现场祝福流
+async function loadFeed() {
+  try {
+    const res = await fetch(`/api/wall?room=${encodeURIComponent(room)}`);
+    const data = await res.json();
+    if (data.ok && data.messages) {
+      $("feedCount").textContent = `共 ${data.total || data.messages.length} 条`;
+      if (data.messages.length > 0) {
+        const reversed = [...data.messages].reverse().slice(0, 15);
+        $("feedList").innerHTML = reversed.map(m => `
+          <div class="feed-item">
+            <div class="feed-meta">
+              <strong>${escapeHtml(m.name)} <span style="color:var(--sub);font-weight:normal;">(${escapeHtml(m.identity)})</span></strong>
+              <span>${new Date(m.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+            </div>
+            <div class="feed-text">${escapeHtml(m.message)}</div>
+          </div>
+        `).join("");
+      }
+    }
+  } catch(e){}
+}
+
+function escapeHtml(str) {
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[m]));
+}
+
+loadFeed();
+setInterval(loadFeed, 4000);
+</script>
+</body>
+</html>
