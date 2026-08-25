@@ -248,6 +248,17 @@ try {
   if (savedIden) $("guestIdentity").value = savedIden;
 } catch(e){}
 
+function formatTime(ts) {
+  try {
+    const d = new Date(ts);
+    const h = String(d.getHours()).padStart(2, "0");
+    const m = String(d.getMinutes()).padStart(2, "0");
+    return `${h}:${m}`;
+  } catch(e) {
+    return "";
+  }
+}
+
 // 发送祝福
 let isSending = false;
 $("btnSubmit").onclick = async () => {
@@ -271,7 +282,7 @@ $("btnSubmit").onclick = async () => {
   try {
     const res = await fetch("/api/wall", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ room, name, identity, message, color: selectedColor })
     });
     const data = await res.json();
@@ -285,7 +296,7 @@ $("btnSubmit").onclick = async () => {
     // 立即刷新列表
     loadFeed();
   } catch(e) {
-    alert("发送失败：" + e.message);
+    alert("发送失败：" + (e.message || "网络请求异常"));
   } finally {
     isSending = false;
     $("btnSubmit").disabled = false;
@@ -298,15 +309,15 @@ async function loadFeed() {
   try {
     const res = await fetch(`/api/wall?room=${encodeURIComponent(room)}`);
     const data = await res.json();
-    if (data.ok && data.messages) {
+    if (data && data.ok && data.messages) {
       $("feedCount").textContent = `共 ${data.total || data.messages.length} 条`;
       if (data.messages.length > 0) {
-        const reversed = [...data.messages].reverse().slice(0, 15);
+        const reversed = [...data.messages].reverse().slice(0, 20);
         $("feedList").innerHTML = reversed.map(m => `
           <div class="feed-item">
             <div class="feed-meta">
-              <strong>${escapeHtml(m.name)} <span style="color:var(--sub);font-weight:normal;">(${escapeHtml(m.identity)})</span></strong>
-              <span>${new Date(m.ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+              <strong>${escapeHtml(m.name)} <span style="color:var(--sub);font-weight:normal;">(${escapeHtml(m.identity || '现场宾客')})</span></strong>
+              <span>${formatTime(m.ts)}</span>
             </div>
             <div class="feed-text">${escapeHtml(m.message)}</div>
           </div>
@@ -323,7 +334,7 @@ function escapeHtml(str) {
 }
 
 loadFeed();
-setInterval(loadFeed, 4000);
+setInterval(loadFeed, 3000);
 </script>
 </body>
 </html>
