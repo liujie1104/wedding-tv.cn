@@ -280,18 +280,13 @@ $("btnSubmit").onclick = async () => {
   $("btnSubmit").textContent = "正在发送上大屏…";
 
   try {
-    let res = await fetch("/api/wall-send", {
+    const res = await fetch("/api/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ room, name, identity, message, color: selectedColor })
+      body: JSON.stringify({
+        wall: { room, name, identity, message, color: selectedColor }
+      })
     });
-    if (!res.ok) {
-      res = await fetch("/api/wall", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room, name, identity, message, color: selectedColor })
-      });
-    }
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || "发送失败");
 
@@ -314,7 +309,7 @@ $("btnSubmit").onclick = async () => {
 // 实时加载现场祝福流
 async function loadFeed() {
   try {
-    const res = await fetch(`/api/wall?room=${encodeURIComponent(room)}`);
+    const res = await fetch(`/api/load?wall=${encodeURIComponent(room)}`);
     const data = await res.json();
     if (data && data.ok && data.messages) {
       $("feedCount").textContent = `共 ${data.total || data.messages.length} 条`;

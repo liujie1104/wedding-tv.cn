@@ -476,9 +476,9 @@ function escapeHtml(str) {
 let lastTimestamp = Date.now() - 3600000;
 async function pollMessages() {
   try {
-    const res = await fetch(`/api/wall?room=${encodeURIComponent(config.room)}&since=${lastTimestamp}`);
+    const res = await fetch(`/api/load?wall=${encodeURIComponent(config.room)}&since=${lastTimestamp}`);
     const data = await res.json();
-    if (data.ok && data.messages && data.messages.length > 0) {
+    if (data && data.ok && data.messages && data.messages.length > 0) {
       data.messages.forEach(msg => {
         spawnDanmaku(msg.name, msg.identity, msg.message, msg.color);
         if (msg.ts > lastTimestamp) lastTimestamp = msg.ts;

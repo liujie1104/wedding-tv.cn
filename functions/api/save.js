@@ -64,7 +64,7 @@ function normalizeInvitation(value) {
 }
 
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 20)) return json(429, { ok: false, error: "too many requests" });
+  if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV binding WEDDING not configured");
 
   let payload;
@@ -75,12 +75,40 @@ export const onRequestPost = async ({ request, env }) => {
   } catch {
     return badRequest("invalid json");
   }
+
+  // 1. 婚礼大屏弹幕支持
+  if (payload?.wall) {
+    const room = cleanLine(payload.wall.room, 32) || "wedding888";
+    const name = cleanLine(payload.wall.name, 16) || "热心宾客";
+    const identity = cleanLine(payload.wall.identity, 24) || "现场宾客";
+    const message = cleanText(payload.wall.message, 120);
+    const color = cleanLine(payload.wall.color, 12) || "gold";
+    if (!message) return badRequest("missing message");
+
+    const newItem = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      name,
+      identity,
+      message,
+      color,
+      ts: Date.now(),
+    };
+
+    let list = [];
+    try {
+      const raw = await env.WEDDING.get("wall:" + room);
+      if (raw) list = JSON.parse(raw);
+    } catch {}
+    list.push(newItem);
+    if (list.length > 200) list = list.slice(-200);
+    await env.WEDDING.put("wall:" + room, JSON.stringify(list), { expirationTtl: 86400 });
+    return json(200, { ok: true, item: newItem });
+  }
+
   if (!payload?.invitation || typeof payload.invitation !== "object") return badRequest("missing invitation");
   const inv = normalizeInvitation(payload.invitation);
   if (!inv.groom || !inv.bride) return badRequest("missing names");
   if (!inv.date) return badRequest("invalid date");
-
-  try {
     let id = shortId(8);
     for (let i = 0; i < 3; i++) {
       const exists = await env.WEDDING.get("inv:" + id);
