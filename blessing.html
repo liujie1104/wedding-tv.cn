@@ -280,11 +280,18 @@ $("btnSubmit").onclick = async () => {
   $("btnSubmit").textContent = "正在发送上大屏…";
 
   try {
-    const res = await fetch("/api/wall", {
+    let res = await fetch("/api/wall-send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ room, name, identity, message, color: selectedColor })
     });
+    if (!res.ok) {
+      res = await fetch("/api/wall", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ room, name, identity, message, color: selectedColor })
+      });
+    }
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || "发送失败");
 
