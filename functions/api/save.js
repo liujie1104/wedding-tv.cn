@@ -1,4 +1,4 @@
-// POST /api/save  body: { invitation: {...} } -> { ok, id }
+// POST /api/save  body: { invitation: {...} } OR { wall: {...} } -> { ok, id/item }
 import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
 
 const PUBLIC_INVITATION_TTL = 60 * 60 * 24 * 365;
@@ -94,21 +94,25 @@ export const onRequestPost = async ({ request, env }) => {
       ts: Date.now(),
     };
 
-    let list = [];
     try {
       const raw = await env.WEDDING.get("wall:" + room);
-      if (raw) list = JSON.parse(raw);
-    } catch {}
-    list.push(newItem);
-    if (list.length > 200) list = list.slice(-200);
-    await env.WEDDING.put("wall:" + room, JSON.stringify(list), { expirationTtl: 86400 });
-    return json(200, { ok: true, item: newItem });
+      let list = raw ? JSON.parse(raw) : [];
+      list.push(newItem);
+      if (list.length > 200) list = list.slice(-200);
+      await env.WEDDING.put("wall:" + room, JSON.stringify(list), { expirationTtl: 86400 });
+      return json(200, { ok: true, item: newItem });
+    } catch (e) {
+      return serverError(String(e?.message || e));
+    }
   }
 
+  // 2. 电子请帖保存
   if (!payload?.invitation || typeof payload.invitation !== "object") return badRequest("missing invitation");
   const inv = normalizeInvitation(payload.invitation);
   if (!inv.groom || !inv.bride) return badRequest("missing names");
   if (!inv.date) return badRequest("invalid date");
+
+  try {
     let id = shortId(8);
     for (let i = 0; i < 3; i++) {
       const exists = await env.WEDDING.get("inv:" + id);
