@@ -1,0 +1,56 @@
+{
+  "name": "wedding-tv.cn 婚礼工具箱",
+  "short_name": "备婚智囊",
+  "description": "免费婚礼现场大屏互动、电子请帖、商家合同避坑与婚礼筹备工具箱",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0e0a14",
+  "theme_color": "#0e0a14",
+  "orientation": "any",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "📺 现场大屏",
+      "short_name": "现场大屏",
+      "description": "婚礼现场大屏互动与抽奖",
+      "url": "/live-wall.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "🛡️ 合同避坑",
+      "short_name": "合同避坑",
+      "description": "婚庆摄影酒店合同避坑审查",
+      "url": "/contract-audit.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "💌 电子请帖",
+      "short_name": "电子请帖",
+      "description": "自制婚礼电子请帖与海报",
+      "url": "/invitation.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "💰 预算计算",
+      "short_name": "预算计算",
+      "description": "婚礼影像与总预算智能估算",
+      "url": "/calculator.html",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

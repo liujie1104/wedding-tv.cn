@@ -1,58 +1,74 @@
-// Cache only versioned/static media. Documents and API responses always use the network.
-const CACHE = "wt-v7-2026-08-12-home-refresh";
-const PRECACHE = ["/manifest.webmanifest", "/assets/hero-wedding-planning.webp"];
+const CACHE_NAME = 'wedding-tv-v1';
+const STATIC_PRECACHE = [
+  '/',
+  '/index.html',
+  '/contract-audit.html',
+  '/live-wall.html',
+  '/invitation.html',
+  '/calculator.html',
+  '/timeline.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/og.png'
+];
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(() => {}));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(STATIC_PRECACHE).catch(err => {
+        console.warn('Pre-cache partial failure:', err);
+      });
+    }).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (url.origin !== location.origin) return;
-  if (url.pathname.startsWith("/api/")) return; // never cache API
-  const isNav = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
 
-  // Never persist documents: editorial, policy and SEO updates must be visible immediately.
-  if (isNav) {
-    e.respondWith(
-      fetch(req).catch(() => new Response(
-        "页面暂时无法访问，请检查网络连接后重试。",
-        { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } }
-      ))
-    );
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Do not cache analytics, adsense, or cross-origin POST requests
+  if (
+    event.request.method !== 'GET' ||
+    url.hostname.includes('googlesyndication.com') ||
+    url.hostname.includes('google-analytics.com') ||
+    url.hostname.includes('doubleclick.net')
+  ) {
     return;
   }
 
-  const cacheableAsset = /\.(?:css|js|png|jpe?g|webp|svg|ico|woff2?|mp3)$/i.test(url.pathname);
-  if (!cacheableAsset) return;
-
-  // Network-first; use cache only when the network fails.
-  e.respondWith(
-    fetch(req)
-      .then((res) => {
-        // 仅缓存 200 OK 的 basic 响应；4xx/5xx 永不入缓存
-        if (res && res.status === 200 && res.type === "basic") {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, clone)).catch(() => {});
+  // Stale-While-Revalidate strategy for static and pages
+  event.respondWith(
+    caches.match(event.request).then(cachedResponse => {
+      const fetchPromise = fetch(event.request).then(networkResponse => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
         }
-        return res;
-      })
-      .catch(() =>
-        caches.match(req).then((cached) => {
-          if (cached) return cached;
-          return new Response("offline", { status: 503 });
-        })
-      )
+        return networkResponse;
+      }).catch(() => {
+        // Fallback for navigation requests if offline
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html');
+        }
+      });
+
+      return cachedResponse || fetchPromise;
+    })
   );
 });
