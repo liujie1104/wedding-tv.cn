@@ -146,8 +146,11 @@ async function canonicalHtmlRedirect(request, env, url) {
   if (request.method !== "GET" && request.method !== "HEAD") return null;
 
   const path = url.pathname;
-  if (["/index", "/index.html", "/live", "/live.html"].includes(path)) {
+  if (["/index", "/index.html"].includes(path)) {
     return permanentRedirect(url, "/");
+  }
+  if (["/live", "/live.html"].includes(path)) {
+    return permanentRedirect(url, "/live-wall.html");
   }
   if (path === "/" || path.endsWith(".html")) return null;
 

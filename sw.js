@@ -1,35 +1,31 @@
-const CACHE_NAME = 'wedding-tv-v1';
-const STATIC_PRECACHE = [
-  '/',
-  '/index.html',
-  '/contract-audit.html',
-  '/live-wall.html',
-  '/invitation.html',
-  '/calculator.html',
-  '/timeline.html',
-  '/manifest.json',
+const CACHE_NAME = 'wedding-tv-v2';
+
+// Only pre-cache fixed static brand icons and assets
+const STATIC_ASSETS = [
   '/icon-192.png',
   '/icon-512.png',
-  '/og.png'
+  '/og.png',
+  '/manifest.json'
 ];
 
+// Install: pre-cache static brand assets
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(STATIC_PRECACHE).catch(err => {
-        console.warn('Pre-cache partial failure:', err);
-      });
+      return cache.addAll(STATIC_ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
 
+// Activate: clean up ALL old caches (including wedding-tv-v1)
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then(keys => {
       return Promise.all(
-        cacheNames.map(cache => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            console.log('[SW] Removing old cache:', key);
+            return caches.delete(key);
           }
         })
       );
@@ -37,38 +33,66 @@ self.addEventListener('activate', event => {
   );
 });
 
+// Fetch handler: strict policy
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
+  const req = event.request;
+  const url = new URL(req.url);
 
-  // Do not cache analytics, adsense, or cross-origin POST requests
+  // 1. Only handle GET requests
+  if (req.method !== 'GET') {
+    return;
+  }
+
+  // 2. Network-Only for all API routes, analytics, third-parties
   if (
-    event.request.method !== 'GET' ||
+    url.pathname.startsWith('/api/') ||
     url.hostname.includes('googlesyndication.com') ||
     url.hostname.includes('google-analytics.com') ||
     url.hostname.includes('doubleclick.net')
   ) {
+    return; // Standard network fetch
+  }
+
+  // 3. Network-Only for all HTML documents & navigations (never cache dynamic HTML or private user pages)
+  if (req.mode === 'navigate' || req.destination === 'document' || url.pathname.endsWith('.html') || url.pathname === '/') {
     return;
   }
 
-  // Stale-While-Revalidate strategy for static and pages
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      }).catch(() => {
-        // Fallback for navigation requests if offline
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
+  // 4. Network-Only for dynamic user data, uploads, or images from API
+  if (url.pathname.startsWith('/api/img') || url.pathname.startsWith('/api/avatar') || url.pathname.startsWith('/api/poster-img')) {
+    return;
+  }
 
-      return cachedResponse || fetchPromise;
+  // 5. Cache-First only for static assets (.css, .js, .woff2, .ttf, static images)
+  const isStaticAsset = /\.(css|js|woff2?|ttf|png|svg|ico|webp|jpg|jpeg)$/i.test(url.pathname);
+  if (!isStaticAsset) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(req).then(cached => {
+      if (cached) {
+        return cached;
+      }
+
+      return fetch(req).then(res => {
+        if (!res || res.status !== 200 || res.type !== 'basic') {
+          return res;
+        }
+
+        // Respect Cache-Control: private, no-store
+        const cacheControl = res.headers.get('cache-control') || '';
+        if (cacheControl.includes('no-store') || cacheControl.includes('private')) {
+          return res;
+        }
+
+        const resClone = res.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(req, resClone);
+        });
+
+        return res;
+      });
     })
   );
 });

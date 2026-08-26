@@ -5,12 +5,15 @@ on:
   push:
     branches: [main]
     paths:
-      - sitemap.xml
-      - robots.txt
-      - scripts/audit-static-content.js
-      - src/worker.js
-      - wrangler.jsonc
-      - sw.js
+      - '**/*.html'
+      - 'blog/**'
+      - 'functions/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'sw.js'
+      - 'wrangler.jsonc'
 
 permissions:
   contents: read

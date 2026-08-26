@@ -282,11 +282,13 @@ if (!/不使用可以复制到任何地区的家庭核对表/.test(editorialPoli
 }
 
 const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
-const navigationCacheBlock = serviceWorker.split("if (isNav) {")[1]?.split("const cacheableAsset")[0] || "";
-if (/\.put\s*\(/.test(navigationCacheBlock)) {
-  errors.push("sw.js: navigation responses are persisted and can hide reviewed content");
+if (!/wedding-tv-v2/.test(serviceWorker)) {
+  errors.push("sw.js: cache version must be updated to wedding-tv-v2");
 }
-if (/\/index\.html/.test(navigationCacheBlock)) {
+if (/url\.pathname\.startsWith\(['"]\/api\/['"]\)/.test(serviceWorker) && !/return;/.test(serviceWorker)) {
+  errors.push("sw.js: /api/ endpoints must be network-only");
+}
+if (/\/index\.html/.test(serviceWorker) && /respondWith/.test(serviceWorker) && /fallback/i.test(serviceWorker)) {
   errors.push("sw.js: missing navigation URLs must not be replaced with the homepage");
 }
 
@@ -306,6 +308,25 @@ if (/JSON\.stringify\(body\)/.test(posterPage) || /function buildPrompt\(\{[^}]*
 }
 if (/1\s*分钟(?:内)?(?:生成|完成)|高清原图/.test(posterPage)) {
   errors.push("poster.html: contains generation speed or image quality promises that cannot be guaranteed");
+}
+
+for (const interactivePage of ["live-wall.html", "blessing.html"]) {
+  if (urls.includes(interactivePage)) {
+    errors.push(`${interactivePage}: interactive UGC page must not be included in sitemap.xml`);
+  }
+  const fullPath = path.join(root, interactivePage);
+  if (fs.existsSync(fullPath)) {
+    const html = fs.readFileSync(fullPath, "utf8");
+    if (!/name="robots"\s+content="[^"]*noindex/i.test(html)) {
+      errors.push(`${interactivePage}: interactive page must declare noindex`);
+    }
+    if (/pagead2\.googlesyndication\.com|adsbygoogle/.test(html)) {
+      errors.push(`${interactivePage}: interactive page must not load ad scripts`);
+    }
+    if (/unionId=\d+/.test(html)) {
+      errors.push(`${interactivePage}: interactive page must not contain affiliate promotions`);
+    }
+  }
 }
 
 for (const page of ["speech.html", "vows.html", "checklist.html"]) {

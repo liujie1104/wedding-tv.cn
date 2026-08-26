@@ -3,11 +3,11 @@ import re
 
 PROJECT_ROOT = r"d:\Liu JIE\wedding-tv.cn"
 
-def inject_adsense_script():
-    script_tag = '<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>'
+def verify_adsense_meta():
+    meta_tag = '<meta name="google-adsense-account" content="ca-pub-6560247681968502" />'
     exclude_files = {'404.html', 'i.html', 'live.html', 'google4fc1865e51bc4f82.html'}
 
-    injected_count = 0
+    count = 0
     for root_dir, _, files in os.walk(PROJECT_ROOT):
         if '.git' in root_dir or '.gemini' in root_dir or 'node_modules' in root_dir:
             continue
@@ -17,15 +17,17 @@ def inject_adsense_script():
                 with open(filepath, 'r', encoding='utf-8', errors='ignore') as file_obj:
                     content = file_obj.read()
 
-                if 'pagead2.googlesyndication.com' not in content:
-                    if '</head>' in content:
-                        content = content.replace('</head>', f'  {script_tag}\n</head>')
-                        with open(filepath, 'w', encoding='utf-8') as file_obj:
-                            file_obj.write(content)
-                        injected_count += 1
-                        print(f"Injected AdSense script to: {os.path.relpath(filepath, PROJECT_ROOT)}")
+                # Clean any stray ad scripts
+                clean_content = re.sub(r'<script\s+async\s+src=["\']https://pagead2\.googlesyndication\.com/[^"\']*["\'][^>]*></script>', '', content)
+                if 'google-adsense-account' not in clean_content and '</head>' in clean_content:
+                    clean_content = clean_content.replace('</head>', f'  {meta_tag}\n</head>')
+                
+                if clean_content != content:
+                    with open(filepath, 'w', encoding='utf-8') as file_obj:
+                        file_obj.write(clean_content)
+                    count += 1
 
-    print(f"Total AdSense scripts injected: {injected_count}")
+    print(f"Verified AdSense meta and cleaned scripts across: {count} files")
 
 if __name__ == '__main__':
-    inject_adsense_script()
+    verify_adsense_meta()
