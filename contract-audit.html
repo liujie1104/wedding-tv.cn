@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>婚礼商家合同避坑审查器 · 婚庆/婚纱摄影/酒店报价单诊断与砍价助手 | wedding-tv.cn</title>
-<meta name="description" content="免费在线婚礼商家合同避坑审查工具：全面诊断婚宴酒店、婚庆策划、婚纱摄影、四大金刚 48 项隐形消费与霸王条款，生成专业砍价话术与可打印的《婚礼服务补充防坑协议》。" />
+<meta name="description" content="婚礼商家合同避坑审查器与砍价助手：全面诊断婚宴酒店、婚庆策划、婚纱摄影、四大金刚 48 项隐形消费与霸王条款漏洞，提供针对性砍价谈判话术，并可一键生成可直接签署盖章的法律级《婚礼服务补充防坑协议》。" /> />
 <meta name="author" content="wedding-tv.cn 内容维护" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <meta name="theme-color" content="#0e0a14" />
@@ -232,9 +232,13 @@ a:hover{text-decoration:underline}
 .faq-card h4{margin:0 0 8px; color:var(--gold); font-size:15px;}
 .faq-card p{margin:0; color:var(--sub); font-size:13px; line-height:1.6;}
 
-footer{
-  border-top:1px solid var(--line); padding:30px 20px; text-align:center;
-  color:var(--sub); font-size:13px; margin-top:60px;
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .topbar, .hero, .cat-tabs, .main-layout, .faq-section, footer, #pwaInstallBanner { display: none !important; }
+  #docModal { display: block !important; position: static !important; background: none !important; padding: 0 !important; }
+  .doc-box { box-shadow: none !important; border: 0 !important; max-width: 100% !important; max-height: none !important; }
+  .doc-header, .doc-footer { display: none !important; }
+  .doc-body { padding: 0 !important; font-size: 13pt !important; line-height: 1.8 !important; }
 }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
