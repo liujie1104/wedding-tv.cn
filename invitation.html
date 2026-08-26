@@ -19,6 +19,7 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💌</text></svg>" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
 <script type="application/ld+json">
 {
@@ -215,7 +216,8 @@ textarea{resize:vertical;min-height:80px}
         <div id="avatarGallery" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
       </fieldset>
 
-      <div class="actions" style="justify-content:flex-end">
+      <div class="actions" style="justify-content:flex-end;gap:10px;">
+        <button class="btn ghost" type="button" id="btnGenPoster">📸 一键生成朋友圈海报 / 手机长图</button>
         <button class="btn" id="publish">📤 生成请帖链接</button>
       </div>
       <div class="error" id="formError"></div>
@@ -230,6 +232,9 @@ textarea{resize:vertical;min-height:80px}
             <span class="tip">仅是缩略效果，最终请帖样式更精美</span>
           </div>
           <div id="preview" class="tpl-gold"></div>
+          <button class="btn ghost sm" type="button" id="btnGenPosterSide" style="width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            📸 一键生成朋友圈预告海报
+          </button>
         </div>
 
         <div class="card" style="margin-top:14px">
@@ -241,6 +246,24 @@ textarea{resize:vertical;min-height:80px}
         </div>
       </div>
     </aside>
+  </div>
+
+  <!-- 朋友圈海报弹窗 -->
+  <div id="posterModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,15,10,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:18px;max-width:460px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;">
+        <strong style="color:var(--gold2);font-size:16px;">📸 朋友圈预告海报已就绪</strong>
+        <button id="btnClosePoster" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <div style="padding:16px;overflow-y:auto;text-align:center;background:#fdfaf5;flex:1;">
+        <canvas id="posterCanvas" width="1080" height="1920" style="width:100%;max-width:320px;border-radius:12px;box-shadow:0 8px 30px rgba(122,90,47,0.3);display:block;margin:0 auto;"></canvas>
+        <div class="tip" style="margin-top:10px;">💡 手机端长按上方图片可直接存入相册，或点击下方按钮下载</div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--line);background:#fff;display:flex;gap:10px;">
+        <button class="btn" id="btnDownloadPoster" style="flex:1;justify-content:center;padding:12px;font-size:15px;">💾 下载高清海报 (PNG)</button>
+        <button class="btn ghost" id="btnClosePosterBtn" style="padding:12px 18px;">关闭</button>
+      </div>
+    </div>
   </div>
 
   <section class="card" style="margin-top:24px;line-height:1.8">
@@ -412,6 +435,217 @@ render();
 // 顶部置顶按钮：调用同一个发布逻辑
 $('publishTop').addEventListener('click', () => $('publish').click());
 
+// ---------- 一键生成朋友圈海报 / 手机长图 ----------
+async function generatePoster() {
+  const canvas = $('posterCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1080;
+  const H = 1920;
+  canvas.width = W;
+  canvas.height = H;
+
+  const tpl = state.template || 'gold';
+  const groom = state.groom || '新郎';
+  const bride = state.bride || '新娘';
+  const dateStr = state.date ? new Date(state.date).toLocaleDateString('zh-CN', {year:'numeric', month:'long', day:'numeric'}) : '2026年吉日';
+  const timeStr = state.time || '18:18';
+  const venueStr = (state.city || '') + ' ' + (state.venue || '喜来登大酒店 · 宴会厅');
+
+  // 1. 背景渐变与边框配色
+  let bgGrad;
+  let goldColor = '#e5c07b';
+  let titleColor = '#ffffff';
+  let textColor = '#f0e6d6';
+  let borderColor = 'rgba(229, 192, 123, 0.4)';
+
+  if (tpl === 'gold') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#420b10');
+    bgGrad.addColorStop(0.5, '#6a181e');
+    bgGrad.addColorStop(1, '#2c070b');
+    goldColor = '#f5d799';
+    borderColor = 'rgba(245, 215, 153, 0.5)';
+  } else if (tpl === 'cream') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#fbf6ee');
+    bgGrad.addColorStop(0.5, '#f5e8d6');
+    bgGrad.addColorStop(1, '#ebd7be');
+    goldColor = '#8a6534';
+    titleColor = '#2b2017';
+    textColor = '#5a4635';
+    borderColor = 'rgba(138, 101, 52, 0.4)';
+  } else if (tpl === 'morandi') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#2c382a');
+    bgGrad.addColorStop(0.5, '#41523f');
+    bgGrad.addColorStop(1, '#1d261c');
+    goldColor = '#dcd6cd';
+    borderColor = 'rgba(220, 214, 205, 0.4)';
+  } else {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#15131a');
+    bgGrad.addColorStop(0.5, '#251e29');
+    bgGrad.addColorStop(1, '#0c0a0f');
+    goldColor = '#ffd28a';
+    borderColor = 'rgba(255, 210, 138, 0.4)';
+  }
+
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // 2. 双重烫金精致边框
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 4;
+  ctx.strokeRect(50, 50, W - 100, H - 100);
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(66, 66, W - 132, H - 132);
+
+  // 四角装饰圆点
+  ctx.fillStyle = goldColor;
+  [ [76, 76], [W - 76, 76], [76, H - 76], [W - 76, H - 76] ].forEach(([x, y]) => {
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  // 3. 顶部 Header 标题
+  ctx.textAlign = 'center';
+  ctx.fillStyle = goldColor;
+  ctx.font = '600 32px "PingFang SC", "Microsoft YaHei", serif';
+  ctx.fillText('W E D D I N G   I N V I T A T I O N', W / 2, 150);
+
+  ctx.font = '400 24px "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillStyle = textColor;
+  ctx.fillText('· 诚挚邀请 · 见证良缘 ·', W / 2, 200);
+
+  // 4. 照片主区域
+  const photoW = W - 200;
+  const photoH = 750;
+  const photoX = 100;
+  const photoY = 250;
+
+  if (state.coverDataUrl) {
+    try {
+      const img = new Image();
+      await new Promise((res) => {
+        img.onload = res;
+        img.onerror = res;
+        img.src = state.coverDataUrl;
+      });
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+      ctx.clip();
+      const imgAspect = img.width / img.height;
+      const targetAspect = photoW / photoH;
+      let drawW, drawH, drawX, drawY;
+      if (imgAspect > targetAspect) {
+        drawH = photoH;
+        drawW = photoH * imgAspect;
+        drawX = photoX - (drawW - photoW) / 2;
+        drawY = photoY;
+      } else {
+        drawW = photoW;
+        drawH = photoW / imgAspect;
+        drawX = photoX;
+        drawY = photoY - (drawH - photoH) / 2;
+      }
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      ctx.restore();
+
+      ctx.strokeStyle = goldColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+      ctx.stroke();
+    } catch(e) {}
+  } else {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+    ctx.fill();
+    ctx.strokeStyle = goldColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = goldColor;
+    ctx.font = '80px serif';
+    ctx.fillText('囍', W / 2, photoY + photoH / 2 + 30);
+    ctx.restore();
+  }
+
+  // 5. 新人姓名
+  const textStartY = photoY + photoH + 90;
+  ctx.fillStyle = goldColor;
+  ctx.font = 'bold 74px "Songti SC", "STSong", serif';
+  ctx.fillText(`${groom}  ❤  ${bride}`, W / 2, textStartY);
+
+  // 6. 爱情寄语
+  ctx.fillStyle = textColor;
+  ctx.font = 'italic 30px "PingFang SC", "Microsoft YaHei", sans-serif';
+  const loveQuote = state.story ? state.story.slice(0, 36) + (state.story.length > 36 ? '…' : '') : '愿有岁月可回首，且以深情共白头';
+  ctx.fillText(`“ ${loveQuote} ”`, W / 2, textStartY + 75);
+
+  // 分隔线
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - 200, textStartY + 120);
+  ctx.lineTo(W / 2 + 200, textStartY + 120);
+  ctx.stroke();
+
+  // 7. 婚期与场地
+  ctx.fillStyle = titleColor;
+  ctx.font = 'bold 36px "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText(`📅 ${dateStr}  ${timeStr}`, W / 2, textStartY + 185);
+
+  ctx.fillStyle = textColor;
+  ctx.font = '30px "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText(`📍 ${venueStr}`, W / 2, textStartY + 245);
+
+  // 8. 底部二维码与查收引导
+  const qrX = W / 2 - 80;
+  const qrY = H - 320;
+  const qrUrl = window.location.href;
+
+  try {
+    const qrCanvas = document.createElement('canvas');
+    if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+      await new Promise(r => {
+        QRCode.toCanvas(qrCanvas, qrUrl, { width: 160, margin: 1, color: { dark: '#1a1008', light: '#ffffff' } }, () => r());
+      });
+      ctx.drawImage(qrCanvas, qrX, qrY, 160, 160);
+    }
+  } catch(e) {}
+
+  ctx.fillStyle = goldColor;
+  ctx.font = '22px "PingFang SC", "Microsoft YaHei", sans-serif';
+  ctx.fillText('微信扫码 · 查收新人婚礼电子请帖', W / 2, H - 120);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.font = '18px sans-serif';
+  ctx.fillText('wedding-tv.cn · 免费婚礼服务工具', W / 2, H - 85);
+}
+
+// 绑定海报弹窗与下载
+function openPosterModal() {
+  $('posterModal').style.display = 'flex';
+  generatePoster();
+}
+
+$('btnGenPoster').onclick = openPosterModal;
+$('btnGenPosterSide').onclick = openPosterModal;
+$('btnClosePoster').onclick = () => { $('posterModal').style.display = 'none'; };
+$('btnClosePosterBtn').onclick = () => { $('posterModal').style.display = 'none'; };
+
+$('btnDownloadPoster').onclick = () => {
+  const canvas = $('posterCanvas');
+  const a = document.createElement('a');
+  a.download = `${state.groom || '新郎'}_${state.bride || '新娘'}_婚礼朋友圈海报.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+};
+
 // ---------- 发布 ----------
 $('publish').addEventListener('click', async () => {
   $('formError').textContent = '';
@@ -425,7 +659,7 @@ $('publish').addEventListener('click', async () => {
       date: state.date, time: state.time,
       city: state.city, venue: state.venue,
       greeting: state.greeting,
-      cover: state.cover,           // {key,url} or null
+      cover: state.cover,
       music: state.music,
       story: state.story,
       avatars: state.avatars.map(a=>({style:a.style,key:a.key,url:a.url})),

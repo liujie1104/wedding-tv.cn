@@ -255,10 +255,54 @@ body, html {
 <!-- 底部控制按钮 -->
 <div class="control-bar">
   <button class="ctrl-btn" id="btnSettings">⚙️ 大屏设置 (S)</button>
+  <button class="ctrl-btn" id="btnMusic">🎵 现场音乐</button>
   <button class="ctrl-btn" id="btnDemo">🎲 模拟弹幕</button>
   <button class="ctrl-btn" id="btnLottery">🎁 现场抽奖</button>
   <button class="ctrl-btn" id="btnFullscreen">🖥️ 全屏展示 (F11)</button>
   <button class="ctrl-btn" id="btnClear">🧹 清屏</button>
+</div>
+
+<!-- 音乐与音效控制弹窗 -->
+<div id="musicModal" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(10,6,15,0.92);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+  <div class="lottery-box" style="width:480px;text-align:left;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="color:var(--gold);font-size:20px;margin:0;">🎵 婚礼现场背景音乐与音效</h3>
+      <button id="btnCloseMusic" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+    
+    <div class="form-group">
+      <label>选择婚礼背景曲目</label>
+      <select id="bgmTrackSelect">
+        <option value="canon">🎻 卡农 (Canon in D · 浪漫唯美交响)</option>
+        <option value="march">💒 门德尔松婚礼进行曲 (Wedding March · 庄重神圣)</option>
+        <option value="amour">🎹 梦中的婚礼 (Mariage d'Amour · 经典抒情钢琴)</option>
+        <option value="custom">📁 上传本地音乐文件 (MP3 / WAV)</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="customAudioGroup" style="display:none;">
+      <label>上传本地音频文件 (支持任意 MP3/WAV/M4A)</label>
+      <input type="file" id="customAudioFile" accept="audio/*" />
+    </div>
+
+    <div class="form-group">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <label style="margin-bottom:0;">音乐主音量</label>
+        <span id="volumeValText" style="color:var(--gold);font-size:13px;">70%</span>
+      </div>
+      <input type="range" id="bgmVolumeSlider" min="0" max="100" value="70" style="width:100%;accent-color:var(--gold);" />
+    </div>
+
+    <div class="form-group" style="display:flex;align-items:center;justify-content:space-between;background:#0e0a14;padding:10px 14px;border-radius:8px;border:1px solid var(--line);">
+      <span style="font-size:13px;color:#eee;">抽奖紧张鼓点与中奖胜利号角音效</span>
+      <input type="checkbox" id="chkSfx" checked style="width:20px;height:20px;accent-color:var(--gold);" />
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="ctrl-btn active" id="btnTogglePlayMusic" style="flex:1;justify-content:center;padding:12px;font-size:15px;">▶️ 播放背景音乐</button>
+      <button class="ctrl-btn" id="btnStopMusic" style="padding:12px 20px;">⏹️ 停止</button>
+    </div>
+  </div>
 </div>
 
 <!-- 抽奖弹窗 -->
@@ -568,6 +612,230 @@ $("btnDemo").onclick = () => {
   }
 };
 
+// ---------- 婚礼现场音乐与音效引擎 ----------
+class WeddingAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.masterGain = null;
+    this.isPlaying = false;
+    this.currentTrack = "canon";
+    this.volume = 0.7;
+    this.sfxEnabled = true;
+    this.customAudio = new Audio();
+    this.customAudio.loop = true;
+    this.timer = null;
+    this.step = 0;
+  }
+
+  initContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = this.volume;
+      this.masterGain.connect(this.ctx.destination);
+    }
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+  }
+
+  setVolume(val) {
+    this.volume = Math.max(0, Math.min(1, val));
+    if (this.masterGain) this.masterGain.gain.value = this.volume;
+    if (this.customAudio) this.customAudio.volume = this.volume;
+  }
+
+  playTone(freq, type = "triangle", duration = 0.4, delay = 0, gainLevel = 0.3) {
+    if (!this.ctx || !this.isPlaying) return;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + delay);
+
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(2400, this.ctx.currentTime + delay);
+
+    g.gain.setValueAtTime(0.001, this.ctx.currentTime + delay);
+    g.gain.exponentialRampToValueAtTime(gainLevel, this.ctx.currentTime + delay + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + delay + duration);
+
+    osc.connect(filter);
+    filter.connect(g);
+    g.connect(this.masterGain);
+
+    osc.start(this.ctx.currentTime + delay);
+    osc.stop(this.ctx.currentTime + delay + duration + 0.05);
+  }
+
+  start() {
+    this.initContext();
+    this.isPlaying = true;
+    if (this.currentTrack === "custom" && this.customAudio.src) {
+      this.customAudio.play().catch(()=>{});
+      return;
+    }
+    this.scheduleNotes();
+  }
+
+  stop() {
+    this.isPlaying = false;
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    if (this.customAudio) {
+      this.customAudio.pause();
+    }
+  }
+
+  scheduleNotes() {
+    if (!this.isPlaying) return;
+
+    if (this.currentTrack === "canon") {
+      const chords = [
+        [293.66, 369.99, 440.00, 587.33], // D
+        [220.00, 277.18, 329.63, 440.00], // A
+        [246.94, 293.66, 369.99, 493.88], // Bm
+        [185.00, 220.00, 277.18, 369.99], // F#m
+        [196.00, 246.94, 293.66, 392.00], // G
+        [146.83, 220.00, 293.66, 440.00], // D
+        [196.00, 246.94, 293.66, 392.00], // G
+        [220.00, 277.18, 329.63, 440.00]  // A
+      ];
+      const idx = this.step % chords.length;
+      const c = chords[idx];
+      this.playTone(c[0], "sine", 1.8, 0, 0.4);
+      this.playTone(c[1], "triangle", 0.6, 0.15, 0.25);
+      this.playTone(c[2], "triangle", 0.6, 0.35, 0.25);
+      this.playTone(c[3], "sine", 0.9, 0.55, 0.35);
+      this.playTone(c[2], "triangle", 0.6, 0.8, 0.25);
+      this.step++;
+      this.timer = setTimeout(() => this.scheduleNotes(), 1050);
+    } else if (this.currentTrack === "march") {
+      const notes = [
+        [261.63, 329.63, 392.00],
+        [261.63, 329.63, 392.00],
+        [349.23, 440.00, 523.25],
+        [349.23, 440.00, 523.25],
+        [392.00, 493.88, 587.33],
+        [261.63, 329.63, 523.25]
+      ];
+      const c = notes[this.step % notes.length];
+      this.playTone(c[0], "triangle", 0.7, 0, 0.35);
+      this.playTone(c[1], "sine", 0.7, 0, 0.3);
+      this.playTone(c[2], "triangle", 0.7, 0, 0.35);
+      this.step++;
+      this.timer = setTimeout(() => this.scheduleNotes(), 800);
+    } else if (this.currentTrack === "amour") {
+      const chords = [
+        [196.00, 233.08, 293.66, 392.00], // Gm
+        [261.63, 311.13, 392.00, 523.25], // Cm
+        [174.61, 220.00, 261.63, 349.23], // F
+        [233.08, 293.66, 349.23, 466.16]  // Bb
+      ];
+      const c = chords[this.step % chords.length];
+      this.playTone(c[0], "sine", 1.6, 0, 0.4);
+      this.playTone(c[1], "triangle", 0.5, 0.2, 0.25);
+      this.playTone(c[2], "triangle", 0.5, 0.4, 0.25);
+      this.playTone(c[3], "sine", 0.9, 0.6, 0.35);
+      this.step++;
+      this.timer = setTimeout(() => this.scheduleNotes(), 950);
+    }
+  }
+
+  playDrumroll() {
+    if (!this.sfxEnabled) return;
+    this.initContext();
+    for (let i = 0; i < 18; i++) {
+      const freq = 120 + Math.random() * 40;
+      this.playTone(freq, "sine", 0.08, i * 0.08, 0.35);
+    }
+  }
+
+  playWinFanfare() {
+    if (!this.sfxEnabled) return;
+    this.initContext();
+    const fanfare = [
+      { f: 523.25, d: 0, t: 0.15 },
+      { f: 659.25, d: 0.15, t: 0.15 },
+      { f: 783.99, d: 0.30, t: 0.2 },
+      { f: 1046.50, d: 0.50, t: 0.8 }
+    ];
+    fanfare.forEach(n => {
+      this.playTone(n.f, "triangle", n.t, n.d, 0.5);
+      this.playTone(n.f * 0.5, "sine", n.t, n.d, 0.35);
+    });
+  }
+}
+
+const audioEngine = new WeddingAudioEngine();
+
+// 音乐面板交互
+$("btnMusic").onclick = () => { $("musicModal").style.display = "flex"; };
+$("btnCloseMusic").onclick = () => { $("musicModal").style.display = "none"; };
+
+$("btnTogglePlayMusic").onclick = () => {
+  if (!audioEngine.isPlaying) {
+    audioEngine.start();
+    $("btnTogglePlayMusic").textContent = "⏸️ 暂停播放";
+    $("btnMusic").classList.add("active");
+    $("btnMusic").textContent = "🎶 音乐播放中...";
+    showToast("🎵 背景音乐已开启播放");
+  } else {
+    audioEngine.stop();
+    $("btnTogglePlayMusic").textContent = "▶️ 播放背景音乐";
+    $("btnMusic").classList.remove("active");
+    $("btnMusic").textContent = "🎵 现场音乐";
+  }
+};
+
+$("btnStopMusic").onclick = () => {
+  audioEngine.stop();
+  $("btnTogglePlayMusic").textContent = "▶️ 播放背景音乐";
+  $("btnMusic").classList.remove("active");
+  $("btnMusic").textContent = "🎵 现场音乐";
+  showToast("⏹️ 背景音乐已停止");
+};
+
+$("bgmTrackSelect").onchange = (e) => {
+  const val = e.target.value;
+  audioEngine.currentTrack = val;
+  if (val === "custom") {
+    $("customAudioGroup").style.display = "block";
+  } else {
+    $("customAudioGroup").style.display = "none";
+  }
+  if (audioEngine.isPlaying) {
+    audioEngine.stop();
+    audioEngine.start();
+  }
+};
+
+$("customAudioFile").onchange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    audioEngine.customAudio.src = URL.createObjectURL(file);
+    audioEngine.currentTrack = "custom";
+    if (audioEngine.isPlaying) {
+      audioEngine.customAudio.play().catch(()=>{});
+    }
+    showToast("🎵 自定义音乐已加载！");
+  }
+};
+
+$("bgmVolumeSlider").oninput = (e) => {
+  const v = Number(e.target.value);
+  $("volumeValText").textContent = v + "%";
+  audioEngine.setVolume(v / 100);
+};
+
+$("chkSfx").onchange = (e) => {
+  audioEngine.sfxEnabled = e.target.checked;
+};
+
 // 抽奖逻辑
 let lotteryRolling = false;
 let lotteryInterval = null;
@@ -580,6 +848,7 @@ function toggleLottery() {
 
   if (!lotteryRolling) {
     lotteryRolling = true;
+    audioEngine.playDrumroll();
     $("btnStartLottery").textContent = "⏹️ 停止抽取中奖者";
     lotteryInterval = setInterval(() => {
       const r = pool[Math.floor(Math.random() * pool.length)];
@@ -588,6 +857,7 @@ function toggleLottery() {
   } else {
     lotteryRolling = false;
     clearInterval(lotteryInterval);
+    audioEngine.playWinFanfare();
     $("btnStartLottery").textContent = "▶️ 再抽一位";
     const winner = $("lotteryRoller").textContent.replace(/🎉/g, "").trim();
     const item = document.createElement("div");
