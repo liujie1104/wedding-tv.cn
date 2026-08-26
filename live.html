@@ -7,18 +7,23 @@
 <meta name="description" content="wedding-tv.cn 提供免费婚礼现场大屏互动、微信扫码弹幕发送、大屏祝福墙与现场抽奖工具。" />
 <meta name="robots" content="index,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/live-wall.html" />
-<meta http-equiv="refresh" content="0; url=/live-wall.html" />
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6560247681968502" crossorigin="anonymous"></script>
 <style>
 body{margin:0;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#0e0a14;color:#f7f3ff;display:grid;place-items:center;min-height:100vh}
 main{max-width:560px;padding:32px;text-align:center}
-a{color:#ffd28a}
+a.btn{display:inline-block;margin-top:16px;padding:12px 28px;background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border-radius:999px;text-decoration:none;font-weight:bold;}
 </style>
 </head>
 <body>
 <main>
-  <h1>正在前往 婚礼现场互动大屏</h1>
-  <p>如果页面没有自动跳转，请点击打开 <a href="/live-wall.html">现场大屏投屏系统</a>。</p>
+  <h1>📺 婚礼现场大屏互动系统</h1>
+  <p>正在进入现场大屏投屏系统，如果页面没有自动跳转，请点击下方按钮直接进入：</p>
+  <a class="btn" href="/live-wall.html">进入婚礼现场大屏 (live-wall.html)</a>
 </main>
+<script>
+if (location.pathname.endsWith('live.html')) {
+  setTimeout(() => { location.href = '/live-wall.html'; }, 500);
+}
+</script>
 </body>
 </html>
