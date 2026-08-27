@@ -57,7 +57,7 @@ const reviewedRegionPages = new Set([
   "blog/macao.html",
 ]);
 const requiredConcreteSignals = new Map([
-  ["blog/guangdong.html", [/订婚、认亲、择日、婚礼、回门/, /先生公/, /猪肝饭/, /划旱船/, /大碗疍/]],
+  ["blog/guangdong.html", [/八排瑶/, /划旱船/, /大碗疍/, /咸茶/, /大亚湾/]],
   ["blog/fujian.html", [/杉刺拦路求对歌/, /伴娘妈、送嫁嫂或佬嫂/, /线须/, /赤郎子/, /歌桌怎样开席/]],
   ["blog/hunan.html", [/哭开声/, /包席/, /赶边边场/, /插花日/, /媒公/, /打蹈/]],
   ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/, /咪哆/, /蝴蝶妈妈纹/, /史尔俄特/]],
@@ -76,7 +76,7 @@ const requiredConcreteSignals = new Map([
   ["blog/shanxi.html", [/过帖.*换帖/s, /许口面/, /散喜馍/, /上头糕/, /出十二/]],
   ["blog/liaoning.html", [/蒙古勒津婚礼/, /红帽子镇/, /武国强/, /蒙古贞之恋/, /朝鲜族传统婚礼/]],
   ["blog/anhui.html", [/说媒、行聘、请期/, /送担/, /搬行嫁/, /得定/, /借镬/]],
-  ["blog/shandong.html", [/黄县龙凤花轿婚俗/, /胶东花饽饽/, /龙凤呈祥/, /开洋谢洋/, /鲅鱼水饺/]],
+  ["blog/shandong.html", [/胶东花饽饽/, /龙凤呈祥/, /开洋谢洋/, /鲅鱼水饺/, /乳山/]],
   ["blog/henan.html", [/说媒、相亲、换贴/, /看好、送红/, /嵩山婚俗/, /婚船/, /六礼/]],
   ["blog/hubei.html", [/女婚男嫁/, /金凤引青龙/, /丈母娘抬软轿/, /娶新郎/, /娶女婿/]],
   ["blog/jiangxi.html", [/扎庚/, /睄节/, /祖宗纱代/, /踩红筷子/, /同心餐/]],
@@ -168,6 +168,12 @@ for (const relativePath of reviewedRegionPages) {
   }
   const jsonDate = html.match(/"dateModified":\s*"(\d{4}-\d{2}-\d{2})"/)?.[1];
   const visDate = html.match(/(?:更新|最近更新|更新时间|最后更新)[：:\s]*(\d{4}[-年]\d{1,2}[-月]\d{1,2})/)?.[1];
+  if (!jsonDate) {
+    errors.push(`${relativePath}: missing JSON-LD dateModified`);
+  }
+  if (!visDate) {
+    errors.push(`${relativePath}: missing visible update date in body`);
+  }
   if (jsonDate && visDate) {
     const normVis = visDate.replace(/年|月/g, "-").replace(/日/g, "");
     const parts = normVis.split("-");
