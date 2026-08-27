@@ -1,0 +1,10 @@
+{
+  "name": "wedding-tv.cn",
+  "version": "1.0.0",
+  "private": true,
+  "description": "wedding-tv.cn static website with comprehensive static quality audit",
+  "scripts": {
+    "build": "node scripts/audit-static-content.js",
+    "test": "node scripts/audit-static-content.js"
+  }
+}

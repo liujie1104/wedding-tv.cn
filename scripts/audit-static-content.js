@@ -57,7 +57,7 @@ const reviewedRegionPages = new Set([
   "blog/macao.html",
 ]);
 const requiredConcreteSignals = new Map([
-  ["blog/guangdong.html", [/八排瑶/, /划旱船/, /大碗疍/, /咸茶/, /大亚湾/]],
+  ["blog/guangdong.html", [/八排瑶/, /先生公/, /划旱船/, /大碗疍/, /咸茶/, /大亚湾/]],
   ["blog/fujian.html", [/杉刺拦路求对歌/, /伴娘妈、送嫁嫂或佬嫂/, /线须/, /赤郎子/, /歌桌怎样开席/]],
   ["blog/hunan.html", [/哭开声/, /包席/, /赶边边场/, /插花日/, /媒公/, /打蹈/]],
   ["blog/sichuan.html", [/克斯.*克智.*佐/s, /互换腰带/, /咪哆/, /蝴蝶妈妈纹/, /史尔俄特/]],
@@ -138,6 +138,17 @@ for (const relativePath of publishedRegionPages) {
     errors.push(`${relativePath}: region page has not been added to the reviewed publication allowlist`);
   }
 }
+// Check card consistency across index.html, blog.html, rss.xml
+const indexHtmlContent = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const blogHtmlContent = fs.readFileSync(path.join(root, "blog.html"), "utf8");
+const rssXmlContent = fs.readFileSync(path.join(root, "rss.xml"), "utf8");
+
+for (const retiredTerm of [/连南东三排/, /黄县龙凤花轿婚俗/]) {
+  if (retiredTerm.test(indexHtmlContent)) errors.push(`index.html contains retired term ${retiredTerm}`);
+  if (retiredTerm.test(blogHtmlContent)) errors.push(`blog.html contains retired term ${retiredTerm}`);
+  if (retiredTerm.test(rssXmlContent)) errors.push(`rss.xml contains retired term ${retiredTerm}`);
+}
+
 for (const relativePath of reviewedRegionPages) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) {
