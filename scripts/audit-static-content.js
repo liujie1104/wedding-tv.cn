@@ -145,11 +145,28 @@ for (const relativePath of reviewedRegionPages) {
     continue;
   }
   const html = fs.readFileSync(fullPath, "utf8");
-  const sourceCount = [...html.matchAll(/<a\b[^>]*\bdata-source\b/gi)].length;
+  const sourceMatches = [...html.matchAll(/<a\b[^>]*\bdata-source\b[^>]*href=["']([^"']*)["']/gi)].map(m => m[1]);
+  const sourceCount = sourceMatches.length;
+  const uniqueSources = new Set(sourceMatches);
   const sectionCount = [...html.matchAll(/<h2\b/gi)].length;
   const tableCount = [...html.matchAll(/<table\b/gi)].length;
   const textLength = visibleText(html).length;
   if (sourceCount < 3) errors.push(`${relativePath}: fewer than 3 traceable sources (${sourceCount})`);
+  if (uniqueSources.size < 3) errors.push(`${relativePath}: fewer than 3 distinct source URLs (${uniqueSources.size})`);
+  for (const sUrl of sourceMatches) {
+    if (!sUrl.startsWith("https://")) {
+      errors.push(`${relativePath}: data-source URL must be HTTPS (${sUrl})`);
+    }
+  }
+
+  const descMatch = html.match(/<meta\s+name=["']description["']\s+content=["'](.*?)["']/i)?.[1] || "";
+  if (/具体指南具体流程|提亲纳吉、过大礼彩礼明细/.test(descMatch)) {
+    errors.push(`${relativePath}: meta description contains retired generic pSEO boilerplate`);
+  }
+  if (descMatch.length < 40) {
+    errors.push(`${relativePath}: meta description is too short (${descMatch.length})`);
+  }
+
   if (textLength < 2500) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
   if (sectionCount < 8) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
   if (tableCount < 1) errors.push(`${relativePath}: reviewed regional longform needs at least one factual structure table (${tableCount})`);
@@ -267,6 +284,26 @@ if (!home.includes('/assets/hero-wedding-planning.webp') || !fs.existsSync(path.
 }
 if (/霸王条款|全面诊断|真实复盘|真实水分/.test(home)) {
   errors.push("index.html: contains exaggerated marketing claims");
+}
+
+// Check ads.txt
+const adsTxtPath = path.join(root, "ads.txt");
+if (!fs.existsSync(adsTxtPath)) {
+  errors.push("ads.txt: missing file");
+} else {
+  const adsTxt = fs.readFileSync(adsTxtPath, "utf8");
+  if (!adsTxt.includes("google.com, pub-6560247681968502, DIRECT, f08c47fec0942fa0")) {
+    errors.push("ads.txt: invalid or missing Google AdSense publisher record");
+  }
+}
+
+// Check live.html has noindex,nofollow
+const livePath = path.join(root, "live.html");
+if (fs.existsSync(livePath)) {
+  const liveContent = fs.readFileSync(livePath, "utf8");
+  if (!/noindex/.test(liveContent)) {
+    errors.push("live.html: must declare noindex");
+  }
 }
 
 for (const retiredEndpoint of ["functions/api/debug-env.js", "functions/api/track.js"]) {

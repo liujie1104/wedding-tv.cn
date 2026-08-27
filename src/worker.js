@@ -77,7 +77,7 @@ function staticResponse(response, path) {
     "/rss.xml",
     "/ads.txt",
     "/sw.js",
-    "/manifest.webmanifest",
+    "/manifest.json",
   ].includes(path);
 
   if (isHtml) headers.set("content-type", "text/html; charset=utf-8");
