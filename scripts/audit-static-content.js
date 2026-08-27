@@ -166,8 +166,15 @@ for (const relativePath of reviewedRegionPages) {
   if (descMatch.length < 40) {
     errors.push(`${relativePath}: meta description is too short (${descMatch.length})`);
   }
-  if (!html.includes('"dateModified":"2026-08-27"')) {
-    errors.push(`${relativePath}: dateModified must be updated to 2026-08-27`);
+  const jsonDate = html.match(/"dateModified":\s*"(\d{4}-\d{2}-\d{2})"/)?.[1];
+  const visDate = html.match(/(?:更新|最近更新|更新时间|最后更新)[：:\s]*(\d{4}[-年]\d{1,2}[-月]\d{1,2})/)?.[1];
+  if (jsonDate && visDate) {
+    const normVis = visDate.replace(/年|月/g, "-").replace(/日/g, "");
+    const parts = normVis.split("-");
+    const normVisStr = `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+    if (jsonDate !== normVisStr) {
+      errors.push(`${relativePath}: dateModified (${jsonDate}) does not match visible update date (${normVisStr})`);
+    }
   }
 
   if (textLength < 2500) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
@@ -196,6 +203,12 @@ for (const relativePath of reviewedRegionPages) {
     if (evidenceDateCount < evidenceSourceCount) errors.push(`${relativePath}: evidence records need a verification date`);
     if (!/本站采用的关键事实/.test(html) || !/适用范围/.test(html)) {
       errors.push(`${relativePath}: evidence table is missing claim or applicability fields`);
+    }
+    const evidenceSourceMatches = [...html.matchAll(/<a\b[^>]*\bdata-evidence-source\b[^>]*href=["']([^"']*)["']/gi)].map(m => m[1]);
+    for (const eUrl of evidenceSourceMatches) {
+      if (!sourceMatches.includes(eUrl)) {
+        errors.push(`${relativePath}: data-evidence-source URL (${eUrl}) must exist in page sources list`);
+      }
     }
   }
   for (const unsupportedLegacyClaim of [/彩礼一般多少钱/, /城市常见区间/, /婚宴一桌/, /单去双回/, /新娘脚不能沾/]) {
