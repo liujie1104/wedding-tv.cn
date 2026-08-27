@@ -11,8 +11,10 @@ const risky = [
   /精确到\s*±/, /300dpi/i, /永久(?:链接|分享|保存)/, /版权安全/,
   /豁免协议/, /默认按\s*IP\s*定位/i, /行业基准/, /几乎每场/,
   /性价比最高/, /行业白皮书/, /问卷调研/, /平台实测/,
-  /1\s*分钟(?:内)?(?:生成|完成)/, /高清原图/,
-  /霸王条款/, /法律级/, /精准诊断/, /法律顾问/, /专家团队/
+  /1\s*分钟(?:内)?(?:生成|完成)/, /5\s*秒(?:自动)?生成/, /高清原图/,
+  /霸王条款/, /法律级/, /精准诊断/,
+  /36\s*项/, /司仪迟到/, /婚纱破损/, /识别.*水分|潜在.*水分|挤水分/,
+  /确保.*满意/, /省钱省心/, /告别焦虑/, /调度秘籍/, /总管秘籍/
 ];
 const errors = [];
 const warnings = [];
@@ -199,16 +201,28 @@ for (const fullPath of allHtmlFiles) {
     errors.push(`${relativePath}: contains unverified FAQPage structured data`);
   }
 
-  // Check both visible text and full metadata (title, description, og, json-ld)
+  // Extract all metadata: title, description, og/twitter tags, and json-ld script blocks
   const vText = visibleText(html);
   const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] || "";
   const desc = html.match(/<meta\s+name=["']description["']\s+content=["'](.*?)["']/i)?.[1] || "";
-  const combinedMetadata = `${title} ${desc} ${vText}`;
+  const ogMatches = [...html.matchAll(/<meta\s+(?:property|name)=["'](?:og:[^"']+|twitter:[^"']+)["']\s+content=["'](.*?)["']/gi)].map(m => m[1]).join(" ");
+  const jsonLdBlocks = [...html.matchAll(/<script type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi)].map(m => m[1]).join(" ");
+  const combinedMetadata = `${title} ${desc} ${ogMatches} ${jsonLdBlocks} ${vText}`;
 
   for (const pattern of risky) {
-    if (pattern.test(combinedMetadata) && !["about.html", "authors.html", "editorial-policy.html"].some(p => relativePath.includes(p))) {
+    if (pattern.test(combinedMetadata)) {
       errors.push(`${relativePath}: contains prohibited risky claim ${pattern}`);
     }
+  }
+
+  // Strict check: no positive fake expert/legal credential claims
+  const positiveCredentialRegex = /(?:拥有|具备|聘请|设立)[^。！？\n]{0,20}(?:专家团队|法律顾问|律师团队)|由[^。！？\n]{0,20}(?:法律顾问|律师团队|专职律师)[^。！？\n]{0,20}(?:维护|审校|支持)/;
+  const strippedText = combinedMetadata
+    .replace(/不(?:声称|代表)?拥有[^。！？\n]*专家团队/g, "")
+    .replace(/不是专家团队/g, "")
+    .replace(/不等同于个人专家背书/g, "");
+  if (positiveCredentialRegex.test(strippedText)) {
+    errors.push(`${relativePath}: contains unverified expert/legal credentials claim`);
   }
 
   if (html.includes("manifest.webmanifest")) {

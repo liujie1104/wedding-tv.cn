@@ -333,9 +333,7 @@ footer{padding:34px 0 48px;border-top:1px solid var(--line);color:var(--sub);fon
 
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
-}
+
 </script>
 </body>
 </html>
