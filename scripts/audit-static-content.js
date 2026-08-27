@@ -199,11 +199,24 @@ for (const fullPath of allHtmlFiles) {
     errors.push(`${relativePath}: contains unverified FAQPage structured data`);
   }
 
+  // Check both visible text and full metadata (title, description, og, json-ld)
   const vText = visibleText(html);
+  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] || "";
+  const desc = html.match(/<meta\s+name=["']description["']\s+content=["'](.*?)["']/i)?.[1] || "";
+  const combinedMetadata = `${title} ${desc} ${vText}`;
+
   for (const pattern of risky) {
-    if (pattern.test(vText) && !["about.html", "authors.html", "editorial-policy.html"].some(p => relativePath.includes(p))) {
+    if (pattern.test(combinedMetadata) && !["about.html", "authors.html", "editorial-policy.html"].some(p => relativePath.includes(p))) {
       errors.push(`${relativePath}: contains prohibited risky claim ${pattern}`);
     }
+  }
+
+  if (html.includes("manifest.webmanifest")) {
+    errors.push(`${relativePath}: references retired manifest.webmanifest`);
+  }
+  const manifestCount = (html.match(/<link\s+rel=["']manifest["']/gi) || []).length;
+  if (manifestCount > 1) {
+    errors.push(`${relativePath}: has multiple manifest links (${manifestCount})`);
   }
 }
 
