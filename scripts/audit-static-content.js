@@ -166,6 +166,9 @@ for (const relativePath of reviewedRegionPages) {
   if (descMatch.length < 40) {
     errors.push(`${relativePath}: meta description is too short (${descMatch.length})`);
   }
+  if (!html.includes('"dateModified":"2026-08-27"')) {
+    errors.push(`${relativePath}: dateModified must be updated to 2026-08-27`);
+  }
 
   if (textLength < 2500) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
   if (sectionCount < 8) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
