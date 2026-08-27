@@ -1,7 +1,7 @@
 {
   "name": "wedding-tv.cn 婚礼工具箱",
   "short_name": "备婚智囊",
-  "description": "免费婚礼现场大屏互动、电子请帖、商家合同避坑与婚礼筹备工具箱",
+  "description": "免费婚礼筹备数字工具箱、电子请帖制作与婚俗指南",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -25,17 +25,17 @@
   ],
   "shortcuts": [
     {
-      "name": "📺 现场大屏",
-      "short_name": "现场大屏",
-      "description": "婚礼现场大屏互动与抽奖",
-      "url": "/live-wall.html",
+      "name": "💰 预算计算",
+      "short_name": "预算计算",
+      "description": "婚礼影像与总预算智能估算",
+      "url": "/calculator.html",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "🛡️ 合同避坑",
-      "short_name": "合同避坑",
-      "description": "婚庆摄影酒店合同避坑审查",
-      "url": "/contract-audit.html",
+      "name": "⏱️ 流程时间轴",
+      "short_name": "流程时间轴",
+      "description": "婚礼当天节点排期与导出",
+      "url": "/timeline.html",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
@@ -46,10 +46,10 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "💰 预算计算",
-      "short_name": "预算计算",
-      "description": "婚礼影像与总预算智能估算",
-      "url": "/calculator.html",
+      "name": "🤖 AI 策划",
+      "short_name": "AI 策划",
+      "description": "智能生成婚礼方案与预算",
+      "url": "/ai-planner.html",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]

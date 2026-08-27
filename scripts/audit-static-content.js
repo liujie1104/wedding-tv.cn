@@ -12,6 +12,7 @@ const risky = [
   /豁免协议/, /默认按\s*IP\s*定位/i, /行业基准/, /几乎每场/,
   /性价比最高/, /行业白皮书/, /问卷调研/, /平台实测/,
   /1\s*分钟(?:内)?(?:生成|完成)/, /高清原图/,
+  /霸王条款/, /法律级/, /精准诊断/, /法律顾问/, /专家团队/
 ];
 const errors = [];
 const warnings = [];
@@ -108,6 +109,17 @@ function filesUnder(dir, extension) {
   });
 }
 
+function visibleText(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[^;]+;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 if (new Set(urls).size !== urls.length) errors.push("sitemap.xml: duplicate URL");
 if (/^\s*Disallow:\s*\/(?:news|insights|blog\/cities)\//im.test(robots)) {
   errors.push("robots.txt: retired URLs must remain crawlable so noindex/404 can be observed");
@@ -171,15 +183,45 @@ for (const relativePath of reviewedRegionPages) {
   }
 }
 
-function visibleText(html) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&[^;]+;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+// Global scan across ALL HTML files for Ads, Affiliate links, and False claims
+const allHtmlFiles = filesUnder(root, ".html");
+for (const fullPath of allHtmlFiles) {
+  const relativePath = path.relative(root, fullPath).replaceAll("\\", "/");
+  const html = fs.readFileSync(fullPath, "utf8");
+
+  if (/pagead2\.googlesyndication\.com|adsbygoogle/.test(html)) {
+    errors.push(`${relativePath}: contains AdSense script tag during review mode`);
+  }
+  if (/unionId=\d+/.test(html)) {
+    errors.push(`${relativePath}: contains affiliate promotion parameter`);
+  }
+  if (/FAQPage/.test(html)) {
+    errors.push(`${relativePath}: contains unverified FAQPage structured data`);
+  }
+
+  const vText = visibleText(html);
+  for (const pattern of risky) {
+    if (pattern.test(vText) && !["about.html", "authors.html", "editorial-policy.html"].some(p => relativePath.includes(p))) {
+      errors.push(`${relativePath}: contains prohibited risky claim ${pattern}`);
+    }
+  }
+}
+
+// Specific check for virtual case studies consistency
+const caseStudies = [
+  "wedding-budget-scenarios-case.html",
+  "outdoor-wedding-emergency-case.html",
+  "wedding-quote-comparison-case.html"
+];
+for (const cPath of caseStudies) {
+  const html = fs.readFileSync(path.join(root, cPath), "utf8");
+  const desc = html.match(/<meta\s+name=["']description["']\s+content=["'](.*?)["']/i)?.[1] || "";
+  if (/真实复盘|实战案例|真实事故|真实水分/.test(desc)) {
+    errors.push(`${cPath}: description claims real case study while body specifies virtual simulation`);
+  }
+  if (!/演练|推演|模拟/.test(desc)) {
+    errors.push(`${cPath}: description must explicitly state simulation/drill nature`);
+  }
 }
 
 for (const relativePath of ["index.html", "blog.html", "rss.xml", "sitemap.xml"]) {
@@ -195,6 +237,9 @@ if (/SITE_STATS|st-(?:views|inquiries|cities)|useDailyJitter/.test(home)) {
 }
 if (!home.includes('/assets/hero-wedding-planning.webp') || !fs.existsSync(path.join(root, "assets", "hero-wedding-planning.webp"))) {
   errors.push("index.html: wedding planning hero image is missing");
+}
+if (/霸王条款|全面诊断|真实复盘|真实水分/.test(home)) {
+  errors.push("index.html: contains exaggerated marketing claims");
 }
 
 for (const retiredEndpoint of ["functions/api/debug-env.js", "functions/api/track.js"]) {
@@ -320,12 +365,6 @@ for (const interactivePage of ["live-wall.html", "blessing.html"]) {
     if (!/name="robots"\s+content="[^"]*noindex/i.test(html)) {
       errors.push(`${interactivePage}: interactive page must declare noindex`);
     }
-    if (/pagead2\.googlesyndication\.com|adsbygoogle/.test(html)) {
-      errors.push(`${interactivePage}: interactive page must not load ad scripts`);
-    }
-    if (/unionId=\d+/.test(html)) {
-      errors.push(`${interactivePage}: interactive page must not contain affiliate promotions`);
-    }
   }
 }
 
@@ -372,10 +411,6 @@ for (const relativePath of urls) {
   if (/noindex/i.test(robots)) errors.push(`${relativePath}: noindex page is in sitemap`);
   if (!/authors\.html|name="author"/i.test(html)) warnings.push(`${relativePath}: no organization author/responsibility link`);
   if (text.length < 500) warnings.push(`${relativePath}: visible text is short (${text.length})`);
-
-  for (const pattern of risky) {
-    if (pattern.test(text)) errors.push(`${relativePath}: risky unsupported wording ${pattern}`);
-  }
 
   for (const block of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)) {
     try { JSON.parse(block[1]); }
