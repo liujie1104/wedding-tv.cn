@@ -1,19 +1,26 @@
 // POST /api/story  body: { brief, groom, bride } -> { ok, story }
-import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
+import { json, badRequest, serverError, rateLimit, getIp, checkDailyQuota, readJsonBody } from "../_lib.js";
 
 const MODEL = "gemini-2.5-flash";
 
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 10)) return json(429, { ok: false, error: "请稍后再试" });
+  const ip = getIp(request);
+  if (!rateLimit(ip, 10)) return json(429, { ok: false, error: "请稍后再试" });
   const key = env.GEMINI_API_KEY;
   if (!key) return json(503, { ok: false, error: "AI 服务尚未配置" });
 
-  let body;
-  try { body = await request.json(); } catch { return badRequest("invalid json"); }
+  const { data: body, err } = await readJsonBody(request, 8192);
+  if (err === "payload_too_large") return json(413, { ok: false, error: "请求内容过大" });
+  if (err) return badRequest("invalid json");
+
   const brief = (body?.brief || "").toString().slice(0, 600);
   const groom = (body?.groom || "").toString().slice(0, 30);
   const bride = (body?.bride || "").toString().slice(0, 30);
   if (brief.length < 5) return badRequest("请至少写 5 个字");
+
+  // 校验通过后扣除配额
+  const allowed = await checkDailyQuota(env, ip, "story", 20, 500);
+  if (!allowed) return json(429, { ok: false, error: "今日爱情故事生成配额已用完，请明天再试" });
 
   const sys =
     "你是一位温柔的中文婚礼文案作家。请把用户提供的相识简介，改写为 90-130 字的温馨爱情故事，" +

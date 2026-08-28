@@ -149,20 +149,27 @@ for (const retiredTerm of [/连南东三排/, /黄县龙凤花轿婚俗/]) {
   if (retiredTerm.test(rssXmlContent)) errors.push(`rss.xml contains retired term ${retiredTerm}`);
 }
 
-// Check sitemap.xml lastmod parity with JSON-LD dateModified
+// Check sitemap.xml lastmod parity with JSON-LD dateModified (or visible update date)
 const sitemapRaw = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
-const urlMatches = [...sitemapRaw.matchAll(/<url>\s*<loc>(https:\/\/wedding-tv\.cn\/[^<]*)<\/loc>\s*<lastmod>([^<]*)<\/lastmod>\s*<\/url>/g)];
+const urlBlocks = [...sitemapRaw.matchAll(/<url>([\s\S]*?)<\/url>/g)];
 
-for (const match of urlMatches) {
-  const loc = match[1];
-  const lastmod = match[2];
+for (const blockMatch of urlBlocks) {
+  const block = blockMatch[1];
+  const locMatch = block.match(/<loc>(https:\/\/wedding-tv\.cn\/[^<]*)<\/loc>/);
+  const lastmodMatch = block.match(/<lastmod>([^<]*)<\/lastmod>/);
+  if (!locMatch || !lastmodMatch) continue;
+
+  const loc = locMatch[1];
+  const lastmod = lastmodMatch[1];
   const relPath = loc === "https://wedding-tv.cn/" ? "index.html" : loc.replace("https://wedding-tv.cn/", "");
   const fullFilePath = path.join(root, relPath);
   if (fs.existsSync(fullFilePath)) {
     const pageContent = fs.readFileSync(fullFilePath, "utf8");
     const jsonDateMatch = pageContent.match(/"dateModified":\s*"([^"]*)"/);
-    if (jsonDateMatch && jsonDateMatch[1] !== lastmod) {
-      errors.push(`Sitemap lastmod mismatch for ${loc}: sitemap has ${lastmod}, but page JSON-LD has ${jsonDateMatch[1]}`);
+    const visDateMatch = pageContent.match(/(?:更新时间|最近更新|更新|最后更新)[：:]\s*(\d{4})[年-](\d{1,2})[月-](\d{1,2})/);
+    const expectedDate = jsonDateMatch ? jsonDateMatch[1] : (visDateMatch ? `${visDateMatch[1]}-${String(visDateMatch[2]).padStart(2, '0')}-${String(visDateMatch[3]).padStart(2, '0')}` : null);
+    if (expectedDate && expectedDate !== lastmod) {
+      errors.push(`Sitemap lastmod mismatch for ${loc}: sitemap has ${lastmod}, but page has ${expectedDate}`);
     }
   }
 }

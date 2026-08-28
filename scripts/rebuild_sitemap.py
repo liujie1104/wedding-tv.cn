@@ -1,14 +1,10 @@
-import os
-import subprocess
-from datetime import datetime, timedelta, timezone
+import os, re
+from xml.dom import minidom
+import xml.etree.ElementTree as ET
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITEMAP_PATH = os.path.join(PROJECT_ROOT, "sitemap.xml")
-TODAY_STR = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d")
 
-# Review-mode sitemap:
-# keep only durable tools, reviewed guides, policy pages and explicitly approved
-# regional articles indexed. Unreviewed city and regional pages stay excluded.
 CORE_PAGES = [
     ("", "1.0", "daily"),
     ("ai-planner.html", "0.95", "weekly"),
@@ -84,61 +80,56 @@ CORE_PAGES = [
     ("terms.html", "0.7", "monthly"),
 ]
 
-def last_modified(relative_path: str) -> str:
-    working_tree = subprocess.run(
-        ["git", "status", "--porcelain", "--", relative_path],
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    if working_tree.stdout.strip():
-        return TODAY_STR
+def extract_html_date(rel_path: str) -> str:
+    target_rel = "index.html" if not rel_path else rel_path
+    fpath = os.path.join(PROJECT_ROOT, target_rel.replace("/", os.sep))
+    if not os.path.exists(fpath):
+        return "2026-08-27"
+    with open(fpath, "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    # 1. Check JSON-LD dateModified
+    m = re.search(r'"dateModified":\s*"(\d{4}-\d{2}-\d{2})"', content)
+    if m:
+        return m.group(1)
+    
+    # 2. Check visible update date
+    m2 = re.search(r'(?:更新时间|最近更新|更新|最后更新)[：:]\s*(\d{4})[年-](\d{1,2})[月-](\d{1,2})', content)
+    if m2:
+        return f"{m2.group(1)}-{int(m2.group(2)):02d}-{int(m2.group(3)):02d}"
+    
+    return "2026-08-27"
 
-    result = subprocess.run(
-        ["git", "log", "-1", "--format=%cs", "--", relative_path],
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    return result.stdout.strip() or TODAY_STR
+def build_sitemap():
+    urlset = ET.Element("urlset")
+    urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
+    for rel_path, priority, freq in CORE_PAGES:
+        url_el = ET.SubElement(urlset, "url")
+        loc_el = ET.SubElement(url_el, "loc")
+        loc_el.text = f"https://wedding-tv.cn/{rel_path}"
 
-def build_urls() -> list[tuple[str, str, str, str]]:
-    urls = [
-        (
-            f"https://wedding-tv.cn/{path}",
-            last_modified(path or "index.html"),
-            freq,
-            priority,
-        )
-        for path, priority, freq in CORE_PAGES
-    ]
+        lastmod_el = ET.SubElement(url_el, "lastmod")
+        lastmod_el.text = extract_html_date(rel_path)
 
-    return urls
+        changefreq_el = ET.SubElement(url_el, "changefreq")
+        changefreq_el.text = freq
 
+        priority_el = ET.SubElement(url_el, "priority")
+        priority_el.text = priority
 
-def main() -> None:
-    urls = build_urls()
-    xml_lines = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ]
-    for loc, lastmod, freq, priority in urls:
-        xml_lines.append("  <url>")
-        xml_lines.append(f"    <loc>{loc}</loc>")
-        xml_lines.append(f"    <lastmod>{lastmod}</lastmod>")
-        xml_lines.append(f"    <changefreq>{freq}</changefreq>")
-        xml_lines.append(f"    <priority>{priority}</priority>")
-        xml_lines.append("  </url>")
-    xml_lines.append("</urlset>")
+    xml_str = ET.tostring(urlset, encoding="utf-8")
+    parsed = minidom.parseString(xml_str)
+    pretty_xml = parsed.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8")
 
-    with open(SITEMAP_PATH, "w", encoding="utf-8") as handle:
-        handle.write("\n".join(xml_lines) + "\n")
+    # Remove extra blank lines
+    lines = [line for line in pretty_xml.splitlines() if line.strip()]
+    final_xml = "\n".join(lines) + "\n"
 
-    print(f"Rebuilt sitemap.xml with {len(urls)} review-mode entries.")
+    with open(SITEMAP_PATH, "w", encoding="utf-8") as f:
+        f.write(final_xml)
+
+    print(f"Sitemap rebuilt successfully with {len(CORE_PAGES)} URLs.")
+
 if __name__ == "__main__":
-    main()
+    build_sitemap()

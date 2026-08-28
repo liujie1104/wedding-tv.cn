@@ -126,7 +126,7 @@ const PROMPTS = {
 };
 
 // ---------- 模型适配 ----------
-async function callQwen({ key, baseUrl, model, sys, user: truncatedUser, cfg }) {
+async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
   const root = String(baseUrl || QWEN_BASE_URL).replace(/\/+$/, "");
   const r = await fetch(
     `${root}/chat/completions`,
@@ -154,7 +154,7 @@ async function callQwen({ key, baseUrl, model, sys, user: truncatedUser, cfg }) 
   return text;
 }
 
-async function callGemini({ key, sys, user: truncatedUser, cfg }) {
+async function callGemini({ key, sys, user, cfg }) {
   const r = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`,
     {
@@ -182,9 +182,6 @@ export const onRequestPost = async ({ request, env }) => {
   const ip = getIp(request);
   if (!rateLimit(ip, 12)) return json(429, { ok: false, error: "请求过于频繁，请稍后再试" });
 
-  const allowed = await checkDailyQuota(env, ip, "ai", 30, 1000);
-  if (!allowed) return json(429, { ok: false, error: "今日免费 AI 额度已达上限，请明日再试" });
-
   const qwenKey = env.DASHSCOPE_API_KEY;
   const qwenBaseUrl = env.BAILIAN_BASE_URL || env.DASHSCOPE_BASE_URL || QWEN_BASE_URL;
   const qwenModel = env.BAILIAN_MODEL || env.DASHSCOPE_MODEL || QWEN_MODEL;
@@ -199,14 +196,18 @@ export const onRequestPost = async ({ request, env }) => {
   const builder = PROMPTS[kind];
   if (!builder) return badRequest("unsupported kind");
 
-  const { sys, user: truncatedUser, cfg } = builder(body || {});
-  if (!user || user.length < 5) return badRequest("内容太少");
-  const truncatedUser = user.slice(0, 1500);
+  const { sys, user: rawUser, cfg } = builder(body || {});
+  if (!rawUser || rawUser.length < 5) return badRequest("内容太少");
+  const user = String(rawUser).slice(0, 1500);
+
+  // 只有在请求合法有效之后，才扣除日额度（避免无效请求刷爆配额）
+  const allowed = await checkDailyQuota(env, ip, "ai", 30, 1000);
+  if (!allowed) return json(429, { ok: false, error: "今日免费 AI 额度已达上限，请明日再试" });
 
   // 优先 qwen，失败兜底 gemini
   const order = [];
-  if (qwenKey) order.push({ name: qwenModel, fn: () => callQwen({ key: qwenKey, baseUrl: qwenBaseUrl, model: qwenModel, sys, user: truncatedUser, cfg }) });
-  if (geminiKey) order.push({ name: "gemini-2.5-flash", fn: () => callGemini({ key: geminiKey, sys, user: truncatedUser, cfg }) });
+  if (qwenKey) order.push({ name: qwenModel, fn: () => callQwen({ key: qwenKey, baseUrl: qwenBaseUrl, model: qwenModel, sys, user, cfg }) });
+  if (geminiKey) order.push({ name: "gemini-2.5-flash", fn: () => callGemini({ key: geminiKey, sys, user, cfg }) });
 
   let lastErr;
   for (const { name, fn } of order) {

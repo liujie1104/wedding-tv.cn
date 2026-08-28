@@ -33,17 +33,28 @@ export function rateLimit(ip, max = 30, windowMs = 60_000) {
   return true;
 }
 
-// 持久化 KV 每日额度控制 (单 IP 日额度 + 全站每日预算)
+// IP 单向哈希（加盐散列，不保留原始明文 IP，保护用户隐私）
+async function hashIp(ip) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(String(ip || "unknown") + "_wedding_salt_v1");
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 16);
+}
+
+// 持久化 KV 每日额度控制 (单 IP 哈希日额度 + 全站每日预算)
 export async function checkDailyQuota(env, ip, scope = "ai", maxPerIp = 30, maxGlobal = 1000) {
-  if (!env || !env.WEDDING_KV) return true; // 若无 KV 则使用内存限流
+  const kv = env?.WEDDING || env?.WEDDING_KV;
+  if (!kv) return true; // 若无 KV 绑定则降级为内存限流
   try {
     const today = new Date().toISOString().slice(0, 10);
-    const ipKey = `quota:${scope}:ip:${today}:${ip}`;
+    const ipHash = await hashIp(ip);
+    const ipKey = `quota:${scope}:ip:${today}:${ipHash}`;
     const globalKey = `quota:${scope}:global:${today}`;
 
     const [ipCountStr, globalCountStr] = await Promise.all([
-      env.WEDDING_KV.get(ipKey),
-      env.WEDDING_KV.get(globalKey),
+      kv.get(ipKey),
+      kv.get(globalKey),
     ]);
 
     const ipCount = parseInt(ipCountStr || "0", 10);
@@ -55,13 +66,13 @@ export async function checkDailyQuota(env, ip, scope = "ai", maxPerIp = 30, maxG
 
     // 递增计数并保留 48 小时 TTL
     await Promise.all([
-      env.WEDDING_KV.put(ipKey, String(ipCount + 1), { expirationTtl: 172800 }),
-      env.WEDDING_KV.put(globalKey, String(globalCount + 1), { expirationTtl: 172800 }),
+      kv.put(ipKey, String(ipCount + 1), { expirationTtl: 172800 }),
+      kv.put(globalKey, String(globalCount + 1), { expirationTtl: 172800 }),
     ]);
     return true;
   } catch (e) {
     console.error("checkDailyQuota error", e);
-    return true; // 故障时不中断服务，降级放行
+    return true; // 故障时不中断正常用户服务
   }
 }
 
