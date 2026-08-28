@@ -80,11 +80,52 @@ CORE_PAGES = [
     ("terms.html", "0.7", "monthly"),
 ]
 
+EXPLICIT_CORE_DATES = {
+    "": "2026-08-27",
+    "about.html": "2026-08-26",
+    "terms.html": "2026-08-11",
+    "editorial-policy.html": "2026-08-27",
+    "authors.html": "2026-08-28",
+    "privacy.html": "2026-08-28",
+    "ai-planner.html": "2026-08-26",
+    "invitation.html": "2026-08-26",
+    "poster.html": "2026-08-26",
+    "qr-poster.html": "2026-08-26",
+    "almanac.html": "2026-08-26",
+    "timeline.html": "2026-08-26",
+    "timeline-templates.html": "2026-08-26",
+    "playlist.html": "2026-08-26",
+    "vows.html": "2026-08-27",
+    "speech.html": "2026-08-27",
+    "checklist.html": "2026-08-27",
+    "countdown.html": "2026-08-26",
+    "calculator.html": "2026-08-26",
+    "quote-comparison.html": "2026-08-26",
+    "emergency-plan-generator.html": "2026-08-26",
+    "mv-style.html": "2026-08-26",
+    "guide.html": "2026-08-26",
+    "guide-livestream.html": "2026-08-26",
+    "wedding-budget-planning-guide.html": "2026-08-26",
+    "wedding-day-timeline-guide.html": "2026-08-26",
+    "wedding-invitation-wording-guide.html": "2026-08-26",
+    "wedding-family-communication-guide.html": "2026-08-26",
+    "wedding-vendor-contract-guide.html": "2026-08-26",
+    "wedding-photo-video-delivery-guide.html": "2026-08-26",
+    "wedding-live-stream-technical-guide.html": "2026-08-26",
+    "wedding-emergency-plan-guide.html": "2026-08-26",
+    "wedding-customs-verification-guide.html": "2026-08-26",
+    "wedding-budget-scenarios-case.html": "2026-08-26",
+    "wedding-quote-comparison-case.html": "2026-08-26",
+    "outdoor-wedding-emergency-case.html": "2026-08-26",
+    "tool-methodology.html": "2026-08-26",
+    "blog.html": "2026-08-28"
+}
+
 def extract_html_date(rel_path: str) -> str:
     target_rel = "index.html" if not rel_path else rel_path
     fpath = os.path.join(PROJECT_ROOT, target_rel.replace("/", os.sep))
     if not os.path.exists(fpath):
-        return "2026-08-27"
+        return EXPLICIT_CORE_DATES.get(rel_path, "2026-08-26")
     with open(fpath, "r", encoding="utf-8") as f:
         content = f.read()
     
@@ -98,7 +139,7 @@ def extract_html_date(rel_path: str) -> str:
     if m2:
         return f"{m2.group(1)}-{int(m2.group(2)):02d}-{int(m2.group(3)):02d}"
     
-    return "2026-08-27"
+    return EXPLICIT_CORE_DATES.get(rel_path, "2026-08-26")
 
 def build_sitemap():
     urlset = ET.Element("urlset")

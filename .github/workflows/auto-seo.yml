@@ -41,6 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate Worker and Functions syntax
+        run: node -e "import('./src/worker.js')"
       - name: Audit indexed content
         run: node scripts/audit-static-content.js
 

@@ -2,9 +2,11 @@
   "name": "wedding-tv.cn",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "wedding-tv.cn static website with comprehensive static quality audit",
   "scripts": {
     "build": "node scripts/audit-static-content.js",
-    "test": "node scripts/audit-static-content.js"
+    "test": "node scripts/audit-static-content.js",
+    "check-worker": "node -e \"import('./src/worker.js').catch(e => { console.error(e); process.exit(1); })\""
   }
 }
