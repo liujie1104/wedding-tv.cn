@@ -1,7 +1,7 @@
 // POST /api/ai  body: { kind, ... } -> { ok, text, model }
 // 主：阿里云百炼 qwen-plus（中文好、免费额度大）
 // 兜底：Google Gemini 2.5 Flash
-import { json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
+import { json, badRequest, serverError, rateLimit, getIp, checkDailyQuota, readJsonBody } from "../_lib.js";
 
 const QWEN_MODEL = "qwen-plus";
 const QWEN_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
@@ -126,7 +126,7 @@ const PROMPTS = {
 };
 
 // ---------- 模型适配 ----------
-async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
+async function callQwen({ key, baseUrl, model, sys, user: truncatedUser, cfg }) {
   const root = String(baseUrl || QWEN_BASE_URL).replace(/\/+$/, "");
   const r = await fetch(
     `${root}/chat/completions`,
@@ -154,7 +154,7 @@ async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
   return text;
 }
 
-async function callGemini({ key, sys, user, cfg }) {
+async function callGemini({ key, sys, user: truncatedUser, cfg }) {
   const r = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`,
     {
@@ -179,7 +179,11 @@ async function callGemini({ key, sys, user, cfg }) {
 }
 
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 12)) return json(429, { ok: false, error: "请稍后再试" });
+  const ip = getIp(request);
+  if (!rateLimit(ip, 12)) return json(429, { ok: false, error: "请求过于频繁，请稍后再试" });
+
+  const allowed = await checkDailyQuota(env, ip, "ai", 30, 1000);
+  if (!allowed) return json(429, { ok: false, error: "今日免费 AI 额度已达上限，请明日再试" });
 
   const qwenKey = env.DASHSCOPE_API_KEY;
   const qwenBaseUrl = env.BAILIAN_BASE_URL || env.DASHSCOPE_BASE_URL || QWEN_BASE_URL;
@@ -187,19 +191,22 @@ export const onRequestPost = async ({ request, env }) => {
   const geminiKey = env.GEMINI_API_KEY;
   if (!qwenKey && !geminiKey) return json(503, { ok: false, error: "AI 服务尚未配置" });
 
-  let body;
-  try { body = await request.json(); } catch { return badRequest("invalid json"); }
+  const { data: body, err } = await readJsonBody(request, 8192);
+  if (err === "payload_too_large") return json(413, { ok: false, error: "请求内容过大" });
+  if (err) return badRequest("invalid json");
+
   const kind = String(body?.kind || "");
   const builder = PROMPTS[kind];
   if (!builder) return badRequest("unsupported kind");
 
-  const { sys, user, cfg } = builder(body || {});
+  const { sys, user: truncatedUser, cfg } = builder(body || {});
   if (!user || user.length < 5) return badRequest("内容太少");
+  const truncatedUser = user.slice(0, 1500);
 
   // 优先 qwen，失败兜底 gemini
   const order = [];
-  if (qwenKey) order.push({ name: qwenModel, fn: () => callQwen({ key: qwenKey, baseUrl: qwenBaseUrl, model: qwenModel, sys, user, cfg }) });
-  if (geminiKey) order.push({ name: "gemini-2.5-flash", fn: () => callGemini({ key: geminiKey, sys, user, cfg }) });
+  if (qwenKey) order.push({ name: qwenModel, fn: () => callQwen({ key: qwenKey, baseUrl: qwenBaseUrl, model: qwenModel, sys, user: truncatedUser, cfg }) });
+  if (geminiKey) order.push({ name: "gemini-2.5-flash", fn: () => callGemini({ key: geminiKey, sys, user: truncatedUser, cfg }) });
 
   let lastErr;
   for (const { name, fn } of order) {

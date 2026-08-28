@@ -149,6 +149,24 @@ for (const retiredTerm of [/连南东三排/, /黄县龙凤花轿婚俗/]) {
   if (retiredTerm.test(rssXmlContent)) errors.push(`rss.xml contains retired term ${retiredTerm}`);
 }
 
+// Check sitemap.xml lastmod parity with JSON-LD dateModified
+const sitemapRaw = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+const urlMatches = [...sitemapRaw.matchAll(/<url>\s*<loc>(https:\/\/wedding-tv\.cn\/[^<]*)<\/loc>\s*<lastmod>([^<]*)<\/lastmod>\s*<\/url>/g)];
+
+for (const match of urlMatches) {
+  const loc = match[1];
+  const lastmod = match[2];
+  const relPath = loc === "https://wedding-tv.cn/" ? "index.html" : loc.replace("https://wedding-tv.cn/", "");
+  const fullFilePath = path.join(root, relPath);
+  if (fs.existsSync(fullFilePath)) {
+    const pageContent = fs.readFileSync(fullFilePath, "utf8");
+    const jsonDateMatch = pageContent.match(/"dateModified":\s*"([^"]*)"/);
+    if (jsonDateMatch && jsonDateMatch[1] !== lastmod) {
+      errors.push(`Sitemap lastmod mismatch for ${loc}: sitemap has ${lastmod}, but page JSON-LD has ${jsonDateMatch[1]}`);
+    }
+  }
+}
+
 for (const relativePath of reviewedRegionPages) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) {
