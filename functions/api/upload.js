@@ -20,8 +20,6 @@ export const onRequestPost = async ({ request, env }) => {
   const ip = getIp(request);
   if (!rateLimit(ip, 30)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV not configured");
-  const allowed = await checkDailyQuota(env, ip, "upload", 20, 1000);
-  if (!allowed) return json(429, { ok: false, error: "今日图片上传次数过多，请明日再试" });
 
   const { data: payload, err } = await readJsonBody(request, 4_600_000);
   if (err === "payload_too_large") return json(413, { ok: false, error: "image too large; please compress" });
@@ -41,6 +39,10 @@ export const onRequestPost = async ({ request, env }) => {
   catch { return badRequest("base64 decode fail"); }
   if (bytes.length > 3_500_000) return badRequest("image too large after decode");
   if (!hasValidSignature(bytes, mime)) return badRequest("image content does not match declared type");
+
+  // 只有在所有格式、大小与签名校验完全通过后，才扣除日额度
+  const allowed = await checkDailyQuota(env, ip, "upload", 20, 1000);
+  if (!allowed) return json(429, { ok: false, error: "今日图片上传次数过多，请明日再试" });
 
   try {
     const ext = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : "jpg";

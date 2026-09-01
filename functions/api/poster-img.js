@@ -11,7 +11,7 @@ const ALLOW_HOSTS = [
 
 export const onRequestGet = async ({ request }) => {
   const url = new URL(request.url);
-  const target = url.searchParams.get("url");
+  const target = url.searchParams.get("url") || url.searchParams.get("u");
   if (!target) return badRequest("missing url");
   let u;
   try { u = new URL(target); } catch { return badRequest("invalid url"); }

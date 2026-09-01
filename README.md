@@ -60,7 +60,7 @@ wrangler dev
 不要通过公开接口输出 Secret 的内容、长度或片段。部署前运行静态审计，部署后只检查公开页面、响应头和不包含配置详情的正常错误响应：
 
 ```powershell
-node scripts/audit-static-content.js
+node scripts/audit-static-content.cjs
 curl.exe -I https://wedding-tv.cn/
 curl.exe "https://wedding-tv.cn/api/load?id=missing"
 ```

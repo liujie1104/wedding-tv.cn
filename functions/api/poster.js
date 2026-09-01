@@ -105,7 +105,7 @@ async function queryTask({ request, env }) {
     const rawUrl = data?.output?.results?.[0]?.url;
     if (!rawUrl) return serverError("未返回图片地址");
     // 返回代理地址，避免把阿里云带签名的临时 URL 暴露或让客户端直接下载跨域
-    const proxyUrl = `/api/poster-img?u=${encodeURIComponent(rawUrl)}`;
+    const proxyUrl = `/api/poster-img?url=${encodeURIComponent(rawUrl)}`;
     return json(200, { ok: true, status: "SUCCEEDED", imageUrl: proxyUrl });
   }
   if (status === "FAILED") {

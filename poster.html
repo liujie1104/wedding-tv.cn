@@ -525,9 +525,16 @@ function drawUserPhoto(ctx, w, h, photo, circle, bgImg) {
   ctx.restore();
 }
 
+function resolveImageUrl(url) {
+  if (typeof url === "string" && (url.startsWith("/") || url.startsWith("data:"))) {
+    return url;
+  }
+  return `/api/poster-img?url=${encodeURIComponent(url || "")}`;
+}
+
 async function composite(url, form) {
-  const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`;
-  const img = await loadImg(proxy);
+  const imgUrl = resolveImageUrl(url);
+  const img = await loadImg(imgUrl);
   lastBgImg = img;
   // 创建唯一 canvas，后续重绘在同一个上面
   let canvas = lastCanvas;
@@ -632,16 +639,18 @@ function refreshDownload(canvas) {
 async function showImage(url) {
   lastImageUrl = url;
   setProgress("叠加中文文字…");
+  const directView = resolveImageUrl(url);
   try {
-    await composite(url, lastForm);
+    await composite(directView, lastForm);
     $("toolbar").style.display = "flex";
   } catch(e) {
     // 兜底：直接展示原图
-    const proxyView = `/api/poster-img?url=${encodeURIComponent(url)}`;
-    const proxyDownload = `/api/poster-img?dl=1&name=wedding-poster-${Date.now()}.png&url=${encodeURIComponent(url)}`;
-    STAGE.innerHTML = `<img src="${proxyView}" alt="婚礼海报" />`;
+    const dlParam = directView.includes("?")
+      ? `${directView}&dl=1&name=wedding-poster-${Date.now()}.png`
+      : `${directView}?dl=1&name=wedding-poster-${Date.now()}.png`;
+    STAGE.innerHTML = `<img src="${directView}" alt="婚礼海报" />`;
     const dl = $("dlBtn");
-    dl.href = proxyDownload;
+    dl.href = dlParam;
     dl.download = `wedding-poster-${Date.now()}.png`;
     $("toolbar").style.display = "flex";
   }
