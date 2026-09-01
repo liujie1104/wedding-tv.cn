@@ -84,6 +84,7 @@ async function createTask({ request, env }) {
 
 // ---------- GET: 查询任务 ----------
 async function queryTask({ request, env }) {
+  if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "请稍后再试" });
   const key = env.DASHSCOPE_API_KEY;
   if (!key) return json(503, { ok: false, error: "未配置" });
   const url = new URL(request.url);

@@ -1,5 +1,5 @@
 // POST /api/save  body: { invitation: {...} } OR { wall: {...} } -> { ok, id/item }
-import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
+import { shortId, json, badRequest, serverError, rateLimit, getIp, readJsonBody, checkDailyQuota } from "../_lib.js";
 
 const PUBLIC_INVITATION_TTL = 60 * 60 * 24 * 365;
 const TEMPLATES = new Set(["gold", "cream", "morandi", "hk"]);
@@ -64,17 +64,13 @@ function normalizeInvitation(value) {
 }
 
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "too many requests" });
+  const ip = getIp(request);
+  if (!rateLimit(ip, 30)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV binding WEDDING not configured");
 
-  let payload;
-  try {
-    const raw = await request.text();
-    if (raw.length > 200_000) return badRequest("payload too large");
-    payload = JSON.parse(raw);
-  } catch {
-    return badRequest("invalid json");
-  }
+  const { data: payload, err } = await readJsonBody(request, 200_000);
+  if (err === "payload_too_large") return json(413, { ok: false, error: "payload too large" });
+  if (err) return badRequest("invalid json");
 
   // 1. 婚礼大屏弹幕支持
   if (payload?.wall) {
@@ -84,6 +80,9 @@ export const onRequestPost = async ({ request, env }) => {
     const message = cleanText(payload.wall.message, 120);
     const color = cleanLine(payload.wall.color, 12) || "gold";
     if (!message) return badRequest("missing message");
+
+    const allowed = await checkDailyQuota(env, ip, "wall", 50, 5000);
+    if (!allowed) return json(429, { ok: false, error: "今日弹幕发送过多，请明日再试" });
 
     const newItem = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
@@ -111,6 +110,9 @@ export const onRequestPost = async ({ request, env }) => {
   const inv = normalizeInvitation(payload.invitation);
   if (!inv.groom || !inv.bride) return badRequest("missing names");
   if (!inv.date) return badRequest("invalid date");
+
+  const invAllowed = await checkDailyQuota(env, ip, "invite", 10, 500);
+  if (!invAllowed) return json(429, { ok: false, error: "今日请帖创建次数过多，请明日再试" });
 
   try {
     let id = shortId(8);

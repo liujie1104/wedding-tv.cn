@@ -1,5 +1,5 @@
 // POST /api/upload  body: { dataUrl } -> { ok, key, url }
-import { shortId, json, badRequest, serverError, rateLimit, getIp } from "../_lib.js";
+import { shortId, json, badRequest, serverError, rateLimit, getIp, readJsonBody, checkDailyQuota } from "../_lib.js";
 
 const PUBLIC_IMAGE_TTL = 60 * 60 * 24 * 365;
 
@@ -17,11 +17,16 @@ function hasValidSignature(bytes, mime) {
 }
 
 export const onRequestPost = async ({ request, env }) => {
-  if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "too many requests" });
+  const ip = getIp(request);
+  if (!rateLimit(ip, 30)) return json(429, { ok: false, error: "too many requests" });
   if (!env.WEDDING) return serverError("KV not configured");
+  const allowed = await checkDailyQuota(env, ip, "upload", 20, 1000);
+  if (!allowed) return json(429, { ok: false, error: "今日图片上传次数过多，请明日再试" });
 
-  let payload;
-  try { payload = await request.json(); } catch { return badRequest("invalid json"); }
+  const { data: payload, err } = await readJsonBody(request, 4_600_000);
+  if (err === "payload_too_large") return json(413, { ok: false, error: "image too large; please compress" });
+  if (err) return badRequest("invalid json");
+
   const dataUrl = payload?.dataUrl;
   if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/"))
     return badRequest("bad dataUrl");
