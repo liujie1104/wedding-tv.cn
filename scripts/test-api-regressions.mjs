@@ -285,3 +285,39 @@ test("Save API validation & quota order: invalid wall or invitation payloads do 
   assert.ok(data3.id);
   assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:invite:")).length, 2);
 });
+
+test("Policy pages date integrity: privacy and terms dates are strictly synchronized", async () => {
+  const root = path.resolve(process.cwd());
+  const sitemapXml = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+
+  // Helper to extract lastmod from sitemap for a specific page
+  const getSitemapLastmod = (page) => {
+    const m = sitemapXml.match(new RegExp(`<loc>https:\\/\\/wedding-tv\\.cn\\/${page}<\\/loc>\\s*<lastmod>([^<]+)<\\/lastmod>`));
+    return m ? m[1] : null;
+  };
+
+  // 1. Check privacy.html
+  const privacyHtml = fs.readFileSync(path.join(root, "privacy.html"), "utf8");
+  const privJsonDate = privacyHtml.match(/"dateModified":\s*"([^"]+)"/)?.[1];
+  const privVisDateMatch = privacyHtml.match(/最后更新：(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  const privVisDate = privVisDateMatch ? `${privVisDateMatch[1]}-${String(privVisDateMatch[2]).padStart(2, "0")}-${String(privVisDateMatch[3]).padStart(2, "0")}` : null;
+  const privStatusDateMatch = privacyHtml.match(/当前状态[（(](\d{4})年(\d{1,2})月(\d{1,2})日/);
+  const privStatusDate = privStatusDateMatch ? `${privStatusDateMatch[1]}-${String(privStatusDateMatch[2]).padStart(2, "0")}-${String(privStatusDateMatch[3]).padStart(2, "0")}` : null;
+  const privSitemapDate = getSitemapLastmod("privacy.html");
+
+  assert.equal(privJsonDate, "2026-09-01", "privacy.html JSON-LD dateModified must be 2026-09-01");
+  assert.equal(privVisDate, "2026-09-01", "privacy.html visible date must be 2026-09-01");
+  assert.equal(privStatusDate, "2026-09-01", "privacy.html current status date must be 2026-09-01");
+  assert.equal(privSitemapDate, "2026-09-01", "privacy.html sitemap lastmod must be 2026-09-01");
+
+  // 2. Check terms.html
+  const termsHtml = fs.readFileSync(path.join(root, "terms.html"), "utf8");
+  const termsJsonDate = termsHtml.match(/"dateModified":\s*"([^"]+)"/)?.[1];
+  const termsVisDateMatch = termsHtml.match(/最后更新：(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  const termsVisDate = termsVisDateMatch ? `${termsVisDateMatch[1]}-${String(termsVisDateMatch[2]).padStart(2, "0")}-${String(termsVisDateMatch[3]).padStart(2, "0")}` : null;
+  const termsSitemapDate = getSitemapLastmod("terms.html");
+
+  assert.equal(termsJsonDate, "2026-09-01", "terms.html JSON-LD dateModified must be 2026-09-01");
+  assert.equal(termsVisDate, "2026-09-01", "terms.html visible date must be 2026-09-01");
+  assert.equal(termsSitemapDate, "2026-09-01", "terms.html sitemap lastmod must be 2026-09-01");
+});

@@ -171,6 +171,28 @@ for (const blockMatch of urlBlocks) {
     if (expectedDate && expectedDate !== lastmod) {
       errors.push(`Sitemap lastmod mismatch for ${loc}: sitemap has ${lastmod}, but page has ${expectedDate}`);
     }
+
+    // Strict internal date consistency for policy pages
+    if (relPath === "privacy.html") {
+      const statusDateMatch = pageContent.match(/当前状态[（(](\d{4})[年-](\d{1,2})[月-](\d{1,2})/);
+      const statusDate = statusDateMatch ? `${statusDateMatch[1]}-${String(statusDateMatch[2]).padStart(2, '0')}-${String(statusDateMatch[3]).padStart(2, '0')}` : null;
+      if (statusDate && statusDate !== lastmod) {
+        errors.push(`privacy.html: status date (${statusDate}) does not match sitemap lastmod (${lastmod})`);
+      }
+      if (jsonDateMatch && visDateMatch) {
+        const visDate = `${visDateMatch[1]}-${String(visDateMatch[2]).padStart(2, '0')}-${String(visDateMatch[3]).padStart(2, '0')}`;
+        if (jsonDateMatch[1] !== visDate) {
+          errors.push(`privacy.html: JSON-LD dateModified (${jsonDateMatch[1]}) does not match visible update date (${visDate})`);
+        }
+      }
+    } else if (relPath === "terms.html") {
+      if (jsonDateMatch && visDateMatch) {
+        const visDate = `${visDateMatch[1]}-${String(visDateMatch[2]).padStart(2, '0')}-${String(visDateMatch[3]).padStart(2, '0')}`;
+        if (jsonDateMatch[1] !== visDate) {
+          errors.push(`terms.html: JSON-LD dateModified (${jsonDateMatch[1]}) does not match visible update date (${visDate})`);
+        }
+      }
+    }
   }
 }
 

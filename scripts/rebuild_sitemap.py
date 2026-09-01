@@ -83,10 +83,10 @@ CORE_PAGES = [
 EXPLICIT_CORE_DATES = {
     "": "2026-08-27",
     "about.html": "2026-08-26",
-    "terms.html": "2026-08-11",
+    "terms.html": "2026-09-01",
     "editorial-policy.html": "2026-08-27",
     "authors.html": "2026-08-28",
-    "privacy.html": "2026-08-28",
+    "privacy.html": "2026-09-01",
     "ai-planner.html": "2026-08-26",
     "invitation.html": "2026-08-26",
     "poster.html": "2026-08-26",
