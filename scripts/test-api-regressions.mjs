@@ -1,6 +1,9 @@
-// Automated regression tests for Cloudflare Worker API contracts and quota execution order
+// Automated regression tests for Cloudflare Worker API contracts, frontend image resolution, and quota execution order
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
 
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequestGet as posterGet, onRequestPost as posterPost } from "../functions/api/poster.js";
@@ -40,16 +43,17 @@ const FAKE_PNG_DATA_URL =
 
 test("Poster proxy contract: poster task success output is directly consumable by poster-img", async (t) => {
   const originalFetch = globalThis.fetch;
+  const mockTaskId = "abcdef-123456"; // Valid hex + hyphen task ID matching /^[a-f0-9-]{6,64}$/i
   const mockOssUrl = "https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/task123/final.png";
 
   // Mock global fetch for DashScope API and OSS
   globalThis.fetch = async (url, opts) => {
     const urlStr = String(url);
-    if (urlStr.includes("dashscope.aliyuncs.com/api/v1/tasks/task-success-123")) {
+    if (urlStr.includes(`dashscope.aliyuncs.com/api/v1/tasks/${mockTaskId}`)) {
       return new Response(
         JSON.stringify({
           output: {
-            task_id: "task-success-123",
+            task_id: mockTaskId,
             task_status: "SUCCEEDED",
             results: [{ url: mockOssUrl }],
           },
@@ -71,7 +75,7 @@ test("Poster proxy contract: poster task success output is directly consumable b
   });
 
   // Step 1: Query task from poster.js
-  const queryReq = new Request("https://wedding-tv.cn/api/poster?id=task-success-123", {
+  const queryReq = new Request(`https://wedding-tv.cn/api/poster?id=${mockTaskId}`, {
     headers: { "cf-connecting-ip": "1.2.3.4" },
   });
   const queryRes = await posterGet({ request: queryReq, env: { DASHSCOPE_API_KEY: "test-key" } });
@@ -112,6 +116,59 @@ test("Poster proxy contract: poster task success output is directly consumable b
   const doubleWrappedReq = new Request("https://wedding-tv.cn/api/poster-img?url=%2Fapi%2Fposter-img%3Fu%3Dtest");
   const doubleWrappedRes = await posterImgGet({ request: doubleWrappedReq });
   assert.equal(doubleWrappedRes.status, 400);
+});
+
+test("Poster frontend contract: poster.html resolveImageUrl never double-wraps proxied URLs", async () => {
+  const root = path.resolve(process.cwd());
+  const posterHtmlPath = path.join(root, "poster.html");
+  const posterHtml = fs.readFileSync(posterHtmlPath, "utf8");
+
+  // 1. Verify that resolveImageUrl is defined in poster.html
+  assert.ok(posterHtml.includes("function resolveImageUrl(url)"), "poster.html must define resolveImageUrl");
+
+  // 2. Extract resolveImageUrl function and execute in sandbox
+  const match = posterHtml.match(/function resolveImageUrl\(url\)\s*\{[\s\S]*?\n\}/);
+  assert.ok(match, "resolveImageUrl function body must match");
+
+  const context = {};
+  vm.createContext(context);
+  vm.runInContext(match[0], context);
+  const resolveImageUrl = context.resolveImageUrl;
+  assert.equal(typeof resolveImageUrl, "function");
+
+  // Case A: Proxied relative path from backend
+  const backendProxyUrl = "/api/poster-img?url=https%3A%2F%2Fdashscope-result-bj.oss-cn-beijing.aliyuncs.com%2Fimage.png";
+  assert.equal(
+    resolveImageUrl(backendProxyUrl),
+    backendProxyUrl,
+    "Should return relative proxy URL directly without double-wrapping"
+  );
+
+  // Case B: Raw external https URL
+  const rawHttpsUrl = "https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/image.png";
+  assert.equal(
+    resolveImageUrl(rawHttpsUrl),
+    `/api/poster-img?url=${encodeURIComponent(rawHttpsUrl)}`,
+    "Should wrap raw external https URL"
+  );
+
+  // Case C: Data URL
+  const dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg==";
+  assert.equal(resolveImageUrl(dataUrl), dataUrl, "Should return dataUrl directly");
+
+  // 3. Static contract: ensure composite and showImage in poster.html never bypass resolveImageUrl
+  assert.ok(
+    posterHtml.includes("const imgUrl = resolveImageUrl(url);"),
+    "composite() must use resolveImageUrl(url)"
+  );
+  assert.ok(
+    posterHtml.includes("const directView = resolveImageUrl(url);"),
+    "showImage() fallback must use resolveImageUrl(url)"
+  );
+  assert.ok(
+    !posterHtml.includes("const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`"),
+    "poster.html must not contain old double-wrapping proxy template"
+  );
 });
 
 test("Upload validation & quota order: invalid uploads never consume daily quota, only valid uploads write quota", async () => {
