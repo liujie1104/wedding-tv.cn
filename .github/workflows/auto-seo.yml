@@ -47,6 +47,8 @@ jobs:
           node-version: 20
       - name: Validate Worker and Functions syntax
         run: node --input-type=module --eval "import('./src/worker.js')"
+      - name: Run API regression tests
+        run: node --test scripts/test-api-regressions.mjs
       - name: Audit indexed content
         run: node scripts/audit-static-content.cjs
 

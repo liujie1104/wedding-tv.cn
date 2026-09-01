@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "wedding-tv.cn static website with comprehensive static quality audit",
+  "description": "wedding-tv.cn static website with comprehensive static quality audit and automated API regression tests",
   "scripts": {
     "audit": "node scripts/audit-static-content.cjs",
     "build": "node scripts/audit-static-content.cjs",
-    "test": "node scripts/audit-static-content.cjs",
+    "test": "node --test scripts/test-api-regressions.mjs && node scripts/audit-static-content.cjs",
+    "test:api": "node --test scripts/test-api-regressions.mjs",
+    "test:static": "node scripts/audit-static-content.cjs",
     "check-worker": "node --input-type=module --eval \"import('./src/worker.js')\""
   }
 }

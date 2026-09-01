@@ -1,0 +1,230 @@
+// Automated regression tests for Cloudflare Worker API contracts and quota execution order
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
+import { onRequestGet as posterGet, onRequestPost as posterPost } from "../functions/api/poster.js";
+import { onRequestPost as uploadPost } from "../functions/api/upload.js";
+import { onRequestPost as savePost } from "../functions/api/save.js";
+
+// Mock KV implementation
+class MockKV {
+  constructor() {
+    this.store = new Map();
+    this.puts = [];
+    this.gets = [];
+  }
+
+  async get(key) {
+    this.gets.push(key);
+    return this.store.get(key) || null;
+  }
+
+  async put(key, value, options = {}) {
+    this.puts.push({ key, value, options });
+    this.store.set(key, typeof value === "string" ? value : String(value));
+  }
+
+  async delete(key) {
+    this.store.delete(key);
+  }
+}
+
+// 1x1 transparent PNG with valid signature (\x89PNG\r\n\x1a\n)
+const VALID_1X1_PNG_DATA_URL =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+
+// Fake PNG dataUrl with invalid signature
+const FAKE_PNG_DATA_URL =
+  "data:image/png;base64,VEVTVEZBS0VQTkdOT1RBUE5HQVRBTEw="; // "TESTFAKENOTPNGATALL"
+
+test("Poster proxy contract: poster task success output is directly consumable by poster-img", async (t) => {
+  const originalFetch = globalThis.fetch;
+  const mockOssUrl = "https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/task123/final.png";
+
+  // Mock global fetch for DashScope API and OSS
+  globalThis.fetch = async (url, opts) => {
+    const urlStr = String(url);
+    if (urlStr.includes("dashscope.aliyuncs.com/api/v1/tasks/task-success-123")) {
+      return new Response(
+        JSON.stringify({
+          output: {
+            task_id: "task-success-123",
+            task_status: "SUCCEEDED",
+            results: [{ url: mockOssUrl }],
+          },
+        }),
+        { status: 200, headers: { "content-type": "application/json" } }
+      );
+    }
+    if (urlStr === mockOssUrl) {
+      return new Response(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), {
+        status: 200,
+        headers: { "content-type": "image/png" },
+      });
+    }
+    return new Response("not found", { status: 404 });
+  };
+
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  // Step 1: Query task from poster.js
+  const queryReq = new Request("https://wedding-tv.cn/api/poster?id=task-success-123", {
+    headers: { "cf-connecting-ip": "1.2.3.4" },
+  });
+  const queryRes = await posterGet({ request: queryReq, env: { DASHSCOPE_API_KEY: "test-key" } });
+  assert.equal(queryRes.status, 200);
+
+  const queryData = await queryRes.json();
+  assert.equal(queryData.ok, true);
+  assert.equal(queryData.status, "SUCCEEDED");
+  assert.ok(queryData.imageUrl, "imageUrl should be returned");
+  assert.ok(
+    queryData.imageUrl.startsWith("/api/poster-img?url="),
+    `imageUrl should be /api/poster-img?url=..., got: ${queryData.imageUrl}`
+  );
+
+  // Step 2: Feed the exact returned imageUrl to poster-img.js
+  const imgReq = new Request(`https://wedding-tv.cn${queryData.imageUrl}`);
+  const imgRes = await posterImgGet({ request: imgReq });
+  assert.equal(imgRes.status, 200, "poster-img should return 200 for valid proxied image");
+  assert.equal(imgRes.headers.get("content-type"), "image/png");
+
+  // Step 3: Test download flag dl=1
+  const dlReq = new Request(`https://wedding-tv.cn${queryData.imageUrl}&dl=1&name=test-wedding.png`);
+  const dlRes = await posterImgGet({ request: dlReq });
+  assert.equal(dlRes.status, 200);
+  assert.equal(dlRes.headers.get("content-disposition"), 'attachment; filename="test-wedding.png"');
+
+  // Step 4: Test backward-compatible 'u' query parameter
+  const legacyReq = new Request(`https://wedding-tv.cn/api/poster-img?u=${encodeURIComponent(mockOssUrl)}`);
+  const legacyRes = await posterImgGet({ request: legacyReq });
+  assert.equal(legacyRes.status, 200);
+
+  // Step 5: Test untrusted / malicious host rejection
+  const evilReq = new Request("https://wedding-tv.cn/api/poster-img?url=https%3A%2F%2Fmalicious-site.com%2Fbad.png");
+  const evilRes = await posterImgGet({ request: evilReq });
+  assert.equal(evilRes.status, 400);
+
+  // Step 6: Test double-wrapped relative path rejection
+  const doubleWrappedReq = new Request("https://wedding-tv.cn/api/poster-img?url=%2Fapi%2Fposter-img%3Fu%3Dtest");
+  const doubleWrappedRes = await posterImgGet({ request: doubleWrappedReq });
+  assert.equal(doubleWrappedRes.status, 400);
+});
+
+test("Upload validation & quota order: invalid uploads never consume daily quota, only valid uploads write quota", async () => {
+  const kv = new MockKV();
+  const env = { WEDDING: kv };
+  const clientIp = "192.168.1.100";
+
+  // Helper to count quota puts in KV
+  const getQuotaPutCount = () =>
+    kv.puts.filter((p) => p.key.startsWith("quota:upload:")).length;
+
+  // Case 1: Invalid JSON payload
+  const req1 = new Request("https://wedding-tv.cn/api/upload", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: "{ bad-json",
+  });
+  const res1 = await uploadPost({ request: req1, env });
+  assert.equal(res1.status, 400);
+  assert.equal(getQuotaPutCount(), 0, "Invalid JSON should not write quota");
+
+  // Case 2: Missing or invalid dataUrl format
+  const req2 = new Request("https://wedding-tv.cn/api/upload", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ dataUrl: "http://example.com/not-data-url.png" }),
+  });
+  const res2 = await uploadPost({ request: req2, env });
+  assert.equal(res2.status, 400);
+  assert.equal(getQuotaPutCount(), 0, "Invalid dataUrl format should not write quota");
+
+  // Case 3: Unsupported MIME type (e.g. image/gif)
+  const req3 = new Request("https://wedding-tv.cn/api/upload", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ dataUrl: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" }),
+  });
+  const res3 = await uploadPost({ request: req3, env });
+  assert.equal(res3.status, 400);
+  assert.equal(getQuotaPutCount(), 0, "Unsupported MIME should not write quota");
+
+  // Case 4: Invalid magic bytes / file signature mismatch
+  const req4 = new Request("https://wedding-tv.cn/api/upload", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ dataUrl: FAKE_PNG_DATA_URL }),
+  });
+  const res4 = await uploadPost({ request: req4, env });
+  assert.equal(res4.status, 400);
+  assert.equal(getQuotaPutCount(), 0, "Mismatched file signature should not write quota");
+
+  // Case 5: Valid PNG upload with proper signature
+  const req5 = new Request("https://wedding-tv.cn/api/upload", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ dataUrl: VALID_1X1_PNG_DATA_URL }),
+  });
+  const res5 = await uploadPost({ request: req5, env });
+  assert.equal(res5.status, 200, "Valid upload should return 200");
+  const data5 = await res5.json();
+  assert.equal(data5.ok, true);
+  assert.ok(data5.key, "Key should be generated");
+  assert.ok(data5.url, "Url should be returned");
+
+  // Verify KV writes: 1 image put + 2 quota puts (IP quota + global quota)
+  const imagePuts = kv.puts.filter((p) => p.key.startsWith("img:"));
+  assert.equal(imagePuts.length, 1, "Image should be written to KV");
+  assert.equal(getQuotaPutCount(), 2, "Both IP and global quota should be incremented for valid upload");
+});
+
+test("Save API validation & quota order: invalid wall or invitation payloads do not consume quota", async () => {
+  const kv = new MockKV();
+  const env = { WEDDING: kv };
+  const clientIp = "192.168.1.101";
+
+  // Case 1: Invalid wall message (empty message)
+  const req1 = new Request("https://wedding-tv.cn/api/save", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ wall: { room: "room1", message: "" } }),
+  });
+  const res1 = await savePost({ request: req1, env });
+  assert.equal(res1.status, 400);
+  assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:wall:")).length, 0);
+
+  // Case 2: Invalid invitation (missing names / invalid date)
+  const req2 = new Request("https://wedding-tv.cn/api/save", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({ invitation: { groom: "", bride: "", date: "invalid-date" } }),
+  });
+  const res2 = await savePost({ request: req2, env });
+  assert.equal(res2.status, 400);
+  assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:invite:")).length, 0);
+
+  // Case 3: Valid invitation
+  const req3 = new Request("https://wedding-tv.cn/api/save", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({
+      invitation: {
+        groom: "张三",
+        bride: "李四",
+        date: "2026-10-01",
+        time: "12:00",
+        venue: "希尔顿酒店",
+      },
+    }),
+  });
+  const res3 = await savePost({ request: req3, env });
+  assert.equal(res3.status, 200);
+  const data3 = await res3.json();
+  assert.equal(data3.ok, true);
+  assert.ok(data3.id);
+  assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:invite:")).length, 2);
+});
