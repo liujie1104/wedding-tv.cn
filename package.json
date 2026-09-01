@@ -5,8 +5,9 @@
   "type": "module",
   "description": "wedding-tv.cn static website with comprehensive static quality audit",
   "scripts": {
-    "build": "node scripts/audit-static-content.js",
-    "test": "node scripts/audit-static-content.js",
-    "check-worker": "node -e \"import('./src/worker.js').catch(e => { console.error(e); process.exit(1); })\""
+    "audit": "node scripts/audit-static-content.cjs",
+    "build": "node scripts/audit-static-content.cjs",
+    "test": "node scripts/audit-static-content.cjs",
+    "check-worker": "node --input-type=module --eval \"import('./src/worker.js')\""
   }
 }

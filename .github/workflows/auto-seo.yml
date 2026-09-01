@@ -46,9 +46,9 @@ jobs:
         with:
           node-version: 20
       - name: Validate Worker and Functions syntax
-        run: node -e "import('./src/worker.js')"
+        run: node --input-type=module --eval "import('./src/worker.js')"
       - name: Audit indexed content
-        run: node scripts/audit-static-content.js
+        run: node scripts/audit-static-content.cjs
 
   submit-indexnow:
     runs-on: ubuntu-latest
