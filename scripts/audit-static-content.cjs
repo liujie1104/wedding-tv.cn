@@ -422,6 +422,12 @@ for (const provider of ["阿里云百炼", "Google Gemini", "Cloudflare Workers 
 if (!/电子请帖与上传图片[\s\S]{0,160}365 天自动过期/.test(privacy)) {
   errors.push("privacy.html: missing invitation and image retention disclosure");
 }
+if (!/现场祝福墙数据[\s\S]{0,180}24 小时/.test(privacy)) {
+  errors.push("privacy.html: missing live wall data and 24-hour retention disclosure");
+}
+if (!privacy.includes("Cloudflare Web Analytics") || !privacy.includes("/cdn-cgi/rum")) {
+  errors.push("privacy.html: missing Cloudflare Web Analytics disclosure");
+}
 for (const sourcePath of ["functions/api/save.js", "functions/api/upload.js"]) {
   const source = fs.readFileSync(path.join(root, sourcePath), "utf8");
   if (!/expirationTtl/.test(source)) errors.push(`${sourcePath}: public data has no expiration`);
@@ -437,8 +443,22 @@ if (!/"run_worker_first"\s*:\s*true/.test(wrangler)) {
 if (!wrangler.includes('"html_handling": "none"')) {
   errors.push("wrangler.jsonc: .html canonical URLs must not be redirected by Cloudflare HTML handling");
 }
+if (!/"new_sqlite_classes"\s*:\s*\[\s*"WallRoom"\s*\]/.test(wrangler) || /"new_classes"\s*:/.test(wrangler)) {
+  errors.push("wrangler.jsonc: WallRoom must use a SQLite-backed Durable Object migration");
+}
+if (!worker.includes("setAlarm(now + WALL_MESSAGE_TTL_MS)") || !worker.includes("this.state.storage.deleteAll()")) {
+  errors.push("src/worker.js: live wall messages must be deleted 24 hours after the latest post");
+}
 if (!worker.includes("canonicalHtmlRedirect") || !worker.includes("status: 301")) {
   errors.push("src/worker.js: extensionless document variants need a permanent redirect to .html canonical URLs");
+}
+
+const seoWorkflow = fs.readFileSync(path.join(root, ".github", "workflows", "auto-seo.yml"), "utf8");
+if (!seoWorkflow.includes("wrangler@4.128.0 deploy --dry-run")) {
+  errors.push("auto-seo.yml: CI must run the pinned Wrangler deployment dry-run");
+}
+if (!seoWorkflow.includes("Workers Builds: wedding-tv") || !seoWorkflow.includes("cmp --silent sitemap.xml live-sitemap.xml")) {
+  errors.push("auto-seo.yml: search-engine submission must wait for Cloudflare deployment and live sitemap verification");
 }
 if (!worker.includes('new URL("/index.html", url.origin)')) {
   errors.push("src/worker.js: root path must explicitly serve index.html when HTML handling is disabled");

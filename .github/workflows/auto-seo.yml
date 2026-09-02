@@ -35,6 +35,7 @@ on:
 
 permissions:
   contents: read
+  checks: read
 
 jobs:
   validate:
@@ -44,9 +45,11 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Validate Worker and Functions syntax
         run: node --input-type=module --eval "import('./src/worker.js')"
+      - name: Validate Wrangler deployment configuration
+        run: npx --yes wrangler@4.128.0 deploy --dry-run --outdir /tmp/wrangler-dry-run
       - name: Run API regression tests
         run: node --test scripts/test-api-regressions.mjs
       - name: Audit indexed content
@@ -58,6 +61,52 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
+
+      - name: Wait for successful Cloudflare deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_CHECK_NAME: "Workers Builds: wedding-tv"
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 60); do
+            CHECKS=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/check-runs")
+            STATUS=$(jq -r --arg name "$CLOUDFLARE_CHECK_NAME" '[.check_runs[] | select(.name == $name)][0].status // ""' <<<"$CHECKS")
+            CONCLUSION=$(jq -r --arg name "$CLOUDFLARE_CHECK_NAME" '[.check_runs[] | select(.name == $name)][0].conclusion // ""' <<<"$CHECKS")
+
+            if [ "$STATUS" = "completed" ]; then
+              if [ "$CONCLUSION" = "success" ]; then
+                echo "Cloudflare deployment completed successfully."
+                break
+              fi
+              echo "Cloudflare deployment completed with conclusion: ${CONCLUSION:-unknown}" >&2
+              exit 1
+            fi
+
+            if [ "$attempt" -eq 60 ]; then
+              echo "Timed out waiting for Cloudflare deployment check: $CLOUDFLARE_CHECK_NAME" >&2
+              exit 1
+            fi
+            sleep 15
+          done
+
+      - name: Verify deployed sitemap matches this commit
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            curl --fail --silent --show-error \
+              -H "Cache-Control: no-cache" \
+              "https://wedding-tv.cn/sitemap.xml?deployment=${GITHUB_SHA}&attempt=${attempt}" \
+              --output live-sitemap.xml
+            if cmp --silent sitemap.xml live-sitemap.xml; then
+              echo "The live sitemap matches this commit."
+              break
+            fi
+            if [ "$attempt" -eq 40 ]; then
+              echo "The live sitemap did not match this commit after 10 minutes." >&2
+              exit 1
+            fi
+            sleep 15
+          done
 
       - name: Extract URLs from sitemap
         id: urls

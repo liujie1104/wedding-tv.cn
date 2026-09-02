@@ -21,6 +21,8 @@ const API = {
   "/api/poster-img":{ GET:  posterImgGet },
 };
 
+const WALL_MESSAGE_TTL_MS = 24 * 60 * 60 * 1000;
+
 const LEGACY_REDIRECTS = new Map([
   ["/blog/aomen", "/blog/macao.html"],
   ["/blog/aomen.html", "/blog/macao.html"],
@@ -254,23 +256,38 @@ export class WallRoom {
     const url = new URL(request.url);
     if (request.method === "POST") {
       const item = await request.json();
+      const now = Date.now();
+      const cutoff = now - WALL_MESSAGE_TTL_MS;
       let list = (await this.state.storage.get("messages")) || [];
+      if (!Array.isArray(list)) list = [];
+      list = list.filter((message) => Number(message?.ts) > cutoff);
       list.push(item);
       if (list.length > 200) list = list.slice(-200);
+      await this.state.storage.setAlarm(now + WALL_MESSAGE_TTL_MS);
       await this.state.storage.put("messages", list);
       return new Response(JSON.stringify({ ok: true, item }), {
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", "cache-control": "no-store" },
       });
     }
     if (request.method === "GET") {
       const since = Number(url.searchParams.get("since") || 0);
       let list = (await this.state.storage.get("messages")) || [];
-      const newItems = list.filter((item) => item.ts > since);
-      return new Response(JSON.stringify({ ok: true, messages: newItems, total: list.length }), {
-        headers: { "content-type": "application/json" },
+      if (!Array.isArray(list)) list = [];
+      const cutoff = Date.now() - WALL_MESSAGE_TTL_MS;
+      const activeItems = list.filter((item) => Number(item?.ts) > cutoff);
+      const newItems = activeItems.filter((item) => item.ts > since);
+      return new Response(JSON.stringify({ ok: true, messages: newItems, total: activeItems.length }), {
+        headers: { "content-type": "application/json", "cache-control": "no-store" },
       });
     }
-    return new Response("method not allowed", { status: 405 });
+    return new Response("method not allowed", {
+      status: 405,
+      headers: { "cache-control": "no-store" },
+    });
+  }
+
+  async alarm() {
+    await this.state.storage.deleteAll();
   }
 }
 

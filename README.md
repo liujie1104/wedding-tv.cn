@@ -6,7 +6,7 @@
 
 - **前端**：纯静态 HTML/CSS/JS，无打包
 - **运行时**：Cloudflare Workers（`src/worker.js` 入口） + Static Assets
-- **数据**：Cloudflare KV（绑定名 `WEDDING`）
+- **数据**：Cloudflare KV（绑定名 `WEDDING`）+ SQLite-backed Durable Objects（绑定名 `WALL_DO`）
 - **AI**：Google Gemini 2.5 Flash（文本）+ DashScope wanx2.1-t2i-turbo（海报图像）+ Workers AI（头像）
 
 ## 目录
@@ -16,7 +16,7 @@ src/worker.js          Worker 入口，路由 /api/* 到 functions/api/*.js
 functions/api/         后端处理函数（save/load/upload/img/story/avatar/ai/poster/poster-img）
 functions/_lib.js      公共工具
 *.html                 首页 + 各工具/落地页（被 ASSETS 直接服务）
-wrangler.jsonc         Cloudflare 配置（KV/AI/vars）
+wrangler.jsonc         Cloudflare 配置（KV/Durable Objects/AI/vars）
 .assetsignore          隔离不应公开的源码
 ```
 
@@ -24,10 +24,12 @@ wrangler.jsonc         Cloudflare 配置（KV/AI/vars）
 
 - 首页以 `/` 为 canonical，其余公开静态文档以 `.html` URL 为 canonical；sitemap、RSS 与站内链接保持一致。
 - Cloudflare Static Assets 使用 `html_handling: "none"`，确保 `.html` canonical 直接返回 `200`，不被平台自动改写。
-- 无扩展名和尾斜杠旧地址由 Worker 以 `301` 永久重定向到对应 `.html`；`index.html` 与 `live.html` 重定向到首页。
+- 无扩展名和尾斜杠旧地址由 Worker 以 `301` 永久重定向到对应 `.html`；`index.html` 重定向到首页，`live.html` 重定向到 `live-wall.html`。
 - `404.html` 只作为真实 `404` 响应返回，不能作为可索引的 `200` 页面。
 
 ## 本地开发
+
+需要 Node.js 22 或更高版本。
 
 ```powershell
 npm install -g wrangler
@@ -36,9 +38,9 @@ wrangler dev
 
 ## 部署
 
-主分支 push 到 GitHub → Cloudflare 自动构建并部署。
+主分支 push 到 GitHub → Cloudflare 自动构建并部署。GitHub Actions 先完成 Wrangler dry-run 和内容审计，再等待 Cloudflare 的提交检查成功并确认线上 sitemap 与当前提交一致，最后才提交 IndexNow 和百度链接推送。
 
-> ⚠️ 凡是希望持久存在的 KV/AI/vars 绑定，**必须**写入 `wrangler.jsonc`，否则每次推送会被覆盖。  
+> 凡是希望持久存在的 KV、Durable Objects、AI 或 vars 绑定，**必须**写入 `wrangler.jsonc`，否则每次推送会被覆盖。
 > 真正的 Secret（如 `GEMINI_API_KEY`、`DASHSCOPE_API_KEY`）通过 Cloudflare Dashboard 的 Secrets 添加，不放仓库。
 
 ## 必需环境变量 / 绑定
@@ -46,6 +48,7 @@ wrangler dev
 | 名称 | 类型 | 说明 |
 | --- | --- | --- |
 | `WEDDING` | KV | 短链与请帖数据存储 |
+| `WALL_DO` | SQLite-backed Durable Object | 按房间串行保存现场祝福，最后一条留言后 24 小时自动清空 |
 | `AI` | Workers AI | 头像图像生成 |
 | `ASSETS` | Static Assets | 静态资源 |
 | `GEMINI_API_KEY` | Secret | Gemini API Key |
@@ -61,6 +64,7 @@ wrangler dev
 
 ```powershell
 node scripts/audit-static-content.cjs
+npx --yes wrangler@4.128.0 deploy --dry-run --outdir .wrangler/dry-run
 curl.exe -I https://wedding-tv.cn/
 curl.exe "https://wedding-tv.cn/api/load?id=missing"
 ```

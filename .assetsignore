@@ -4,6 +4,7 @@ src/
 scripts/
 .github/
 .vscode/
+.wrangler/
 node_modules/
 .embedder/
 .git/

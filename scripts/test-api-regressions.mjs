@@ -321,17 +321,22 @@ test("Live wall XSS prevention: guest names and lottery winners are properly esc
 
 test("Durable Object serial message processing: WallRoom handles serial writes and retrieval", async () => {
   const storageMap = new Map();
+  let alarmAt = null;
+  const storageOperations = [];
   const mockState = {
     storage: {
       async get(key) { return storageMap.get(key) || null; },
-      async put(key, val) { storageMap.set(key, val); },
+      async put(key, val) { storageOperations.push("put"); storageMap.set(key, val); },
+      async setAlarm(timestamp) { storageOperations.push("alarm"); alarmAt = timestamp; },
+      async deleteAll() { storageMap.clear(); },
     },
   };
 
   const wallRoom = new WallRoom(mockState, {});
+  const now = Date.now();
 
   // 1. Post two messages serially
-  const msg1 = { id: "m1", name: "宾客A", message: "新婚快乐", ts: 1000 };
+  const msg1 = { id: "m1", name: "宾客A", message: "新婚快乐", ts: now - 1000 };
   const res1 = await wallRoom.fetch(new Request("https://wall-room/message", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -339,7 +344,7 @@ test("Durable Object serial message processing: WallRoom handles serial writes a
   }));
   assert.equal(res1.status, 200);
 
-  const msg2 = { id: "m2", name: "宾客B", message: "百年好合", ts: 2000 };
+  const msg2 = { id: "m2", name: "宾客B", message: "百年好合", ts: now };
   const res2 = await wallRoom.fetch(new Request("https://wall-room/message", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -348,13 +353,32 @@ test("Durable Object serial message processing: WallRoom handles serial writes a
   assert.equal(res2.status, 200);
 
   // 2. Query messages
-  const getRes = await wallRoom.fetch(new Request("https://wall-room/messages?since=500"));
+  const getRes = await wallRoom.fetch(new Request(`https://wall-room/messages?since=${now - 2000}`));
   assert.equal(getRes.status, 200);
   const getData = await getRes.json();
   assert.equal(getData.ok, true);
   assert.equal(getData.messages.length, 2);
   assert.equal(getData.messages[0].name, "宾客A");
   assert.equal(getData.messages[1].name, "宾客B");
+  assert.ok(alarmAt >= now + 86_399_000, "WallRoom must schedule cleanup about 24 hours after the latest post");
+  assert.ok(storageOperations.indexOf("alarm") < storageOperations.indexOf("put"), "Cleanup must be scheduled before messages are stored");
+
+  // 3. Alarm removes all room messages
+  await wallRoom.alarm();
+  const afterAlarmRes = await wallRoom.fetch(new Request("https://wall-room/messages?since=0"));
+  const afterAlarmData = await afterAlarmRes.json();
+  assert.equal(afterAlarmData.total, 0);
+  assert.equal(afterAlarmData.messages.length, 0);
+});
+
+test("Wrangler Durable Object configuration: WallRoom uses a SQLite migration", () => {
+  const config = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), "wrangler.jsonc"), "utf8"));
+  const binding = config.durable_objects?.bindings?.find((item) => item.name === "WALL_DO");
+  assert.equal(binding?.class_name, "WallRoom");
+
+  const migration = config.migrations?.find((item) => item.tag === "v1");
+  assert.deepEqual(migration?.new_sqlite_classes, ["WallRoom"]);
+  assert.equal(migration?.new_classes, undefined, "New Durable Objects must not use legacy KV-backed migrations");
 });
 
 test("Policy pages date integrity: dynamic synchronization based on JSON-LD dateModified", async () => {
