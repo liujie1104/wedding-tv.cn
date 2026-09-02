@@ -897,7 +897,7 @@ function toggleLottery() {
     const winner = $("lotteryRoller").textContent.replace(/🎉/g, "").trim();
     const item = document.createElement("div");
     item.style.padding = "4px 0";
-    item.innerHTML = `🏆 <strong style="color:var(--gold)">${winner}</strong> 荣获幸运大礼！ (${new Date().toLocaleTimeString()})`;
+    item.innerHTML = `🏆 <strong style="color:var(--gold)">${escapeHtml(winner)}</strong> 荣获幸运大礼！ (${escapeHtml(new Date().toLocaleTimeString())})`;
     $("lotteryWinnerList").appendChild(item);
   }
 }

@@ -243,3 +243,34 @@ export default {
     return staticResponse(res, path);
   },
 };
+
+export class WallRoom {
+  constructor(state, env) {
+    this.state = state;
+    this.env = env;
+  }
+
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (request.method === "POST") {
+      const item = await request.json();
+      let list = (await this.state.storage.get("messages")) || [];
+      list.push(item);
+      if (list.length > 200) list = list.slice(-200);
+      await this.state.storage.put("messages", list);
+      return new Response(JSON.stringify({ ok: true, item }), {
+        headers: { "content-type": "application/json" },
+      });
+    }
+    if (request.method === "GET") {
+      const since = Number(url.searchParams.get("since") || 0);
+      let list = (await this.state.storage.get("messages")) || [];
+      const newItems = list.filter((item) => item.ts > since);
+      return new Response(JSON.stringify({ ok: true, messages: newItems, total: list.length }), {
+        headers: { "content-type": "application/json" },
+      });
+    }
+    return new Response("method not allowed", { status: 405 });
+  }
+}
+

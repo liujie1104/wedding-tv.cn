@@ -15,6 +15,14 @@
   "kv_namespaces": [
     { "binding": "WEDDING", "id": "11ebf337807946b68cbd33d1432ea2ee" }
   ],
+  "durable_objects": {
+    "bindings": [
+      { "name": "WALL_DO", "class_name": "WallRoom" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_classes": ["WallRoom"] }
+  ],
   "ai": { "binding": "AI" },
   "vars": {
     "AVATAR_ENABLED": "true",

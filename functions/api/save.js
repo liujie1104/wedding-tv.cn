@@ -93,6 +93,24 @@ export const onRequestPost = async ({ request, env }) => {
       ts: Date.now(),
     };
 
+    // 1. 如果配置了 Durable Object (env.WALL_DO)，按房间隔离并串行写入，避免并发覆写
+    if (env?.WALL_DO) {
+      try {
+        const id = env.WALL_DO.idFromName(room);
+        const obj = env.WALL_DO.get(id);
+        const doRes = await obj.fetch("https://wall-room/message", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(newItem),
+        });
+        const doData = await doRes.json();
+        return json(200, doData);
+      } catch (e) {
+        return serverError(String(e?.message || e));
+      }
+    }
+
+    // 2. KV 兜底模式（未配置 WALL_DO 时）
     try {
       const raw = await env.WEDDING.get("wall:" + room);
       let list = raw ? JSON.parse(raw) : [];

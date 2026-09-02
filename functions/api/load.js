@@ -9,8 +9,20 @@ export const onRequestGet = async ({ request, env }) => {
   if (wallRoom) {
     const room = wallRoom.slice(0, 32);
     const since = Number(url.searchParams.get("since") || 0);
+
+    // 如果配置了 Durable Object (env.WALL_DO)，从 DO 串行存储获取
+    if (env?.WALL_DO) {
+      try {
+        const id = env.WALL_DO.idFromName(room);
+        const obj = env.WALL_DO.get(id);
+        const doRes = await obj.fetch(`https://wall-room/messages?since=${encodeURIComponent(since)}`);
+        const doData = await doRes.json();
+        return json(200, doData);
+      } catch {}
+    }
+
     let list = [];
-    if (env.WEDDING) {
+    if (env?.WEDDING) {
       try {
         const raw = await env.WEDDING.get("wall:" + room);
         if (raw) list = JSON.parse(raw);

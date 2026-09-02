@@ -1,4 +1,4 @@
-// Automated regression tests for Cloudflare Worker API contracts, frontend image resolution, and quota execution order
+// Automated regression tests for Cloudflare Worker API contracts, frontend image resolution, quota execution order, XSS security, and policy dates
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -9,6 +9,8 @@ import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequestGet as posterGet, onRequestPost as posterPost } from "../functions/api/poster.js";
 import { onRequestPost as uploadPost } from "../functions/api/upload.js";
 import { onRequestPost as savePost } from "../functions/api/save.js";
+import { onRequestGet as loadGet } from "../functions/api/load.js";
+import { WallRoom } from "../src/worker.js";
 
 // Mock KV implementation
 class MockKV {
@@ -286,7 +288,76 @@ test("Save API validation & quota order: invalid wall or invitation payloads do 
   assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:invite:")).length, 2);
 });
 
-test("Policy pages date integrity: privacy and terms dates are strictly synchronized", async () => {
+test("Live wall XSS prevention: guest names and lottery winners are properly escaped", async () => {
+  const root = path.resolve(process.cwd());
+  const wallHtml = fs.readFileSync(path.join(root, "live-wall.html"), "utf8");
+
+  // 1. Verify escapeHtml exists and works against malicious vectors
+  const match = wallHtml.match(/function escapeHtml\(str\)\s*\{[\s\S]*?\n\}/);
+  assert.ok(match, "escapeHtml function must exist in live-wall.html");
+
+  const context = {};
+  vm.createContext(context);
+  vm.runInContext(match[0], context);
+  const escapeHtml = context.escapeHtml;
+
+  const maliciousName = `<img src=x onerror="alert('XSS')">`;
+  const escaped = escapeHtml(maliciousName);
+  assert.ok(!escaped.includes("<"), "Must not contain raw <");
+  assert.ok(!escaped.includes(">"), "Must not contain raw >");
+  assert.ok(!escaped.includes('"'), 'Must not contain raw "');
+  assert.equal(escaped, "&lt;img src=x onerror=&quot;alert(&#39;XSS&#39;)&quot;&gt;");
+
+  // 2. Statically verify lottery winner rendering uses escapeHtml
+  assert.ok(
+    wallHtml.includes("escapeHtml(winner)"),
+    "live-wall.html must use escapeHtml(winner) when displaying lottery winners"
+  );
+  assert.ok(
+    !wallHtml.includes("<strong>${winner}</strong>"),
+    "live-wall.html must not interpolate raw unescaped ${winner} into innerHTML"
+  );
+});
+
+test("Durable Object serial message processing: WallRoom handles serial writes and retrieval", async () => {
+  const storageMap = new Map();
+  const mockState = {
+    storage: {
+      async get(key) { return storageMap.get(key) || null; },
+      async put(key, val) { storageMap.set(key, val); },
+    },
+  };
+
+  const wallRoom = new WallRoom(mockState, {});
+
+  // 1. Post two messages serially
+  const msg1 = { id: "m1", name: "宾客A", message: "新婚快乐", ts: 1000 };
+  const res1 = await wallRoom.fetch(new Request("https://wall-room/message", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(msg1),
+  }));
+  assert.equal(res1.status, 200);
+
+  const msg2 = { id: "m2", name: "宾客B", message: "百年好合", ts: 2000 };
+  const res2 = await wallRoom.fetch(new Request("https://wall-room/message", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(msg2),
+  }));
+  assert.equal(res2.status, 200);
+
+  // 2. Query messages
+  const getRes = await wallRoom.fetch(new Request("https://wall-room/messages?since=500"));
+  assert.equal(getRes.status, 200);
+  const getData = await getRes.json();
+  assert.equal(getData.ok, true);
+  assert.equal(getData.messages.length, 2);
+  assert.equal(getData.messages[0].name, "宾客A");
+  assert.equal(getData.messages[1].name, "宾客B");
+});
+
+test("Policy pages date integrity: dynamic synchronization based on JSON-LD dateModified", async () => {
   const root = path.resolve(process.cwd());
   const sitemapXml = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
 
@@ -299,25 +370,27 @@ test("Policy pages date integrity: privacy and terms dates are strictly synchron
   // 1. Check privacy.html
   const privacyHtml = fs.readFileSync(path.join(root, "privacy.html"), "utf8");
   const privJsonDate = privacyHtml.match(/"dateModified":\s*"([^"]+)"/)?.[1];
+  assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(privJsonDate || ""), "privacy.html must have valid YYYY-MM-DD JSON-LD dateModified");
+
   const privVisDateMatch = privacyHtml.match(/最后更新：(\d{4})年(\d{1,2})月(\d{1,2})日/);
   const privVisDate = privVisDateMatch ? `${privVisDateMatch[1]}-${String(privVisDateMatch[2]).padStart(2, "0")}-${String(privVisDateMatch[3]).padStart(2, "0")}` : null;
   const privStatusDateMatch = privacyHtml.match(/当前状态[（(](\d{4})年(\d{1,2})月(\d{1,2})日/);
   const privStatusDate = privStatusDateMatch ? `${privStatusDateMatch[1]}-${String(privStatusDateMatch[2]).padStart(2, "0")}-${String(privStatusDateMatch[3]).padStart(2, "0")}` : null;
   const privSitemapDate = getSitemapLastmod("privacy.html");
 
-  assert.equal(privJsonDate, "2026-09-01", "privacy.html JSON-LD dateModified must be 2026-09-01");
-  assert.equal(privVisDate, "2026-09-01", "privacy.html visible date must be 2026-09-01");
-  assert.equal(privStatusDate, "2026-09-01", "privacy.html current status date must be 2026-09-01");
-  assert.equal(privSitemapDate, "2026-09-01", "privacy.html sitemap lastmod must be 2026-09-01");
+  assert.equal(privVisDate, privJsonDate, "privacy.html visible date must match JSON-LD dateModified");
+  assert.equal(privStatusDate, privJsonDate, "privacy.html current status date must match JSON-LD dateModified");
+  assert.equal(privSitemapDate, privJsonDate, "privacy.html sitemap lastmod must match JSON-LD dateModified");
 
   // 2. Check terms.html
   const termsHtml = fs.readFileSync(path.join(root, "terms.html"), "utf8");
   const termsJsonDate = termsHtml.match(/"dateModified":\s*"([^"]+)"/)?.[1];
+  assert.ok(/^\d{4}-\d{2}-\d{2}$/.test(termsJsonDate || ""), "terms.html must have valid YYYY-MM-DD JSON-LD dateModified");
+
   const termsVisDateMatch = termsHtml.match(/最后更新：(\d{4})年(\d{1,2})月(\d{1,2})日/);
   const termsVisDate = termsVisDateMatch ? `${termsVisDateMatch[1]}-${String(termsVisDateMatch[2]).padStart(2, "0")}-${String(termsVisDateMatch[3]).padStart(2, "0")}` : null;
   const termsSitemapDate = getSitemapLastmod("terms.html");
 
-  assert.equal(termsJsonDate, "2026-09-01", "terms.html JSON-LD dateModified must be 2026-09-01");
-  assert.equal(termsVisDate, "2026-09-01", "terms.html visible date must be 2026-09-01");
-  assert.equal(termsSitemapDate, "2026-09-01", "terms.html sitemap lastmod must be 2026-09-01");
+  assert.equal(termsVisDate, termsJsonDate, "terms.html visible date must match JSON-LD dateModified");
+  assert.equal(termsSitemapDate, termsJsonDate, "terms.html sitemap lastmod must match JSON-LD dateModified");
 });
