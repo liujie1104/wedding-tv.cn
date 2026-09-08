@@ -97,7 +97,7 @@ EXPLICIT_CORE_DATES = {
     "playlist.html": "2026-08-26",
     "vows.html": "2026-08-27",
     "speech.html": "2026-08-27",
-    "checklist.html": "2026-08-27",
+    "checklist.html": "2026-09-08",
     "countdown.html": "2026-08-26",
     "calculator.html": "2026-08-26",
     "quote-comparison.html": "2026-08-26",

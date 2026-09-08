@@ -418,3 +418,70 @@ test("Policy pages date integrity: dynamic synchronization based on JSON-LD date
   assert.equal(termsVisDate, termsJsonDate, "terms.html visible date must match JSON-LD dateModified");
   assert.equal(termsSitemapDate, termsJsonDate, "terms.html sitemap lastmod must match JSON-LD dateModified");
 });
+
+test("Assets deployment contract: browser scripts and assets must not be excluded by .assetsignore", async () => {
+  const root = path.resolve(process.cwd());
+  const assetsIgnore = fs.readFileSync(path.join(root, ".assetsignore"), "utf8");
+  const ignorePatterns = assetsIgnore.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#"));
+
+  // 1. Verify assets/speed-booster.js exists and is not ignored
+  const speedBoosterPath = path.join(root, "assets", "speed-booster.js");
+  assert.ok(fs.existsSync(speedBoosterPath), "assets/speed-booster.js must exist on disk");
+  assert.ok(!ignorePatterns.some(p => p === "assets/" || p === "assets"), "assets/ must not be in .assetsignore");
+
+  // Verify it has valid JS syntax
+  const scriptContent = fs.readFileSync(speedBoosterPath, "utf8");
+  assert.doesNotThrow(() => new vm.Script(scriptContent, { filename: "assets/speed-booster.js" }), "assets/speed-booster.js must have valid syntax");
+
+  // 2. Scan all HTML files to ensure none reference old /scripts/speed-booster.js
+  const htmlFiles = [];
+  function scan(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name === ".git") continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) scan(full);
+      else if (entry.name.endsWith(".html")) htmlFiles.push(full);
+    }
+  }
+  scan(root);
+
+  for (const h of htmlFiles) {
+    const content = fs.readFileSync(h, "utf8");
+    assert.ok(!content.includes("/scripts/speed-booster.js"), `${path.relative(root, h)} must not reference /scripts/speed-booster.js`);
+  }
+
+  // 3. Verify worker redirects legacy /scripts/speed-booster.js
+  const workerSrc = fs.readFileSync(path.join(root, "src", "worker.js"), "utf8");
+  assert.ok(workerSrc.includes('path === "/scripts/speed-booster.js"'), "worker.js must handle legacy /scripts/speed-booster.js requests");
+  assert.ok(workerSrc.includes('permanentRedirect(url, "/assets/speed-booster.js")'), "worker.js must redirect to /assets/speed-booster.js");
+});
+
+test("Checklist feature claims contract: checklist.html must accurately describe actual functionality", async () => {
+  const root = path.resolve(process.cwd());
+  const checklistHtml = fs.readFileSync(path.join(root, "checklist.html"), "utf8");
+
+  // 1. Prohibited exaggerated claims
+  assert.ok(!/128\s*项/.test(checklistHtml), "checklist.html must not promise 128 fixed items");
+  assert.ok(!/导出\s*Excel/i.test(checklistHtml), "checklist.html must not promise Excel export");
+  assert.ok(!/智能倒计时/.test(checklistHtml), "checklist.html must not promise automatic countdown deadline system");
+
+  // 2. Required authorized functional description
+  assert.ok(
+    checklistHtml.includes("按城市、婚期、预算和人数生成婚礼筹备清单初稿，支持在线勾选、保存当前浏览器进度、复制全文和打印。AI 建议需结合当地情况核对。"),
+    "checklist.html description must match authorized summary"
+  );
+
+  // 3. Date parity across JSON-LD, visible text, and sitemap
+  const sitemapXml = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+  const sitemapMatch = sitemapXml.match(/<loc>https:\/\/wedding-tv\.cn\/checklist\.html<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/);
+  const sitemapDate = sitemapMatch ? sitemapMatch[1] : null;
+
+  const jsonDate = checklistHtml.match(/"dateModified":\s*"([^"]+)"/)?.[1];
+  const visDateMatch = checklistHtml.match(/更新[：:]\s*(\d{4})[-年](\d{1,2})[-月](\d{1,2})/);
+  const visDate = visDateMatch ? `${visDateMatch[1]}-${String(visDateMatch[2]).padStart(2, "0")}-${String(visDateMatch[3]).padStart(2, "0")}` : null;
+
+  assert.ok(jsonDate, "checklist.html must have JSON-LD dateModified");
+  assert.equal(visDate, jsonDate, "checklist.html visible date must match dateModified");
+  assert.equal(sitemapDate, jsonDate, "checklist.html sitemap lastmod must match dateModified");
+});
+

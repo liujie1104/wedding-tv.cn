@@ -6,6 +6,28 @@ const root = path.resolve(__dirname, "..");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
 const urls = [...sitemap.matchAll(/<loc>https:\/\/wedding-tv\.cn\/?([^<]*)<\/loc>/g)].map((match) => match[1] || "index.html");
+
+const assetsIgnoreLines = fs.existsSync(path.join(root, ".assetsignore"))
+  ? fs.readFileSync(path.join(root, ".assetsignore"), "utf8")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#"))
+  : [];
+
+function isExcludedByAssetsIgnore(relPath) {
+  const norm = relPath.replace(/\\/g, "/").replace(/^\/+/, "");
+  for (const pat of assetsIgnoreLines) {
+    const p = pat.replace(/\\/g, "/");
+    if (p.endsWith("/")) {
+      if (norm.startsWith(p) || norm === p.slice(0, -1)) return true;
+    } else if (pat.startsWith("*.")) {
+      if (norm.endsWith(pat.slice(1))) return true;
+    } else {
+      if (norm === p || norm.startsWith(p + "/")) return true;
+    }
+  }
+  return false;
+}
 const risky = [
   /上千场/, /数千(?:场|份)/, /5000\+/, /100\+\s*个城市/,
   /精确到\s*±/, /300dpi/i, /永久(?:链接|分享|保存)/, /版权安全/,
@@ -14,7 +36,8 @@ const risky = [
   /1\s*分钟(?:内)?(?:生成|完成)/, /5\s*秒(?:自动)?生成/, /高清原图/,
   /霸王条款/, /法律级/, /精准诊断/,
   /36\s*项/, /司仪迟到/, /婚纱破损/, /识别.*水分|潜在.*水分|挤水分/,
-  /确保.*满意/, /省钱省心/, /告别焦虑/, /调度秘籍/, /总管秘籍/
+  /确保.*满意/, /省钱省心/, /告别焦虑/, /调度秘籍/, /总管秘籍/,
+  /128\s*项/, /导出\s*Excel/i, /智能倒计时/
 ];
 const errors = [];
 const warnings = [];
@@ -539,6 +562,15 @@ for (const page of ["speech.html", "vows.html", "checklist.html"]) {
   }
 }
 
+// 筹备清单页面承诺的功能必须与实际实现相符
+const checklistHtml = fs.readFileSync(path.join(root, "checklist.html"), "utf8");
+if (/128\s*项|导出\s*Excel|智能倒计时/i.test(checklistHtml)) {
+  errors.push("checklist.html: contains unfulfilled promises (128 items, Excel export, or automatic countdown system)");
+}
+if (!/按城市、婚期、预算和人数生成婚礼筹备清单初稿/.test(checklistHtml)) {
+  errors.push("checklist.html: description does not match authorized functional scope");
+}
+
 const workflows = fs.readdirSync(path.join(root, ".github", "workflows"))
   .filter((name) => /auto-(?:cities|insights|news)\.ya?ml$/i.test(name));
 if (workflows.length) errors.push(`workflows: unreviewed AI publishing is enabled (${workflows.join(", ")})`);
@@ -585,6 +617,42 @@ for (const relativePath of urls) {
     if (!block[1].trim()) continue;
     try { new vm.Script(block[1], { filename: relativePath }); }
     catch (error) { errors.push(`${relativePath}: inline JavaScript syntax error (${error.message})`); }
+  }
+
+  // 校验页面引用的外链脚本（必须存在、未被 .assetsignore 排除且语法正确）
+  for (const match of html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)) {
+    const src = match[1].trim();
+    if (!src || src.startsWith("http://") || src.startsWith("https://") || src.startsWith("//") || src.startsWith("data:")) continue;
+    const cleanSrc = src.split("?")[0].split("#")[0];
+    const assetLocalPath = cleanSrc.replace(/^\/+/, "");
+    const fullAssetPath = path.join(root, assetLocalPath);
+    if (!fs.existsSync(fullAssetPath)) {
+      errors.push(`${relativePath}: referenced script "${src}" does not exist on disk`);
+    } else if (isExcludedByAssetsIgnore(assetLocalPath)) {
+      errors.push(`${relativePath}: referenced script "${src}" is excluded by .assetsignore and will return 404 online`);
+    } else {
+      try {
+        new vm.Script(fs.readFileSync(fullAssetPath, "utf8"), { filename: assetLocalPath });
+      } catch (e) {
+        errors.push(`${relativePath}: referenced script "${src}" syntax error (${e.message})`);
+      }
+    }
+  }
+
+  // 校验引用的样式表、图标等静态资产未被排除
+  for (const match of html.matchAll(/<link[^>]+href=["']([^"']+)["'][^>]*>/gi)) {
+    const tag = match[0];
+    const href = match[1].trim();
+    if (!/rel=["'](?:stylesheet|icon|apple-touch-icon|manifest)["']/i.test(tag)) continue;
+    if (!href || href.startsWith("http://") || href.startsWith("https://") || href.startsWith("//") || href.startsWith("data:")) continue;
+    const cleanHref = href.split("?")[0].split("#")[0];
+    const assetLocalPath = cleanHref.replace(/^\/+/, "");
+    const fullAssetPath = path.join(root, assetLocalPath);
+    if (!fs.existsSync(fullAssetPath)) {
+      errors.push(`${relativePath}: referenced asset "${href}" does not exist on disk`);
+    } else if (isExcludedByAssetsIgnore(assetLocalPath)) {
+      errors.push(`${relativePath}: referenced asset "${href}" is excluded by .assetsignore and will return 404 online`);
+    }
   }
 
   const linkSource = html

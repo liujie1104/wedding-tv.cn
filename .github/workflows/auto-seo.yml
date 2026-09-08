@@ -16,6 +16,8 @@ on:
       - 'sw.js'
       - 'manifest.json'
       - 'wrangler.jsonc'
+      - '.assetsignore'
+      - 'assets/**'
       - '.github/workflows/**'
   pull_request:
     branches: [main]
@@ -31,12 +33,13 @@ on:
       - 'sw.js'
       - 'manifest.json'
       - 'wrangler.jsonc'
+      - '.assetsignore'
+      - 'assets/**'
       - '.github/workflows/**'
 
 permissions:
   contents: read
   checks: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest

@@ -220,6 +220,10 @@ export default {
     const legacyTarget = LEGACY_REDIRECTS.get(path);
     if (legacyTarget) return permanentRedirect(url, legacyTarget);
 
+    if (path === "/scripts/speed-booster.js") {
+      return permanentRedirect(url, "/assets/speed-booster.js");
+    }
+
     // Permanently retired generated pages must not linger as ambiguous soft 404s.
     if (isRetiredPath(path)) return retiredResponse();
 
