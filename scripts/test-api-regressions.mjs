@@ -485,3 +485,13 @@ test("Checklist feature claims contract: checklist.html must accurately describe
   assert.equal(sitemapDate, jsonDate, "checklist.html sitemap lastmod must match dateModified");
 });
 
+test("AI prompt constraints: checklist prompt forbids hallucinating merchants and local market prices", () => {
+  const root = path.resolve(process.cwd());
+  const aiSource = fs.readFileSync(path.join(root, "functions", "api", "ai.js"), "utf8");
+
+  // Verify checklist prompt constraints
+  assert.ok(aiSource.includes("绝不推荐、提及或点名任何具体酒店"), "checklist prompt must forbid recommending specific hotels/merchants");
+  assert.ok(aiSource.includes("绝不生成声称代表当地市场行情的具体价格区间"), "checklist prompt must forbid fabricating local market prices");
+  assert.ok(aiSource.includes("规划参考比例"), "checklist prompt must allocate budget as percentage/planning reference");
+  assert.ok(aiSource.includes("向当地婚姻登记机关、预订场地或双方家庭长辈沟通确认"), "checklist prompt must convert local matters to verification tasks");
+});
