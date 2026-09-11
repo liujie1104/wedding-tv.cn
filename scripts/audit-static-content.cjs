@@ -423,8 +423,11 @@ const allHtml = filesUnder(root, ".html");
 for (const fullPath of allHtml) {
   const relativePath = path.relative(root, fullPath).replaceAll("\\", "/");
   const html = fs.readFileSync(fullPath, "utf8");
-  if (/hm\.baidu\.com|\/api\/track\b/.test(html)) {
-    errors.push(`${relativePath}: retired analytics or first-party tracking remains`);
+  if (/hm\.baidu\.com/.test(html)) {
+    errors.push(`${relativePath}: Baidu analytics must be injected centrally to enforce consent and route exclusions`);
+  }
+  if (/\/api\/track\b/.test(html)) {
+    errors.push(`${relativePath}: retired first-party tracking remains`);
   }
 }
 
@@ -450,6 +453,23 @@ if (!/现场祝福墙数据[\s\S]{0,180}24 小时/.test(privacy)) {
 }
 if (!privacy.includes("Cloudflare Web Analytics") || !privacy.includes("/cdn-cgi/rum")) {
   errors.push("privacy.html: missing Cloudflare Web Analytics disclosure");
+}
+if (!privacy.includes("百度统计隐私政策") || !privacy.includes("wedding_baidu_analytics_consent_v1")) {
+  errors.push("privacy.html: missing Baidu analytics consent, provider, or withdrawal disclosure");
+}
+const baiduAnalyticsSource = fs.readFileSync(path.join(root, "src", "baidu-analytics.js"), "utf8");
+if (!baiduAnalyticsSource.includes("1df8fda3d25e8df34a5c8e08f945e9fb") || !baiduAnalyticsSource.includes("hm.baidu.com/hm.js")) {
+  errors.push("src/baidu-analytics.js: missing the configured Baidu analytics tracking ID");
+}
+for (const noindexPath of allHtml.filter((fullPath) => /<meta[^>]+name=["']robots["'][^>]+content=["'][^"']*noindex/i.test(fs.readFileSync(fullPath, "utf8")))) {
+  const route = `/${path.relative(root, noindexPath).replaceAll("\\", "/")}`;
+  if (!baiduAnalyticsSource.includes(`"${route}"`)) {
+    errors.push(`src/baidu-analytics.js: noindex route is not excluded from Baidu analytics (${route})`);
+  }
+}
+const analyticsServiceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+if (!analyticsServiceWorker.includes("hm.baidu.com")) {
+  errors.push("sw.js: Baidu analytics requests must remain network-only");
 }
 for (const sourcePath of ["functions/api/save.js", "functions/api/upload.js"]) {
   const source = fs.readFileSync(path.join(root, sourcePath), "utf8");

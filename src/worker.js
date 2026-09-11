@@ -8,6 +8,10 @@ import { onRequestPost as avatarPost } from "../functions/api/avatar.js";
 import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as posterPost, onRequestGet as posterGet } from "../functions/api/poster.js";
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
+import {
+  BAIDU_ANALYTICS_SNIPPET,
+  shouldInjectBaiduAnalytics,
+} from "./baidu-analytics.js";
 
 const API = {
   "/api/save":      { POST: savePost },
@@ -93,7 +97,19 @@ function staticResponse(response, path) {
     headers.set("cache-control", "no-store");
     headers.set("cloudflare-cdn-cache-control", "no-store");
   }
-  return new Response(response.body, {
+  let body = response.body;
+  if (body && shouldInjectBaiduAnalytics(path)) {
+    body = new HTMLRewriter()
+      .on("head", {
+        element(element) {
+          element.append(BAIDU_ANALYTICS_SNIPPET, { html: true });
+        },
+      })
+      .transform(response).body;
+    headers.delete("content-length");
+    headers.delete("etag");
+  }
+  return new Response(body, {
     status: response.status,
     statusText: response.statusText,
     headers,

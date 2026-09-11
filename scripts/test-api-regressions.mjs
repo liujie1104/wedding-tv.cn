@@ -11,7 +11,13 @@ import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as uploadPost } from "../functions/api/upload.js";
 import { onRequestPost as savePost } from "../functions/api/save.js";
 import { onRequestGet as loadGet } from "../functions/api/load.js";
-import { WallRoom } from "../src/worker.js";
+import worker, { WallRoom } from "../src/worker.js";
+import {
+  BAIDU_ANALYTICS_EXCLUDED_PATHS,
+  BAIDU_ANALYTICS_ID,
+  BAIDU_ANALYTICS_SNIPPET,
+  shouldInjectBaiduAnalytics,
+} from "../src/baidu-analytics.js";
 import {
   DEFAULT_BAILIAN_IMAGE_MODEL,
   DEFAULT_BAILIAN_TEXT_MODEL,
@@ -50,6 +56,78 @@ const VALID_1X1_PNG_DATA_URL =
 // Fake PNG dataUrl with invalid signature
 const FAKE_PNG_DATA_URL =
   "data:image/png;base64,VEVTVEZBS0VQTkdOT1RBUE5HQVRBTEw="; // "TESTFAKENOTPNGATALL"
+
+test("Baidu analytics: public content is consent-gated and private/noindex routes are excluded", () => {
+  assert.equal(BAIDU_ANALYTICS_ID, "1df8fda3d25e8df34a5c8e08f945e9fb");
+  assert.match(BAIDU_ANALYTICS_SNIPPET, /wedding_baidu_analytics_consent_v1/);
+  assert.match(BAIDU_ANALYTICS_SNIPPET, /https:\/\/hm\.baidu\.com\/hm\.js\?/);
+  assert.match(BAIDU_ANALYTICS_SNIPPET, /允许统计/);
+  assert.match(BAIDU_ANALYTICS_SNIPPET, /拒绝/);
+  assert.equal(shouldInjectBaiduAnalytics("/"), true);
+  assert.equal(shouldInjectBaiduAnalytics("/blog/hunan.html"), true);
+  assert.equal(shouldInjectBaiduAnalytics("/privacy.html"), true);
+  assert.equal(shouldInjectBaiduAnalytics("/assets/speed-booster.js"), false);
+  for (const route of BAIDU_ANALYTICS_EXCLUDED_PATHS) {
+    assert.equal(shouldInjectBaiduAnalytics(route), false, `${route} must remain excluded`);
+  }
+});
+
+test("Worker injects Baidu consent code into public HTML but not invitation short links", async (t) => {
+  const originalHtmlRewriter = globalThis.HTMLRewriter;
+  let transformCount = 0;
+  globalThis.HTMLRewriter = class {
+    on(selector, handler) {
+      assert.equal(selector, "head");
+      this.handler = handler;
+      return this;
+    }
+
+    transform(response) {
+      transformCount += 1;
+      let appended = "";
+      this.handler.element({
+        append(value, options) {
+          assert.deepEqual(options, { html: true });
+          appended += value;
+        },
+      });
+      return new Response(`<!doctype html><html><head>${appended}</head><body>page</body></html>`, {
+        status: response.status,
+        headers: response.headers,
+      });
+    }
+  };
+  t.after(() => {
+    if (originalHtmlRewriter === undefined) delete globalThis.HTMLRewriter;
+    else globalThis.HTMLRewriter = originalHtmlRewriter;
+  });
+
+  const env = {
+    ASSETS: {
+      fetch: async () => new Response("<!doctype html><html><head></head><body>page</body></html>", {
+        headers: { "content-type": "text/html" },
+      }),
+    },
+  };
+  const ctx = { waitUntil() {} };
+
+  const publicResponse = await worker.fetch(
+    new Request("https://wedding-tv.cn/blog/hunan.html"),
+    env,
+    ctx
+  );
+  const publicHtml = await publicResponse.text();
+  assert.match(publicHtml, new RegExp(BAIDU_ANALYTICS_ID));
+  assert.match(publicHtml, /data-purpose="baidu-analytics-consent"/);
+
+  const invitationResponse = await worker.fetch(
+    new Request("https://wedding-tv.cn/i/abc12345"),
+    env,
+    ctx
+  );
+  assert.doesNotMatch(await invitationResponse.text(), new RegExp(BAIDU_ANALYTICS_ID));
+  assert.equal(transformCount, 1, "only the public content response should be rewritten");
+});
 
 test("Poster proxy contract: poster task success output is directly consumable by poster-img", async (t) => {
   const originalFetch = globalThis.fetch;

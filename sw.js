@@ -46,6 +46,7 @@ self.addEventListener('fetch', event => {
   // 2. Network-Only for all API routes, analytics, third-parties
   if (
     url.pathname.startsWith('/api/') ||
+    url.hostname.includes('hm.baidu.com') ||
     url.hostname.includes('googlesyndication.com') ||
     url.hostname.includes('google-analytics.com') ||
     url.hostname.includes('doubleclick.net')
