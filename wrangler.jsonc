@@ -26,6 +26,8 @@
   "ai": { "binding": "AI" },
   "vars": {
     "AVATAR_ENABLED": "true",
-    "AVATAR_DAILY_LIMIT": "100"
+    "AVATAR_DAILY_LIMIT": "100",
+    "BAILIAN_MODEL": "qwen3.8-flash",
+    "BAILIAN_IMAGE_MODEL": "qwen-image-3.0"
   }
 }

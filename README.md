@@ -7,7 +7,7 @@
 - **前端**：纯静态 HTML/CSS/JS，无打包
 - **运行时**：Cloudflare Workers（`src/worker.js` 入口） + Static Assets
 - **数据**：Cloudflare KV（绑定名 `WEDDING`）+ SQLite-backed Durable Objects（绑定名 `WALL_DO`）
-- **AI**：Google Gemini 2.5 Flash（文本）+ DashScope wanx2.1-t2i-turbo（海报图像）+ Workers AI（头像）
+- **AI**：阿里云百炼 `qwen3.8-flash`（文本）+ `qwen-image-3.0`（海报图像）+ Google Gemini 2.5 Flash（文本兜底）+ Workers AI（头像）
 
 ## 目录
 
@@ -15,6 +15,7 @@
 src/worker.js          Worker 入口，路由 /api/* 到 functions/api/*.js
 functions/api/         后端处理函数（save/load/upload/img/story/avatar/ai/poster/poster-img）
 functions/_lib.js      公共工具
+functions/config/      百炼免费模型白名单与额度快照
 *.html                 首页 + 各工具/落地页（被 ASSETS 直接服务）
 wrangler.jsonc         Cloudflare 配置（KV/Durable Objects/AI/vars）
 .assetsignore          隔离不应公开的源码
@@ -54,7 +55,9 @@ wrangler dev
 | `GEMINI_API_KEY` | Secret | Gemini API Key |
 | `DASHSCOPE_API_KEY` | Secret | DashScope / 阿里云百炼 API Key（AI 文案、AI 策划、AI 海报） |
 | `BAILIAN_BASE_URL` | Var | 可选，百炼 OpenAI 兼容模式 Base URL；不填则使用 `https://dashscope.aliyuncs.com/compatible-mode/v1` |
-| `BAILIAN_MODEL` | Var | 可选，AI 文案模型；不填则使用 `qwen-plus` |
+| `BAILIAN_MODEL` | Var | AI 文案模型，只允许免费额度白名单；当前为 `qwen3.8-flash` |
+| `BAILIAN_IMAGE_BASE_URL` | Var | 可选，百炼华北 2 业务空间域名，例如 `https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com`；海报接口优先使用此值 |
+| `BAILIAN_IMAGE_MODEL` | Var | AI 海报模型，只允许图片生成白名单；当前为 `qwen-image-3.0` |
 | `AVATAR_ENABLED` | Var | `true` / `false` 总开关 |
 | `AVATAR_DAILY_LIMIT` | Var | 头像每日全站配额 |
 
@@ -81,3 +84,5 @@ python scripts/ai_content_quality.py index.html ai-planner.html guide.html
 ```
 
 脚本会输出每个页面的 JSON 评分；`risk_level=high` 或 `score < 60` 时返回非 0 退出码，适合后续接入 GitHub Actions。
+
+百炼模型必须遵守 [BAILIAN_MODEL_POLICY.md](BAILIAN_MODEL_POLICY.md)。未记录正数免费额度、未开启“免费额度用完即停”或用途不匹配的模型会在调用前被拒绝。

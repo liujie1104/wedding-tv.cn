@@ -1,0 +1,163 @@
+{
+  "snapshotDate": "2026-09-11",
+  "region": "cn-beijing",
+  "source": "Aliyun Bailian free-quota console screenshots supplied by the account owner",
+  "policy": {
+    "defaultDeny": true,
+    "requirePositiveRecordedQuota": true,
+    "requireFreeStopEnabled": true,
+    "note": "Only model codes with a readable positive quota in this snapshot may be used. Hidden or unreadable rows remain blocked until a new verified snapshot is recorded."
+  },
+  "coverage": {
+    "language": { "consoleCount": 13, "recordedCount": 12 },
+    "visual": { "consoleCount": 11, "recordedCount": 10 },
+    "embedding": { "consoleCount": 3, "recordedCount": 3 },
+    "speech": { "consoleCount": 61, "recordedCount": 55 }
+  },
+  "groups": [
+    {
+      "category": "language",
+      "capabilities": ["text-generation"],
+      "quota": { "remaining": 1000000, "total": 1000000, "unit": "token" },
+      "freeStopEnabled": true,
+      "models": [
+        "qwen3.8-27b",
+        "qwen3.7-flash-2026-07-15",
+        "kimi-k3",
+        "qwen3.8-max-0902",
+        "qwen3.5-ocr",
+        "qwen3.7-flash",
+        "qwen3.8-flash",
+        "deepseek-v4-flash-0731",
+        "glm-5.2",
+        "deepseek-v4-pro-0813",
+        "qwen3.8-2.4t-a95b",
+        "qwen3.8-max"
+      ]
+    },
+    {
+      "category": "visual",
+      "capabilities": ["image-generation"],
+      "quota": { "remaining": 10, "total": 10, "unit": "image" },
+      "freeStopEnabled": true,
+      "models": ["qwen-image-3.0", "qwen-image-3.0-pro"]
+    },
+    {
+      "category": "visual",
+      "capabilities": ["image-translation"],
+      "quota": { "remaining": 100, "total": 100, "unit": "image" },
+      "freeStopEnabled": true,
+      "models": ["qwen-mt-image-2.0"]
+    },
+    {
+      "category": "visual",
+      "capabilities": ["video-generation"],
+      "quota": { "remaining": 50, "total": 50, "unit": "second" },
+      "freeStopEnabled": true,
+      "models": ["wan2.7-t2v-2026-06-12", "wan2.7-r2v-2026-06-12"]
+    },
+    {
+      "category": "visual",
+      "capabilities": ["video-generation"],
+      "quota": { "remaining": 10, "total": 10, "unit": "second" },
+      "freeStopEnabled": true,
+      "models": ["happyhorse-1.1-r2v", "happyhorse-1.1-t2v", "happyhorse-1.1-i2v"]
+    },
+    {
+      "category": "visual",
+      "capabilities": ["video-generation"],
+      "quota": { "remaining": 30, "total": 30, "unit": "second" },
+      "freeStopEnabled": true,
+      "models": ["wan3.0-video", "wan3.0-video-prime"]
+    },
+    {
+      "category": "embedding",
+      "capabilities": ["text-embedding"],
+      "quota": { "remaining": 1000000, "total": 1000000, "unit": "token" },
+      "freeStopEnabled": true,
+      "models": ["qwen3.7-text-embedding-flash", "qwen3.7-text-embedding"]
+    },
+    {
+      "category": "embedding",
+      "capabilities": ["text-rerank"],
+      "quota": { "remaining": 1000000, "total": 1000000, "unit": "token" },
+      "freeStopEnabled": true,
+      "models": ["qwen3.7-text-rerank"]
+    },
+    {
+      "category": "speech",
+      "capabilities": ["speech-synthesis"],
+      "quota": { "remaining": 30000, "total": 30000, "unit": "character" },
+      "freeStopEnabled": true,
+      "models": [
+        "sambert-zhide-v1",
+        "sambert-zhida-v1",
+        "sambert-zhishu-v1",
+        "sambert-zhiyue-v1",
+        "sambert-eva-v1",
+        "sambert-beth-v1",
+        "sambert-zhiye-v1",
+        "sambert-zhiya-v1",
+        "sambert-indah-v1",
+        "sambert-cindy-v1",
+        "sambert-zhiying-v1",
+        "sambert-zhistella-v1",
+        "sambert-perla-v1",
+        "sambert-zhilun-v1",
+        "sambert-zhichu-v1",
+        "sambert-zhimao-v1",
+        "sambert-zhigui-v1",
+        "sambert-zhinan-v1",
+        "sambert-zhixiao-v1",
+        "sambert-zhiming-v1",
+        "sambert-brian-v1",
+        "sambert-betty-v1",
+        "sambert-donna-v1",
+        "sambert-hanna-v1",
+        "sambert-zhiru-v1",
+        "sambert-zhiqi-v1",
+        "sambert-zhiting-v1",
+        "sambert-zhiyuan-v1",
+        "sambert-zhixiang-v1",
+        "sambert-zhijia-v1",
+        "sambert-zhifei-v1",
+        "sambert-waan-v1",
+        "sambert-camila-v1",
+        "sambert-zhiwei-v1",
+        "sambert-zhijing-v1",
+        "sambert-cally-v1",
+        "sambert-zhimiao-emo-v1",
+        "sambert-zhiqian-v1",
+        "sambert-zhishuo-v1",
+        "sambert-zhina-v1"
+      ]
+    },
+    {
+      "category": "speech",
+      "capabilities": ["speech-recognition"],
+      "quota": { "remaining": 36000, "total": 36000, "unit": "second" },
+      "freeStopEnabled": true,
+      "models": [
+        "paraformer-v2",
+        "paraformer-v1",
+        "paraformer-realtime-8k-v2",
+        "paraformer-realtime-v2",
+        "paraformer-realtime-v1",
+        "paraformer-8k-v1",
+        "paraformer-8k-v2",
+        "paraformer-mtl-v1",
+        "qwen-audio-3.0-asr-flash-streaming",
+        "qwen-audio-3.0-asr-flash",
+        "qwen3-asr-flash",
+        "qwen-audio-3.0-asr-flash-filetrans"
+      ]
+    },
+    {
+      "category": "speech",
+      "capabilities": ["speech-synthesis"],
+      "quota": { "remaining": 10000, "total": 10000, "unit": "character" },
+      "freeStopEnabled": true,
+      "models": ["qwen-audio-3.0-tts-plus", "cosyvoice-v1", "cosyvoice-clone-v1"]
+    }
+  ]
+}

@@ -1,9 +1,14 @@
-// AI 婚礼海报生成 - 基于阿里云百炼万相 wanx2.1-t2i-turbo
+// AI 婚礼海报生成 - 仅使用阿里云百炼免费额度白名单模型
 // POST /api/poster        body: { groom, bride, date, venue, style, color, size }  -> { ok, taskId }
 // GET  /api/poster?id=xxx                                                          -> { ok, status, imageUrl?, error? }
 import { json, badRequest, serverError, rateLimit, getIp, checkDailyQuota, readJsonBody } from "../_lib.js";
+import {
+  DEFAULT_BAILIAN_IMAGE_MODEL,
+  requireBailianBeijingBaseUrl,
+  requireBailianModel,
+} from "../_bailian-model-policy.js";
 
-const MODEL = "wanx2.1-t2i-turbo";
+const MODEL = DEFAULT_BAILIAN_IMAGE_MODEL;
 const SIZES = {
   portrait:  "720*1280",
   landscape: "1280*720",
@@ -33,6 +38,15 @@ function buildPrompt({ style, color }) {
   return parts.filter(Boolean).join(" ");
 }
 
+function getImageApiRoot(env) {
+  const configured = env.BAILIAN_IMAGE_BASE_URL || env.BAILIAN_BASE_URL || env.DASHSCOPE_BASE_URL;
+  const url = requireBailianBeijingBaseUrl(configured || "https://dashscope.aliyuncs.com");
+  url.pathname = url.pathname.replace(/\/compatible-mode\/v1\/?$/, "").replace(/\/+$/, "");
+  url.search = "";
+  url.hash = "";
+  return url.href.replace(/\/+$/, "");
+}
+
 const NEGATIVE = "text, letters, words, chinese characters, watermark, signature, logo, low quality, blurry, ugly, distorted, extra limbs, poor anatomy, busy bottom area, cluttered foreground";
 
 // ---------- POST: 创建任务 ----------
@@ -41,13 +55,20 @@ async function createTask({ request, env }) {
   if (!rateLimit(ip, 5)) return json(429, { ok: false, error: "请稍后再试（每分钟 5 次）" });
   const key = env.DASHSCOPE_API_KEY;
   if (!key) return json(503, { ok: false, error: "AI 海报服务未配置（缺少 DASHSCOPE_API_KEY）" });
+  let selectedModel;
+  try {
+    selectedModel = requireBailianModel(env.BAILIAN_IMAGE_MODEL || MODEL, "image-generation");
+    getImageApiRoot(env);
+  } catch (e) {
+    return json(503, { ok: false, error: String(e?.message || e) });
+  }
 
   const { data: body, err } = await readJsonBody(request, 8192);
   if (err === "payload_too_large") return json(413, { ok: false, error: "请求内容过大" });
   if (err) return badRequest("invalid json");
 
   // 校验通过后扣除每日配额
-  const allowed = await checkDailyQuota(env, ip, "poster", 10, 200);
+  const allowed = await checkDailyQuota(env, ip, "poster", 3, 10);
   if (!allowed) return json(429, { ok: false, error: "今日免费 AI 海报配额已用完，请明天再试" });
 
   const size = SIZES[body?.size] || SIZES.portrait;
@@ -60,7 +81,7 @@ async function createTask({ request, env }) {
   const prompt = buildPrompt({ style, color });
 
   const r = await fetch(
-    "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis",
+    `${getImageApiRoot(env)}/api/v1/services/aigc/image-generation/generation`,
     {
       method: "POST",
       headers: {
@@ -69,9 +90,19 @@ async function createTask({ request, env }) {
         "X-DashScope-Async": "enable",
       },
       body: JSON.stringify({
-        model: MODEL,
-        input: { prompt, negative_prompt: NEGATIVE },
-        parameters: { size, n: 1, prompt_extend: true },
+        model: selectedModel.code,
+        input: {
+          messages: [
+            { role: "user", content: [{ text: prompt }] },
+          ],
+        },
+        parameters: {
+          size,
+          n: 1,
+          prompt_extend: true,
+          negative_prompt: NEGATIVE,
+          watermark: false,
+        },
       }),
     }
   );
@@ -87,12 +118,18 @@ async function queryTask({ request, env }) {
   if (!rateLimit(getIp(request), 30)) return json(429, { ok: false, error: "请稍后再试" });
   const key = env.DASHSCOPE_API_KEY;
   if (!key) return json(503, { ok: false, error: "未配置" });
+  try {
+    requireBailianModel(env.BAILIAN_IMAGE_MODEL || MODEL, "image-generation");
+    getImageApiRoot(env);
+  } catch (e) {
+    return json(503, { ok: false, error: String(e?.message || e) });
+  }
   const url = new URL(request.url);
   const id = url.searchParams.get("id");
   if (!id || !/^[a-f0-9-]{6,64}$/i.test(id)) return badRequest("invalid id");
 
   const r = await fetch(
-    `https://dashscope.aliyuncs.com/api/v1/tasks/${encodeURIComponent(id)}`,
+    `${getImageApiRoot(env)}/api/v1/tasks/${encodeURIComponent(id)}`,
     {
       headers: { authorization: `Bearer ${key}` },
     }
@@ -102,7 +139,8 @@ async function queryTask({ request, env }) {
 
   const status = data?.output?.task_status; // PENDING / RUNNING / SUCCEEDED / FAILED
   if (status === "SUCCEEDED") {
-    const rawUrl = data?.output?.results?.[0]?.url;
+    const rawUrl = data?.output?.choices?.[0]?.message?.content?.find((item) => item?.image)?.image
+      || data?.output?.results?.[0]?.url;
     if (!rawUrl) return serverError("未返回图片地址");
     // 返回代理地址，避免把阿里云带签名的临时 URL 暴露或让客户端直接下载跨域
     const proxyUrl = `/api/poster-img?url=${encodeURIComponent(rawUrl)}`;

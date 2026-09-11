@@ -1,9 +1,14 @@
 // POST /api/ai  body: { kind, ... } -> { ok, text, model }
-// 主：阿里云百炼 qwen-plus（中文好、免费额度大）
+// 主：阿里云百炼免费额度白名单模型
 // 兜底：Google Gemini 2.5 Flash
 import { json, badRequest, serverError, rateLimit, getIp, checkDailyQuota, readJsonBody } from "../_lib.js";
+import {
+  DEFAULT_BAILIAN_TEXT_MODEL,
+  requireBailianBeijingBaseUrl,
+  requireBailianModel,
+} from "../_bailian-model-policy.js";
 
-const QWEN_MODEL = "qwen-plus";
+const QWEN_MODEL = DEFAULT_BAILIAN_TEXT_MODEL;
 const QWEN_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1";
 const GEMINI_MODEL = "gemini-2.5-flash";
 
@@ -131,7 +136,8 @@ const PROMPTS = {
 
 // ---------- 模型适配 ----------
 async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
-  const root = String(baseUrl || QWEN_BASE_URL).replace(/\/+$/, "");
+  const selectedModel = requireBailianModel(model || QWEN_MODEL, "text-generation");
+  const root = requireBailianBeijingBaseUrl(baseUrl || QWEN_BASE_URL).href.replace(/\/+$/, "");
   const r = await fetch(
     `${root}/chat/completions`,
     {
@@ -141,7 +147,7 @@ async function callQwen({ key, baseUrl, model, sys, user, cfg }) {
         authorization: `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model: model || QWEN_MODEL,
+        model: selectedModel.code,
         messages: [
           { role: "system", content: sys },
           { role: "user", content: user },
@@ -191,6 +197,15 @@ export const onRequestPost = async ({ request, env }) => {
   const qwenModel = env.BAILIAN_MODEL || env.DASHSCOPE_MODEL || QWEN_MODEL;
   const geminiKey = env.GEMINI_API_KEY;
   if (!qwenKey && !geminiKey) return json(503, { ok: false, error: "AI 服务尚未配置" });
+
+  if (qwenKey) {
+    try {
+      requireBailianModel(qwenModel, "text-generation");
+      requireBailianBeijingBaseUrl(qwenBaseUrl);
+    } catch (e) {
+      return json(503, { ok: false, error: String(e?.message || e) });
+    }
+  }
 
   const { data: body, err } = await readJsonBody(request, 8192);
   if (err === "payload_too_large") return json(413, { ok: false, error: "请求内容过大" });

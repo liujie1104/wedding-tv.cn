@@ -7,10 +7,18 @@ import vm from "node:vm";
 
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequestGet as posterGet, onRequestPost as posterPost } from "../functions/api/poster.js";
+import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as uploadPost } from "../functions/api/upload.js";
 import { onRequestPost as savePost } from "../functions/api/save.js";
 import { onRequestGet as loadGet } from "../functions/api/load.js";
 import { WallRoom } from "../src/worker.js";
+import {
+  DEFAULT_BAILIAN_IMAGE_MODEL,
+  DEFAULT_BAILIAN_TEXT_MODEL,
+  listRecordedBailianModels,
+  requireBailianBeijingBaseUrl,
+  requireBailianModel,
+} from "../functions/_bailian-model-policy.js";
 
 // Mock KV implementation
 class MockKV {
@@ -57,7 +65,12 @@ test("Poster proxy contract: poster task success output is directly consumable b
           output: {
             task_id: mockTaskId,
             task_status: "SUCCEEDED",
-            results: [{ url: mockOssUrl }],
+            choices: [
+              {
+                finish_reason: "stop",
+                message: { role: "assistant", content: [{ type: "image", image: mockOssUrl }] },
+              },
+            ],
           },
         }),
         { status: 200, headers: { "content-type": "application/json" } }
@@ -171,6 +184,126 @@ test("Poster frontend contract: poster.html resolveImageUrl never double-wraps p
     !posterHtml.includes("const proxy = `/api/poster-img?url=${encodeURIComponent(url)}`"),
     "poster.html must not contain old double-wrapping proxy template"
   );
+});
+
+test("Bailian model policy: only quota-backed models and matching capabilities are accepted", () => {
+  const models = listRecordedBailianModels();
+  assert.equal(models.length, 80, "all 80 readable model codes from the screenshots must be recorded");
+  assert.ok(models.every((record) => record.quota.remaining > 0), "every allowlisted model must have positive quota");
+  assert.ok(models.every((record) => record.freeStopEnabled), "every allowlisted model must have free-stop enabled");
+  assert.equal(requireBailianModel(DEFAULT_BAILIAN_TEXT_MODEL, "text-generation").quota.remaining, 1_000_000);
+  assert.equal(requireBailianModel(DEFAULT_BAILIAN_IMAGE_MODEL, "image-generation").quota.remaining, 10);
+  assert.throws(() => requireBailianModel("qwen-plus", "text-generation"), /未列入免费额度白名单/);
+  assert.throws(() => requireBailianModel("wanx2.1-t2i-turbo", "image-generation"), /未列入免费额度白名单/);
+  assert.throws(() => requireBailianModel("wan3.0-video", "image-generation"), /不支持当前用途/);
+});
+
+test("Bailian endpoint policy: only Beijing free-quota endpoints are accepted", () => {
+  assert.equal(
+    requireBailianBeijingBaseUrl("https://dashscope.aliyuncs.com/compatible-mode/v1").hostname,
+    "dashscope.aliyuncs.com"
+  );
+  assert.equal(
+    requireBailianBeijingBaseUrl("https://workspace-id.cn-beijing.maas.aliyuncs.com/compatible-mode/v1").hostname,
+    "workspace-id.cn-beijing.maas.aliyuncs.com"
+  );
+  assert.throws(
+    () => requireBailianBeijingBaseUrl("https://dashscope-intl.aliyuncs.com/compatible-mode/v1"),
+    /仅允许华北 2/
+  );
+  assert.throws(
+    () => requireBailianBeijingBaseUrl("https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"),
+    /Token Plan/
+  );
+  assert.throws(() => requireBailianBeijingBaseUrl("http://dashscope.aliyuncs.com"), /仅允许华北 2/);
+});
+
+test("AI API rejects an unquotaed model before making a provider request", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let providerCalled = false;
+  globalThis.fetch = async () => {
+    providerCalled = true;
+    throw new Error("provider must not be called");
+  };
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const request = new Request("https://wedding-tv.cn/api/ai", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": "2.3.4.6" },
+    body: JSON.stringify({ kind: "vows", story: "测试内容足够长" }),
+  });
+  const response = await aiPost({
+    request,
+    env: { DASHSCOPE_API_KEY: "test-key", BAILIAN_MODEL: "qwen-plus" },
+  });
+  assert.equal(response.status, 503);
+  assert.equal(providerCalled, false);
+});
+
+test("Poster API rejects a non-Beijing or Token Plan endpoint before consuming quota", async () => {
+  const kv = new MockKV();
+  const request = new Request("https://wedding-tv.cn/api/poster", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": "2.3.4.7" },
+    body: JSON.stringify({ style: "rose", size: "portrait" }),
+  });
+  const response = await posterPost({
+    request,
+    env: {
+      DASHSCOPE_API_KEY: "test-key",
+      BAILIAN_IMAGE_BASE_URL: "https://token-plan.cn-beijing.maas.aliyuncs.com",
+      WEDDING: kv,
+    },
+  });
+  assert.equal(response.status, 503);
+  assert.equal(kv.puts.length, 0);
+});
+
+test("Poster API uses the approved qwen-image endpoint and request schema", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let capturedUrl = "";
+  let capturedBody;
+  globalThis.fetch = async (url, opts) => {
+    capturedUrl = String(url);
+    capturedBody = JSON.parse(opts.body);
+    return new Response(JSON.stringify({ output: { task_id: "abcdef-123456", task_status: "PENDING" } }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  };
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const request = new Request("https://wedding-tv.cn/api/poster", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": "2.3.4.5" },
+    body: JSON.stringify({ style: "rose", size: "portrait" }),
+  });
+  const response = await posterPost({ request, env: { DASHSCOPE_API_KEY: "test-key" } });
+  assert.equal(response.status, 200);
+  assert.match(capturedUrl, /\/api\/v1\/services\/aigc\/image-generation\/generation$/);
+  assert.equal(capturedBody.model, "qwen-image-3.0");
+  assert.equal(capturedBody.input.messages[0].content[0].text.length > 20, true);
+  assert.equal(capturedBody.parameters.n, 1);
+  assert.equal(capturedBody.parameters.watermark, false);
+});
+
+test("Repository contains no retired unquotaed Bailian defaults", () => {
+  const root = path.resolve(process.cwd());
+  const guardedFiles = [
+    path.join(root, "functions", "api", "ai.js"),
+    path.join(root, "functions", "api", "poster.js"),
+    path.join(root, "scripts", "ai_content_quality.py"),
+    path.join(root, "wrangler.jsonc"),
+  ];
+  for (const file of guardedFiles) {
+    const source = fs.readFileSync(file, "utf8");
+    assert.ok(!source.includes("qwen-plus"), `${path.relative(root, file)} must not use qwen-plus`);
+    assert.ok(!source.includes("wanx2.1-t2i-turbo"), `${path.relative(root, file)} must not use wanx2.1-t2i-turbo`);
+  }
 });
 
 test("Upload validation & quota order: invalid uploads never consume daily quota, only valid uploads write quota", async () => {

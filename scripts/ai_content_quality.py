@@ -8,7 +8,7 @@ Usage:
 
 Optional:
   BAILIAN_BASE_URL=https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1
-  BAILIAN_MODEL=qwen-plus
+  BAILIAN_MODEL=qwen3.8-flash
 """
 from __future__ import annotations
 
@@ -18,12 +18,43 @@ import re
 import sys
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
 from html.parser import HTMLParser
 from pathlib import Path
 
 
 DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-DEFAULT_MODEL = "qwen-plus"
+DEFAULT_MODEL = "qwen3.8-flash"
+POLICY_PATH = Path(__file__).resolve().parents[1] / "functions" / "config" / "bailian-free-models.json"
+
+
+def require_allowed_model(model: str, capability: str) -> dict:
+    policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+    for group in policy["groups"]:
+        if model not in group["models"]:
+            continue
+        if capability not in group["capabilities"]:
+            raise ValueError(f"百炼模型 {model} 不支持当前用途：{capability}")
+        if policy["policy"]["requirePositiveRecordedQuota"] and int(group["quota"]["remaining"]) <= 0:
+            raise ValueError(f"百炼模型 {model} 的已记录免费额度为 0")
+        if policy["policy"]["requireFreeStopEnabled"] and not group["freeStopEnabled"]:
+            raise ValueError(f"百炼模型 {model} 未开启免费额度用完即停")
+        return group
+    raise ValueError(f"百炼模型未列入免费额度白名单：{model}")
+
+
+def require_beijing_base_url(base_url: str) -> str:
+    parsed = urlparse(base_url)
+    hostname = (parsed.hostname or "").lower()
+    public_beijing = hostname == "dashscope.aliyuncs.com"
+    beijing_workspace = hostname.endswith(".cn-beijing.maas.aliyuncs.com") and (
+        hostname != "token-plan.cn-beijing.maas.aliyuncs.com"
+    )
+    if parsed.scheme != "https" or not (public_beijing or beijing_workspace):
+        raise ValueError("百炼接口仅允许华北 2（北京）免费额度端点，禁止其他地域或 Token Plan 地址")
+    if parsed.username or parsed.password or parsed.port not in {None, 443}:
+        raise ValueError("百炼接口地址包含不允许的认证信息或端口")
+    return base_url.rstrip("/")
 
 
 class TextExtractor(HTMLParser):
@@ -83,7 +114,7 @@ def call_bailian(key: str, base_url: str, model: str, page: str, text: str) -> d
         ensure_ascii=False,
     ).encode("utf-8")
     req = urllib.request.Request(
-        f"{base_url.rstrip('/')}/chat/completions",
+        f"{base_url}/chat/completions",
         data=body,
         headers={
             "authorization": f"Bearer {key}",
@@ -110,6 +141,12 @@ def main() -> int:
 
     base_url = os.environ.get("BAILIAN_BASE_URL", DEFAULT_BASE_URL)
     model = os.environ.get("BAILIAN_MODEL", DEFAULT_MODEL)
+    try:
+        require_allowed_model(model, "text-generation")
+        base_url = require_beijing_base_url(base_url)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
     results = []
 
     for path in paths:
