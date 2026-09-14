@@ -5,7 +5,10 @@ const vm = require("vm");
 const root = path.resolve(__dirname, "..");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
-const urls = [...sitemap.matchAll(/<loc>https:\/\/wedding-tv\.cn\/?([^<]*)<\/loc>/g)].map((match) => match[1] || "index.html");
+const urls = [...sitemap.matchAll(/<loc>https:\/\/wedding-tv\.cn\/?([^<]*)<\/loc>/g)].map((match) => {
+  const p = match[1] || "index.html";
+  return p === "en/" ? "en/index.html" : p;
+});
 
 const assetsIgnoreLines = fs.existsSync(path.join(root, ".assetsignore"))
   ? fs.readFileSync(path.join(root, ".assetsignore"), "utf8")
@@ -616,7 +619,9 @@ for (const relativePath of urls) {
   const canonical = html.match(/<link rel="canonical" href="([^"]*)"/i)?.[1];
   const expectedCanonical = relativePath === "index.html"
     ? "https://wedding-tv.cn/"
-    : `https://wedding-tv.cn/${relativePath}`;
+    : (relativePath === "en/index.html"
+      ? "https://wedding-tv.cn/en/"
+      : `https://wedding-tv.cn/${relativePath}`);
   const text = visibleText(html);
 
   if (!title) errors.push(`${relativePath}: missing title`);

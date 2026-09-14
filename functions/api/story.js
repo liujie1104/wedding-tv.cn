@@ -13,19 +13,23 @@ export const onRequestPost = async ({ request, env }) => {
   if (err === "payload_too_large") return json(413, { ok: false, error: "请求内容过大" });
   if (err) return badRequest("invalid json");
 
+  const isEn = body?.lang === "en";
   const brief = (body?.brief || "").toString().slice(0, 600);
   const groom = (body?.groom || "").toString().slice(0, 30);
   const bride = (body?.bride || "").toString().slice(0, 30);
-  if (brief.length < 5) return badRequest("请至少写 5 个字");
+  if (brief.length < 5) return badRequest(isEn ? "Please write at least 5 characters" : "请至少写 5 个字");
 
   // 校验通过后扣除配额
   const allowed = await checkDailyQuota(env, ip, "story", 20, 500);
-  if (!allowed) return json(429, { ok: false, error: "今日爱情故事生成配额已用完，请明天再试" });
+  if (!allowed) return json(429, { ok: false, error: isEn ? "Daily quota exceeded, please try again tomorrow" : "今日爱情故事生成配额已用完，请明天再试" });
 
-  const sys =
-    "你是一位温柔的中文婚礼文案作家。请把用户提供的相识简介，改写为 90-130 字的温馨爱情故事，" +
-    "用第三人称叙述，风格清新、不浮夸、避免陈词滥调。直接输出一段正文，不要标题、不要 Markdown、不要引号、不要换行。";
-  const user = `新郎：${groom || "（未填）"}\n新娘：${bride || "（未填）"}\n相识简介：${brief}`;
+  const sys = isEn
+    ? "You are a warm, poetic wedding storyteller. Rewrite the couple's brief relationship background into an 80-130 word heartwarming love story in English, using third-person narrative. The tone should be sincere, romantic, and elegant without clichés. Output only a single cohesive paragraph of plain text. Do NOT include titles, markdown, quotes, bullet points, or line breaks."
+    : "你是一位温柔的中文婚礼文案作家。请把用户提供的相识简介，改写为 90-130 字的温馨爱情故事，" +
+      "用第三人称叙述，风格清新、不浮夸、避免陈词滥调。直接输出一段正文，不要标题、不要 Markdown、不要引号、不要换行。";
+  const user = isEn
+    ? `Partner 1: ${groom || "(unspecified)"}\nPartner 2: ${bride || "(unspecified)"}\nBrief notes: ${brief}`
+    : `新郎：${groom || "（未填）"}\n新娘：${bride || "（未填）"}\n相识简介：${brief}`;
 
   try {
     const r = await fetch(

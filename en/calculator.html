@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wedding Photo & Video Budget Calculator | wedding-tv.cn</title>
+<meta name="description" content="Free interactive wedding photography and videography cost estimator. Calculate realistic price ranges based on camera coverage, duration, live-streaming, drone shots, and same-day edits." />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#0e0a14" />
+<meta name="author" content="wedding-tv.cn" />
+
+<link rel="canonical" href="https://wedding-tv.cn/en/calculator.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/calculator.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/en/calculator.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/calculator.html" />
+
+<meta property="og:site_name" content="wedding-tv.cn" />
+<meta property="og:title" content="Wedding Photo & Video Budget Calculator | wedding-tv.cn" />
+<meta property="og:description" content="Select camera crew, duration, live stream, and highlight film options to estimate your wedding videography budget range." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wedding-tv.cn/en/calculator.html" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Wedding Photo & Video Budget Calculator" />
+<meta name="twitter:description" content="Interactive wedding photo, video, and live streaming cost estimator." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💍</text></svg>" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Wedding Photo & Video Budget Calculator",
+  "url": "https://wedding-tv.cn/en/calculator.html",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "en",
+  "description": "Interactive tool to calculate estimated wedding video, photography, and live streaming budget ranges based on coverage, duration, and optional add-ons.",
+  "dateModified": "2026-09-14",
+  "author": { "@type": "Organization", "name": "wedding-tv.cn Editorial Team", "url": "https://wedding-tv.cn/en/about.html" },
+  "publisher": { "@type": "Organization", "name": "wedding-tv.cn", "url": "https://wedding-tv.cn/en/" }
+}
+</script>
+
+<style>
+:root{--bg:#0e0a14;--fg:#f5f1ea;--mute:#b9b1a3;--accent:#d4a574;--card:#1a1320;--line:#2a2030;--ok:#7fdca8}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+header.topbar{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:5}
+header.topbar .inner{max-width:920px;margin:0 auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center}
+header.topbar a.brand{font-weight:700;color:var(--fg)}
+nav a{margin-left:18px;color:var(--mute);font-size:14px}
+.wrap{max-width:920px;margin:0 auto;padding:48px 22px}
+h1{font-size:32px;margin:0 0 8px}
+.lead{color:var(--mute);margin:0 0 28px}
+.calc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:28px}
+.row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;align-items:center}
+.row label{flex:0 0 170px;color:var(--mute);font-size:14px}
+.row select,.row input[type=number]{flex:1;min-width:200px;background:#0a060f;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:15px}
+.row .opts{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+.opts label.chk{flex:none;display:inline-flex;align-items:center;gap:6px;background:#0a060f;border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:14px;color:var(--fg)}
+.opts label.chk input{accent-color:var(--accent)}
+.result{background:linear-gradient(135deg,#1f1426,#2a1838);border:1px solid var(--accent);border-radius:12px;padding:28px;text-align:center;margin-top:8px}
+.result .price{font-size:42px;font-weight:800;color:var(--accent);letter-spacing:-1px}
+.result .range{color:var(--mute);font-size:14px;margin-top:6px}
+.breakdown{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.breakdown table{width:100%;border-collapse:collapse;font-size:14px}
+.breakdown th,.breakdown td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left}
+.breakdown th{background:#1f1628;color:var(--accent)}
+.breakdown tr:last-child td{border-bottom:none;background:#1f1628;font-weight:700}
+.cta{display:inline-block;background:var(--accent);color:#1a0f00;padding:10px 20px;border-radius:8px;font-weight:700;margin-top:14px}
+.note{color:var(--mute);font-size:13px;margin-top:18px;line-height:1.6}
+.share{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+.share button{background:#0a060f;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px}
+.share button:hover{border-color:var(--accent);color:var(--accent)}
+h2{font-size:22px;margin:42px 0 12px;border-left:4px solid var(--accent);padding-left:12px}
+ul.tips li{margin:6px 0}
+footer{border-top:1px solid var(--line);margin-top:64px;padding:24px 0;color:var(--mute);font-size:13px;text-align:center}
+</style>
+
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<script defer src="/assets/speed-booster.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="inner">
+    <a class="brand" href="/en/">wedding-tv.cn</a>
+    <nav>
+      <a href="/en/">Home</a>
+      <a href="/en/wedding-live-wall.html">Live Screen</a>
+      <a href="/en/timeline.html">Timeline</a>
+      <a href="/en/invitation.html">Invitation</a>
+      <a href="/en/checklist.html">Checklist</a>
+      <a href="/calculator.html">中文版</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<h1>Wedding Photo & Video Budget Calculator</h1>
+<p class="lead">Select your coverage options below to instantly calculate estimated price ranges for <strong>wedding videography, photography, live streaming, and highlight films</strong>. Use this estimate for initial planning; final quotes depend on written vendor agreements.</p>
+
+<form id="calc" class="calc" onsubmit="return false">
+  <div class="row">
+    <label>Market Location Tier</label>
+    <select id="city">
+      <option value="1.35" selected>Tier 1: Major Metro / International Destination</option>
+      <option value="1.15">Tier 2: Regional Capital / Large Metro</option>
+      <option value="1.0">Tier 3: Mid-Sized City / Suburban Venue</option>
+      <option value="0.85">Tier 4: Small Town / Rural Region</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Camera Crew Setup</label>
+    <select id="cams">
+      <option value="500">Solo Filmmaker (Single Camera)</option>
+      <option value="1200" selected>Dual Cameras (Lead Cinema + Second Shooter)</option>
+      <option value="2400">Three Cameras + Crane / Jib Rig</option>
+      <option value="4000">Full Production (Four Cameras + Live Director)</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Coverage Duration</label>
+    <select id="dur">
+      <option value="0.7">Half-Day (4 Hours)</option>
+      <option value="1.0" selected>Full-Day (8 Hours)</option>
+      <option value="1.35">Extended Day + Early Prep (10+ Hours)</option>
+      <option value="1.8">Two-Day Celebration / Rehearsal Dinner</option>
+    </select>
+  </div>
+  <div class="row">
+    <label>Optional Add-ons</label>
+    <div class="opts">
+      <label class="chk"><input type="checkbox" id="op_live" data-cost="600"> Multi-Cam Cloud Live Stream</label>
+      <label class="chk"><input type="checkbox" id="op_quick" data-cost="350" checked> Same-Day Edit (SDE Highlight)</label>
+      <label class="chk"><input type="checkbox" id="op_mv" data-cost="1000"> Cinematic Feature Film (10-15 Min)</label>
+      <label class="chk"><input type="checkbox" id="op_drone" data-cost="300"> Aerial Drone Coverage</label>
+      <label class="chk"><input type="checkbox" id="op_doc" data-cost="500"> Full Documentary Cut (60+ Min)</label>
+      <label class="chk"><input type="checkbox" id="op_invite" data-cost="50"> Digital Invitation & Social Poster</label>
+    </div>
+  </div>
+  <div class="row">
+    <label>Estimated Guest Count</label>
+    <input type="number" id="guests" value="120" min="20" max="800" step="10">
+  </div>
+</form>
+
+<div class="result">
+  <div style="color:var(--mute);font-size:14px;margin-bottom:6px">Estimated Budget Range (USD Reference)</div>
+  <div class="price" id="total">$ —</div>
+  <div class="range" id="range">Low $— · High $—</div>
+  <div class="share">
+    <button onclick="copyResult()">📋 Copy Estimate</button>
+    <button onclick="shareResult()">🔗 Share Link</button>
+  </div>
+</div>
+
+<div class="breakdown">
+  <table>
+    <thead><tr><th>Coverage Item</th><th style="text-align:right">Subtotal</th></tr></thead>
+    <tbody id="bd"></tbody>
+  </table>
+</div>
+
+<p class="note">This calculation uses baseline reference parameters. Actual quotes vary significantly based on peak vs. off-peak dates, vendor portfolio demand, travel expenses, turnaround timeline, and music licensing. We recommend obtaining at least two formal written vendor quotes.</p>
+
+<h2>Negotiation & Review Checklist</h2>
+<ul class="tips">
+  <li>Use this estimate as a <strong>breakdown baseline</strong> to ask vendors to explain specific pricing differences line by line.</li>
+  <li>Confirm whether the quote includes <strong>raw footage delivery, audio backup, color grading passes, and overtime hourly rates</strong>.</li>
+  <li>If booking <strong>wedding live-streaming</strong>, verify dedicated mobile bonding hardware, backup internet, and local high-res recording.</li>
+  <li>Ensure <strong>same-day edit (SDE)</strong> delivery hours and reception projection requirements are clearly stated in writing.</li>
+  <li>Deposit terms should be explicitly tied to milestones with a clear cancellation and postponement clause.</li>
+</ul>
+
+<h2>Next Planning Steps</h2>
+<p>Create an hour-by-hour schedule with our <a href="/en/timeline.html">Wedding Day Timeline Builder</a>, or organize milestone tasks with the <a href="/en/checklist.html">Smart Wedding Checklist</a>.</p>
+
+</main>
+
+<section class="content-boundary" style="max-width:780px;margin:44px auto 24px;padding:24px;background:#171121;border:1px solid rgba(255,255,255,.12);border-radius:8px;line-height:1.8">
+  <h2 style="font-size:22px;margin:0 0 12px;color:#d4a574">Scope & Methodology Disclosures</h2>
+  <p style="margin:0 0 12px">This tool estimates typical wedding photo and video coverage using published baseline ratios. It does not represent live market clearing rates or guarantee contractor availability.</p>
+  <p style="margin:0 0 12px">Before signing any vendor contract, verify equipment redundancy, audio multi-tracking, insurance certificate, editing revision windows, and digital archive retention policies.</p>
+  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">Content Responsibility: <a href="/en/about.html" rel="author">wedding-tv.cn Editorial Team</a> · Updated: 2026-09-14 · <a href="/en/privacy.html">Privacy Policy</a></p>
+</section>
+
+<footer>© 2026 wedding-tv.cn · <a href="/en/privacy.html">Privacy</a> · <a href="/en/terms.html">Terms</a> · <a href="/en/about.html">About</a> · <a href="/en/">Home</a></footer>
+
+<script>
+const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+function calc(){
+  const city = parseFloat(document.getElementById('city').value);
+  const cams = parseFloat(document.getElementById('cams').value);
+  const dur = parseFloat(document.getElementById('dur').value);
+  const base = cams * dur;
+  const items = [{name:'Camera Crew × Duration Factor ('+dur+'x)', cost: base}];
+  document.querySelectorAll('.opts input[type=checkbox]').forEach(cb=>{
+    if(cb.checked){
+      const c = parseFloat(cb.dataset.cost);
+      items.push({name: cb.parentNode.textContent.trim(), cost: c});
+    }
+  });
+  const guests = parseInt(document.getElementById('guests').value)||120;
+  const guestFee = Math.max(0,(guests-100))*3;
+  if(guestFee>0) items.push({name:'Guest Scale Adjustment ('+guests+' guests)', cost: guestFee});
+  const sub = items.reduce((s,i)=>s+i.cost,0);
+  const total = sub * city;
+  const cityFee = total - sub;
+  if(Math.abs(cityFee)>1) items.push({name:'Market Tier Adjustment ('+city+'x)', cost: cityFee});
+  items.push({name:'Estimated Total', cost: total});
+
+  document.getElementById('bd').innerHTML = items.map(i=>
+    '<tr><td>'+i.name+'</td><td style="text-align:right">'+fmt(i.cost)+'</td></tr>').join('');
+  document.getElementById('total').textContent = fmt(total);
+  document.getElementById('range').textContent = 'Estimated Range: ' + fmt(total*0.85) + ' — ' + fmt(total*1.25);
+  return total;
+}
+document.getElementById('calc').addEventListener('input', calc);
+document.getElementById('calc').addEventListener('change', calc);
+calc();
+
+function copyResult(){
+  const t = document.getElementById('total').textContent;
+  const r = document.getElementById('range').textContent;
+  navigator.clipboard.writeText('My Wedding Photo & Video Budget Estimate: '+t+' ('+r+') — via wedding-tv.cn/en/calculator.html');
+  alert('Estimate copied to clipboard!');
+}
+function shareResult(){
+  if(navigator.share){
+    navigator.share({title:'Wedding Budget Estimate', text:'Estimated wedding photo & video budget', url:location.href});
+  } else {
+    navigator.clipboard.writeText(location.href);
+    alert('Link copied to clipboard!');
+  }
+}
+</script>
+
+</body>
+</html>

@@ -166,7 +166,7 @@ const DEFAULT_MD = `## 6 Months Before
 - [ ] Begin shopping for wedding attire and schedule first fitting
 
 ## 3 Months Before
-- [ ] Send out formal wedding invitations and launch RSVP tracking
+- [ ] Send out wedding invitations and track guest attendance confirmations
 - [ ] Schedule catering menu tasting and cake design session
 - [ ] Purchase wedding rings and arrange engraving if desired
 - [ ] Plan ceremony order, readings, and special musical selections
@@ -285,11 +285,12 @@ async function gen(){
 $("go").onclick = gen;
 $("regenBtn").onclick = () => {
   localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem("checklist_en_md");
   $("out").innerHTML = renderMarkdown(DEFAULT_MD);
   bindCheckboxes();
 };
 $("copyBtn").onclick = async () => {
-  await navigator.clipboard.writeText(sessionStorage.getItem("checklist_en_md") || $("out").innerText);
+  await navigator.clipboard.writeText(sessionStorage.getItem("checklist_en_md") || DEFAULT_MD);
   $("copyBtn").textContent = "✅ Copied";
   setTimeout(() => $("copyBtn").textContent = "📋 Copy All", 1500);
 };

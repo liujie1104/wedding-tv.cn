@@ -12,19 +12,23 @@
       const records = recall(recordKey, []).filter(r => r.expiresAt > Date.now());
       records.push({ id: data.roomId, mode: data.room.mode, createdAt: Date.now(), expiresAt: data.room.expiresAt });
       remember(recordKey, records.slice(-30));
-      location.assign("/live-wall.html?room=" + data.roomId + "#key=" + data.adminKey);
+      const isEn = location.pathname.startsWith('/en/') || document.documentElement.lang === 'en';
+      const langParam = isEn ? '&lang=en' : '';
+      location.assign("/live-wall.html?room=" + data.roomId + langParam + "#key=" + data.adminKey);
     } catch (error) { $("createStatus").textContent = error.message; $("createStatus").classList.add("error"); }
     finally { $("createButton").disabled = false; }
   });
   const records = recall(recordKey, []);
   if (records.length) {
+    const isEn = location.pathname.startsWith('/en/') || document.documentElement.lang === 'en';
+    const langParam = isEn ? '&lang=en' : '';
     $("recentSection").hidden = false;
     for (const record of records.slice().reverse()) {
       const row = node("li");
-      row.append(node("span", (record.mode === "event" ? "正式活动" : "彩排试用") + " · " + new Date(record.createdAt).toLocaleString("zh-CN")));
+      row.append(node("span", (isEn ? (record.mode === "event" ? "Live Event" : "Rehearsal") : (record.mode === "event" ? "正式活动" : "彩排试用")) + " · " + new Date(record.createdAt).toLocaleString(isEn ? "en-US" : "zh-CN")));
       if (record.expiresAt > Date.now()) {
-        const link = node("a", "打开房间"); link.href = "/live-wall.html?room=" + encodeURIComponent(record.id); row.append(link);
-      } else row.append(node("span", "已过期", "muted"));
+        const link = node("a", isEn ? "Open Room" : "打开房间"); link.href = "/live-wall.html?room=" + encodeURIComponent(record.id) + langParam; row.append(link);
+      } else row.append(node("span", isEn ? "Expired" : "已过期", "muted"));
       $("recentRooms").append(row);
     }
   }

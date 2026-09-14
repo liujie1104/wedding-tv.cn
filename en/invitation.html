@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Free Digital Wedding Invitation & Save-the-Date Poster Maker | wedding-tv.cn</title>
-<meta name="description" content="Create elegant mobile wedding invitations and 9:16 vertical Save-the-Date posters online for free. Features 4 designer templates, photo uploads, background music, AI love story expansion, and RSVP sharing." />
+<meta name="description" content="Create elegant mobile wedding invitations and 9:16 vertical Save-the-Date posters online for free. Features 4 designer templates, photo uploads, background music, AI love story expansion, and calendar integration (.ics)." />
 <meta name="author" content="wedding-tv.cn Editorial Team" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <meta name="theme-color" content="#fdf6ee" />
@@ -565,7 +565,7 @@ async function generatePoster() {
 
   ctx.fillStyle = goldColor;
   ctx.font = '22px -apple-system, sans-serif';
-  ctx.fillText('Scan QR Code to RSVP & View Invitation', W / 2, H - 120);
+  ctx.fillText('Scan QR Code to View Invitation & Save to Calendar', W / 2, H - 120);
 
   ctx.fillStyle = 'rgba(255,255,255,0.45)';
   ctx.font = '18px sans-serif';
@@ -597,6 +597,7 @@ $('publish').addEventListener('click', async () => {
   $('publish').disabled = true; $('publish').textContent = 'Publishing...';
   try{
     const inv = {
+      lang: 'en',
       template: state.template,
       groom: state.groom, bride: state.bride,
       date: state.date, time: state.time,
@@ -610,7 +611,7 @@ $('publish').addEventListener('click', async () => {
     const r = await fetch('/api/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({invitation:inv})});
     const j = await r.json();
     if(!j.ok) throw new Error(j.error);
-    location.href = '/i/'+j.id;
+    location.href = '/i/'+j.id+'?lang=en';
   }catch(err){
     $('formError').textContent = '❌ Publishing failed: ' + err.message;
     $('publish').disabled = false; $('publish').textContent = '📤 Publish Invitation Link';

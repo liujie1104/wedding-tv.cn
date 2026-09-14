@@ -89,13 +89,13 @@ CORE_PAGES = [
     ("en/speech.html", "0.9", "weekly"),
     ("en/privacy.html", "0.7", "monthly"),
     ("en/terms.html", "0.7", "monthly"),
+    ("en/about.html", "0.7", "monthly"),
+    ("en/calculator.html", "0.9", "weekly"),
 ]
 
 EXPLICIT_CORE_DATES = {
     "": "2026-09-14",
     "wedding-live-wall.html": "2026-09-14",
-    "terms.html": "2026-09-14",
-    "privacy.html": "2026-09-14",
     "timeline.html": "2026-09-14",
     "vows.html": "2026-09-14",
     "speech.html": "2026-09-14",
@@ -112,6 +112,8 @@ EXPLICIT_CORE_DATES = {
     "en/speech.html": "2026-09-14",
     "en/privacy.html": "2026-09-14",
     "en/terms.html": "2026-09-14",
+    "en/about.html": "2026-09-14",
+    "en/calculator.html": "2026-09-14",
     "about.html": "2026-08-26",
     "terms.html": "2026-09-01",
     "editorial-policy.html": "2026-08-27",

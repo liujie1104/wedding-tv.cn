@@ -16,7 +16,7 @@ export const BAIDU_ANALYTICS_EXCLUDED_PATHS = new Set([
 ]);
 
 export function shouldInjectBaiduAnalytics(pathname) {
-  const isHtml = pathname === "/" || pathname.endsWith(".html");
+  const isHtml = pathname === "/" || pathname === "/en/" || pathname === "/en" || pathname.endsWith(".html");
   return isHtml && !BAIDU_ANALYTICS_EXCLUDED_PATHS.has(pathname);
 }
 

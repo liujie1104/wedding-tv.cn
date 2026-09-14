@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wedding-tv-v2';
+const CACHE_NAME = 'wedding-tv-v3';
 
 // Only pre-cache fixed static brand icons and assets
 const STATIC_ASSETS = [
@@ -17,7 +17,7 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate: clean up ALL old caches (including wedding-tv-v1)
+// Activate: clean up ALL old caches (including wedding-tv-v1, wedding-tv-v2)
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
@@ -64,35 +64,30 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // 5. Cache-First only for static assets (.css, .js, .woff2, .ttf, static images)
+  // 5. Stale-While-Revalidate for static assets (.css, .js, .woff2, .ttf, static images)
   const isStaticAsset = /\.(css|js|woff2?|ttf|png|svg|ico|webp|jpg|jpeg)$/i.test(url.pathname);
   if (!isStaticAsset) {
     return;
   }
 
   event.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) {
-        return cached;
-      }
-
-      return fetch(req).then(res => {
-        if (!res || res.status !== 200 || res.type !== 'basic') {
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(req).then(cached => {
+        const fetchPromise = fetch(req).then(res => {
+          if (res && res.status === 200 && (res.type === 'basic' || res.type === 'cors')) {
+            // Respect Cache-Control: private, no-store
+            const cacheControl = res.headers.get('cache-control') || '';
+            if (!cacheControl.includes('no-store') && !cacheControl.includes('private')) {
+              cache.put(req, res.clone());
+            }
+          }
           return res;
-        }
-
-        // Respect Cache-Control: private, no-store
-        const cacheControl = res.headers.get('cache-control') || '';
-        if (cacheControl.includes('no-store') || cacheControl.includes('private')) {
-          return res;
-        }
-
-        const resClone = res.clone();
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(req, resClone);
+        }).catch(err => {
+          if (cached) return cached;
+          throw err;
         });
 
-        return res;
+        return cached || fetchPromise;
       });
     })
   );

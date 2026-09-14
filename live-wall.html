@@ -11,8 +11,8 @@
 <link rel="icon" href="/icon-192.png" />
 <link rel="stylesheet" href="/assets/wall.css" />
 <script defer src="/assets/qrcode.js"></script>
-<script defer src="/assets/wall-ui.js"></script>
-<script defer src="/assets/wall-screen.js"></script>
+<script defer src="/assets/wall-ui.js?v=20260914"></script>
+<script defer src="/assets/wall-screen.js?v=20260914"></script>
 </head><body class="wall-body">
 <header class="wall-header"><a class="brand" href="/wedding-live-wall.html">wedding-tv.cn · 婚礼大屏</a><div class="actions"><span class="tag" id="modeTag">正在连接</span><button id="manage" hidden>主持人管理</button><a class="button" href="/wedding-live-wall.html">创建新房间</a></div></header>
 <main class="stage" id="stage" data-theme="rose">
@@ -23,7 +23,8 @@
 <div class="wall-messages" id="messages" aria-label="已通过的祝福"></div>
 <div class="qr-area"><canvas id="qr" aria-label="宾客祝福二维码"></canvas><div><p id="qrLabel">扫码送上你的祝福</p><small id="qrHint">主持人审核后上墙</small><a id="guestLink" href="/wedding-live-wall.html" target="_blank" rel="noopener noreferrer">打开手机页面</a></div></div>
 </main>
-<div class="wall-toolbar"><button id="fullscreen">全屏展示</button><button id="pause" hidden>暂停展示</button><button id="lottery">抽奖</button><button id="music">音乐</button><button id="tableCard">下载扫码桌牌</button><button id="replay">重播祝福</button><button id="screenLang" type="button">English</button><span id="connection" class="status" role="status">正在连接…</span></div>
+<div class="wall-toolbar"><button id="fullscreen">全屏展示</button><button id="pause" hidden>暂停展示</button><button id="lottery">抽奖</button><button id="music">音乐</button><button id="bgBtn" type="button">背景图片</button><button id="tableCard">下载扫码桌牌</button><button id="replay">重播祝福</button><button id="screenLang" type="button">English</button><span id="connection" class="status" role="status">正在连接…</span></div>
+<dialog id="bgDialog"><button class="dialog-close" data-close="bgDialog">关闭</button><h2 id="bgDialogTitle">大屏背景图片</h2><p class="muted" id="bgDialogDesc">选择本机图片作为大屏背景（仅保存在当前浏览器，不上传服务器）。建议尺寸 1920×1080。</p><div class="field"><label for="customBackground" id="bgFieldLabel">选择图片 (JPG/PNG/WebP)</label><input type="file" id="customBackground" accept="image/jpeg,image/png,image/webp" /></div><div class="actions"><button id="removeBackground" type="button">清除背景图片</button></div><p class="status" id="bgNotice" role="status"></p></dialog>
 <dialog id="adminDialog"><button class="dialog-close" data-close="adminDialog" aria-label="关闭管理面板">关闭</button><h2>主持人管理</h2>
 <div class="notice">管理链接可控制、删除本房间，请仅交给可信主持人。宾客请使用扫码链接。</div>
 <div class="actions"><button id="copyAdmin">复制管理链接</button><button id="copyScreen">复制观看链接</button><button id="copyGuest">复制宾客链接</button></div>
@@ -36,8 +37,7 @@
 <div class="field"><label for="settingDate">婚礼日期</label><input id="settingDate" name="date" type="date" /></div>
 <div class="field"><label for="settingTheme">配色</label><select id="settingTheme" name="theme"><option value="rose">玫瑰</option><option value="forest">松绿</option><option value="ink">墨黑</option></select></div>
 <div class="field wide"><label for="settingVenue">场地简称</label><input id="settingVenue" name="venue" maxlength="60" /></div></div>
-<div class="actions"><button class="primary" type="submit">保存设置</button></div></form>
-<div class="field"><label for="customBackground">本机背景图片（不上传）</label><input type="file" id="customBackground" accept="image/jpeg,image/png,image/webp" /></div><div class="actions"><button id="removeBackground">清除本机背景</button></div></details>
+<div class="actions"><button class="primary" type="submit">保存设置</button><button type="button" id="adminBgBtn">设置大屏背景图片</button></div></form></details>
 <div class="status" id="adminNotice" role="status"></div>
 <h3>待审核祝福</h3><div id="pending"></div><details><summary>已通过的祝福</summary><div id="approved"></div></details>
 <div class="actions"><button id="closeRoom">结束并删除房间</button></div>

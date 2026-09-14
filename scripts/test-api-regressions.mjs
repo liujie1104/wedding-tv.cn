@@ -65,6 +65,7 @@ test("Baidu analytics: public content is consent-gated and private/noindex route
   assert.match(BAIDU_ANALYTICS_SNIPPET, /允许统计/);
   assert.match(BAIDU_ANALYTICS_SNIPPET, /拒绝/);
   assert.equal(shouldInjectBaiduAnalytics("/"), true);
+  assert.equal(shouldInjectBaiduAnalytics("/en/"), true);
   assert.equal(shouldInjectBaiduAnalytics("/blog/hunan.html"), true);
   assert.equal(shouldInjectBaiduAnalytics("/privacy.html"), true);
   assert.equal(shouldInjectBaiduAnalytics("/assets/speed-booster.js"), false);

@@ -190,7 +190,10 @@ const TEMPLATES = {
 let currentItems = [];
 
 function parseTime(str){
-  const [h, m] = str.split(":").map(Number);
+  if (!str || typeof str !== "string" || !str.includes(":")) return 16 * 60;
+  const parts = str.split(":").map(Number);
+  const h = isNaN(parts[0]) ? 16 : parts[0];
+  const m = isNaN(parts[1]) ? 0 : parts[1];
   return h * 60 + m;
 }
 
@@ -254,7 +257,9 @@ window.removeItem = function(index){
 
 function generateFromTemplate(){
   const tplKey = document.getElementById("template").value;
-  const baseMinutes = parseTime(document.getElementById("ceremonyTime").value);
+  const timeInput = document.getElementById("ceremonyTime");
+  if (!timeInput.value) timeInput.value = "16:00";
+  const baseMinutes = parseTime(timeInput.value);
   const raw = TEMPLATES[tplKey] || TEMPLATES.classic;
   currentItems = raw.map(([offset, category, title, desc]) => ({
     timeStr: formatTime(baseMinutes + offset),

@@ -90,6 +90,8 @@
     <ul>
       <li><strong>Hosting & Security Telemetry:</strong> Delivered via Cloudflare's global edge network, standard technical server logs (IP address, browser user-agent, request timestamp, URL) may be processed transiently to deliver web assets, protect against DDoS attacks, and mitigate abuse.</li>
       <li><strong>Cloudflare Web Analytics:</strong> Privacy-first analytics script measuring page load times, country-level aggregate metrics, and device categories without using cookies or persistent identifiers.</li>
+      <li><strong>Baidu Analytics (Optional Consent):</strong> On public editorial content pages, Baidu Analytics script is loaded only after you explicitly click "Accept" on our analytics consent banner. It uses cookies to distinguish unique visitors and compile aggregate visit volume, traffic sources, browser types, and navigation paths. It is never loaded on user-generated pages (such as live wedding wall displays, blessing screens, or invitations). For details on Baidu's data processing, see the <a href="https://tongji.baidu.com/web/help/article?id=330&amp;type=0" target="_blank" rel="nofollow noopener">Baidu Analytics Privacy Policy</a>.</li>
+      <li><strong>Local Browser Storage:</strong> Local storage is used for saving utility inputs locally, as well as preserving your analytics consent preference under key <code>wedding_baidu_analytics_consent_v1</code>. You can revoke or reset your consent at any time below.</li>
       <li><strong>API Rate Limiting & Abuse Defense:</strong> To safeguard free AI APIs from automated scraping, IP addresses are transformed using a salted one-way hash (plain IP is never stored) and kept in Cloudflare KV for up to 48 hours solely to track daily request quotas.</li>
     </ul>
 
@@ -105,6 +107,7 @@
     <h2>3. Third-Party Service Providers</h2>
     <ul>
       <li><strong>Cloudflare:</strong> Provides DNS, CDN edge delivery, KV storage for invitations/wall messages, and Web Analytics.</li>
+      <li><strong>Baidu Analytics:</strong> Used strictly upon your explicit consent on public pages for aggregate traffic analytics. May set first-party cookies according to their privacy policy. You can reject analytics without affecting any site functionality, or withdraw consent at any time.</li>
       <li><strong>Alibaba DashScope / Qwen:</strong> Processes selected AI text generation requests.</li>
       <li><strong>Google Gemini:</strong> Secondary model provider for text generation and image comprehension tasks.</li>
       <li><strong>Cloudflare Workers AI:</strong> Model provider for serverless AI inference.</li>
@@ -125,8 +128,10 @@
       <li><strong>Access:</strong> Inquire about what data is stored relating to your invitation or wedding wall room.</li>
       <li><strong>Deletion:</strong> Request immediate removal of published invitations or uploaded wedding images.</li>
       <li><strong>Opt-Out:</strong> Our site does not sell personal data, does not serve targeted ads, and does not conduct cross-site tracking.</li>
+      <li><strong>Consent Withdrawal:</strong> You may withdraw your cookie and analytics consent at any time using the button below.</li>
     </ul>
     <p>To exercise any of these rights, contact us at <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>.</p>
+    <p><button class="button" type="button" id="resetAnalyticsConsent">Reset Analytics Preferences</button></p>
 
     <h2>6. Security Measures</h2>
     <p>We implement modern security practices including end-to-end SSL/TLS encryption, salted hashing for rate-limiting, strict input sanitization against XSS, and automated content expiration.</p>
@@ -148,5 +153,13 @@
     © 2026 wedding-tv.cn · <a href="/en/privacy.html">Privacy Policy</a> · <a href="/en/terms.html">Terms of Service</a> · <a href="/en/wedding-live-wall.html">Live Wall</a> · <a href="/en/">Home</a>
   </div>
 </footer>
+<script>
+document.getElementById("resetAnalyticsConsent")?.addEventListener("click", function () {
+  if (window.WeddingAnalyticsConsent) window.WeddingAnalyticsConsent.reset();
+  else {
+    try { localStorage.removeItem("wedding_baidu_analytics_consent_v1"); location.reload(); } catch(_) {}
+  }
+});
+</script>
 </body>
 </html>

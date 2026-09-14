@@ -186,7 +186,53 @@ function safeImageUrl(value){
   }catch(_){ return ''; }
 }
 
+function applyEnglishUI() {
+  document.documentElement.lang = 'en';
+  window.__T = {
+    title: (g, b) => `${g} & ${b}'s Wedding Invitation · wedding-tv.cn`,
+    todayLabel: 'Today is the Wedding Day!',
+    cdLabels: ['Days', 'Hours', 'Mins', 'Secs'],
+    scroll: '▼ Scroll Down',
+    copySuccess: 'Link copied! Share it with your guests.',
+    copyPrompt: 'Copy this link:',
+    shareTitle: 'You are invited to our wedding',
+    invalidDate: 'Invalid wedding date',
+    calSummary: (g, b) => `${g} & ${b}'s Wedding`,
+    calDesc: 'Created with wedding-tv.cn',
+    qrTip: 'Long press QR code to save and share',
+    kDate: 'Date',
+    kTime: 'Time',
+    kCity: 'City',
+    kVenue: 'Venue',
+    btnCopy: '📋 Copy Link',
+    btnShare: '📤 Share',
+    btnCal: '📅 Add to Calendar',
+    btnQr: '🔳 QR Code',
+    footMadeBy: 'Invitation provided by ',
+    footFree: ' · Free online creation',
+    footMake: '💌 Create My Invitation',
+    footCalc: '💰 Wedding Budget Calculator',
+  };
+  if ($('scrollHint')) $('scrollHint').textContent = window.__T.scroll;
+  if ($('kDate')) $('kDate').textContent = window.__T.kDate;
+  if ($('kTime')) $('kTime').textContent = window.__T.kTime;
+  if ($('kCity')) $('kCity').textContent = window.__T.kCity;
+  if ($('kVenue')) $('kVenue').textContent = window.__T.kVenue;
+  if ($('btnCopy')) $('btnCopy').textContent = window.__T.btnCopy;
+  if ($('btnShare')) $('btnShare').textContent = window.__T.btnShare;
+  if ($('btnCal')) $('btnCal').textContent = window.__T.btnCal;
+  if ($('btnQr')) $('btnQr').textContent = window.__T.btnQr;
+  if ($('qrTip')) $('qrTip').textContent = window.__T.qrTip;
+  if ($('foot')) {
+    $('foot').innerHTML = `${window.__T.footMadeBy}<a href="/en/" target="_blank" rel="noopener">wedding-tv.cn</a>${window.__T.footFree}<br>` +
+      `<a class="pill" id="footMake" href="/en/invitation.html" target="_blank" rel="noopener">${window.__T.footMake}</a>` +
+      `<a class="pill" id="footCalc" href="/en/calculator.html" target="_blank" rel="noopener" style="margin-left:6px">${window.__T.footCalc}</a>`;
+  }
+}
+
 function render(inv){
+  const isEn = params.get('lang') === 'en' || inv?.lang === 'en';
+  if (isEn) applyEnglishUI();
   document.body.classList.add('tpl-' + (inv.template || 'gold'));
   // 封面
   const coverUrl = safeImageUrl(inv.cover?.url);
@@ -199,12 +245,12 @@ function render(inv){
   const dateStr = isNaN(d) ? inv.date : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   $('dateEn').textContent = dateEn || '';
-  $('dateCn').textContent = dateStr || '';
+  $('dateCn').textContent = isEn ? (dateEn || '') : (dateStr || '');
   $('timeCn').textContent = inv.time || '11:58';
   $('cityEn').textContent = inv.city || '';
   $('cityCn').textContent = inv.city || '—';
   $('venueCn').textContent = inv.venue || '—';
-  $('greet').textContent = inv.greeting || '谨订于良辰吉日，恭请阁下莅临婚宴，共证幸福时刻。';
+  $('greet').textContent = inv.greeting || (isEn ? 'Together with our families, we invite you to celebrate our wedding.' : '谨订于良辰吉日，恭请阁下莅临婚宴，共证幸福时刻。');
   // 故事
   if(inv.story){ $('story').textContent = inv.story; $('story').classList.remove('hidden'); }
   // 头像
@@ -220,7 +266,12 @@ function render(inv){
       img.src = src;
       img.alt = '';
       const label = document.createElement('small');
-      label.textContent = ({cartoon:'卡通',oil:'油画',hk:'港风',line:'线稿'}[avatar?.style]||'');
+      label.textContent = ({
+        cartoon: isEn ? 'Cartoon' : '卡通',
+        oil: isEn ? 'Oil' : '油画',
+        hk: isEn ? 'Vintage' : '港风',
+        line: isEn ? 'Line Art' : '线稿'
+      }[avatar?.style] || '');
       box.append(img,label);
       avatars.append(box);
     });

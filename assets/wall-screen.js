@@ -28,6 +28,12 @@
     if ($("fullscreen")) $("fullscreen").textContent = screenLang === "en" ? "Full Screen" : "全屏展示";
     if ($("lottery")) $("lottery").textContent = screenLang === "en" ? "Lucky Draw" : "抽奖";
     if ($("music")) $("music").textContent = screenLang === "en" ? "Music" : "音乐";
+    if ($("bgBtn")) $("bgBtn").textContent = screenLang === "en" ? "Background" : "背景图片";
+    if ($("bgDialogTitle")) $("bgDialogTitle").textContent = screenLang === "en" ? "Screen Background" : "大屏背景图片";
+    if ($("bgDialogDesc")) $("bgDialogDesc").textContent = screenLang === "en" ? "Select a local image as screen background (stored locally in your browser, not uploaded)." : "选择本机图片作为大屏背景（仅保存在当前浏览器，不上传服务器）。建议尺寸 1920×1080。";
+    if ($("bgFieldLabel")) $("bgFieldLabel").textContent = screenLang === "en" ? "Select Image (JPG/PNG/WebP)" : "选择图片 (JPG/PNG/WebP)";
+    if ($("removeBackground")) $("removeBackground").textContent = screenLang === "en" ? "Remove Background" : "清除背景图片";
+    if ($("adminBgBtn")) $("adminBgBtn").textContent = screenLang === "en" ? "Set Screen Background" : "设置大屏背景图片";
     if ($("tableCard")) $("tableCard").textContent = screenLang === "en" ? "Download QR Card" : "下载扫码桌牌";
     if ($("replay")) $("replay").textContent = screenLang === "en" ? "Replay Wishes" : "重播祝福";
     if ($("manage")) $("manage").textContent = screenLang === "en" ? "Host Controls" : "主持人管理";
@@ -174,6 +180,8 @@
   $("copyAdmin").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId + "#key=" + key).then(() => notice("管理链接已准备，请仅交给可信主持人"));
   $("copyScreen").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId).then(() => notice("观看链接已准备"));
   $("copyGuest").onclick = () => copy(guestUrl).then(() => notice("宾客链接已准备"));
+  if ($("bgBtn")) $("bgBtn").onclick = () => $("bgDialog").showModal();
+  if ($("adminBgBtn")) $("adminBgBtn").onclick = () => { $("adminDialog").close(); $("bgDialog").showModal(); };
   $("fullscreen").onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $("stage").requestFullscreen(); } catch { status("浏览器不支持全屏，请使用电脑浏览器或系统全屏模式", true); } };
   $("replay").onclick = () => { queue = approved().slice(); $("messages").replaceChildren(); };
   $("lottery").onclick = () => $("lotteryDialog").showModal();
@@ -227,29 +235,49 @@
       const open = indexedDB.open("WeddingWallAssets", 1); open.onupgradeneeded = () => open.result.createObjectStore("images"); open.onerror = () => reject(open.error);
       open.onsuccess = () => {
         const db = open.result, tx = db.transaction("images", write ? "readwrite" : "readonly"), store = tx.objectStore("images");
-        const req = write ? (value ? store.put(value, "bg_" + roomId) : store.delete("bg_" + roomId)) : store.get("bg_" + roomId);
+        const storeKey = "bg_" + (roomId || "demo");
+        const req = write ? (value ? store.put(value, storeKey) : store.delete(storeKey)) : store.get(storeKey);
         tx.oncomplete = () => { db.close(); resolve(req.result); }; tx.onerror = () => { db.close(); reject(tx.error); };
       };
     });
   }
   function setBackground(value) { $("backgroundImage").hidden = !value; if (value) $("backgroundImage").src = value; else $("backgroundImage").removeAttribute("src"); }
+  function showBgNotice(text, error = false) {
+    if ($("bgNotice")) { $("bgNotice").textContent = text; $("bgNotice").classList.toggle("error", error); }
+    notice(text, error);
+  }
   $("customBackground").onchange = async () => {
     const file = $("customBackground").files[0]; if (!file) return;
-    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 15 * 1024 * 1024) { notice("请选择不超过 15 MB 的 JPG、PNG 或 WebP 图片", true); return; }
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size > 15 * 1024 * 1024) {
+      showBgNotice(screenLang === "en" ? "Please select a JPG, PNG, or WebP image under 15 MB" : "请选择不超过 15 MB 的 JPG、PNG 或 WebP 图片", true);
+      return;
+    }
     try {
       const bitmap = await createImageBitmap(file), scale = Math.min(1, 1920 / bitmap.width);
       const canvas = node("canvas"); canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
       canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close();
-      const image = canvas.toDataURL("image/jpeg", .85); setBackground(image); await backgroundStore(image, true); notice("背景已保存在这台设备，不会上传");
-    } catch { notice("图片未能保存，请更换较小图片重试", true); }
+      const image = canvas.toDataURL("image/jpeg", .85); setBackground(image); await backgroundStore(image, true);
+      showBgNotice(screenLang === "en" ? "Background saved locally on this device (not uploaded)" : "背景已保存在这台设备，不会上传");
+    } catch {
+      showBgNotice(screenLang === "en" ? "Failed to save image, please try a smaller image" : "图片未能保存，请更换较小图片重试", true);
+    }
   };
-  $("removeBackground").onclick = async () => { setBackground(""); try { await backgroundStore(null, true); notice("本机背景已清除"); } catch { notice("本机存储不可用", true); } };
+  $("removeBackground").onclick = async () => {
+    setBackground("");
+    try {
+      await backgroundStore(null, true);
+      showBgNotice(screenLang === "en" ? "Local background cleared" : "本机背景已清除");
+    } catch {
+      showBgNotice(screenLang === "en" ? "Local storage unavailable" : "本机存储不可用", true);
+    }
+  };
+  try { setBackground(await backgroundStore()); } catch {}
   if (demo) {
     const samples = [["同学小陈", "愿你们并肩走过每一个春夏秋冬"], ["朋友小周", "今天的笑容，往后的每一天都要有"], ["家人", "平安喜乐，携手同行"], ["同事小赵", "新婚快乐，日子常有小惊喜"]];
     data = { room: { groom: "小林", bride: "小夏", venue: "欢迎一起见证我们的婚礼", theme: "rose", accepting: true }, messages: samples.map(([name, message], i) => ({ id: "demo-" + i, name, message, color: i % 2 ? "rose" : "gold", status: "approved", ts: Date.now() })) };
     applyRoom(); spawn(queue.shift()); $("messages").firstElementChild.style.animationDelay = "-4s"; status("本地演示 · 不上传数据");
     $("pause").hidden = false; $("pause").onclick = () => { data.room.paused = !data.room.paused; applyRoom(); };
-  } else { await poll(); setInterval(poll, 4000); try { setBackground(await backgroundStore()); } catch {} }
+  } else { await poll(); setInterval(poll, 4000); }
   try {
     await QRCode.toCanvas($("qr"), guestUrl, { width: 240, margin: 4, errorCorrectionLevel: "M" });
     $("qr").style.removeProperty("width"); $("qr").style.removeProperty("height");
