@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Free Digital Wedding Invitation & Save-the-Date Poster Maker | wedding-tv.cn</title>
+<meta name="description" content="Create elegant mobile wedding invitations and 9:16 vertical Save-the-Date posters online for free. Features 4 designer templates, photo uploads, background music, AI love story expansion, and RSVP sharing." />
+<meta name="author" content="wedding-tv.cn Editorial Team" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#fdf6ee" />
+<link rel="canonical" href="https://wedding-tv.cn/en/invitation.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/invitation.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/en/invitation.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/invitation.html" />
+<meta property="og:title" content="Free Digital Wedding Invitation & Poster Maker — wedding-tv.cn" />
+<meta property="og:description" content="Design mobile invitations and instant Save-the-Date social posters with photo upload, music, and AI love story writer." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wedding-tv.cn/en/invitation.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://wedding-tv.cn/og.png" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>💌</text></svg>" />
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"wedding-tv.cn Digital Wedding Invitation Maker",
+  "url":"https://wedding-tv.cn/en/invitation.html",
+  "applicationCategory":"LifestyleApplication",
+  "operatingSystem":"Any",
+  "featureList":["4 Designer Themes","Background Music Selection","Photo Upload & Compression","AI Love Story Writer","Instant 9:16 Social Poster Canvas Export","Zero Account Required","Free Public Share Link"],
+  "inLanguage":"en",
+  "dateModified":"2026-09-14",
+  "publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/en/"},
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://wedding-tv.cn/en/"},
+    {"@type":"ListItem","position":2,"name":"Wedding Tools","item":"https://wedding-tv.cn/en/"},
+    {"@type":"ListItem","position":3,"name":"Digital Invitation","item":"https://wedding-tv.cn/en/invitation.html"}
+  ]
+}
+</script>
+
+<style>
+:root{
+  --bg:#fdf6ee; --ink:#2a1f17; --gold:#b08545; --gold2:#7a5a2f;
+  --line:#e7d9c4; --soft:#f7ecdb; --danger:#b3261e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--gold2);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{display:flex;gap:18px;padding:14px 20px;border-bottom:1px solid var(--line);background:#fff;align-items:center;flex-wrap:wrap}
+.topbar a{color:var(--ink);text-decoration:none;font-size:14px}
+.topbar a.brand{font-weight:700;color:var(--gold2);letter-spacing:.5px}
+.lang-switch{margin-left:auto;padding:4px 10px;border:1px solid var(--line);border-radius:20px;font-size:12px;font-weight:600;background:var(--soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 80px}
+h1{font-size:28px;margin:6px 0 6px;letter-spacing:.5px}
+h1 small{display:block;font-size:14px;color:#7a6a55;font-weight:400;margin-top:6px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:22px}
+@media(max-width:920px){.layout{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 0 #fff inset, 0 8px 24px -18px rgba(122,90,47,.35)}
+fieldset{border:1px dashed var(--line);border-radius:10px;padding:14px 16px;margin:0 0 14px}
+legend{padding:0 8px;color:var(--gold2);font-weight:600;font-size:13px}
+label{display:block;font-size:13px;color:#5b4a35;margin:8px 0 4px}
+input[type=text],input[type=date],input[type=time],input[type=file],select,textarea{
+  width:100%;padding:9px 11px;border:1px solid var(--line);background:#fffdf8;border-radius:8px;
+  font:inherit;color:var(--ink);outline:none;transition:border .15s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:80px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tpl{cursor:pointer;border:2px solid var(--line);border-radius:10px;padding:8px 6px;text-align:center;font-size:12px;background:#fffdf8;transition:.15s}
+.tpl b{display:block;font-size:13px;margin-bottom:4px}
+.tpl.sel{border-color:var(--gold);background:#fff6e6}
+.tpl .swatch{height:34px;border-radius:6px;margin-bottom:6px}
+.tpl[data-tpl=gold] .swatch{background:linear-gradient(135deg,#7a1f24,#b08545)}
+.tpl[data-tpl=cream] .swatch{background:linear-gradient(135deg,#f6e2cf,#e9c9a8)}
+.tpl[data-tpl=morandi] .swatch{background:linear-gradient(135deg,#a9b3a3,#c7b8a8)}
+.tpl[data-tpl=hk] .swatch{background:linear-gradient(135deg,#1c1c1c,#7a5a2f)}
+.btn{display:inline-block;padding:10px 18px;border:0;border-radius:999px;background:var(--gold);color:#fff;cursor:pointer;font:inherit;font-weight:600;letter-spacing:.5px;transition:.15s;text-align:center}
+.btn:hover{background:var(--gold2)}
+.btn.ghost{background:#fff;color:var(--gold2);border:1px solid var(--line)}
+.btn.sm{padding:6px 14px;font-size:13px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.tip{font-size:12px;color:#8a795f;margin-top:6px}
+.error{color:var(--danger);font-size:13px;margin-top:6px}
+.preview-box{position:sticky;top:14px}
+.invite{
+  width:100%;max-width:380px;margin:0 auto;
+  background:#fffaf2;border-radius:18px;overflow:hidden;
+  box-shadow:0 30px 60px -30px rgba(122,90,47,.5);
+  font-family:Georgia,serif;
+}
+.invite .cover{aspect-ratio:3/4;background:#eee;background-size:cover;background-position:center;position:relative}
+.invite .cover .veil{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.55))}
+.invite .cover h2{position:absolute;left:0;right:0;bottom:18px;color:#fff;text-align:center;font-size:26px;letter-spacing:4px;margin:0;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.invite .body{padding:22px 22px 26px;text-align:center}
+.invite .names{font-size:22px;letter-spacing:2px;margin:6px 0 10px;color:#7a1f24;font-weight:700}
+.invite .heart{color:#b08545;margin:0 6px}
+.invite .meta{font-size:14px;color:#3a2d1e;margin:6px 0;line-height:1.9}
+.invite .story{margin:14px 0 0;padding:12px;background:#fdf3e2;border-radius:10px;font-size:13px;color:#5b4a35;text-align:left;white-space:pre-wrap;line-height:1.85;font-family:-apple-system,sans-serif}
+.invite .avatars{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.invite .avatars img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.tpl-cream .invite{background:#fff7ec}.tpl-cream .invite .names{color:#a06b3a}
+.tpl-morandi .invite{background:#eef0ec}.tpl-morandi .invite .names{color:#5a6a55}
+.tpl-hk .invite{background:#1c1612;color:#f0d9a8}.tpl-hk .invite .meta{color:#e2c79a}.tpl-hk .invite .names{color:#f0c97a}.tpl-hk .invite .story{background:#241c16;color:#d8c39a}
+</style>
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<script defer src="/assets/speed-booster.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="/en/">wedding-tv.cn</a>
+  <a href="/en/wedding-live-wall.html">Live Wedding Wall</a>
+  <a href="/en/timeline.html">Timeline Maker</a>
+  <a href="/en/checklist.html">Checklist</a>
+  <a href="/en/countdown.html">Countdown</a>
+  <a href="/en/vows.html">AI Vows</a>
+  <a href="/en/speech.html">AI Speeches</a>
+  <a href="/invitation.html" class="lang-switch" title="切换至中文版">中文版</a>
+</header>
+
+<main class="wrap">
+  <h1>Free Digital Wedding Invitation & Poster Maker
+    <small>4 Designer Themes · Background Music · Photo Upload · AI Love Story Writer · Instant 9:16 Social Poster</small>
+  </h1>
+
+  <div id="stickyBar" style="position:sticky;top:0;z-index:50;background:rgba(253,246,238,.94);backdrop-filter:blur(8px);padding:10px 0;margin:6px 0 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)">
+    <button class="btn" id="publishTop">📤 Publish Invitation Link</button>
+    <span class="tip" id="publishTopTip">Enter names & date to create. Details can be completed anytime.</span>
+  </div>
+
+  <div class="layout">
+    <!-- Left: Form -->
+    <section class="card" id="formCard">
+      <fieldset>
+        <legend>1 · Choose Design Theme</legend>
+        <div class="tpls" id="tpls">
+          <div class="tpl sel" data-tpl="gold"><div class="swatch"></div><b>Gold Foil</b>Burgundy & Gold</div>
+          <div class="tpl" data-tpl="cream"><div class="swatch"></div><b>Cream French</b>Soft & Minimal</div>
+          <div class="tpl" data-tpl="morandi"><div class="swatch"></div><b>Morandi</b>Modern Sage</div>
+          <div class="tpl" data-tpl="hk"><div class="swatch"></div><b>Vintage Film</b>Cinematic Dark</div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2 · Wedding Details</legend>
+        <div class="row2">
+          <div><label>Partner A Name *</label><input id="groom" type="text" placeholder="e.g., Alexander" maxlength="30"></div>
+          <div><label>Partner B Name *</label><input id="bride" type="text" placeholder="e.g., Charlotte" maxlength="30"></div>
+        </div>
+        <div class="row2">
+          <div><label>Wedding Date *</label><input id="date" type="date" onclick="this.showPicker&&this.showPicker()"></div>
+          <div><label>Ceremony Time</label><input id="time" type="time" value="16:00"></div>
+        </div>
+        <label>City / Destination</label><input id="city" type="text" placeholder="e.g., Paris / Napa Valley / Kyoto" maxlength="40">
+        <label>Venue / Location</label><input id="venue" type="text" placeholder="e.g., The Glasshouse Estate · Grand Ballroom" maxlength="80">
+        <label>Personal Invitation Note (Optional)</label>
+        <textarea id="greeting" placeholder="Together with our families, we invite you to celebrate our wedding day and share this unforgettable moment with us." maxlength="200"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>3 · Cover Photo</legend>
+        <input id="cover" type="file" accept="image/*">
+        <div class="tip">Upload a couple photo (max 8MB). Automatically compressed client-side. Or leave empty for styled gradient.</div>
+        <div id="coverPreview" class="tip"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>4 · Background Music (Optional)</legend>
+        <select id="music">
+          <option value="">No Music</option>
+          <option value="01">01 · Gentle Piano Melody</option>
+          <option value="02">02 · Acoustic Guitar Love</option>
+          <option value="03">03 · Canon in D Acoustic</option>
+          <option value="04">04 · Parisian Chanson</option>
+          <option value="05">05 · Smooth Romance Jazz</option>
+          <option value="07">07 · String Quartet Classic</option>
+          <option value="08">08 · Modern Downtempo Romance</option>
+          <option value="09">09 · Lofi Romance Chill</option>
+          <option value="10">10 · Fingerstyle Warmth</option>
+        </select>
+        <audio id="musicPreview" controls preload="none" style="width:100%;margin-top:8px;display:none"></audio>
+      </fieldset>
+
+      <fieldset>
+        <legend>5 · Our Story & AI Story Writer</legend>
+        <label>How did you meet or propose? (1-2 sentences)</label>
+        <textarea id="brief" placeholder="e.g., We met at a local bookstore cafe in college. After six years of traveling the world together, he proposed on a sunset cliff in Santorini." maxlength="500"></textarea>
+        <div class="actions">
+          <button class="btn sm" type="button" id="aiStory">✨ AI Expand into Romantic Story</button>
+          <span class="tip" id="storyStatus"></span>
+        </div>
+        <label style="margin-top:10px">Final Love Story (Editable)</label>
+        <textarea id="story" rows="6" placeholder="Click button above to generate, or write your own heartfelt story..."></textarea>
+      </fieldset>
+
+      <div class="actions" style="justify-content:flex-end;gap:10px;">
+        <button class="btn ghost" type="button" id="btnGenPoster">📸 Instant 9:16 Save-the-Date Poster</button>
+        <button class="btn" id="publish">📤 Publish Invitation Link</button>
+      </div>
+      <div class="error" id="formError"></div>
+    </section>
+
+    <!-- Right: Live Preview -->
+    <aside>
+      <div class="preview-box">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <strong>Live Mobile Preview</strong>
+            <span class="tip">Realistic responsive rendering</span>
+          </div>
+          <div id="preview" class="tpl-gold"></div>
+          <button class="btn ghost sm" type="button" id="btnGenPosterSide" style="width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+            📸 Generate 9:16 Save-the-Date Poster
+          </button>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <strong>🌿 100% Free & Privacy-Respecting</strong>
+          <p style="font-size:13px;color:#5b4a35;margin:8px 0 0">
+            wedding-tv.cn is a non-profit wedding utility site. No registration, no app download, and no hidden subscriptions.
+            Check out our <a href="/en/wedding-live-wall.html">Interactive Live Wedding Wall</a> and <a href="/en/timeline.html">Day-of Timeline Maker</a>.
+          </p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 9:16 Poster Modal -->
+  <div id="posterModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,15,10,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:18px;max-width:460px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;">
+        <strong style="color:var(--gold2);font-size:16px;">📸 Save-the-Date Poster Ready</strong>
+        <button id="btnClosePoster" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <div style="padding:16px;overflow-y:auto;text-align:center;background:#fdfaf5;flex:1;">
+        <canvas id="posterCanvas" width="1080" height="1920" style="width:100%;max-width:320px;border-radius:12px;box-shadow:0 8px 30px rgba(122,90,47,0.3);display:block;margin:0 auto;"></canvas>
+        <div class="tip" style="margin-top:10px;">💡 Tap and hold to save on mobile, or click download button below</div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--line);background:#fff;display:flex;gap:10px;">
+        <button class="btn" id="btnDownloadPoster" style="flex:1;justify-content:center;padding:12px;font-size:15px;">💾 Download Poster (PNG)</button>
+        <button class="btn ghost" id="btnClosePosterBtn" style="padding:12px 18px;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="card" style="margin-top:28px;line-height:1.8">
+    <h2 style="margin-top:0">Pre-Publishing & Guest Privacy Checklist</h2>
+    <p>Once published, anyone with your link can view the wedding invitation details. We recommend keeping sensitive details (like private room numbers or personal phone numbers) confidential. Private logistics can be communicated separately via direct messaging.</p>
+    <h3>Helpful Tips for Couples</h3>
+    <ul>
+      <li>Ensure all featured photos have consent from those pictured before publishing.</li>
+      <li>If using AI story expansion, review and edit names, dates, and places for accurate reflection.</li>
+      <li>Test the link on both mobile and desktop before sending to family and wedding party.</li>
+      <li>Published invitations are retained for 365 days. If you ever need it removed early, contact our support team.</li>
+    </ul>
+    <p style="color:#7b6a55;font-size:14px">Editorial Responsibility: <a href="/en/about.html" rel="author">wedding-tv.cn Editorial Team</a> · Updated: 2026-09-14 · <a href="/en/privacy.html">Privacy Policy</a></p>
+  </section>
+</main>
+
+<script>
+const state = {
+  template: 'gold',
+  groom:'', bride:'', date:'', time:'16:00', city:'', venue:'', greeting:'',
+  cover:null,
+  coverDataUrl:null,
+  music:'',
+  brief:'', story:'',
+  avatars:[]
+};
+
+const $ = (id)=>document.getElementById(id);
+const fields = ['groom','bride','date','time','city','venue','greeting','brief','story','music'];
+fields.forEach(id => {
+  const el = $(id);
+  if(el) el.addEventListener('input', e => { state[id]=e.target.value; render(); });
+});
+
+$('music').addEventListener('change', e => {
+  const v = e.target.value;
+  const a = $('musicPreview');
+  if(!v){ a.style.display='none'; a.pause(); a.removeAttribute('src'); return; }
+  a.src = `/audio/${v}.mp3`;
+  a.style.display = 'block';
+  a.play().catch(()=>{});
+});
+
+$('tpls').addEventListener('click', e => {
+  const t = e.target.closest('.tpl'); if(!t) return;
+  document.querySelectorAll('.tpl').forEach(x=>x.classList.remove('sel'));
+  t.classList.add('sel'); state.template = t.dataset.tpl; render();
+});
+
+async function fileToCompressedDataUrl(file, maxW = 1200, quality = 0.85){
+  if(!file) return null;
+  const img = await new Promise((res,rej)=>{
+    const i = new Image(); i.onload=()=>res(i); i.onerror=rej; i.src = URL.createObjectURL(file);
+  });
+  const scale = Math.min(1, maxW / img.naturalWidth);
+  const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
+  const c = document.createElement('canvas'); c.width=w; c.height=h;
+  c.getContext('2d').drawImage(img,0,0,w,h);
+  return c.toDataURL('image/jpeg', quality);
+}
+
+$('cover').addEventListener('change', async e => {
+  const f = e.target.files[0]; if(!f) return;
+  $('coverPreview').textContent = 'Compressing image...';
+  try{
+    const dataUrl = await fileToCompressedDataUrl(f, 1200, 0.85);
+    state.coverDataUrl = dataUrl;
+    render();
+    $('coverPreview').textContent = 'Uploading...';
+    const r = await fetch('/api/upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({dataUrl})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error);
+    state.cover = {key:j.key, url:j.url};
+    $('coverPreview').textContent = '✅ Photo uploaded successfully';
+  }catch(err){
+    $('coverPreview').textContent = '❌ Upload failed: ' + err.message;
+  }
+});
+
+$('aiStory').addEventListener('click', async () => {
+  const brief = $('brief').value.trim();
+  if(brief.length < 5){ $('storyStatus').textContent = 'Please write a brief summary first'; return; }
+  $('aiStory').disabled = true; $('storyStatus').textContent = '✨ Writing love story...';
+  try{
+    const r = await fetch('/api/story',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({brief, groom:state.groom, bride:state.bride, lang:'en'})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error);
+    $('story').value = j.story; state.story = j.story; render();
+    $('storyStatus').textContent = '✅ Story generated! Feel free to edit.';
+  }catch(err){ $('storyStatus').textContent = '❌ ' + err.message; }
+  finally{ $('aiStory').disabled = false; }
+});
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function render(){
+  const tpl = state.template;
+  const cover = state.coverDataUrl;
+  let dateStr = 'Wedding Date';
+  if (state.date) {
+    try {
+      const parts = state.date.split('-');
+      const d = new Date(parts[0], parts[1]-1, parts[2]);
+      dateStr = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    } catch(e) { dateStr = state.date; }
+  }
+  const html = `
+    <div class="invite tpl-${tpl}">
+      <div class="cover" style="${cover?`background-image:url('${cover}')`:'background:linear-gradient(135deg,#7a1f24,#b08545)'}">
+        <div class="veil"></div>
+        <h2>SAVE THE DATE</h2>
+      </div>
+      <div class="body">
+        <div class="names">${esc(state.groom||'Partner A')}<span class="heart">❤</span>${esc(state.bride||'Partner B')}</div>
+        <div class="meta">📅 ${dateStr} ${state.time ? 'at ' + state.time : ''}</div>
+        <div class="meta">📍 ${esc(state.venue||'Wedding Venue')}${state.city ? ', ' + esc(state.city) : ''}</div>
+        ${state.greeting ? `<p style="font-size:13px;color:#6b5a45;margin:12px 0;font-style:italic">“${esc(state.greeting)}”</p>` : ''}
+        ${state.story?`<div class="story">${esc(state.story)}</div>`:''}
+      </div>
+    </div>`;
+  $('preview').className = 'tpl-'+tpl;
+  $('preview').innerHTML = html;
+}
+render();
+
+$('publishTop').addEventListener('click', () => $('publish').click());
+
+async function generatePoster() {
+  const canvas = $('posterCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 1080;
+  const H = 1920;
+  canvas.width = W;
+  canvas.height = H;
+
+  const tpl = state.template || 'gold';
+  const groom = state.groom || 'Partner A';
+  const bride = state.bride || 'Partner B';
+  let dateStr = 'Special Date';
+  if (state.date) {
+    try {
+      const parts = state.date.split('-');
+      const d = new Date(parts[0], parts[1]-1, parts[2]);
+      dateStr = d.toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+    } catch(e) { dateStr = state.date; }
+  }
+  const timeStr = state.time || '16:00';
+  const venueStr = (state.venue || 'The Glasshouse Estate') + (state.city ? ' · ' + state.city : '');
+
+  let bgGrad;
+  let goldColor = '#e5c07b';
+  let titleColor = '#ffffff';
+  let textColor = '#f0e6d6';
+  let borderColor = 'rgba(229, 192, 123, 0.4)';
+
+  if (tpl === 'gold') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#420b10');
+    bgGrad.addColorStop(0.5, '#6a181e');
+    bgGrad.addColorStop(1, '#2c070b');
+    goldColor = '#f5d799';
+    borderColor = 'rgba(245, 215, 153, 0.5)';
+  } else if (tpl === 'cream') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#fbf6ee');
+    bgGrad.addColorStop(0.5, '#f5e8d6');
+    bgGrad.addColorStop(1, '#ebd7be');
+    goldColor = '#8a6534';
+    titleColor = '#2b2017';
+    textColor = '#5a4635';
+    borderColor = 'rgba(138, 101, 52, 0.4)';
+  } else if (tpl === 'morandi') {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#2c382a');
+    bgGrad.addColorStop(0.5, '#41523f');
+    bgGrad.addColorStop(1, '#1d261c');
+    goldColor = '#dcd6cd';
+    borderColor = 'rgba(220, 214, 205, 0.4)';
+  } else {
+    bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, '#15131a');
+    bgGrad.addColorStop(0.5, '#251e29');
+    bgGrad.addColorStop(1, '#0c0a0f');
+    goldColor = '#ffd28a';
+    borderColor = 'rgba(255, 210, 138, 0.4)';
+  }
+
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 4;
+  ctx.strokeRect(50, 50, W - 100, H - 100);
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(66, 66, W - 132, H - 132);
+
+  ctx.fillStyle = goldColor;
+  [ [76, 76], [W - 76, 76], [76, H - 76], [W - 76, H - 76] ].forEach(([x, y]) => {
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = goldColor;
+  ctx.font = '600 32px Georgia, serif';
+  ctx.fillText('W E D D I N G   I N V I T A T I O N', W / 2, 150);
+
+  ctx.font = '400 22px -apple-system, sans-serif';
+  ctx.fillStyle = textColor;
+  ctx.fillText('TOGETHER WITH OUR FAMILIES', W / 2, 200);
+
+  const photoW = W - 200;
+  const photoH = 750;
+  const photoX = 100;
+  const photoY = 250;
+
+  if (state.coverDataUrl) {
+    try {
+      const img = new Image();
+      await new Promise((res) => {
+        img.onload = res;
+        img.onerror = res;
+        img.src = state.coverDataUrl;
+      });
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+      ctx.clip();
+      const imgAspect = img.width / img.height;
+      const targetAspect = photoW / photoH;
+      let drawW, drawH, drawX, drawY;
+      if (imgAspect > targetAspect) {
+        drawH = photoH;
+        drawW = photoH * imgAspect;
+        drawX = photoX - (drawW - photoW) / 2;
+        drawY = photoY;
+      } else {
+        drawW = photoW;
+        drawH = photoW / imgAspect;
+        drawX = photoX;
+        drawY = photoY - (drawH - photoH) / 2;
+      }
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      ctx.restore();
+
+      ctx.strokeStyle = goldColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+      ctx.stroke();
+    } catch(e) {}
+  } else {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.roundRect(photoX, photoY, photoW, photoH, 20);
+    ctx.fill();
+    ctx.strokeStyle = goldColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = goldColor;
+    ctx.font = '56px Georgia, serif';
+    ctx.fillText('&', W / 2, photoY + photoH / 2 + 20);
+    ctx.restore();
+  }
+
+  const textStartY = photoY + photoH + 90;
+  ctx.fillStyle = goldColor;
+  ctx.font = 'bold 64px Georgia, serif';
+  ctx.fillText(`${groom}  &  ${bride}`, W / 2, textStartY);
+
+  ctx.fillStyle = textColor;
+  ctx.font = 'italic 28px -apple-system, sans-serif';
+  const loveQuote = state.story ? state.story.slice(0, 48) + (state.story.length > 48 ? '...' : '') : 'Two lives, two hearts, joined together in friendship';
+  ctx.fillText(`“ ${loveQuote} ”`, W / 2, textStartY + 75);
+
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W / 2 - 200, textStartY + 120);
+  ctx.lineTo(W / 2 + 200, textStartY + 120);
+  ctx.stroke();
+
+  ctx.fillStyle = titleColor;
+  ctx.font = 'bold 36px -apple-system, sans-serif';
+  ctx.fillText(`📅 ${dateStr}  ${timeStr}`, W / 2, textStartY + 185);
+
+  ctx.fillStyle = textColor;
+  ctx.font = '28px -apple-system, sans-serif';
+  ctx.fillText(`📍 ${venueStr}`, W / 2, textStartY + 245);
+
+  const qrX = W / 2 - 80;
+  const qrY = H - 320;
+  const qrUrl = window.location.href;
+
+  try {
+    const qrCanvas = document.createElement('canvas');
+    if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+      await new Promise(r => {
+        QRCode.toCanvas(qrCanvas, qrUrl, { width: 160, margin: 1, color: { dark: '#1a1008', light: '#ffffff' } }, () => r());
+      });
+      ctx.drawImage(qrCanvas, qrX, qrY, 160, 160);
+    }
+  } catch(e) {}
+
+  ctx.fillStyle = goldColor;
+  ctx.font = '22px -apple-system, sans-serif';
+  ctx.fillText('Scan QR Code to RSVP & View Invitation', W / 2, H - 120);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '18px sans-serif';
+  ctx.fillText('wedding-tv.cn · Free Wedding Utilities', W / 2, H - 85);
+}
+
+function openPosterModal() {
+  $('posterModal').style.display = 'flex';
+  generatePoster();
+}
+
+$('btnGenPoster').onclick = openPosterModal;
+$('btnGenPosterSide').onclick = openPosterModal;
+$('btnClosePoster').onclick = () => { $('posterModal').style.display = 'none'; };
+$('btnClosePosterBtn').onclick = () => { $('posterModal').style.display = 'none'; };
+
+$('btnDownloadPoster').onclick = () => {
+  const canvas = $('posterCanvas');
+  const a = document.createElement('a');
+  a.download = `${state.groom || 'PartnerA'}_${state.bride || 'PartnerB'}_Wedding_Poster.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+};
+
+$('publish').addEventListener('click', async () => {
+  $('formError').textContent = '';
+  if(!state.groom || !state.bride){ $('formError').textContent = 'Please enter names for both partners'; return; }
+  if(!state.date){ $('formError').textContent = 'Please select a wedding date'; return; }
+  $('publish').disabled = true; $('publish').textContent = 'Publishing...';
+  try{
+    const inv = {
+      template: state.template,
+      groom: state.groom, bride: state.bride,
+      date: state.date, time: state.time,
+      city: state.city, venue: state.venue,
+      greeting: state.greeting,
+      cover: state.cover,
+      music: state.music,
+      story: state.story,
+      avatars: state.avatars.map(a=>({style:a.style,key:a.key,url:a.url})),
+    };
+    const r = await fetch('/api/save',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({invitation:inv})});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error);
+    location.href = '/i/'+j.id;
+  }catch(err){
+    $('formError').textContent = '❌ Publishing failed: ' + err.message;
+    $('publish').disabled = false; $('publish').textContent = '📤 Publish Invitation Link';
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wedding Day Timeline Maker & Schedule Generator | wedding-tv.cn</title>
+<meta name="description" content="Build your hour-by-hour wedding day timeline. Preset templates for full-day celebrations, morning prep, ceremony, and reception banquet. Export printable PNG schedule or CSV." />
+<meta name="author" content="wedding-tv.cn Team" />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://wedding-tv.cn/en/timeline.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/timeline.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/en/timeline.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/timeline.html" />
+<link rel="manifest" href="/manifest.json" />
+<meta property="og:title" content="Wedding Day Timeline Maker & Schedule Generator" />
+<meta property="og:description" content="Build your hour-by-hour wedding day schedule. Export clean printable PNG long images." />
+<meta property="og:url" content="https://wedding-tv.cn/en/timeline.html" />
+<meta property="og:image" content="https://wedding-tv.cn/og.png" />
+<meta name="theme-color" content="#0e0a14" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='52' font-size='52'>⏱️</text></svg>" />
+<style>
+:root{--bg:#0e0a14;--panel:#171121;--ink:#f7f3ff;--sub:#b9aed1;--rose:#ff6b9d;--gold:#ffd28a;--line:rgba(255,255,255,.08)}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:980px;margin:0 auto;padding:24px}
+nav{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);margin-bottom:20px;align-items:center}
+h1{margin:8px 0 6px;font-size:30px}
+.lead{color:var(--sub);margin:0 0 24px}
+.controls{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+label{display:block;font-size:13px;color:var(--sub);margin-bottom:6px}
+input,select,button{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#0e0a14;color:var(--ink);font:inherit;width:100%}
+button.primary{background:linear-gradient(90deg,#ff6b9d,#ffd28a);color:#1a0f1f;border:none;font-weight:600;cursor:pointer}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.btn-row button{width:auto;flex:0 0 auto;cursor:pointer}
+.timeline{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;position:relative}
+.tl-row{display:flex;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);align-items:flex-start}
+.tl-row:last-child{border-bottom:none}
+.tl-time{flex:0 0 80px;color:var(--gold);font-weight:700;font-size:17px;font-family:"Courier New",monospace}
+.tl-body{flex:1}
+.tl-title{font-weight:600;color:var(--ink);font-size:15px}
+.tl-desc{color:var(--sub);font-size:13px;margin-top:2px}
+.tl-cat{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--sub);margin-right:6px}
+.tl-cat.morning{color:#ffd28a;border-color:#ffd28a}
+.tl-cat.ceremony{color:#ff6b9d;border-color:#ff6b9d}
+.tl-cat.banquet{color:#88d8b0;border-color:#88d8b0}
+.tl-cat.evening{color:#9bb1ff;border-color:#9bb1ff}
+.tl-actions{display:flex;gap:6px}
+.tl-actions button{padding:4px 8px;font-size:12px;width:auto;cursor:pointer}
+footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;border-top:1px solid var(--line);padding-top:20px}
+.tools-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.tools-bar a{padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:13px}
+.notes{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;color:var(--sub);font-size:14px}
+.notes h3{color:var(--gold);margin:0 0 8px;font-size:16px}
+</style>
+<script defer src="/assets/speed-booster.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Wedding Day Timeline Maker",
+  "url": "https://wedding-tv.cn/en/timeline.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "en",
+  "description": "Generate an hour-by-hour wedding day schedule. Download printable PNG schedule or CSV.",
+  "dateModified": "2026-09-14",
+  "publisher": {
+    "@type": "Organization",
+    "name": "wedding-tv.cn",
+    "url": "https://wedding-tv.cn/en/"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <a href="/en/">Home</a> /
+  <a href="/en/wedding-live-wall.html">Live Screen</a> /
+  <a href="/en/checklist.html">Checklist</a> /
+  <a href="/en/invitation.html">Invitation</a> /
+  <a href="/timeline.html" style="margin-left:auto;color:var(--gold);font-weight:700">中文版</a>
+</nav>
+
+<h1>⏱️ Wedding Day Timeline Maker</h1>
+<p class="lead">Select your wedding format and ceremony start time to generate an hour-by-hour run-of-show schedule. Export as a printable PNG schedule or CSV file.</p>
+
+<div class="controls">
+  <div>
+    <label for="template">Celebration Format</label>
+    <select id="template">
+      <option value="classic">Full-Day Classic (Prep + Ceremony + Reception)</option>
+      <option value="afternoon">Afternoon Ceremony & Evening Reception</option>
+      <option value="destination">Intimate Lawn / Destination Wedding</option>
+    </select>
+  </div>
+  <div>
+    <label for="ceremonyTime">Ceremony Start Time</label>
+    <input type="time" id="ceremonyTime" value="16:00" />
+  </div>
+  <div>
+    <label for="coupleName">Couple Names</label>
+    <input type="text" id="coupleName" value="Alex & Taylor" maxlength="40" />
+  </div>
+  <div style="align-self:end">
+    <button class="primary" id="applyBtn">Generate Timeline</button>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button id="addBtn">+ Add Event</button>
+  <button id="pngBtn">🖼️ Export PNG Schedule</button>
+  <button id="csvBtn">📊 Export CSV</button>
+  <button id="printBtn">🖨️ Print</button>
+  <button id="resetBtn">↺ Reset</button>
+</div>
+
+<div class="timeline" id="timelineList"></div>
+
+<section class="notes">
+  <h3>Timeline Planning Principles</h3>
+  <p>1. <strong>Buffer Time is Essential:</strong> Always allocate 15-20 minutes of buffer before the ceremony and between photoshoots. Things running 10 minutes late is completely normal.</p>
+  <p>2. <strong>Designate a Coordinator:</strong> Never make the bride or groom responsible for tracking time on the day. Assign your schedule to the bridal party, best man, or wedding planner.</p>
+  <p>3. <strong>Vendor Arrival Times:</strong> Hair & makeup and photographers should arrive 2-3 hours before the first scheduled photo or first-look session.</p>
+</section>
+
+<div class="tools-bar">
+  <span>Companion Tools:</span>
+  <a href="/en/wedding-live-wall.html">📺 Live Blessing Screen</a>
+  <a href="/en/checklist.html">📋 AI Wedding Checklist</a>
+  <a href="/en/invitation.html">💌 Digital Invitation</a>
+  <a href="/en/vows.html">💍 Wedding Vows Helper</a>
+  <a href="/en/countdown.html">📅 Wedding Countdown</a>
+</div>
+
+<footer>
+  <a href="/en/privacy.html">Privacy</a> ·
+  <a href="/en/terms.html">Terms</a> ·
+  <a href="/timeline.html">中文界面</a> ·
+  <span>Updated: 2026-09-14</span>
+</footer>
+</div>
+
+<script>
+const TEMPLATES = {
+  classic: [
+    [-300, "morning", "Bridal Party Hair & Makeup Begins", "Coffee & breakfast served, photographer details shots."],
+    [-180, "morning", "Groom & Groomsmen Get Ready", "Suits, ties, boutonnières, and cufflinks check."],
+    [-120, "morning", "First Look & Couple Portraits", "Intimate portrait session before guest arrival."],
+    [-60, "morning", "Bridal Party & Family Photos", "Completed before guests arrive at the venue."],
+    [-30, "ceremony", "Guest Arrival & Welcome Music", "Ushers seat guests, welcome refreshments available."],
+    [0, "ceremony", "Ceremony Processional Begins", "Processional music starts, officiant takes position."],
+    [15, "ceremony", "Exchange of Vows & Rings", "Personal vows, ring exchange, and pronouncement."],
+    [30, "ceremony", "Ceremony Recessional & Kiss", "Celebratory music, guests transition to cocktail area."],
+    [35, "banquet", "Cocktail Hour & Appetizers", "Drinks, hors d'oeuvres, and background music."],
+    [90, "banquet", "Guests Invited to Reception Hall", "Grand entrance of bridal party and newlyweds."],
+    [105, "banquet", "First Dance & Welcome Speech", "Newlyweds first dance, welcome toast by hosts."],
+    [120, "banquet", "Dinner Service Begins", "Plated dinner or buffet service."],
+    [160, "banquet", "Toasts & Speeches", "Maid of honor, best man, and parents speak."],
+    [190, "banquet", "Cake Cutting & Dessert", "Cake cutting photo, dessert bar open."],
+    [220, "evening", "Open Dance Floor & Party", "Party music starts, bouquet toss."],
+    [300, "evening", "Grand Sparkler Send-Off", "Final farewell and newlyweds exit."]
+  ],
+  afternoon: [
+    [-180, "morning", "Hair & Makeup Styling", "Bridal prep in bridal suite."],
+    [-90, "morning", "Photographer Arrives for Portraits", "Couple & family portraits."],
+    [-30, "ceremony", "Guest Seating & Ambient Music", "Prelude music."],
+    [0, "ceremony", "Ceremony Begins", "Processional & vows."],
+    [30, "ceremony", "Recessional & Confetti", "Couple exit celebration."],
+    [45, "banquet", "Cocktail Hour & Canapés", "Bar open, mingling."],
+    [105, "banquet", "Dinner & Speeches", "Dinner served with toasts."],
+    [180, "evening", "First Dance & Party", "Dancing starts."],
+    [270, "evening", "Last Call & Wrap-up", "Music concludes."]
+  ],
+  destination: [
+    [-120, "morning", "Relaxed Morning Prep", "Leisurely prep and brunch."],
+    [-30, "ceremony", "Guests Gather at Sunset Lawn", "Welcome drinks served."],
+    [0, "ceremony", "Intimate Ceremony", "Vows overlooking sunset view."],
+    [30, "banquet", "Champagne Toast & Sunset Photos", "Golden hour photo session."],
+    [60, "banquet", "Family Style Dinner", "Shared feast and conversation."],
+    [150, "evening", "Acoustic Music & Stargazing", "Dessert and quiet celebration."]
+  ]
+};
+
+let currentItems = [];
+
+function parseTime(str){
+  const [h, m] = str.split(":").map(Number);
+  return h * 60 + m;
+}
+
+function formatTime(totalMinutes){
+  totalMinutes = (totalMinutes % 1440 + 1440) % 1440;
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  const period = h >= 12 ? "PM" : "AM";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${String(h12).padStart(2, "0")}:${String(m).padStart(2, "0")} ${period}`;
+}
+
+function renderTimeline(){
+  const list = document.getElementById("timelineList");
+  list.innerHTML = "";
+  if (!currentItems.length){
+    list.innerHTML = "<p class='lead'>No timeline items. Click 'Generate Timeline' or '+ Add Event'.</p>";
+    return;
+  }
+  currentItems.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "tl-row";
+    row.innerHTML = `
+      <div class="tl-time">${item.timeStr}</div>
+      <div class="tl-body">
+        <div>
+          <span class="tl-cat ${item.category}">${item.category.toUpperCase()}</span>
+          <span class="tl-title">${escapeHtml(item.title)}</span>
+        </div>
+        ${item.desc ? `<div class="tl-desc">${escapeHtml(item.desc)}</div>` : ""}
+      </div>
+      <div class="tl-actions">
+        ${index > 0 ? `<button onclick="moveItem(${index}, -1)">▲</button>` : ""}
+        ${index < currentItems.length - 1 ? `<button onclick="moveItem(${index}, 1)">▼</button>` : ""}
+        <button onclick="removeItem(${index})">✕</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function escapeHtml(text){
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+window.moveItem = function(index, dir){
+  const target = index + dir;
+  if (target < 0 || target >= currentItems.length) return;
+  const temp = currentItems[index];
+  currentItems[index] = currentItems[target];
+  currentItems[target] = temp;
+  renderTimeline();
+};
+
+window.removeItem = function(index){
+  currentItems.splice(index, 1);
+  renderTimeline();
+};
+
+function generateFromTemplate(){
+  const tplKey = document.getElementById("template").value;
+  const baseMinutes = parseTime(document.getElementById("ceremonyTime").value);
+  const raw = TEMPLATES[tplKey] || TEMPLATES.classic;
+  currentItems = raw.map(([offset, category, title, desc]) => ({
+    timeStr: formatTime(baseMinutes + offset),
+    offset,
+    category,
+    title,
+    desc
+  }));
+  renderTimeline();
+}
+
+document.getElementById("applyBtn").onclick = generateFromTemplate;
+document.getElementById("resetBtn").onclick = generateFromTemplate;
+
+document.getElementById("addBtn").onclick = function(){
+  const title = prompt("Event Title (e.g., Cake Cutting):");
+  if (!title) return;
+  const timeStr = prompt("Time (e.g., 05:30 PM):", "05:00 PM");
+  currentItems.push({
+    timeStr: timeStr || "TBD",
+    offset: 0,
+    category: "ceremony",
+    title,
+    desc: ""
+  });
+  renderTimeline();
+};
+
+document.getElementById("printBtn").onclick = () => window.print();
+
+document.getElementById("csvBtn").onclick = function(){
+  const couple = document.getElementById("coupleName").value || "Wedding";
+  const rows = [["Time", "Category", "Event Title", "Details"]];
+  currentItems.forEach(i => rows.push([i.timeStr, i.category, i.title, i.desc]));
+  const csvContent = "\uFEFF" + rows.map(r => r.map(c => `"${(c||"").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${couple.replace(/[^a-zA-Z0-9]/g, "_")}_Wedding_Timeline.csv`;
+  a.click();
+};
+
+document.getElementById("pngBtn").onclick = async function(){
+  if (!currentItems.length) return;
+  await document.fonts.ready;
+  const canvas = document.createElement("canvas");
+  const width = 800;
+  const rowHeight = 72;
+  const height = 180 + currentItems.length * rowHeight + 100;
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  // Background
+  ctx.fillStyle = "#120d12";
+  ctx.fillRect(0, 0, width, height);
+
+  // Card header
+  ctx.fillStyle = "#ffd28a";
+  ctx.font = "bold 28px sans-serif";
+  ctx.textAlign = "center";
+  const couple = document.getElementById("coupleName").value || "Wedding Day Schedule";
+  ctx.fillText(couple + " · Wedding Day Timeline", width / 2, 60);
+
+  ctx.fillStyle = "#b9aed1";
+  ctx.font = "16px sans-serif";
+  ctx.fillText("wedding-tv.cn · Hour-by-Hour Run of Show", width / 2, 100);
+
+  // Line
+  ctx.strokeStyle = "rgba(255,255,255,0.12)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, 130);
+  ctx.lineTo(width - 40, 130);
+  ctx.stroke();
+
+  // Rows
+  currentItems.forEach((item, index) => {
+    const y = 180 + index * rowHeight;
+    ctx.textAlign = "left";
+
+    // Time
+    ctx.fillStyle = "#ffd28a";
+    ctx.font = "bold 18px Courier New, monospace";
+    ctx.fillText(item.timeStr, 50, y);
+
+    // Title
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 17px sans-serif";
+    ctx.fillText(item.title, 180, y);
+
+    // Desc
+    if (item.desc){
+      ctx.fillStyle = "#b9aed1";
+      ctx.font = "13px sans-serif";
+      ctx.fillText(item.desc, 180, y + 24);
+    }
+  });
+
+  // Footer
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#68636c";
+  ctx.font = "13px sans-serif";
+  ctx.fillText("Generated with wedding-tv.cn · Free Wedding Planning Tools", width / 2, height - 35);
+
+  const a = document.createElement("a");
+  a.href = canvas.toDataURL("image/png");
+  a.download = `${couple.replace(/[^a-zA-Z0-9]/g, "_")}_Timeline.png`;
+  a.click();
+};
+
+generateFromTemplate();
+</script>
+</body>
+</html>

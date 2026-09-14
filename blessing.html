@@ -14,18 +14,25 @@
 <script defer src="/assets/wall-guest.js"></script>
 </head><body>
 <main class="guest">
-<header class="heading"><span class="tag">婚礼现场祝福</span><h1 id="guestCouple">欢迎送上你的祝福</h1><p class="muted" id="roomNotice">正在连接房间…</p></header>
+<header class="heading">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <span class="tag" id="guestTag">婚礼现场祝福</span>
+    <button type="button" id="langToggle" class="button" style="padding:2px 10px;font-size:12px;min-height:28px;line-height:1;">English</button>
+  </div>
+  <h1 id="guestCouple">欢迎送上你的祝福</h1>
+  <p class="muted" id="roomNotice">正在连接房间…</p>
+</header>
 <form id="guestForm">
-<div class="field"><label for="guestName">你的昵称</label><input id="guestName" maxlength="16" placeholder="无需填写真实姓名" required /></div>
-<div class="field"><label for="guestIdentity">身份或桌号（选填）</label><input id="guestIdentity" maxlength="24" placeholder="例如：同学 · 6号桌" /></div>
-<div class="field"><label for="guestMsg">婚礼祝福</label><textarea id="guestMsg" maxlength="120" required placeholder="写下对新人的祝福"></textarea></div>
-<div class="quick"><button type="button" data-message="新婚快乐，愿你们平安喜乐，携手同行！">平安喜乐，携手同行</button><button type="button" data-message="愿你们并肩走过每一个春夏秋冬。">并肩走过四季</button></div>
-<div class="field"><label for="guestColor">文字配色</label><select id="guestColor"><option value="rose">玫瑰</option><option value="gold">金色</option><option value="red">红色</option><option value="purple">紫色</option></select></div>
-<label class="check"><input id="guestConsent" type="checkbox" required /><span>我同意将昵称和留言提交给主持人，审核通过后向房间参与者展示。请勿填写联系方式或他人私人信息。<a href="/privacy.html">隐私说明</a></span></label>
+<div class="field"><label for="guestName" id="lblGuestName">你的昵称</label><input id="guestName" maxlength="16" placeholder="无需填写真实姓名" required /></div>
+<div class="field"><label for="guestIdentity" id="lblGuestIdentity">身份或桌号（选填）</label><input id="guestIdentity" maxlength="24" placeholder="例如：同学 · 6号桌" /></div>
+<div class="field"><label for="guestMsg" id="lblGuestMsg">婚礼祝福</label><textarea id="guestMsg" maxlength="120" required placeholder="写下对新人的祝福"></textarea></div>
+<div class="quick"><button type="button" id="quickBtn1" data-message="新婚快乐，愿你们平安喜乐，携手同行！">平安喜乐，携手同行</button><button type="button" id="quickBtn2" data-message="愿你们并肩走过每一个春夏秋冬。">并肩走过四季</button></div>
+<div class="field"><label for="guestColor" id="lblGuestColor">文字配色</label><select id="guestColor"><option value="rose">玫瑰</option><option value="gold">金色</option><option value="red">红色</option><option value="purple">紫色</option></select></div>
+<label class="check"><input id="guestConsent" type="checkbox" required /><span id="lblConsentText">我同意将昵称和留言提交给主持人，审核通过后向房间参与者展示。请勿填写联系方式或他人私人信息。<a id="privacyLink" href="/privacy.html">隐私说明</a></span></label>
 <div class="actions"><button class="primary" id="submitGuest" disabled>发送祝福</button></div>
 <p class="status" id="sendNotice" role="status"></p>
 </form>
-<section class="guide"><h2>已通过的祝福</h2><p id="feedCount" class="muted"></p><div id="feedList"></div></section>
-<section class="guide" id="createInvite"><h2>你也在筹备婚礼？</h2><p>为自己的婚礼创建独立祝福大屏，或下载一张当天流程表。</p><div class="actions"><a class="button" href="/wedding-live-wall.html?from=guest">创建我的婚礼大屏</a><a class="button" href="/timeline.html">制作流程表</a></div></section>
-</main><footer><a href="/">wedding-tv.cn</a><a href="/privacy.html">隐私政策</a></footer>
+<section class="guide"><h2 id="lblApprovedTitle">已通过的祝福</h2><p id="feedCount" class="muted"></p><div id="feedList"></div></section>
+<section class="guide" id="createInvite"><h2 id="lblCreateTitle">你也在筹备婚礼？</h2><p id="lblCreateDesc">为自己的婚礼创建独立祝福大屏，或下载一张当天流程表。</p><div class="actions"><a class="button" id="btnCreateWall" href="/wedding-live-wall.html?from=guest">创建我的婚礼大屏</a><a class="button" id="btnCreateTimeline" href="/timeline.html">制作流程表</a></div></section>
+</main><footer><a href="/">wedding-tv.cn</a><a href="/privacy.html" id="footerPrivacy">隐私政策</a></footer>
 </body></html>

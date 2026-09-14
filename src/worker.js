@@ -39,17 +39,27 @@ const LEGACY_REDIRECTS = new Map([
   ["/blog/xianggang.html", "/blog/hong-kong.html"],
   ["/blog/xizang", "/blog/tibet.html"],
   ["/blog/xizang.html", "/blog/tibet.html"],
+  ["/en.html", "/en/"],
+  ["/timeline-en", "/en/timeline.html"],
+  ["/timeline-en.html", "/en/timeline.html"],
+  ["/checklist-en", "/en/checklist.html"],
+  ["/checklist-en.html", "/en/checklist.html"],
+  ["/invitation-en", "/en/invitation.html"],
+  ["/invitation-en.html", "/en/invitation.html"],
+  ["/calculator-en", "/en/calculator.html"],
+  ["/calculator-en.html", "/en/calculator.html"],
+  ["/about-en", "/en/about.html"],
+  ["/about-en.html", "/en/about.html"],
+  ["/privacy-en", "/en/privacy.html"],
+  ["/privacy-en.html", "/en/privacy.html"],
+  ["/terms-en", "/en/terms.html"],
+  ["/terms-en.html", "/en/terms.html"],
 ]);
 
 const RETIRED_PREFIXES = ["/news", "/insights", "/blog/cities"];
 const RETIRED_PATHS = new Set([
   "/budget-reference", "/budget-reference.html",
-  "/about-en", "/about-en.html",
-  "/calculator-en", "/calculator-en.html",
-  "/checklist-en", "/checklist-en.html",
-  "/en", "/en.html",
   "/guide-en", "/guide-en.html",
-  "/invitation-en", "/invitation-en.html",
   "/blog-global-en", "/blog-global-en.html",
   "/blog-global-india-en", "/blog-global-india-en.html",
   "/blog-global-japan-en", "/blog-global-japan-en.html",
@@ -170,10 +180,16 @@ async function canonicalHtmlRedirect(request, env, url) {
   if (["/index", "/index.html"].includes(path)) {
     return permanentRedirect(url, "/");
   }
+  if (["/en/index", "/en/index.html"].includes(path)) {
+    return permanentRedirect(url, "/en/");
+  }
+  if (path === "/en") {
+    return permanentRedirect(url, "/en/");
+  }
   if (["/live", "/live.html"].includes(path)) {
     return permanentRedirect(url, "/live-wall.html");
   }
-  if (path === "/" || path.endsWith(".html")) return null;
+  if (path === "/" || path === "/en/" || path.endsWith(".html")) return null;
 
   const basePath = path.endsWith("/") ? path.slice(0, -1) : path;
   if (!basePath || /\.[^/]+$/.test(basePath)) return null;
@@ -256,6 +272,13 @@ export default {
       indexUrl.search = url.search;
       const indexResponse = await env.ASSETS.fetch(new Request(indexUrl.href, request));
       return staticResponse(indexResponse, "/");
+    }
+
+    if (path === "/en/") {
+      const indexUrl = new URL("/en/index.html", url.origin);
+      indexUrl.search = url.search;
+      const indexResponse = await env.ASSETS.fetch(new Request(indexUrl.href, request));
+      return staticResponse(indexResponse, "/en/");
     }
 
     // 其它路径直接交给静态资源。html_handling=none 保证 .html canonical 本身返回 200。

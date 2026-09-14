@@ -184,7 +184,8 @@ for (const blockMatch of urlBlocks) {
 
   const loc = locMatch[1];
   const lastmod = lastmodMatch[1];
-  const relPath = loc === "https://wedding-tv.cn/" ? "index.html" : loc.replace("https://wedding-tv.cn/", "");
+  let relPath = loc === "https://wedding-tv.cn/" ? "index.html" : loc.replace("https://wedding-tv.cn/", "");
+  if (relPath === "en/") relPath = "en/index.html";
   const fullFilePath = path.join(root, relPath);
   if (fs.existsSync(fullFilePath)) {
     const pageContent = fs.readFileSync(fullFilePath, "utf8");

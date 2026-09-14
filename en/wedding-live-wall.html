@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Free Wedding Live Screen & QR Blessing Wall | wedding-tv.cn</title>
+<meta name="description" content="Connect a laptop to the venue screen. Guests scan a QR code to send instant text blessings. Free independent room, host moderation, lucky draw, and PNG table card export." />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="author" content="wedding-tv.cn Team" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<link rel="canonical" href="https://wedding-tv.cn/en/wedding-live-wall.html" />
+<link rel="alternate" hreflang="zh-CN" href="https://wedding-tv.cn/wedding-live-wall.html" />
+<link rel="alternate" hreflang="en" href="https://wedding-tv.cn/en/wedding-live-wall.html" />
+<link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/wedding-live-wall.html" />
+<meta property="og:title" content="Free Wedding Live Screen & Blessing Wall" />
+<meta property="og:description" content="Guests scan QR code to send wishes. Host moderates messages before display on the big screen." />
+<meta property="og:image" content="https://wedding-tv.cn/assets/wall-demo.webp" />
+<meta property="og:url" content="https://wedding-tv.cn/en/wedding-live-wall.html" />
+<meta property="og:type" content="website" />
+<link rel="manifest" href="/manifest.json" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<link rel="stylesheet" href="/assets/wall.css" />
+<link rel="icon" href="/icon-192.png" />
+<script defer src="/assets/speed-booster.js"></script>
+<script defer src="/assets/wall-ui.js"></script>
+<script defer src="/assets/wall-create.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Free Wedding Live Screen & Blessing Wall",
+  "url": "https://wedding-tv.cn/en/wedding-live-wall.html",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "en",
+  "description": "Connect a laptop to venue screen. Guests scan QR code to send text blessings. Host moderates in real time, runs lucky draws, and exports printable table cards.",
+  "dateModified": "2026-09-14",
+  "publisher": {
+    "@type": "Organization",
+    "name": "wedding-tv.cn",
+    "url": "https://wedding-tv.cn/en/"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+</head>
+<body>
+<header class="site-head">
+  <a class="brand" href="/en/">wedding-tv.cn</a>
+  <nav aria-label="Tool Navigation">
+    <a href="/en/timeline.html">Timeline</a>
+    <a href="/en/invitation.html">Invitation</a>
+    <a href="/en/checklist.html">Checklist</a>
+    <a href="/wedding-live-wall.html" class="lang-switch">中文</a>
+  </nav>
+</header>
+<main class="content">
+<h1>Free Wedding Live Screen & QR Blessing Wall</h1>
+<p class="muted">Connect your laptop to the venue screen. Guests scan a QR code to send wishes, and the host moderates before displaying.</p>
+<div class="workspace">
+<form id="createForm">
+  <div class="fields">
+    <div class="field"><label for="groom">Partner 1 Name</label><input id="groom" name="groom" maxlength="20" placeholder="e.g. Alex" required /></div>
+    <div class="field"><label for="bride">Partner 2 Name</label><input id="bride" name="bride" maxlength="20" placeholder="e.g. Taylor" required /></div>
+    <div class="field"><label for="date">Wedding Date (Optional)</label><input id="date" name="date" type="date" /></div>
+    <div class="field"><label for="theme">Screen Theme</label><select id="theme" name="theme"><option value="rose">Rose Wine</option><option value="forest">Forest Green</option><option value="ink">Midnight Ink</option></select></div>
+    <div class="field wide"><label for="venue">Venue / Location (Optional)</label><input id="venue" name="venue" maxlength="60" placeholder="e.g. Grand Ballroom" /></div>
+    <div class="field wide"><label for="mode">Room Mode</label><select id="mode" name="mode"><option value="trial">Rehearsal / Trial</option><option value="event">Official Event</option></select></div>
+    <label class="check field wide"><input id="privacyAgree" type="checkbox" required /><span>I understand that room link holders can view approved blessings, and couple names will be visible on screen. <a href="/en/privacy.html">Data Policy</a></span></label>
+  </div>
+  <div class="actions"><button class="primary" id="createButton" type="submit">Create Wedding Screen Room</button><a class="button" href="/live-wall.html?demo=1&amp;lang=en">Try Demo</a></div>
+  <div class="status" id="createStatus" role="status"></div>
+  <small>Rooms remain active for 7 days. Individual wishes are kept for 24 hours. Max 1,000 submissions per room. Save your host admin link upon creation.</small>
+</form>
+<div>
+  <iframe class="preview-frame" title="Wedding live screen demo" src="/live-wall.html?demo=1&amp;embed=1&amp;lang=en" loading="lazy"></iframe>
+  <div class="preview-caption"><span>Live Demo Preview · Fictional sample blessings</span><a href="/live-wall.html?demo=1&amp;lang=en">Open Fullscreen Demo</a></div>
+</div>
+</div>
+<section id="recentSection" class="guide" hidden>
+  <h2>Rooms Created on this Device</h2>
+  <ul class="room-list" id="recentRooms"></ul>
+  <div class="actions"><button id="exportTrials" type="button">Export Local CSV Summary</button><button id="clearTrials" type="button">Clear Local Records</button></div>
+  <p class="muted">Summarizes room purpose, submissions, and approved counts stored locally. Does not contain blessing text, guest names, or admin keys.</p>
+</section>
+<section class="guide">
+  <h2>First Time Using at a Wedding Reception</h2>
+  <div class="guide-grid">
+    <div>
+      <h3>How to connect laptop and screen?</h3>
+      <p>Connect your laptop to the venue screen or projector via HDMI. Ask venue AV staff to verify signal source and aspect ratio (16:9). Press F11 in your browser for fullscreen, and ensure the title, floating bubbles, and QR code are completely visible.</p>
+    </div>
+    <div>
+      <h3>What happens when guests scan the QR code?</h3>
+      <p>The QR code opens the mobile blessing page. Guests enter a nickname and congratulations. The host receives messages in the moderation queue and clicks 'Approve' before they appear on screen. No photo upload or guest account needed.</p>
+    </div>
+    <div>
+      <h3>How does the host maintain control?</h3>
+      <p>The private host management link is separate from the guest link. Hosts can pause display, delete inappropriate entries, or temporarily stop accepting new wishes. The on-screen lucky draw picks randomly from unique approved nicknames.</p>
+    </div>
+    <div>
+      <h3>What about network drops and data expiry?</h3>
+      <p>Both laptop and guest phones require an internet connection. If connection drops, the screen displays a retry status and recovers automatically. Rooms expire 7 days after creation, and wishes clear 24 hours after submission. Export before the event ends.</p>
+    </div>
+  </div>
+</section>
+<section class="guide">
+  <h2>Printable QR Table Cards & Keepsake Exports</h2>
+  <p>Generate high-resolution PNG QR table cards inside the room to print and place on guest tables. You can also export a 20-message blessing memorial image or a full CSV list. All images and files are generated directly in your browser without third-party exposure.</p>
+  <p><a href="/en/timeline.html">Build Wedding Day Timeline</a> · <a href="/en/checklist.html">Open Wedding Checklist</a></p>
+</section>
+</main>
+<footer>
+  <a href="/en/privacy.html">Privacy Policy</a>
+  <a href="/en/terms.html">Terms of Service</a>
+  <a href="/wedding-live-wall.html">中文界面</a>
+  <span>Updated: 2026-09-14</span>
+</footer>
+</body>
+</html>

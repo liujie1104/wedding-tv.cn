@@ -79,11 +79,39 @@ CORE_PAGES = [
     ("privacy.html", "0.7", "monthly"),
     ("terms.html", "0.7", "monthly"),
     ("wedding-live-wall.html", "0.9", "monthly"),
+    ("en/", "0.95", "daily"),
+    ("en/wedding-live-wall.html", "0.9", "weekly"),
+    ("en/timeline.html", "0.9", "weekly"),
+    ("en/checklist.html", "0.9", "weekly"),
+    ("en/countdown.html", "0.85", "monthly"),
+    ("en/invitation.html", "0.95", "weekly"),
+    ("en/vows.html", "0.9", "weekly"),
+    ("en/speech.html", "0.9", "weekly"),
+    ("en/privacy.html", "0.7", "monthly"),
+    ("en/terms.html", "0.7", "monthly"),
 ]
 
 EXPLICIT_CORE_DATES = {
-    "": "2026-09-12",
-    "wedding-live-wall.html": "2026-09-12",
+    "": "2026-09-14",
+    "wedding-live-wall.html": "2026-09-14",
+    "terms.html": "2026-09-14",
+    "privacy.html": "2026-09-14",
+    "timeline.html": "2026-09-14",
+    "vows.html": "2026-09-14",
+    "speech.html": "2026-09-14",
+    "checklist.html": "2026-09-14",
+    "countdown.html": "2026-09-14",
+    "invitation.html": "2026-09-14",
+    "en/": "2026-09-14",
+    "en/wedding-live-wall.html": "2026-09-14",
+    "en/timeline.html": "2026-09-14",
+    "en/checklist.html": "2026-09-14",
+    "en/countdown.html": "2026-09-14",
+    "en/invitation.html": "2026-09-14",
+    "en/vows.html": "2026-09-14",
+    "en/speech.html": "2026-09-14",
+    "en/privacy.html": "2026-09-14",
+    "en/terms.html": "2026-09-14",
     "about.html": "2026-08-26",
     "terms.html": "2026-09-01",
     "editorial-policy.html": "2026-08-27",
@@ -124,7 +152,12 @@ EXPLICIT_CORE_DATES = {
 }
 
 def extract_html_date(rel_path: str) -> str:
-    target_rel = "index.html" if not rel_path else rel_path
+    if not rel_path:
+        target_rel = "index.html"
+    elif rel_path == "en/":
+        target_rel = "en/index.html"
+    else:
+        target_rel = rel_path
     fpath = os.path.join(PROJECT_ROOT, target_rel.replace("/", os.sep))
     if not os.path.exists(fpath):
         return EXPLICIT_CORE_DATES.get(rel_path, "2026-08-26")
