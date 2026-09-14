@@ -1,5 +1,6 @@
 // Automated regression tests for Cloudflare Worker API contracts, frontend image resolution, quota execution order, XSS security, and policy dates
 import test from "node:test";
+import "./test-managed-wall.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -499,35 +500,15 @@ test("Save API validation & quota order: invalid wall or invitation payloads do 
   assert.equal(kv.puts.filter((p) => p.key.startsWith("quota:invite:")).length, 2);
 });
 
-test("Live wall XSS prevention: guest names and lottery winners are properly escaped", async () => {
+test("Live wall XSS prevention: guest names and lottery winners use text nodes", async () => {
   const root = path.resolve(process.cwd());
-  const wallHtml = fs.readFileSync(path.join(root, "live-wall.html"), "utf8");
-
-  // 1. Verify escapeHtml exists and works against malicious vectors
-  const match = wallHtml.match(/function escapeHtml\(str\)\s*\{[\s\S]*?\n\}/);
-  assert.ok(match, "escapeHtml function must exist in live-wall.html");
-
-  const context = {};
-  vm.createContext(context);
-  vm.runInContext(match[0], context);
-  const escapeHtml = context.escapeHtml;
-
-  const maliciousName = `<img src=x onerror="alert('XSS')">`;
-  const escaped = escapeHtml(maliciousName);
-  assert.ok(!escaped.includes("<"), "Must not contain raw <");
-  assert.ok(!escaped.includes(">"), "Must not contain raw >");
-  assert.ok(!escaped.includes('"'), 'Must not contain raw "');
-  assert.equal(escaped, "&lt;img src=x onerror=&quot;alert(&#39;XSS&#39;)&quot;&gt;");
-
-  // 2. Statically verify lottery winner rendering uses escapeHtml
-  assert.ok(
-    wallHtml.includes("escapeHtml(winner)"),
-    "live-wall.html must use escapeHtml(winner) when displaying lottery winners"
-  );
-  assert.ok(
-    !wallHtml.includes("<strong>${winner}</strong>"),
-    "live-wall.html must not interpolate raw unescaped ${winner} into innerHTML"
-  );
+  const screen = fs.readFileSync(path.join(root, "assets/wall-screen.js"), "utf8");
+  const guest = fs.readFileSync(path.join(root, "assets/wall-guest.js"), "utf8");
+  const ui = fs.readFileSync(path.join(root, "assets/wall-ui.js"), "utf8");
+  assert.doesNotMatch(screen + guest + ui, /innerHTML|insertAdjacentHTML/);
+  assert.match(screen, /\$\("winner"\)\.textContent = winner/);
+  assert.match(ui, /el\.textContent = text/);
+  assert.match(screen, /node\("strong", item.name\)/);
 });
 
 test("Durable Object serial message processing: WallRoom handles serial writes and retrieval", async () => {

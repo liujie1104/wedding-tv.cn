@@ -8,6 +8,7 @@ export const onRequestGet = async ({ request, env }) => {
   const wallRoom = url.searchParams.get("wall");
   if (wallRoom) {
     const room = wallRoom.slice(0, 32);
+    if (room.startsWith("w_")) return badRequest("请使用新版互动入口");
     const since = Number(url.searchParams.get("since") || 0);
 
     // 如果配置了 Durable Object (env.WALL_DO)，从 DO 串行存储获取

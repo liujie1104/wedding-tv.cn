@@ -1,6 +1,6 @@
 # wedding-tv.cn
 
-稀缺婚礼行业品牌域名 + 一组面向新人的免费 AI 工具（AI 婚礼策划助手、电子请帖、誓词生成、筹备清单、倒计时海报、报价计算器…）。
+面向新人与婚礼主持人的免费工具：扫码祝福大屏、婚礼流程 PNG 长图、电子请帖、AI 策划和备婚指南。
 
 ## 技术栈
 
@@ -49,7 +49,7 @@ wrangler dev
 | 名称 | 类型 | 说明 |
 | --- | --- | --- |
 | `WEDDING` | KV | 短链与请帖数据存储 |
-| `WALL_DO` | SQLite-backed Durable Object | 按房间串行保存现场祝福，最后一条留言后 24 小时自动清空 |
+| `WALL_DO` | SQLite-backed Durable Object | 新版房间有效期 7 天、每条祝福保留 24 小时；旧房间保持最后发送后 24 小时清空 |
 | `AI` | Workers AI | 头像图像生成 |
 | `ASSETS` | Static Assets | 静态资源 |
 | `GEMINI_API_KEY` | Secret | Gemini API Key |
@@ -73,6 +73,22 @@ curl.exe "https://wedding-tv.cn/api/load?id=missing"
 ```
 
 首页应返回 `200`，无效请帖应返回通用的 `404` JSON，任何响应都不应泄露环境变量或密钥信息。
+
+## 扫码祝福大屏
+
+- `/wedding-live-wall.html` 是公开、可索引的创建入口；`/live-wall.html?demo=1` 是不读写服务器的虚构演示。
+- `/api/wall` 使用现有 `WallRoom` Durable Object，新房间 ID 以 `w_` 开头。旧 `save/load` 接口禁止访问此命名空间。
+- 新房间默认先审后公开。管理密钥只通过创建响应返回，服务器存 SHA-256 摘要；分享时密钥放 URL fragment，后续操作走 Authorization 请求头。请勿把管理链接交给宾客或写进日志。
+- 单条存储，事务内去重、计数和审核；累计上限 1000 条（含已删除及到期内容），达到上限返回错误，不覆盖旧记录。房间有效期 7 天，每条发送后 24 小时清除。
+- PNG/CSV、二维码、背景及音乐在浏览器处理。抽奖只按昵称去重，不能当作真实身份认证。
+- “正式活动”是创建者自报用途，不是核实的婚礼数；提交数也不是独立宾客数。本机汇总仅包含这台浏览器创建并同步过的房间，不是全站转化报表。
+- 本次未新增 AI 调用或更改百炼模型。没有基于此功能做 AdSense 通过、增长或并发容量保证。
+
+自动回归：`node --test scripts/test-api-regressions.mjs`，其中导入了管理房间的权限、幂等、并发、容量和到期测试。
+
+浏览器联调需要可解析的 `playwright`、`sharp` 和已安装的浏览器：先运行本地 Wrangler，持久化目录放系统临时目录以避免资产监视器反复刷新，再运行 `node scripts/test-wall-browser.cjs`。默认地址为 `http://127.0.0.1:8789`，只允许 localhost；可用 `WALL_BROWSER_CHANNEL=msedge` 选择本机 Edge。测试只创建并删除本地试用房间，验证两个独立浏览器权限、CSV/PNG/JSON、320/390/1440 宽度和四种流程模板。
+
+首批试用应找真实主持人或新人，先彩排，活动后收集设备与网络条件、审核是否及时、导出是否可用。不得把演示、开发测试或自报数据写成真实服务案例。
 
 ## AI 内容质量审查
 

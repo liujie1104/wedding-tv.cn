@@ -8,12 +8,15 @@ import { onRequestPost as avatarPost } from "../functions/api/avatar.js";
 import { onRequestPost as aiPost } from "../functions/api/ai.js";
 import { onRequestPost as posterPost, onRequestGet as posterGet } from "../functions/api/poster.js";
 import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
+import { onRequest as wallRequest } from "../functions/api/wall.js";
+import { managedFetch, managedAlarm } from "./managed-wall.js";
 import {
   BAIDU_ANALYTICS_SNIPPET,
   shouldInjectBaiduAnalytics,
 } from "./baidu-analytics.js";
 
 const API = {
+  "/api/wall":      { POST: wallRequest, GET: wallRequest },
   "/api/save":      { POST: savePost },
   "/api/load":      { GET:  loadGet },
   "/api/upload":    { POST: uploadPost },
@@ -274,6 +277,13 @@ export class WallRoom {
 
   async fetch(request) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith("/managed/")) return managedFetch(this.state, request);
+    // Legacy endpoints must never read or write a managed room without its controls.
+    if (await this.state.storage.get("managed")) {
+      return new Response(JSON.stringify({ ok: false, error: "请使用新版互动入口" }), {
+        status: 403, headers: { "content-type": "application/json", "cache-control": "no-store" },
+      });
+    }
     if (request.method === "POST") {
       const item = await request.json();
       const now = Date.now();
@@ -307,6 +317,7 @@ export class WallRoom {
   }
 
   async alarm() {
+    if (await managedAlarm(this.state)) return;
     await this.state.storage.deleteAll();
   }
 }

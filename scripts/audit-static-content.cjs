@@ -382,8 +382,8 @@ const home = fs.readFileSync(path.join(root, "index.html"), "utf8");
 if (/SITE_STATS|st-(?:views|inquiries|cities)|useDailyJitter/.test(home)) {
   errors.push("index.html: contains unverifiable visitor or usage counters");
 }
-if (!home.includes('/assets/hero-wedding-planning.webp') || !fs.existsSync(path.join(root, "assets", "hero-wedding-planning.webp"))) {
-  errors.push("index.html: wedding planning hero image is missing");
+if (!home.includes('/assets/wall-demo.webp') || !fs.existsSync(path.join(root, "assets", "wall-demo.webp"))) {
+  errors.push("index.html: actual wedding wall demo screenshot is missing");
 }
 if (/霸王条款|全面诊断|真实复盘|真实水分/.test(home)) {
   errors.push("index.html: contains exaggerated marketing claims");

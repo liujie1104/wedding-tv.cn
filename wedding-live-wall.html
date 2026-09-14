@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>免费婚礼扫码祝福大屏｜创建房间、审核弹幕与导出桌牌</title>
+<meta name="description" content="用电脑连接婚礼现场屏幕，宾客扫码发送文字祝福。免费创建独立互动房间，主持人审核后上墙，支持暂停展示、删除留言、抽奖及 PNG 二维码桌牌和祝福纪念图导出。先体验本地演示，再为实际活动创建房间。" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="author" content="wedding-tv.cn 内容维护" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<link rel="canonical" href="https://wedding-tv.cn/wedding-live-wall.html" />
+<meta property="og:title" content="免费婚礼扫码祝福大屏" />
+<meta property="og:description" content="宾客扫码送祝福，主持人审核后上墙。可先体验演示，再创建独立婚礼房间。" />
+<meta property="og:image" content="https://wedding-tv.cn/assets/wall-demo.webp" />
+<meta property="og:url" content="https://wedding-tv.cn/wedding-live-wall.html" />
+<meta property="og:type" content="website" />
+<link rel="stylesheet" href="/assets/wall.css" />
+<link rel="icon" href="/icon-192.png" />
+<script defer src="/assets/wall-ui.js"></script>
+<script defer src="/assets/wall-create.js"></script>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/">wedding-tv.cn</a><nav aria-label="工具导航"><a href="/timeline.html">流程表</a><a href="/invitation.html">电子请帖</a><a href="/blog.html">全部工具与指南</a></nav></header>
+<main class="content">
+<h1>免费婚礼扫码祝福大屏</h1>
+<p class="muted">电脑连接现场屏幕，宾客扫码送祝福，主持人审核后展示。</p>
+<div class="workspace">
+<form id="createForm">
+  <div class="fields">
+    <div class="field"><label for="groom">新人称呼一</label><input id="groom" name="groom" maxlength="20" placeholder="例如：小林" required /></div>
+    <div class="field"><label for="bride">新人称呼二</label><input id="bride" name="bride" maxlength="20" placeholder="例如：小夏" required /></div>
+    <div class="field"><label for="date">婚礼日期（选填）</label><input id="date" name="date" type="date" /></div>
+    <div class="field"><label for="theme">屏幕配色</label><select id="theme" name="theme"><option value="rose">玫瑰</option><option value="forest">松绿</option><option value="ink">墨黑</option></select></div>
+    <div class="field wide"><label for="venue">场地简称（选填）</label><input id="venue" name="venue" maxlength="60" placeholder="不必填写详细地址" /></div>
+    <div class="field wide"><label for="mode">房间用途</label><select id="mode" name="mode"><option value="trial">设备试用 / 彩排</option><option value="event">正式活动</option></select></div>
+    <label class="check field wide"><input id="privacyAgree" type="checkbox" required /><span>我了解房间链接持有者可看到已通过的祝福，新人称呼会随房间公开。<a href="/privacy.html">数据说明</a></span></label>
+  </div>
+  <div class="actions"><button class="primary" id="createButton" type="submit">创建婚礼大屏</button><a class="button" href="/live-wall.html?demo=1">体验演示</a></div>
+  <div class="status" id="createStatus" role="status"></div>
+  <small>房间有效期 7 天；每条祝福保留 24 小时。每房间累计最多接收 1000 条，包含待审和已删除祝福。创建后请保存管理链接。</small>
+</form>
+<div><iframe class="preview-frame" title="婚礼大屏本地演示，使用虚构昵称" src="/live-wall.html?demo=1&amp;embed=1" loading="lazy"></iframe><div class="preview-caption"><span>演示效果 · 虚构昵称，不连接真实房间</span><a href="/live-wall.html?demo=1">打开完整演示</a></div></div>
+</div>
+<section id="recentSection" class="guide" hidden><h2>这台设备创建的房间</h2><ul class="room-list" id="recentRooms"></ul><div class="actions"><button id="exportTrials" type="button">导出本机试用汇总 CSV</button><button id="clearTrials" type="button">清除本机使用记录</button></div><p class="muted">只汇总本机保存的房间用途、提交数和审核数，不含祝福正文、宾客姓名或管理密钥。用途由创建者选择，不代表经核实的真实婚礼数。清除记录不会删除线上房间。</p></section>
+<section class="guide"><h2>第一次在婚礼现场使用</h2><div class="guide-grid">
+<div><h3>电脑与大屏怎么连接？</h3><p>使用电脑浏览器打开房间，把电脑通过 HDMI 接入酒店屏幕控制设备，先让酒店工作人员确认信号源和画面比例。在浏览器中进入“全屏”，再检查四角、标题和二维码是否完整。手机可以管理房间；正式投屏建议用电脑。</p></div>
+<div><h3>宾客扫码后会发生什么？</h3><p>二维码打开本站祝福表单。宾客填写昵称和文字后，主持人会在管理列表收到待审核内容，点击“通过”后才会出现在大屏和公开祝福列表中。不需要宾客上传照片，也不要求注册。拿到链接的人都能进入，二维码不应发布到无关公开群。</p></div>
+<div><h3>主持人如何控制现场？</h3><p>管理链接与宾客链接不同，不要把管理链接印在桌牌上。主持人可先暂停展示，再审核和删除不合适的留言，也可暂停接收新祝福。其他设备打开不带管理密钥的大屏链接，只能观看。抽奖按已通过祝福的昵称去重，无法核实一人多个昵称，不适合高价值奖品或严肃身份核验。</p></div>
+<div><h3>网络中断和数据到期怎么办？</h3><p>现场电脑和宾客手机都需要联网。大屏会显示连接异常并尝试恢复；活动前应分别用酒店网络和手机网络完成一次发送、审核和展示。不承诺任意人数并发。房间创建后 7 天到期，每条祝福发送 24 小时后清除，导出只包含当时仍保留且已通过的内容，请在活动结束前保存。</p></div>
+</div></section>
+<section class="guide"><h2>带走桌牌和祝福，也留下改进依据</h2><p>房间内可生成 PNG 扫码桌牌，打印后请用手机试扫实物。祝福纪念图每张选取最近 20 条已通过内容，完整保留内容可导出 CSV。图片和文件在浏览器生成，不交给 AI 或第三方二维码接口。请在获得参与者同意后再对外分享，避免把现场昵称和私人留言放到公开平台。</p><p>主持人管理页会显示本房间提交、审核及当前保留数量，并提供使用记录下载。设备试用与正式活动分开记录，演示模式不写入服务器。欢迎把设备型号、网络环境和操作卡点发送给 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>；无需附上管理链接或宾客信息。</p><p><a href="/timeline.html">制作婚礼流程 PNG 长图</a> · <a href="/wedding-live-stream-technical-guide.html">查看直播与网络准备指南</a></p></section>
+</main><footer><a href="/authors.html">内容责任</a><a href="/privacy.html">隐私政策</a><a href="/terms.html">使用条款</a><span>更新：2026-09-12</span></footer>
+</body></html>

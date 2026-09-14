@@ -6,6 +6,12 @@ scripts/
 .vscode/
 .wrangler/
 node_modules/
+.pnpm-store/
+tmp/
+.env
+.env.*
+.dev.vars*
+__pycache__/
 .embedder/
 .git/
 wrangler.jsonc

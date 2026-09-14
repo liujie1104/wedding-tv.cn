@@ -75,6 +75,7 @@ export const onRequestPost = async ({ request, env }) => {
   // 1. 婚礼大屏弹幕支持
   if (payload?.wall) {
     const room = cleanLine(payload.wall.room, 32) || "wedding888";
+    if (room.startsWith("w_")) return badRequest("请使用新版互动入口");
     const name = cleanLine(payload.wall.name, 16) || "热心宾客";
     const identity = cleanLine(payload.wall.identity, 24) || "现场宾客";
     const message = cleanText(payload.wall.message, 120);

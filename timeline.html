@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>婚礼流程时间轴生成器 · 中式/西式/草坪婚礼当天时间表 | wedding-tv.cn</title>
-<meta name="description" content="婚礼流程时间轴智能排期工具：根据新人仪式时间与婚礼类型（午宴/晚宴/户外），一键生成从清晨化妆、接亲堵门、外景拍摄到仪式开场的精细化分钟级时间节点，支持手机端实时查看与导出打印。" />
+<title>婚礼流程表生成器｜中式西式时间轴与 PNG 长图下载</title>
+<meta name="description" content="选择婚礼类型和仪式开始时间，生成当天流程表初稿，支持 PNG 长图下载、文字复制和打印。提供中式接亲、双仪式、西式草坪与酒店模板，时间按固定偏移计算，请结合交通、场地与人员安排调整。" />
 <meta name="author" content="wedding-tv.cn 内容维护" />
 <meta name="robots" content="index,follow" />
 <link rel="canonical" href="https://wedding-tv.cn/timeline.html" />
@@ -12,7 +12,7 @@
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/timeline.html" />
 <link rel="manifest" href="/manifest.json" />
 <meta property="og:title" content="婚礼流程时间轴生成器" />
-<meta property="og:description" content="一键生成婚礼当天完整流程，可下载打印。" />
+<meta property="og:description" content="按仪式时间生成流程模板，下载可保存到手机的 PNG 长图。" />
 <meta property="og:url" content="https://wedding-tv.cn/timeline.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
 <meta name="theme-color" content="#0e0a14" />
@@ -54,6 +54,8 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
 <link rel="apple-touch-icon" href="/icon-192.png" />
 <script defer src="/assets/speed-booster.js"></script>
 <meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<script defer src="/assets/wall-ui.js"></script>
+<style>.image-export,.copy-dialog{max-width:min(94vw,680px);max-height:90dvh;padding:20px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#252329;overflow:auto}.image-export img{width:100%;display:block;margin-top:16px}.image-export button,.copy-dialog button{width:auto;margin-right:8px}.copy-dialog textarea{width:100%;min-height:120px}dialog::backdrop{background:#0008}</style>
 </head>
 <body>
 <div class="wrap">
@@ -68,7 +70,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
     <a href="/wedding-emergency-plan-guide.html">应急预案</a>
   </nav>
   <h1>⏱️ 婚礼流程时间轴生成器</h1>
-  <p class="lead">输入婚礼仪式时间和类型，一键生成新郎接亲到送宾的完整流程表。可截图保存或分享给婚庆团队、伴郎伴娘协调时间。</p>
+  <p class="lead">选择仪式时间和婚礼类型，生成流程表初稿，下载 PNG 长图或分享文字。各节点按模板偏移计算，请结合实际交通和场地调整。</p>
 
   <div class="controls">
     <div><label>婚礼类型</label>
@@ -80,12 +82,11 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
       </select>
     </div>
     <div><label>仪式开始时间</label><input id="start" type="time" value="11:18" /></div>
-    <div><label>新郎接亲（中式必填）</label><input id="pickup" type="time" value="07:30" /></div>
     <div style="align-self:end"><button class="primary" onclick="render()">生成时间轴</button></div>
   </div>
 
   <div class="btn-row">
-    <button onclick="downloadImg()">⬇️ 下载图片</button>
+    <button onclick="downloadImg()">下载 PNG 长图</button>
     <button onclick="copyText()">📋 复制为文字</button>
     <button onclick="window.print()">🖨️ 打印</button>
   </div>
@@ -130,7 +131,7 @@ footer{text-align:center;color:var(--sub);font-size:12px;margin:40px 0 20px;bord
     <li>敬酒、合影等时长受桌数和宾客互动影响，应设置最晚结束点和删减规则。</li>
   </ul>
   <p style="margin:0 0 12px">完成第一版后，用三种情景复核：按时、延误一小段、某个非核心环节取消。每种情景都应明确谁决定调整、删减哪一项、如何通知。需要多人协作时，可先下载<a href="/timeline-templates.html">CSV 流程模板</a>补全负责人和版本号。</p>
-  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：2026-08-11 · <a href="/editorial-policy.html">编辑与 AI 使用说明</a></p>
+  <p style="margin:14px 0 0;color:#b9b1a3;font-size:14px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：2026-09-12 · <a href="/editorial-policy.html">编辑与 AI 使用说明</a></p>
 </section>
 
 <footer>由 <a href="/">wedding-tv.cn</a> 提供 · 免费婚礼工具与婚俗指南</footer>
@@ -210,6 +211,8 @@ function fmtTime(base, offset){
   return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
 }
 function render(){
+  if (!$("start").value) { $("start").setCustomValidity("请选择仪式开始时间"); $("start").reportValidity(); return; }
+  $("start").setCustomValidity("");
   const t=$("type").value;
   const [hh,mm]=$("start").value.split(":").map(Number);
   const base=new Date();base.setHours(hh,mm,0,0);
@@ -223,36 +226,16 @@ function copyText(){
   const text=Array.from(rows).map(r=>{
     return r.querySelector(".tl-time").textContent+"  "+r.querySelector(".tl-title").textContent.replace(/^(晨间|仪式|宴会|晚间)/,"");
   }).join("\n");
-  navigator.clipboard.writeText("【婚礼流程】by wedding-tv.cn\n\n"+text).then(()=>alert("已复制到剪贴板"));
+  WallUI.copy("【婚礼流程】by wedding-tv.cn\n\n"+text);
 }
-function downloadImg(){
-  // 用 html-to-canvas 风格的简单 SVG 序列化
-  const tl=$("tl");
-  const w=820,padY=30;
-  const rows=tl.querySelectorAll(".tl-row");
-  const lineH=58;
-  const h=padY*2+rows.length*lineH+60;
-  const items=Array.from(rows).map((r,i)=>{
-    const time=r.querySelector(".tl-time").textContent;
-    const title=r.querySelector(".tl-title").textContent.replace(/^(晨间|仪式|宴会|晚间)/,"");
-    const desc=r.querySelector(".tl-desc")?.textContent||"";
-    const y=padY+50+i*lineH;
-    return `<text x="40" y="${y}" font-size="22" font-family="monospace" fill="#ffd28a" font-weight="700">${time}</text>
-<text x="140" y="${y-2}" font-size="16" fill="#f7f3ff" font-weight="600">${escapeXml(title)}</text>
-<text x="140" y="${y+18}" font-size="12" fill="#b9aed1">${escapeXml(desc)}</text>
-<line x1="40" y1="${y+30}" x2="${w-40}" y2="${y+30}" stroke="rgba(255,255,255,0.08)"/>`;
-  }).join("");
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-<rect width="${w}" height="${h}" fill="#0e0a14"/>
-<text x="40" y="40" font-size="22" fill="#ff6b9d" font-weight="700">⏱️ 婚礼当天流程时间表</text>
-${items}
-<text x="${w/2}" y="${h-15}" text-anchor="middle" font-size="11" fill="#b9aed1">由 wedding-tv.cn 免费生成</text>
-</svg>`;
-  const url=URL.createObjectURL(new Blob([svg],{type:"image/svg+xml"}));
-  const a=document.createElement("a");a.href=url;a.download="婚礼流程时间表.svg";a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+async function downloadImg(){
+  const rows = Array.from(document.querySelectorAll('.tl-row')).map(row => ({
+    heading: row.querySelector('.tl-time').textContent + '  ' + row.querySelector('.tl-title').textContent.replace(/^(晨间|仪式|宴会|晚间)/, ''),
+    text: row.querySelector('.tl-desc')?.textContent || ''
+  }));
+  try { await WallUI.card('婚礼当天流程时间表', rows, 'wedding-tv.cn · 模板初稿，请结合交通和场地调整', '婚礼流程时间表.png'); }
+  catch (error) { alert('图片导出失败：' + error.message); }
 }
-function escapeXml(s){return (s||"").replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]))}
 render();
 </script>
 <script>
