@@ -78,10 +78,12 @@ CORE_PAGES = [
     ("authors.html", "0.7", "monthly"),
     ("privacy.html", "0.7", "monthly"),
     ("terms.html", "0.7", "monthly"),
+    ("wedding-live-wall.html", "0.9", "monthly"),
 ]
 
 EXPLICIT_CORE_DATES = {
-    "": "2026-08-27",
+    "": "2026-09-12",
+    "wedding-live-wall.html": "2026-09-12",
     "about.html": "2026-08-26",
     "terms.html": "2026-09-01",
     "editorial-policy.html": "2026-08-27",

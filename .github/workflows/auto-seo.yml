@@ -54,7 +54,7 @@ jobs:
       - name: Validate Wrangler deployment configuration
         run: npx --yes wrangler@4.128.0 deploy --dry-run --outdir /tmp/wrangler-dry-run
       - name: Run API regression tests
-        run: node --test scripts/test-api-regressions.mjs
+        run: node --test scripts/test-api-regressions.mjs scripts/test-managed-wall.mjs
       - name: Audit indexed content
         run: node scripts/audit-static-content.cjs
 

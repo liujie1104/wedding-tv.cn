@@ -321,4 +321,3 @@ export class WallRoom {
     await this.state.storage.deleteAll();
   }
 }
-
