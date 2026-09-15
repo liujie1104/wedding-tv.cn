@@ -54,6 +54,18 @@ const LEGACY_REDIRECTS = new Map([
   ["/privacy-en.html", "/en/privacy.html"],
   ["/terms-en", "/en/terms.html"],
   ["/terms-en.html", "/en/terms.html"],
+  ["/vows-en", "/en/vows.html"],
+  ["/vows-en.html", "/en/vows.html"],
+  ["/speech-en", "/en/speech.html"],
+  ["/speech-en.html", "/en/speech.html"],
+  ["/countdown-en", "/en/countdown.html"],
+  ["/countdown-en.html", "/en/countdown.html"],
+  ["/wedding-live-wall-en", "/en/wedding-live-wall.html"],
+  ["/wedding-live-wall-en.html", "/en/wedding-live-wall.html"],
+  ["/live-wall-en", "/en/wedding-live-wall.html"],
+  ["/live-wall-en.html", "/en/wedding-live-wall.html"],
+  ["/poster-en", "/poster.html"],
+  ["/poster-en.html", "/poster.html"],
 ]);
 
 const RETIRED_PREFIXES = ["/news", "/insights", "/blog/cities"];
@@ -214,7 +226,9 @@ export default {
     // 短链 /i/abc12345 -> /i.html?id=abc12345（在 Worker 内重写后交给静态资源）
     const m = /^\/i\/([a-z0-9]{4,16})$/i.exec(path);
     if (m) {
-      const newUrl = new URL(`/i.html?id=${encodeURIComponent(m[1])}`, url.origin);
+      const newUrl = new URL(`/i.html`, url.origin);
+      newUrl.search = url.search;
+      newUrl.searchParams.set("id", m[1]);
       const response = await env.ASSETS.fetch(new Request(newUrl, request));
       return staticResponse(response, "/i.html");
     }

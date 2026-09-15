@@ -96,12 +96,6 @@ CORE_PAGES = [
 EXPLICIT_CORE_DATES = {
     "": "2026-09-14",
     "wedding-live-wall.html": "2026-09-14",
-    "timeline.html": "2026-09-14",
-    "vows.html": "2026-09-14",
-    "speech.html": "2026-09-14",
-    "checklist.html": "2026-09-14",
-    "countdown.html": "2026-09-14",
-    "invitation.html": "2026-09-14",
     "en/": "2026-09-14",
     "en/wedding-live-wall.html": "2026-09-14",
     "en/timeline.html": "2026-09-14",

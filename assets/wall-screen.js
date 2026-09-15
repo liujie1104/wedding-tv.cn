@@ -4,18 +4,18 @@
   const params = new URLSearchParams(location.search);
   const demo = params.get("demo") === "1", roomId = params.get("room") || "";
   const managed = /^w_[a-f0-9]{24}$/.test(roomId), embed = demo && params.get("embed") === "1";
-  if (!demo && !roomId) { location.replace("/wedding-live-wall.html"); return; }
+  let screenLang = params.get("lang") === "en" ? "en" : (recall("wedding_screen_lang", "zh") === "en" ? "en" : "zh");
+  if (!demo && !roomId) { location.replace(screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html"); return; }
   if (embed) document.body.classList.add("embed");
   const fragmentKey = new URLSearchParams(location.hash.slice(1)).get("key");
   let key = managed ? (fragmentKey || recall("wall_admin_" + roomId, "")) : "";
   if (fragmentKey && managed && remember("wall_admin_" + roomId, fragmentKey)) history.replaceState(null, "", location.pathname + location.search);
   let data = null, paused = false, stopped = false, inFlight = false;
   let queue = [], seen = new Set(), listSignature = "", audioUrl = "";
-  let screenLang = params.get("lang") === "en" ? "en" : (recall("wedding_screen_lang", "zh") === "en" ? "en" : "zh");
   const winners = [];
   function getGuestUrl() {
     return demo
-      ? location.origin + "/wedding-live-wall.html?from=demo" + (screenLang === "en" ? "&lang=en" : "")
+      ? location.origin + (screenLang === "en" ? "/en/wedding-live-wall.html?from=demo&lang=en" : "/wedding-live-wall.html?from=demo")
       : location.origin + "/blessing.html?room=" + encodeURIComponent(roomId) + (screenLang === "en" ? "&lang=en" : "");
   }
   let guestUrl = getGuestUrl();

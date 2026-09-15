@@ -96,17 +96,42 @@
     if ($("quickBtn1")) { $("quickBtn1").textContent = t.quick1Btn; $("quickBtn1").dataset.message = t.quick1Msg; }
     if ($("quickBtn2")) { $("quickBtn2").textContent = t.quick2Btn; $("quickBtn2").dataset.message = t.quick2Msg; }
     if ($("lblGuestColor")) $("lblGuestColor").textContent = t.colorLabel;
+    const colorSelect = $("guestColor");
+    if (colorSelect && colorSelect.options) {
+      const colorLabels = lang === "en"
+        ? { rose: "Rose", gold: "Gold", red: "Red", purple: "Purple" }
+        : { rose: "玫瑰", gold: "金色", red: "红色", purple: "紫色" };
+      for (let i = 0; i < colorSelect.options.length; i++) {
+        const opt = colorSelect.options[i];
+        if (colorLabels[opt.value]) opt.textContent = colorLabels[opt.value];
+      }
+    }
     if ($("lblConsentText")) {
       $("lblConsentText").childNodes[0].nodeValue = t.consent;
-      if ($("privacyLink")) $("privacyLink").textContent = t.privacy;
+      if ($("privacyLink")) {
+        $("privacyLink").textContent = t.privacy;
+        $("privacyLink").href = lang === "en" ? "/en/privacy.html" : "/privacy.html";
+      }
     }
     if ($("submitGuest") && !sending) $("submitGuest").textContent = t.submitBtn;
     if ($("lblApprovedTitle")) $("lblApprovedTitle").textContent = t.approvedTitle;
     if ($("lblCreateTitle")) $("lblCreateTitle").textContent = t.createTitle;
     if ($("lblCreateDesc")) $("lblCreateDesc").textContent = t.createDesc;
-    if ($("btnCreateWall")) $("btnCreateWall").textContent = t.createWall;
-    if ($("btnCreateTimeline")) $("btnCreateTimeline").textContent = t.createTimeline;
-    if ($("footerPrivacy")) $("footerPrivacy").textContent = t.privacy;
+    if ($("btnCreateWall")) {
+      $("btnCreateWall").textContent = t.createWall;
+      $("btnCreateWall").href = lang === "en" ? "/en/wedding-live-wall.html?from=guest" : "/wedding-live-wall.html?from=guest";
+    }
+    if ($("btnCreateTimeline")) {
+      $("btnCreateTimeline").textContent = t.createTimeline;
+      $("btnCreateTimeline").href = lang === "en" ? "/en/timeline.html" : "/timeline.html";
+    }
+    if ($("footerPrivacy")) {
+      $("footerPrivacy").textContent = t.privacy;
+      $("footerPrivacy").href = lang === "en" ? "/en/privacy.html" : "/privacy.html";
+    }
+    if ($("footerBrand")) {
+      $("footerBrand").href = lang === "en" ? "/en/" : "/";
+    }
   }
 
   if ($("langToggle")) {
