@@ -238,6 +238,49 @@ function applyEnglishUI() {
   }
 }
 
+function parseWeddingDate(dateStr, timeStr, timeZone) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(NaN);
+  const tz = timeZone || 'Asia/Shanghai';
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const [hh, mm] = (timeStr || '11:58').split(':').map(Number);
+  const utcGuess = Date.UTC(y, m - 1, d, hh, mm, 0);
+
+  let dtf;
+  try {
+    dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false
+    });
+  } catch (_) {
+    dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false
+    });
+  }
+
+  function getTzOffsetMs(date) {
+    const parts = dtf.formatToParts(date);
+    const p = {};
+    for (const part of parts) p[part.type] = Number(part.value);
+    const hour = p.hour === 24 ? 0 : p.hour;
+    const tzAsUtc = Date.UTC(p.year, p.month - 1, p.day, hour, p.minute, p.second || 0);
+    return tzAsUtc - date.getTime();
+  }
+
+  let guess = new Date(utcGuess);
+  let offset = getTzOffsetMs(guess);
+  let target = new Date(utcGuess - offset);
+  let offset2 = getTzOffsetMs(target);
+  if (offset2 !== offset) {
+    target = new Date(utcGuess - offset2);
+  }
+  return target;
+}
+
 function render(inv){
   const isEn = params.get('lang') === 'en' || inv?.lang === 'en';
   if (isEn) applyEnglishUI();
@@ -248,10 +291,11 @@ function render(inv){
   // 名字
   $('namesEn').textContent = `${inv.groom} & ${inv.bride}`;
   $('namesCn').textContent = `${inv.groom}  ❤  ${inv.bride}`;
-  // 日期
-  const d = new Date((inv.date || '') + 'T' + (inv.time || '11:58'));
-  const dateStr = isNaN(d) ? inv.date : d.toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-  const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  // 日期（按婚礼所在地时区解析，避免不同时区访客产生偏差）
+  const tz = inv.timezone || 'Asia/Shanghai';
+  const d = parseWeddingDate(inv.date, inv.time, tz);
+  const dateStr = isNaN(d) ? inv.date : d.toLocaleDateString('zh-CN', { timeZone: tz, year:'numeric', month:'long', day:'numeric', weekday:'long' });
+  const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US', { timeZone: tz, year:'numeric', month:'long', day:'numeric' });
   $('dateEn').textContent = dateEn || '';
   $('dateCn').textContent = isEn ? (dateEn || '') : (dateStr || '');
   $('timeCn').textContent = inv.time || '11:58';
@@ -362,20 +406,28 @@ function addToCalendar(){
   const isEn = inv?.lang === 'en' || params.get('lang') === 'en' || document.documentElement.lang === 'en';
   const T = window.__T || (isEn ? { invalidDate: 'Invalid wedding date' } : { invalidDate: '日期无效' });
   if(!inv?._date || isNaN(inv._date)) return alert(T.invalidDate);
+  const tz = inv.timezone || 'Asia/Shanghai';
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
   const summary = (window.__T && window.__T.calSummary) ? window.__T.calSummary(inv.groom, inv.bride) : (isEn ? `${inv.groom} & ${inv.bride}'s Wedding` : `${inv.groom} & ${inv.bride} 的婚礼`);
   const desc = (window.__T && window.__T.calDesc) ? `${window.__T.calDesc} · ${location.href}` : (isEn ? `Created with wedding-tv.cn · ${location.href}` : `由 wedding-tv.cn 制作 · ${location.href}`);
+  const locationStr = [inv.city, inv.venue].filter(Boolean).join(' ');
   const ics = [
-    'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//wedding-tv.cn//Wedding Invitation//EN',
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
     `SUMMARY:${summary}`,
-    `LOCATION:${inv.city||''} ${inv.venue||''}`,
-    `DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
-    `DESCRIPTION:${desc}`,
-    'END:VEVENT','END:VCALENDAR'
-  ].join('\n');
-  const blob = new Blob([ics],{type:'text/calendar'});
+    `LOCATION:${locationStr}`,
+    `DTSTART:${fmt(start)}`,
+    `DTEND:${fmt(end)}`,
+    `DESCRIPTION:${desc} (${tz})`,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics],{type:'text/calendar;charset=utf-8'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'wedding.ics'; a.click();
 }

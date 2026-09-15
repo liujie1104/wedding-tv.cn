@@ -48,7 +48,7 @@
     if ($("brandLink")) $("brandLink").textContent = screenLang === "en" ? "wedding-tv.cn · Live Wall" : "wedding-tv.cn · 婚礼大屏";
     if ($("newRoomLink")) {
       $("newRoomLink").textContent = screenLang === "en" ? "Create New Room" : "创建新房间";
-      $("newRoomLink").href = screenLang === "en" ? "/en/live-wall.html" : "/wedding-live-wall.html";
+      $("newRoomLink").href = screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html";
     }
 
     if ($("adminTitle")) $("adminTitle").textContent = screenLang === "en" ? "Host Controls" : "主持人管理";
@@ -278,7 +278,7 @@
       ? "Immediately delete room, all pending and approved wishes? Please export any needed data first. This action cannot be undone."
       : "立即删除房间、所有待审及已通过祝福？请先导出需要保留的内容。此操作不可恢复。";
     if (!confirm(confirmMsg)) return;
-    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace(screenLang === "en" ? "/en/live-wall.html" : "/wedding-live-wall.html"); }
+    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace(screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html"); }
     catch (error) { notice(error.message, true); }
   };
   async function backgroundStore(value, write = false) {

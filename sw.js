@@ -78,7 +78,7 @@ self.addEventListener('fetch', event => {
             // Respect Cache-Control: private, no-store
             const cacheControl = res.headers.get('cache-control') || '';
             if (!cacheControl.includes('no-store') && !cacheControl.includes('private')) {
-              return cache.put(req, res.clone()).then(() => res);
+              return cache.put(req, res.clone()).catch(() => {}).then(() => res);
             }
           }
           return res;

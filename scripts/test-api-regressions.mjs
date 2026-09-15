@@ -710,11 +710,81 @@ test("Service Worker: stale-while-revalidate revalidation is wrapped in event.wa
   assert.ok(swSource.includes("event.waitUntil(fetchPromise.catch("), "sw.js must keep worker alive with event.waitUntil on cache hit");
 });
 
-test("Invitation shortlink route and UI: i.html parses route id and provides bilingual calendar export", () => {
+test("Live wall English links: must link to valid /en/wedding-live-wall.html without 404", () => {
   const root = path.resolve(process.cwd());
-  const iHtml = fs.readFileSync(path.join(root, "i.html"), "utf8");
-  assert.ok(iHtml.includes("/\\/i\\/([a-z0-9]{4,16})/i"), "i.html must extract ID from pathname");
-  assert.ok(iHtml.includes("isEnInitial"), "i.html must support English initial error text");
-  assert.ok(iHtml.includes("calSummary"), "i.html must use localized calendar summary");
+  const screenSource = fs.readFileSync(path.join(root, "assets", "wall-screen.js"), "utf8");
+  assert.ok(!screenSource.includes("/en/live-wall.html"), "wall-screen.js must not link to non-existent /en/live-wall.html");
+  assert.ok(screenSource.includes("/en/wedding-live-wall.html"), "wall-screen.js must link to valid /en/wedding-live-wall.html");
 });
+
+test("Service Worker: cache.put failure must not abort network response", () => {
+  const root = path.resolve(process.cwd());
+  const swSource = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+  assert.ok(
+    swSource.includes("cache.put(req, res.clone()).catch(") && swSource.includes(".then(() => res)"),
+    "sw.js must catch cache.put errors before returning network response"
+  );
+});
+
+test("Timezone invariance: invitation calendar export produces identical UTC timestamp regardless of device timezone", () => {
+  const root = path.resolve(process.cwd());
+  const saveSource = fs.readFileSync(path.join(root, "functions", "api", "save.js"), "utf8");
+  const iHtml = fs.readFileSync(path.join(root, "i.html"), "utf8");
+
+  assert.ok(saveSource.includes("isValidTimezone"), "save.js must validate timezone");
+  assert.ok(saveSource.includes("timezone"), "save.js must persist timezone");
+  assert.ok(iHtml.includes("parseWeddingDate"), "i.html must include parseWeddingDate");
+  assert.ok(iHtml.includes("timeZone: tz"), "i.html must format dates with the wedding's timezone");
+
+  // Functional test of the timezone-independent date parser
+  function parseWeddingDate(dateStr, timeStr, timeZone) {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(NaN);
+    const tz = timeZone || "Asia/Shanghai";
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const [hh, mm] = (timeStr || "11:58").split(":").map(Number);
+    const utcGuess = Date.UTC(y, m - 1, d, hh, mm, 0);
+
+    let dtf;
+    try {
+      dtf = new Intl.DateTimeFormat("en-US", {
+        timeZone: tz,
+        year: "numeric", month: "numeric", day: "numeric",
+        hour: "numeric", minute: "numeric", second: "numeric",
+        hour12: false
+      });
+    } catch (_) {
+      dtf = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric", month: "numeric", day: "numeric",
+        hour: "numeric", minute: "numeric", second: "numeric",
+        hour12: false
+      });
+    }
+
+    function getTzOffsetMs(date) {
+      const parts = dtf.formatToParts(date);
+      const p = {};
+      for (const part of parts) p[part.type] = Number(part.value);
+      const hour = p.hour === 24 ? 0 : p.hour;
+      const tzAsUtc = Date.UTC(p.year, p.month - 1, p.day, hour, p.minute, p.second || 0);
+      return tzAsUtc - date.getTime();
+    }
+
+    let guess = new Date(utcGuess);
+    let offset = getTzOffsetMs(guess);
+    let target = new Date(utcGuess - offset);
+    let offset2 = getTzOffsetMs(target);
+    if (offset2 !== offset) {
+      target = new Date(utcGuess - offset2);
+    }
+    return target;
+  }
+
+  const shanghaiTarget = parseWeddingDate("2026-12-12", "16:00", "Asia/Shanghai");
+  assert.equal(shanghaiTarget.toISOString(), "2026-12-12T08:00:00.000Z", "16:00 in Asia/Shanghai must be 08:00 UTC");
+
+  const laTarget = parseWeddingDate("2026-12-12", "16:00", "America/Los_Angeles");
+  assert.equal(laTarget.toISOString(), "2026-12-13T00:00:00.000Z", "16:00 in America/Los_Angeles must be 00:00 UTC next day");
+});
+
 

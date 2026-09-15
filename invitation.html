@@ -296,6 +296,7 @@ textarea{resize:vertical;min-height:80px}
 const state = {
   template: 'gold',
   groom:'', bride:'', date:'', time:'11:58', city:'', venue:'', greeting:'',
+  timezone: (typeof Intl !== 'undefined' && Intl.DateTimeFormat ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'Asia/Shanghai') || 'Asia/Shanghai',
   cover:null,            // {key,url} after upload
   coverDataUrl:null,     // 本地预览
   music:'',
@@ -662,6 +663,7 @@ $('publish').addEventListener('click', async () => {
       template: state.template,
       groom: state.groom, bride: state.bride,
       date: state.date, time: state.time,
+      timezone: state.timezone || 'Asia/Shanghai',
       city: state.city, venue: state.venue,
       greeting: state.greeting,
       cover: state.cover,
