@@ -182,9 +182,10 @@ textarea{resize:vertical;min-height:80px}
             <optgroup label="美洲时区 (海外海岛 / 目的地婚礼)">
               <option value="America/New_York">America/New_York · 美东时间 / 纽约 (UTC-5 / 夏令时 UTC-4)</option>
               <option value="America/Chicago">America/Chicago · 美中时间 / 芝加哥 (UTC-6 / 夏令时 UTC-5)</option>
-              <option value="America/Denver">America/Denver · 山地时间 / 丹佛 (UTC-7 / 夏令时 UTC-6)</option>
+              <option value="America/Denver">America/Denver · 山地时间 / 丹佛 / 盐湖城 (UTC-7 / 夏令时 UTC-6)</option>
+              <option value="America/Phoenix">America/Phoenix · 亚利桑那 / 凤凰城 (UTC-7 无夏令时)</option>
               <option value="America/Los_Angeles">America/Los_Angeles · 太平洋时间 / 洛杉矶 / 旧金山 (UTC-8 / 夏令时 UTC-7)</option>
-              <option value="America/Honolulu">America/Honolulu · 美国夏威夷 (UTC-10)</option>
+              <option value="Pacific/Honolulu">Pacific/Honolulu · 美国夏威夷 (UTC-10)</option>
               <option value="Pacific/Guam">Pacific/Guam · 关岛 / 塞班岛 (UTC+10)</option>
             </optgroup>
             <optgroup label="欧洲与大洋洲时区">
@@ -387,7 +388,9 @@ function getTimezoneLabel(tz) {
     'America/New_York': '美东时间 (UTC-5/-4)',
     'America/Chicago': '美中时间 (UTC-6/-5)',
     'America/Denver': '山地时间 (UTC-7/-6)',
+    'America/Phoenix': '亚利桑那时间 (UTC-7)',
     'America/Los_Angeles': '洛杉矶/太平洋时间 (UTC-8/-7)',
+    'Pacific/Honolulu': '夏威夷时间 (UTC-10)',
     'America/Honolulu': '夏威夷时间 (UTC-10)',
     'Pacific/Guam': '关岛时间 (UTC+10)',
     'Australia/Sydney': '悉尼时间 (UTC+10/+11)',

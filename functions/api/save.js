@@ -44,13 +44,25 @@ function normalizeInvitation(value) {
   const lang = cleanLine(value?.lang, 10);
   const date = cleanLine(value?.date, 10);
   const time = cleanLine(value?.time, 5);
-  const tzInput = cleanLine(value?.timezone, 50);
-  const timezone = isValidTimezone(tzInput) ? tzInput : "Asia/Shanghai";
+  const rawTz = value?.timezone;
+  let timezone = "";
+  let invalidTimezone = false;
+  if (rawTz !== undefined && rawTz !== null) {
+    const tzInput = cleanLine(rawTz, 50);
+    if (!isValidTimezone(tzInput)) {
+      invalidTimezone = true;
+    } else {
+      timezone = tzInput;
+    }
+  } else {
+    timezone = lang === "en" ? "America/New_York" : "Asia/Shanghai";
+  }
   const template = cleanLine(value?.template, 16);
   const music = cleanLine(value?.music, 2);
   const invitation = {
     lang: lang === "en" ? "en" : "zh",
     timezone,
+    invalidTimezone,
     template: TEMPLATES.has(template) ? template : "gold",
     groom: cleanLine(value?.groom, 20),
     bride: cleanLine(value?.bride, 20),
@@ -142,6 +154,8 @@ export const onRequestPost = async ({ request, env }) => {
   // 2. 电子请帖保存
   if (!payload?.invitation || typeof payload.invitation !== "object") return badRequest("missing invitation");
   const inv = normalizeInvitation(payload.invitation);
+  if (inv.invalidTimezone) return badRequest("invalid timezone");
+  delete inv.invalidTimezone;
   if (!inv.groom || !inv.bride) return badRequest("missing names");
   if (!inv.date) return badRequest("invalid date");
 

@@ -796,6 +796,9 @@ test("Invitation timezone contract: Chinese and English forms provide venue time
   // Chinese invitation contracts
   assert.ok(cnHtml.includes('id="timezone"'), "invitation.html must have #timezone selector");
   assert.ok(cnHtml.includes('value="America/Los_Angeles"'), "invitation.html must support America/Los_Angeles");
+  assert.ok(cnHtml.includes('value="Pacific/Honolulu"'), "invitation.html must support Pacific/Honolulu");
+  assert.ok(cnHtml.includes('value="America/Phoenix"'), "invitation.html must support America/Phoenix");
+  assert.ok(!cnHtml.includes('value="America/Honolulu"'), "invitation.html must not use invalid America/Honolulu");
   assert.ok(cnHtml.includes('id="confirmModal"'), "invitation.html must have #confirmModal");
   assert.ok(cnHtml.includes('id="confTimezone"'), "invitation.html must display timezone in confirmation modal");
   assert.ok(cnHtml.includes('id="btnConfirmPublish"'), "invitation.html must have #btnConfirmPublish");
@@ -804,6 +807,9 @@ test("Invitation timezone contract: Chinese and English forms provide venue time
   // English invitation contracts
   assert.ok(enHtml.includes('id="timezone"'), "en/invitation.html must have #timezone selector");
   assert.ok(enHtml.includes('value="America/Los_Angeles"'), "en/invitation.html must support America/Los_Angeles");
+  assert.ok(enHtml.includes('value="Pacific/Honolulu"'), "en/invitation.html must support Pacific/Honolulu");
+  assert.ok(enHtml.includes('value="America/Phoenix"'), "en/invitation.html must support America/Phoenix");
+  assert.ok(!enHtml.includes('value="America/Honolulu"'), "en/invitation.html must not use invalid America/Honolulu");
   assert.ok(enHtml.includes('id="confirmModal"'), "en/invitation.html must have #confirmModal");
   assert.ok(enHtml.includes('id="confTimezone"'), "en/invitation.html must display timezone in confirmation modal");
   assert.ok(enHtml.includes('id="btnConfirmPublish"'), "en/invitation.html must have #btnConfirmPublish");
@@ -818,6 +824,122 @@ test("Invitation timezone contract: Chinese and English forms provide venue time
     new Date("2026-12-13T00:00:00.000Z").getTime() - new Date("2026-12-12T08:00:00.000Z").getTime()
   );
   assert.equal(diffMs, 16 * 3600 * 1000, "Difference between LA and Shanghai 16:00 must be exactly 16 hours");
+});
+
+test("Timezone bug regressions: save.js rejects invalid timezones, Phoenix summer DST separation, and date-based timezone abbreviation", async () => {
+  const kv = new MockKV();
+  const env = { WEDDING: kv };
+  const clientIp = "192.168.1.102";
+
+  // 1. save.js rejects explicitly provided invalid timezone (such as America/Honolulu or arbitrary text)
+  const reqInvalidTz = new Request("https://wedding-tv.cn/api/save", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({
+      invitation: {
+        groom: "Alex",
+        bride: "Beth",
+        date: "2026-12-12",
+        timezone: "America/Honolulu",
+      },
+    }),
+  });
+  const resInvalidTz = await savePost({ request: reqInvalidTz, env });
+  assert.equal(resInvalidTz.status, 400);
+  const dataInvalid = await resInvalidTz.json();
+  assert.equal(dataInvalid.error, "invalid timezone");
+
+  // Valid timezone Pacific/Honolulu accepted
+  const reqValidTz = new Request("https://wedding-tv.cn/api/save", {
+    method: "POST",
+    headers: { "content-type": "application/json", "cf-connecting-ip": clientIp },
+    body: JSON.stringify({
+      invitation: {
+        groom: "Alex",
+        bride: "Beth",
+        date: "2026-12-12",
+        timezone: "Pacific/Honolulu",
+      },
+    }),
+  });
+  const resValidTz = await savePost({ request: reqValidTz, env });
+  assert.equal(resValidTz.status, 200);
+  const dataValid = await resValidTz.json();
+  assert.equal(dataValid.ok, true);
+  const savedInv = JSON.parse(kv.store.get("inv:" + dataValid.id));
+  assert.equal(savedInv.timezone, "Pacific/Honolulu");
+
+  // 2. parseWeddingDate: Phoenix vs Denver DST separation in July
+  function parseWeddingDate(dateStr, timeStr, timeZone) {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(NaN);
+    let tz = timeZone || 'Asia/Shanghai';
+    if (tz === 'America/Honolulu') tz = 'Pacific/Honolulu';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm] = (timeStr || '11:58').split(':').map(Number);
+    const utcGuess = Date.UTC(y, m - 1, d, hh, mm, 0);
+
+    const dtf = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false
+    });
+
+    function getTzOffsetMs(date) {
+      const parts = dtf.formatToParts(date);
+      const p = {};
+      for (const part of parts) p[part.type] = Number(part.value);
+      const hour = p.hour === 24 ? 0 : p.hour;
+      const tzAsUtc = Date.UTC(p.year, p.month - 1, p.day, hour, p.minute, p.second || 0);
+      return tzAsUtc - date.getTime();
+    }
+
+    let guess = new Date(utcGuess);
+    let offset = getTzOffsetMs(guess);
+    let target = new Date(utcGuess - offset);
+    let offset2 = getTzOffsetMs(target);
+    if (offset2 !== offset) {
+      target = new Date(utcGuess - offset2);
+    }
+    return target;
+  }
+
+  // Phoenix (America/Phoenix, UTC-7 year-round)
+  const phoenixTarget = parseWeddingDate("2027-07-12", "16:00", "America/Phoenix");
+  assert.equal(phoenixTarget.toISOString(), "2027-07-12T23:00:00.000Z", "Phoenix on 2027-07-12 16:00 must be 23:00 UTC");
+
+  // Denver (America/Denver, MDT UTC-6 in summer)
+  const denverTarget = parseWeddingDate("2027-07-12", "16:00", "America/Denver");
+  assert.equal(denverTarget.toISOString(), "2027-07-12T22:00:00.000Z", "Denver on 2027-07-12 16:00 must be 22:00 UTC");
+
+  // 1-hour difference between Phoenix (MST) and Denver (MDT) in summer
+  assert.equal(phoenixTarget.getTime() - denverTarget.getTime(), 3600 * 1000);
+
+  // Hawaii (Pacific/Honolulu, UTC-10 year-round)
+  const hawaiiTarget = parseWeddingDate("2026-12-12", "16:00", "Pacific/Honolulu");
+  assert.equal(hawaiiTarget.toISOString(), "2026-12-13T02:00:00.000Z", "Hawaii 16:00 must be 02:00 UTC next day");
+
+  // Legacy fallback America/Honolulu -> Pacific/Honolulu
+  const legacyHawaiiTarget = parseWeddingDate("2026-12-12", "16:00", "America/Honolulu");
+  assert.equal(legacyHawaiiTarget.toISOString(), "2026-12-13T02:00:00.000Z", "Legacy America/Honolulu must remap to Pacific/Honolulu");
+
+  // 3. formatTimezoneShort formats using ceremony date, not today
+  const root = path.resolve(process.cwd());
+  const iHtml = fs.readFileSync(path.join(root, "i.html"), "utf8");
+
+  const context = { Intl, Date };
+  vm.createContext(context);
+  const fnMatch = iHtml.match(/function formatTimezoneShort[\s\S]*?\n\}/);
+  assert.ok(fnMatch, "formatTimezoneShort must be found in i.html");
+  vm.runInContext(fnMatch[0], context);
+
+  // Winter wedding in LA (December -> PST / GMT-8)
+  const winterLaStr = context.formatTimezoneShort("America/Los_Angeles", false, new Date("2026-12-12T16:00:00Z"));
+  assert.ok(winterLaStr.includes("PST") || winterLaStr.includes("GMT-8"), `Winter LA must show standard time (PST), got: ${winterLaStr}`);
+
+  // Summer wedding in LA (July -> PDT / GMT-7)
+  const summerLaStr = context.formatTimezoneShort("America/Los_Angeles", false, new Date("2026-07-12T16:00:00Z"));
+  assert.ok(summerLaStr.includes("PDT") || summerLaStr.includes("GMT-7"), `Summer LA must show daylight saving time (PDT), got: ${summerLaStr}`);
 });
 
 

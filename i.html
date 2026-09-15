@@ -240,7 +240,8 @@ function applyEnglishUI() {
 
 function parseWeddingDate(dateStr, timeStr, timeZone) {
   if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return new Date(NaN);
-  const tz = timeZone || 'Asia/Shanghai';
+  let tz = timeZone || 'Asia/Shanghai';
+  if (tz === 'America/Honolulu') tz = 'Pacific/Honolulu';
   const [y, m, d] = dateStr.split('-').map(Number);
   const [hh, mm] = (timeStr || '11:58').split(':').map(Number);
   const utcGuess = Date.UTC(y, m - 1, d, hh, mm, 0);
@@ -281,13 +282,14 @@ function parseWeddingDate(dateStr, timeStr, timeZone) {
   return target;
 }
 
-function formatTimezoneShort(tz, isEn) {
+function formatTimezoneShort(tz, isEn, refDate) {
   try {
     const dtf = new Intl.DateTimeFormat(isEn ? 'en-US' : 'zh-CN', {
       timeZone: tz,
       timeZoneName: 'short'
     });
-    const parts = dtf.formatToParts(new Date());
+    const dateToUse = (refDate instanceof Date && !isNaN(refDate)) ? refDate : new Date();
+    const parts = dtf.formatToParts(dateToUse);
     const tzPart = parts.find(p => p.type === 'timeZoneName');
     const tzName = tzPart ? tzPart.value : '';
 
@@ -308,7 +310,9 @@ function formatTimezoneShort(tz, isEn) {
       'America/New_York': isEn ? 'Eastern Time' : '美东时间',
       'America/Chicago': isEn ? 'Central Time' : '美中时间',
       'America/Denver': isEn ? 'Mountain Time' : '山地时间',
+      'America/Phoenix': isEn ? 'Arizona Time' : '亚利桑那时间',
       'America/Los_Angeles': isEn ? 'Pacific Time' : '洛杉矶时间',
+      'Pacific/Honolulu': isEn ? 'Hawaii Time' : '夏威夷时间',
       'America/Honolulu': isEn ? 'Hawaii Time' : '夏威夷时间',
       'America/Toronto': isEn ? 'Toronto Time' : '多伦多时间',
       'America/Vancouver': isEn ? 'Vancouver Time' : '温哥华时间',
@@ -340,7 +344,7 @@ function render(inv){
   const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US', { timeZone: tz, year:'numeric', month:'long', day:'numeric' });
   $('dateEn').textContent = dateEn || '';
   $('dateCn').textContent = isEn ? (dateEn || '') : (dateStr || '');
-  const tzStr = formatTimezoneShort(tz, isEn);
+  const tzStr = formatTimezoneShort(tz, isEn, d);
   $('timeCn').textContent = (inv.time || '11:58') + ` (${tzStr})`;
   $('cityEn').textContent = inv.city || '';
   $('cityCn').textContent = inv.city || '—';
@@ -450,7 +454,7 @@ function addToCalendar(){
   const T = window.__T || (isEn ? { invalidDate: 'Invalid wedding date' } : { invalidDate: '日期无效' });
   if(!inv?._date || isNaN(inv._date)) return alert(T.invalidDate);
   const tz = inv.timezone || 'Asia/Shanghai';
-  const tzLabel = formatTimezoneShort(tz, isEn);
+  const tzLabel = formatTimezoneShort(tz, isEn, inv._date);
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');

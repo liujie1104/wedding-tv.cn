@@ -172,9 +172,10 @@ textarea{resize:vertical;min-height:80px}
             <optgroup label="North America">
               <option value="America/New_York" selected>America/New_York · Eastern Time / New York / Miami (UTC-5 / UTC-4)</option>
               <option value="America/Chicago">America/Chicago · Central Time / Chicago / Dallas (UTC-6 / UTC-5)</option>
-              <option value="America/Denver">America/Denver · Mountain Time / Denver / Phoenix (UTC-7 / UTC-6)</option>
+              <option value="America/Denver">America/Denver · Mountain Time / Denver / Salt Lake City (UTC-7 / UTC-6)</option>
+              <option value="America/Phoenix">America/Phoenix · Arizona / Phoenix (UTC-7, No DST)</option>
               <option value="America/Los_Angeles">America/Los_Angeles · Pacific Time / Los Angeles / San Francisco (UTC-8 / UTC-7)</option>
-              <option value="America/Honolulu">America/Honolulu · Hawaii Standard Time (UTC-10)</option>
+              <option value="Pacific/Honolulu">Pacific/Honolulu · Hawaii Standard Time (UTC-10)</option>
               <option value="America/Toronto">America/Toronto · Eastern Canada (UTC-5 / UTC-4)</option>
               <option value="America/Vancouver">America/Vancouver · Pacific Canada (UTC-8 / UTC-7)</option>
             </optgroup>
@@ -354,7 +355,9 @@ function getTimezoneLabel(tz) {
     'America/New_York': 'Eastern Time (UTC-5/-4)',
     'America/Chicago': 'Central Time (UTC-6/-5)',
     'America/Denver': 'Mountain Time (UTC-7/-6)',
+    'America/Phoenix': 'Arizona Time (UTC-7)',
     'America/Los_Angeles': 'Pacific Time (UTC-8/-7)',
+    'Pacific/Honolulu': 'Hawaii Time (UTC-10)',
     'America/Honolulu': 'Hawaii Time (UTC-10)',
     'America/Toronto': 'Eastern Canada (UTC-5/-4)',
     'America/Vancouver': 'Pacific Canada (UTC-8/-7)',
