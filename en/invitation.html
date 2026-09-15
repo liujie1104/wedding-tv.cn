@@ -166,6 +166,41 @@ textarea{resize:vertical;min-height:80px}
           <div><label>Wedding Date *</label><input id="date" type="date" onclick="this.showPicker&&this.showPicker()"></div>
           <div><label>Ceremony Time</label><input id="time" type="time" value="16:00"></div>
         </div>
+        <div style="margin-top:10px">
+          <label for="timezone">Wedding Venue Timezone *</label>
+          <select id="timezone">
+            <optgroup label="North America">
+              <option value="America/New_York" selected>America/New_York · Eastern Time / New York / Miami (UTC-5 / UTC-4)</option>
+              <option value="America/Chicago">America/Chicago · Central Time / Chicago / Dallas (UTC-6 / UTC-5)</option>
+              <option value="America/Denver">America/Denver · Mountain Time / Denver / Phoenix (UTC-7 / UTC-6)</option>
+              <option value="America/Los_Angeles">America/Los_Angeles · Pacific Time / Los Angeles / San Francisco (UTC-8 / UTC-7)</option>
+              <option value="America/Honolulu">America/Honolulu · Hawaii Standard Time (UTC-10)</option>
+              <option value="America/Toronto">America/Toronto · Eastern Canada (UTC-5 / UTC-4)</option>
+              <option value="America/Vancouver">America/Vancouver · Pacific Canada (UTC-8 / UTC-7)</option>
+            </optgroup>
+            <optgroup label="Europe & UK">
+              <option value="Europe/London">Europe/London · London / Edinburgh / Dublin (UTC+0 / UTC+1)</option>
+              <option value="Europe/Paris">Europe/Paris · Paris / Rome / Berlin / Madrid (UTC+1 / UTC+2)</option>
+              <option value="Europe/Athens">Europe/Athens · Athens / Santorini / Greece (UTC+2 / UTC+3)</option>
+            </optgroup>
+            <optgroup label="Asia & Pacific">
+              <option value="Asia/Shanghai">Asia/Shanghai · China / Beijing / Shanghai (UTC+8)</option>
+              <option value="Asia/Hong_Kong">Asia/Hong_Kong · Hong Kong / Macau (UTC+8)</option>
+              <option value="Asia/Taipei">Asia/Taipei · Taipei (UTC+8)</option>
+              <option value="Asia/Tokyo">Asia/Tokyo · Japan / Tokyo / Kyoto (UTC+9)</option>
+              <option value="Asia/Seoul">Asia/Seoul · South Korea / Seoul (UTC+9)</option>
+              <option value="Asia/Singapore">Asia/Singapore · Singapore / Malaysia (UTC+8)</option>
+              <option value="Asia/Bangkok">Asia/Bangkok · Thailand / Bangkok / Phuket / Vietnam (UTC+7)</option>
+              <option value="Asia/Makassar">Asia/Makassar · Indonesia / Bali (UTC+8)</option>
+              <option value="Indian/Maldives">Indian/Maldives · Maldives (UTC+5)</option>
+              <option value="Asia/Dubai">Asia/Dubai · UAE / Dubai (UTC+4)</option>
+              <option value="Australia/Sydney">Australia/Sydney · Sydney / Melbourne (UTC+10 / UTC+11)</option>
+              <option value="Pacific/Auckland">Pacific/Auckland · New Zealand / Auckland (UTC+12 / UTC+13)</option>
+              <option value="Pacific/Guam">Pacific/Guam · Guam / Saipan (UTC+10)</option>
+            </optgroup>
+          </select>
+          <div class="tip" id="tzTip" style="color:#7a6a55;margin-top:4px;font-size:12px">⚠️ Calendar reminders & countdowns will be calculated in this ceremony timezone. Please ensure it matches the actual wedding destination.</div>
+        </div>
         <label>City / Destination</label><input id="city" type="text" placeholder="e.g., Paris / Napa Valley / Kyoto" maxlength="40">
         <label>Venue / Location</label><input id="venue" type="text" placeholder="e.g., The Glasshouse Estate · Grand Ballroom" maxlength="80">
         <label>Personal Invitation Note (Optional)</label>
@@ -258,6 +293,34 @@ textarea{resize:vertical;min-height:80px}
     </div>
   </div>
 
+  <!-- Publish Confirmation & Timezone Review Modal -->
+  <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,15,10,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:18px;max-width:460px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;">
+        <strong style="color:var(--gold2);font-size:16px;">📋 Confirm Wedding Details & Timezone</strong>
+        <button id="btnCloseConfirm" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <div style="padding:20px;overflow-y:auto;background:#fdfaf5;font-size:14px;line-height:1.7;">
+        <div style="background:#fff;border:1px solid #e8dfd3;border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+          <div style="margin-bottom:8px;"><strong>👰 Couple:</strong> <span id="confNames"></span></div>
+          <div style="margin-bottom:8px;"><strong>📅 Ceremony Time:</strong> <span id="confDateTime"></span></div>
+          <div style="margin-bottom:8px;padding:10px 12px;background:#fff8ee;border:1px solid #f2cf99;border-radius:8px;">
+            <div style="font-weight:700;color:#a04000;font-size:15px;">🌐 Venue Timezone: <span id="confTimezone"></span></div>
+            <div style="font-size:12px;color:#87541f;margin-top:6px;line-height:1.5;">
+              ⚠️ <strong>Important</strong>: When guests add this invitation to their calendar (Google/Apple/Outlook), the event will be calculated based on this local venue timezone. Please ensure this matches your destination wedding location.
+            </div>
+          </div>
+          <div><strong>📍 Destination / Venue:</strong> <span id="confVenue"></span></div>
+        </div>
+        <div class="tip" style="font-size:12px;color:#7a6a55;">Publishing creates a unique link and QR code stored securely for 365 days.</div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--line);background:#fff;display:flex;gap:10px;">
+        <button class="btn" id="btnConfirmPublish" style="flex:1;justify-content:center;padding:12px;font-size:15px;">✅ Confirm &amp; Publish</button>
+        <button class="btn ghost" id="btnCancelConfirm" style="padding:12px 18px;">Edit Details</button>
+      </div>
+    </div>
+  </div>
+
   <section class="card" style="margin-top:28px;line-height:1.8">
     <h2 style="margin-top:0">Pre-Publishing & Guest Privacy Checklist</h2>
     <p>Once published, anyone with your link can view the wedding invitation details. We recommend keeping sensitive details (like private room numbers or personal phone numbers) confidential. Private logistics can be communicated separately via direct messaging.</p>
@@ -285,10 +348,61 @@ const state = {
 };
 
 const $ = (id)=>document.getElementById(id);
-const fields = ['groom','bride','date','time','city','venue','greeting','brief','story','music'];
+
+function getTimezoneLabel(tz) {
+  const friendly = {
+    'America/New_York': 'Eastern Time (UTC-5/-4)',
+    'America/Chicago': 'Central Time (UTC-6/-5)',
+    'America/Denver': 'Mountain Time (UTC-7/-6)',
+    'America/Los_Angeles': 'Pacific Time (UTC-8/-7)',
+    'America/Honolulu': 'Hawaii Time (UTC-10)',
+    'America/Toronto': 'Eastern Canada (UTC-5/-4)',
+    'America/Vancouver': 'Pacific Canada (UTC-8/-7)',
+    'Europe/London': 'London Time (UTC+0/+1)',
+    'Europe/Paris': 'Paris / Central Europe (UTC+1/+2)',
+    'Europe/Athens': 'Athens Time (UTC+2/+3)',
+    'Asia/Shanghai': 'China Standard Time (UTC+8)',
+    'Asia/Hong_Kong': 'Hong Kong Time (UTC+8)',
+    'Asia/Taipei': 'Taipei Time (UTC+8)',
+    'Asia/Tokyo': 'Tokyo Time (UTC+9)',
+    'Asia/Seoul': 'Seoul Time (UTC+9)',
+    'Asia/Singapore': 'Singapore Time (UTC+8)',
+    'Asia/Bangkok': 'Bangkok Time (UTC+7)',
+    'Asia/Makassar': 'Bali Time (UTC+8)',
+    'Indian/Maldives': 'Maldives Time (UTC+5)',
+    'Asia/Dubai': 'Dubai Time (UTC+4)',
+    'Australia/Sydney': 'Sydney Time (UTC+10/+11)',
+    'Pacific/Auckland': 'Auckland Time (UTC+12/+13)',
+    'Pacific/Guam': 'Guam Time (UTC+10)',
+  };
+  return friendly[tz] || tz;
+}
+
+(function ensureDeviceTzInSelect() {
+  const tzSelect = $('timezone');
+  if (!tzSelect) return;
+  const devTz = state.timezone;
+  let hasOpt = false;
+  for (let i = 0; i < tzSelect.options.length; i++) {
+    if (tzSelect.options[i].value === devTz) { hasOpt = true; break; }
+  }
+  if (!hasOpt && devTz) {
+    const opt = document.createElement('option');
+    opt.value = devTz;
+    opt.textContent = `Current Device Timezone · ${devTz}`;
+    tzSelect.appendChild(opt);
+  }
+  tzSelect.value = state.timezone;
+})();
+
+const fields = ['groom','bride','date','time','timezone','city','venue','greeting','brief','story','music'];
 fields.forEach(id => {
   const el = $(id);
-  if(el) el.addEventListener('input', e => { state[id]=e.target.value; render(); });
+  if(!el) return;
+  el.addEventListener('input', e => { state[id]=e.target.value; render(); });
+  if(el.tagName === 'SELECT') {
+    el.addEventListener('change', e => { state[id]=e.target.value; render(); });
+  }
 });
 
 $('music').addEventListener('change', e => {
@@ -372,7 +486,7 @@ function render(){
       </div>
       <div class="body">
         <div class="names">${esc(state.groom||'Partner A')}<span class="heart">❤</span>${esc(state.bride||'Partner B')}</div>
-        <div class="meta">📅 ${dateStr} ${state.time ? 'at ' + state.time : ''}</div>
+        <div class="meta">📅 ${dateStr} ${state.time ? 'at ' + state.time : ''} <span style="font-size:11px;opacity:.8;display:inline-block;padding:1px 6px;background:rgba(0,0,0,.06);border-radius:4px;">${esc(getTimezoneLabel(state.timezone))}</span></div>
         <div class="meta">📍 ${esc(state.venue||'Wedding Venue')}${state.city ? ', ' + esc(state.city) : ''}</div>
         ${state.greeting ? `<p style="font-size:13px;color:#6b5a45;margin:12px 0;font-style:italic">“${esc(state.greeting)}”</p>` : ''}
         ${state.story?`<div class="story">${esc(state.story)}</div>`:''}
@@ -591,11 +705,37 @@ $('btnDownloadPoster').onclick = () => {
   a.click();
 };
 
-$('publish').addEventListener('click', async () => {
+// ---------- Publish Confirmation & Timezone Review ----------
+function openConfirmModal() {
   $('formError').textContent = '';
-  if(!state.groom || !state.bride){ $('formError').textContent = 'Please enter names for both partners'; return; }
-  if(!state.date){ $('formError').textContent = 'Please select a wedding date'; return; }
-  $('publish').disabled = true; $('publish').textContent = 'Publishing...';
+  if(!state.groom || !state.bride){
+    $('formError').textContent = 'Please enter names for both partners';
+    $('formError').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  if(!state.date){
+    $('formError').textContent = 'Please select a wedding date';
+    $('formError').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+
+  $('confNames').textContent = `${state.groom} & ${state.bride}`;
+  $('confDateTime').textContent = `${state.date} ${state.time || '16:00'}`;
+  $('confTimezone').textContent = `${getTimezoneLabel(state.timezone)} (${state.timezone})`;
+  $('confVenue').textContent = [state.venue, state.city].filter(Boolean).join(', ') || 'Venue not specified';
+
+  $('confirmModal').style.display = 'flex';
+}
+
+$('publish').addEventListener('click', openConfirmModal);
+
+$('btnCloseConfirm').onclick = () => { $('confirmModal').style.display = 'none'; };
+$('btnCancelConfirm').onclick = () => { $('confirmModal').style.display = 'none'; };
+
+$('btnConfirmPublish').addEventListener('click', async () => {
+  const btn = $('btnConfirmPublish');
+  btn.disabled = true;
+  btn.textContent = 'Publishing...';
   try{
     const inv = {
       lang: 'en',
@@ -615,8 +755,10 @@ $('publish').addEventListener('click', async () => {
     if(!j.ok) throw new Error(j.error);
     location.href = '/i/'+j.id+'?lang=en';
   }catch(err){
+    $('confirmModal').style.display = 'none';
     $('formError').textContent = '❌ Publishing failed: ' + err.message;
-    $('publish').disabled = false; $('publish').textContent = '📤 Publish Invitation Link';
+    btn.disabled = false;
+    btn.textContent = '✅ Confirm & Publish';
   }
 });
 </script>

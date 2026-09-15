@@ -281,6 +281,48 @@ function parseWeddingDate(dateStr, timeStr, timeZone) {
   return target;
 }
 
+function formatTimezoneShort(tz, isEn) {
+  try {
+    const dtf = new Intl.DateTimeFormat(isEn ? 'en-US' : 'zh-CN', {
+      timeZone: tz,
+      timeZoneName: 'short'
+    });
+    const parts = dtf.formatToParts(new Date());
+    const tzPart = parts.find(p => p.type === 'timeZoneName');
+    const tzName = tzPart ? tzPart.value : '';
+
+    const friendly = {
+      'Asia/Shanghai': isEn ? 'Beijing Time' : '北京时间',
+      'Asia/Hong_Kong': isEn ? 'Hong Kong Time' : '香港时间',
+      'Asia/Taipei': isEn ? 'Taipei Time' : '台北时间',
+      'Asia/Tokyo': isEn ? 'Tokyo Time' : '东京时间',
+      'Asia/Seoul': isEn ? 'Seoul Time' : '首尔时间',
+      'Asia/Singapore': isEn ? 'Singapore Time' : '新加坡时间',
+      'Asia/Bangkok': isEn ? 'Bangkok Time' : '曼谷时间',
+      'Asia/Makassar': isEn ? 'Bali Time' : '巴厘岛时间',
+      'Indian/Maldives': isEn ? 'Maldives Time' : '马尔代夫时间',
+      'Asia/Dubai': isEn ? 'Dubai Time' : '迪拜时间',
+      'Europe/London': isEn ? 'London Time' : '伦敦时间',
+      'Europe/Paris': isEn ? 'Paris Time' : '巴黎时间',
+      'Europe/Athens': isEn ? 'Athens Time' : '雅典时间',
+      'America/New_York': isEn ? 'Eastern Time' : '美东时间',
+      'America/Chicago': isEn ? 'Central Time' : '美中时间',
+      'America/Denver': isEn ? 'Mountain Time' : '山地时间',
+      'America/Los_Angeles': isEn ? 'Pacific Time' : '洛杉矶时间',
+      'America/Honolulu': isEn ? 'Hawaii Time' : '夏威夷时间',
+      'America/Toronto': isEn ? 'Toronto Time' : '多伦多时间',
+      'America/Vancouver': isEn ? 'Vancouver Time' : '温哥华时间',
+      'Pacific/Guam': isEn ? 'Guam Time' : '关岛时间',
+      'Australia/Sydney': isEn ? 'Sydney Time' : '悉尼时间',
+      'Pacific/Auckland': isEn ? 'Auckland Time' : '新西兰时间',
+    };
+    const city = friendly[tz] || tz.replace(/^.*\//, '').replace(/_/g, ' ');
+    return tzName ? `${city} · ${tzName}` : city;
+  } catch (_) {
+    return tz;
+  }
+}
+
 function render(inv){
   const isEn = params.get('lang') === 'en' || inv?.lang === 'en';
   if (isEn) applyEnglishUI();
@@ -298,7 +340,8 @@ function render(inv){
   const dateEn = isNaN(d) ? inv.date : d.toLocaleDateString('en-US', { timeZone: tz, year:'numeric', month:'long', day:'numeric' });
   $('dateEn').textContent = dateEn || '';
   $('dateCn').textContent = isEn ? (dateEn || '') : (dateStr || '');
-  $('timeCn').textContent = inv.time || '11:58';
+  const tzStr = formatTimezoneShort(tz, isEn);
+  $('timeCn').textContent = (inv.time || '11:58') + ` (${tzStr})`;
   $('cityEn').textContent = inv.city || '';
   $('cityCn').textContent = inv.city || '—';
   $('venueCn').textContent = inv.venue || '—';
@@ -407,6 +450,7 @@ function addToCalendar(){
   const T = window.__T || (isEn ? { invalidDate: 'Invalid wedding date' } : { invalidDate: '日期无效' });
   if(!inv?._date || isNaN(inv._date)) return alert(T.invalidDate);
   const tz = inv.timezone || 'Asia/Shanghai';
+  const tzLabel = formatTimezoneShort(tz, isEn);
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
@@ -423,7 +467,7 @@ function addToCalendar(){
     `LOCATION:${locationStr}`,
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
-    `DESCRIPTION:${desc} (${tz})`,
+    `DESCRIPTION:${desc} (${tzLabel})`,
     'END:VEVENT',
     'END:VCALENDAR'
   ].join('\r\n');

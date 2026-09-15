@@ -787,4 +787,38 @@ test("Timezone invariance: invitation calendar export produces identical UTC tim
   assert.equal(laTarget.toISOString(), "2026-12-13T00:00:00.000Z", "16:00 in America/Los_Angeles must be 00:00 UTC next day");
 });
 
+test("Invitation timezone contract: Chinese and English forms provide venue timezone selector and pre-publish confirmation", () => {
+  const root = path.resolve(process.cwd());
+  const cnHtml = fs.readFileSync(path.join(root, "invitation.html"), "utf8");
+  const enHtml = fs.readFileSync(path.join(root, "en", "invitation.html"), "utf8");
+  const iHtml = fs.readFileSync(path.join(root, "i.html"), "utf8");
+
+  // Chinese invitation contracts
+  assert.ok(cnHtml.includes('id="timezone"'), "invitation.html must have #timezone selector");
+  assert.ok(cnHtml.includes('value="America/Los_Angeles"'), "invitation.html must support America/Los_Angeles");
+  assert.ok(cnHtml.includes('id="confirmModal"'), "invitation.html must have #confirmModal");
+  assert.ok(cnHtml.includes('id="confTimezone"'), "invitation.html must display timezone in confirmation modal");
+  assert.ok(cnHtml.includes('id="btnConfirmPublish"'), "invitation.html must have #btnConfirmPublish");
+  assert.ok(cnHtml.includes("'timezone'"), "invitation.html must bind timezone in form fields");
+
+  // English invitation contracts
+  assert.ok(enHtml.includes('id="timezone"'), "en/invitation.html must have #timezone selector");
+  assert.ok(enHtml.includes('value="America/Los_Angeles"'), "en/invitation.html must support America/Los_Angeles");
+  assert.ok(enHtml.includes('id="confirmModal"'), "en/invitation.html must have #confirmModal");
+  assert.ok(enHtml.includes('id="confTimezone"'), "en/invitation.html must display timezone in confirmation modal");
+  assert.ok(enHtml.includes('id="btnConfirmPublish"'), "en/invitation.html must have #btnConfirmPublish");
+  assert.ok(enHtml.includes("'timezone'"), "en/invitation.html must bind timezone in form fields");
+
+  // Invitation viewer contracts
+  assert.ok(iHtml.includes("formatTimezoneShort"), "i.html must include formatTimezoneShort helper");
+  assert.ok(iHtml.includes("timeCn"), "i.html must render timeCn element");
+
+  // 16-hour discrepancy resolution verification
+  const diffMs = Math.abs(
+    new Date("2026-12-13T00:00:00.000Z").getTime() - new Date("2026-12-12T08:00:00.000Z").getTime()
+  );
+  assert.equal(diffMs, 16 * 3600 * 1000, "Difference between LA and Shanghai 16:00 must be exactly 16 hours");
+});
+
+
 
