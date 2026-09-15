@@ -44,7 +44,50 @@
       : managed
       ? (screenLang === "en" ? "Wishes appear after host approval" : "主持人审核后上墙")
       : (screenLang === "en" ? "Legacy room: direct on-screen" : "旧版房间：祝福直接上墙");
-    if (data) applyRoom();
+
+    if ($("brandLink")) $("brandLink").textContent = screenLang === "en" ? "wedding-tv.cn · Live Wall" : "wedding-tv.cn · 婚礼大屏";
+    if ($("newRoomLink")) {
+      $("newRoomLink").textContent = screenLang === "en" ? "Create New Room" : "创建新房间";
+      $("newRoomLink").href = screenLang === "en" ? "/en/live-wall.html" : "/wedding-live-wall.html";
+    }
+
+    if ($("adminTitle")) $("adminTitle").textContent = screenLang === "en" ? "Host Controls" : "主持人管理";
+    if ($("adminNoticeText")) $("adminNoticeText").textContent = screenLang === "en" ? "Host link controls and deletes this room. Keep strictly confidential. Guests should use the QR link." : "管理链接可控制、删除本房间，请仅交给可信主持人。宾客请使用扫码链接。";
+    if ($("copyAdmin")) $("copyAdmin").textContent = screenLang === "en" ? "Copy Host Link" : "复制管理链接";
+    if ($("copyScreen")) $("copyScreen").textContent = screenLang === "en" ? "Copy View Link" : "复制观看链接";
+    if ($("copyGuest")) $("copyGuest").textContent = screenLang === "en" ? "Copy Guest Link" : "复制宾客链接";
+    if ($("exportImage")) $("exportImage").textContent = screenLang === "en" ? "Keepsake Card PNG" : "祝福纪念图 PNG";
+    if ($("exportCsv")) $("exportCsv").textContent = screenLang === "en" ? "Export Wishes CSV" : "导出祝福 CSV";
+    if ($("exportStats")) $("exportStats").textContent = screenLang === "en" ? "Export Room Log" : "导出本场记录";
+    if ($("adminExportNotice")) $("adminExportNotice").textContent = screenLang === "en" ? "Keepsake card includes up to 20 recent approved wishes; CSV contains all retained approved wishes. Obtain guest consent before sharing." : "纪念图取最近 20 条已通过祝福；CSV 包含当前保留的全部已通过内容。分享前请征得参与者同意。";
+    if ($("adminSettingsSummary")) $("adminSettingsSummary").textContent = screenLang === "en" ? "Couple Info & Background Settings" : "新人信息与背景设置";
+    if ($("lblSettingGroom")) $("lblSettingGroom").textContent = screenLang === "en" ? "Partner 1" : "新人称呼一";
+    if ($("lblSettingBride")) $("lblSettingBride").textContent = screenLang === "en" ? "Partner 2" : "新人称呼二";
+    if ($("lblSettingDate")) $("lblSettingDate").textContent = screenLang === "en" ? "Wedding Date" : "婚礼日期";
+    if ($("lblSettingTheme")) $("lblSettingTheme").textContent = screenLang === "en" ? "Color Theme" : "配色";
+    if ($("optRose")) $("optRose").textContent = screenLang === "en" ? "Rose" : "玫瑰";
+    if ($("optForest")) $("optForest").textContent = screenLang === "en" ? "Forest" : "松绿";
+    if ($("optInk")) $("optInk").textContent = screenLang === "en" ? "Ink" : "墨黑";
+    if ($("lblSettingVenue")) $("lblSettingVenue").textContent = screenLang === "en" ? "Venue / Hall" : "场地简称";
+    if ($("btnSaveSettings")) $("btnSaveSettings").textContent = screenLang === "en" ? "Save Settings" : "保存设置";
+    if ($("adminPendingTitle")) $("adminPendingTitle").textContent = screenLang === "en" ? "Pending Wishes" : "待审核祝福";
+    if ($("adminApprovedSummary")) $("adminApprovedSummary").textContent = screenLang === "en" ? "Approved Wishes" : "已通过的祝福";
+    if ($("closeRoom")) $("closeRoom").textContent = screenLang === "en" ? "End & Delete Room" : "结束并删除房间";
+
+    if ($("lotteryTitle")) $("lotteryTitle").textContent = screenLang === "en" ? "Lucky Draw" : "现场抽奖";
+    if ($("lotteryDesc")) $("lotteryDesc").textContent = screenLang === "en" ? "Randomly picks from approved wish nicknames (duplicates merged). One win per nickname this round. For entertainment only." : "从已通过祝福的昵称中随机选取，同名合并。本轮已中奖昵称不重复。仅供娱乐，不能核验真实身份。";
+    if ($("draw")) $("draw").textContent = screenLang === "en" ? "Draw a Winner" : "抽取一位";
+    if ($("winner") && ($("winner").textContent === "等待抽取" || $("winner").textContent === "Waiting for draw")) $("winner").textContent = screenLang === "en" ? "Waiting for draw" : "等待抽取";
+    if ($("musicTitle")) $("musicTitle").textContent = screenLang === "en" ? "Background Music" : "现场音乐";
+    if ($("musicFileLabel")) $("musicFileLabel").textContent = screenLang === "en" ? "Select local audio file" : "选择有权播放的本机音频";
+    if ($("musicDesc")) $("musicDesc").textContent = screenLang === "en" ? "Plays locally on this device only, never uploaded." : "文件只在本机播放，不上传。手机和部分浏览器需要手动点播放。";
+    document.querySelectorAll("[data-close]").forEach(b => { b.textContent = screenLang === "en" ? "Close" : "关闭"; });
+
+    if (data) {
+      applyRoom();
+      listSignature = "";
+      if (managed && key) renderManagement();
+    }
     try {
       QRCode.toCanvas($("qr"), guestUrl, { width: 240, margin: 4, errorCorrectionLevel: "M" }).then(() => {
         $("qr").style.removeProperty("width"); $("qr").style.removeProperty("height");
@@ -130,12 +173,12 @@
       const row = node("article", null, "message"); row.dataset.id = item.id;
       row.append(node("div", item.name + (item.identity ? " · " + item.identity : ""), "message-meta"), node("p", item.message));
       const actions = node("div", null, "actions");
-      if (item.status === "pending") { const b = node("button", "通过"); b.onclick = () => act("approve", { id: item.id }, b); actions.append(b); }
-      const b = node("button", "删除"); b.onclick = () => act("delete", { id: item.id }, b); actions.append(b);
+      if (item.status === "pending") { const b = node("button", screenLang === "en" ? "Approve" : "通过"); b.onclick = () => act("approve", { id: item.id }, b); actions.append(b); }
+      const b = node("button", screenLang === "en" ? "Delete" : "删除"); b.onclick = () => act("delete", { id: item.id }, b); actions.append(b);
       row.append(actions); $(item.status === "pending" ? "pending" : "approved").append(row);
     }
-    if (!$("pending").children.length) $("pending").append(node("p", "暂无待审核祝福", "muted"));
-    if (!$("approved").children.length) $("approved").append(node("p", "暂无已通过祝福", "muted"));
+    if (!$("pending").children.length) $("pending").append(node("p", screenLang === "en" ? "No pending wishes" : "暂无待审核祝福", "muted"));
+    if (!$("approved").children.length) $("approved").append(node("p", screenLang === "en" ? "No approved wishes yet" : "暂无已通过祝福", "muted"));
   }
   async function poll() {
     if (demo || stopped || inFlight) return;
@@ -148,24 +191,24 @@
         const cfg = recall("wedding_wall_cfg_" + roomId, {});
         data = { ...legacy, room: { groom: cfg.groom || "新人", bride: cfg.bride || "新人", venue: cfg.venue || "", date: cfg.date || "", theme: "rose" } };
       }
-      applyRoom(); status("已连接 · " + new Date().toLocaleTimeString("zh-CN"));
+      applyRoom(); status(screenLang === "en" ? ("Connected · " + new Date().toLocaleTimeString("en-US")) : ("已连接 · " + new Date().toLocaleTimeString("zh-CN")));
     } catch (error) {
-      if (error.status === 403 && key) { key = ""; $("manage").hidden = true; $("pause").hidden = true; $("adminDialog").close(); notice("管理权限无效，请重新打开正确管理链接", true); }
+      if (error.status === 403 && key) { key = ""; $("manage").hidden = true; $("pause").hidden = true; $("adminDialog").close(); notice(screenLang === "en" ? "Invalid host permissions, please re-open the correct link" : "管理权限无效，请重新打开正确管理链接", true); }
       if (error.status === 410) {
         stopped = true; data = null; queue = []; winners.length = 0;
         $("messages").replaceChildren(); $("pending").replaceChildren(); $("approved").replaceChildren();
         document.querySelectorAll("dialog[open]").forEach(dialog => dialog.close());
         for (const id of ["manage", "pause", "lottery", "tableCard", "replay"]) $(id).disabled = true;
-        $("guestLink").hidden = true; $("qr").hidden = true; $("qrLabel").textContent = "房间已结束";
-        $("qrHint").textContent = "请返回创建页开启新房间";
-        $("emptyMessage").hidden = false; $("emptyMessage").textContent = "房间已结束或过期";
+        $("guestLink").hidden = true; $("qr").hidden = true; $("qrLabel").textContent = screenLang === "en" ? "Room closed" : "房间已结束";
+        $("qrHint").textContent = screenLang === "en" ? "Please return to create page to start a new room" : "请返回创建页开启新房间";
+        $("emptyMessage").hidden = false; $("emptyMessage").textContent = screenLang === "en" ? "Room closed or expired" : "房间已结束或过期";
       }
-      status(error.status === 410 ? error.message : "连接异常，正在重试；新祝福可能尚未同步", true);
+      status(error.status === 410 ? error.message : (screenLang === "en" ? "Connection issue, retrying; new wishes may not be synced yet" : "连接异常，正在重试；新祝福可能尚未同步"), true);
     } finally { inFlight = false; }
   }
   async function act(action, body = {}, button) {
     if (button) button.disabled = true;
-    try { await request(roomId, action, body, key); await poll(); notice("操作已保存"); }
+    try { await request(roomId, action, body, key); await poll(); notice(screenLang === "en" ? "Changes saved" : "操作已保存"); }
     catch (error) { notice(error.message, true); }
     finally { if (button) button.disabled = false; }
   }
@@ -177,36 +220,41 @@
   $("settingsForm").onsubmit = async event => { event.preventDefault(); await act("settings", { settings: Object.fromEntries(new FormData($("settingsForm"))) }, $("settingsForm").querySelector("button")); };
   $("pause").onclick = () => act("settings", { paused: !data.room.paused }, $("pause"));
   $("accepting").onclick = () => act("settings", { accepting: !data.room.accepting }, $("accepting"));
-  $("copyAdmin").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId + "#key=" + key).then(() => notice("管理链接已准备，请仅交给可信主持人"));
-  $("copyScreen").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId).then(() => notice("观看链接已准备"));
-  $("copyGuest").onclick = () => copy(guestUrl).then(() => notice("宾客链接已准备"));
+  $("copyAdmin").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId + (screenLang === "en" ? "&lang=en" : "") + "#key=" + key).then(() => notice(screenLang === "en" ? "Host management link copied (keep confidential)" : "管理链接已准备，请仅交给可信主持人"));
+  $("copyScreen").onclick = () => copy(location.origin + "/live-wall.html?room=" + roomId + (screenLang === "en" ? "&lang=en" : "")).then(() => notice(screenLang === "en" ? "Screen viewing link copied" : "观看链接已准备"));
+  $("copyGuest").onclick = () => copy(guestUrl).then(() => notice(screenLang === "en" ? "Guest QR link copied" : "宾客链接已准备"));
   if ($("bgBtn")) $("bgBtn").onclick = () => $("bgDialog").showModal();
   if ($("adminBgBtn")) $("adminBgBtn").onclick = () => { $("adminDialog").close(); $("bgDialog").showModal(); };
-  $("fullscreen").onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $("stage").requestFullscreen(); } catch { status("浏览器不支持全屏，请使用电脑浏览器或系统全屏模式", true); } };
+  $("fullscreen").onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await $("stage").requestFullscreen(); } catch { status(screenLang === "en" ? "Browser does not support fullscreen, use a desktop browser" : "浏览器不支持全屏，请使用电脑浏览器或系统全屏模式", true); } };
   $("replay").onclick = () => { queue = approved().slice(); $("messages").replaceChildren(); };
   $("lottery").onclick = () => $("lotteryDialog").showModal();
   $("draw").onclick = () => {
     const pool = [...new Set(approved().map(m => m.name))].filter(name => !winners.includes(name));
-    if (!pool.length) { $("winner").textContent = "暂无可抽取的昵称"; return; }
+    if (!pool.length) { $("winner").textContent = screenLang === "en" ? "No nicknames available to draw" : "暂无可抽取的昵称"; return; }
     const range = 0x100000000, limit = range - range % pool.length;
     let n; do { n = crypto.getRandomValues(new Uint32Array(1))[0]; } while (n >= limit);
     const winner = pool[n % pool.length]; winners.push(winner);
-    $("winner").textContent = winner; $("winnerHistory").textContent = "本轮已抽取：" + winners.join("、");
+    $("winner").textContent = winner; $("winnerHistory").textContent = screenLang === "en" ? ("Drawn this round: " + winners.join(", ")) : ("本轮已抽取：" + winners.join("、"));
   };
   $("music").onclick = () => $("musicDialog").showModal();
   $("musicFile").onchange = () => { const file = $("musicFile").files[0]; if (!file) return; if (audioUrl) URL.revokeObjectURL(audioUrl); audioUrl = URL.createObjectURL(file); $("audio").src = audioUrl; };
   function csvValue(value) { let text = String(value ?? ""); if (/^\s*[=+\-@]/.test(text)) text = "'" + text; return '"' + text.replaceAll('"', '""') + '"'; }
   $("exportCsv").onclick = () => {
-    const rows = [["昵称", "身份或桌号", "祝福", "发送时间"], ...approved().map(m => [m.name, m.identity, m.message, new Date(m.ts).toISOString()])];
-    download(new Blob(["\ufeff" + rows.map(r => r.map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), "当前已通过祝福.csv");
+    const headers = screenLang === "en" ? ["Nickname", "Identity/Table", "Wish", "Time"] : ["昵称", "身份或桌号", "祝福", "发送时间"];
+    const rows = [headers, ...approved().map(m => [m.name, m.identity, m.message, new Date(m.ts).toISOString()])];
+    download(new Blob(["\ufeff" + rows.map(r => r.map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), screenLang === "en" ? "approved_wishes.csv" : "当前已通过祝福.csv");
   };
   $("exportStats").onclick = () => {
-    const report = { mode: data.room.mode, ...data.stats, retainedMessages: data.messages.length, capturedAt: new Date().toISOString(), note: "用途由创建者选择；提交数不是独立宾客数。仅当前房间，不含昵称、正文、链接或密钥。" };
-    download(new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }), "大屏使用记录.json");
+    const note = screenLang === "en" ? "Purpose decided by creator; submission count is not unique guests. Current room only, contains no names, text, link, or key." : "用途由创建者选择；提交数不是独立宾客数。仅当前房间，不含昵称、正文、链接或密钥。";
+    const report = { mode: data.room.mode, ...data.stats, retainedMessages: data.messages.length, capturedAt: new Date().toISOString(), note };
+    download(new Blob([JSON.stringify(report, null, 2)], { type: "application/json" }), screenLang === "en" ? "wall_session_log.json" : "大屏使用记录.json");
   };
   $("exportImage").onclick = async () => {
-    const items = approved().slice(-20); if (!items.length) { notice("请先审核通过至少一条祝福", true); return; }
-    try { await card(data.room.groom + " & " + data.room.bride + " · 祝福纪念", items.map(m => ({ heading: m.name, text: m.message })), "wedding-tv.cn · 最近 " + items.length + " 条已通过祝福", "婚礼祝福纪念.png"); } catch (error) { notice(error.message, true); }
+    const items = approved().slice(-20); if (!items.length) { notice(screenLang === "en" ? "Please approve at least one wish first" : "请先审核通过至少一条祝福", true); return; }
+    const title = screenLang === "en" ? (data.room.groom + " & " + data.room.bride + " · Wedding Wishes") : (data.room.groom + " & " + data.room.bride + " · 祝福纪念");
+    const subtitle = screenLang === "en" ? ("wedding-tv.cn · Latest " + items.length + " approved wishes") : ("wedding-tv.cn · 最近 " + items.length + " 条已通过祝福");
+    const filename = screenLang === "en" ? "wedding_wishes_keepsake.png" : "婚礼祝福纪念.png";
+    try { await card(title, items.map(m => ({ heading: m.name, text: m.message })), subtitle, filename); } catch (error) { notice(error.message, true); }
   };
   $("tableCard").onclick = async () => {
     if (!data) return;
@@ -226,8 +274,11 @@
     } catch { status(screenLang === "en" ? "Failed to export card, please retry" : "桌牌导出失败，请重试", true); }
   };
   $("closeRoom").onclick = async () => {
-    if (!confirm("立即删除房间、所有待审及已通过祝福？请先导出需要保留的内容。此操作不可恢复。")) return;
-    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace("/wedding-live-wall.html"); }
+    const confirmMsg = screenLang === "en"
+      ? "Immediately delete room, all pending and approved wishes? Please export any needed data first. This action cannot be undone."
+      : "立即删除房间、所有待审及已通过祝福？请先导出需要保留的内容。此操作不可恢复。";
+    if (!confirm(confirmMsg)) return;
+    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace(screenLang === "en" ? "/en/live-wall.html" : "/wedding-live-wall.html"); }
     catch (error) { notice(error.message, true); }
   };
   async function backgroundStore(value, write = false) {

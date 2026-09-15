@@ -31,11 +31,13 @@ function imageRef(value) {
 }
 
 function normalizeInvitation(value) {
+  const lang = cleanLine(value?.lang, 10);
   const date = cleanLine(value?.date, 10);
   const time = cleanLine(value?.time, 5);
   const template = cleanLine(value?.template, 16);
   const music = cleanLine(value?.music, 2);
   const invitation = {
+    lang: lang === "en" ? "en" : "zh",
     template: TEMPLATES.has(template) ? template : "gold",
     groom: cleanLine(value?.groom, 20),
     bride: cleanLine(value?.bride, 20),

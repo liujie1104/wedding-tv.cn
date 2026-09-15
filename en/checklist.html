@@ -250,6 +250,7 @@ async function gen(){
   const city = $("city").value.trim();
   const date = $("date").value;
   if (!city && !date) {
+    sessionStorage.removeItem("checklist_en_md");
     $("out").innerHTML = renderMarkdown(DEFAULT_MD);
     bindCheckboxes();
     return;
@@ -275,6 +276,7 @@ async function gen(){
     sessionStorage.setItem("checklist_en_md", d.text);
     bindCheckboxes();
   } catch(e){
+    sessionStorage.removeItem("checklist_en_md");
     $("out").innerHTML = renderMarkdown(DEFAULT_MD);
     bindCheckboxes();
   } finally {

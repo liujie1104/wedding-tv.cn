@@ -158,21 +158,29 @@ html,body{margin:0;padding:0;background:#1a1410;color:#2a1f17;font:15px/1.7 -app
 <script>
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const id = params.get('id');
+const pathMatch = location.pathname.match(/\/i\/([a-z0-9]{4,16})/i);
+const id = params.get('id') || (pathMatch ? pathMatch[1] : null);
+const isEnInitial = params.get('lang') === 'en';
 
 (async function init(){
-  if(!id){ showErr('链接缺少 id 参数'); return; }
+  if(!id){ showErr(isEnInitial ? 'Missing invitation ID' : '链接缺少 id 参数'); return; }
   try{
     const r = await fetch('/api/load?id='+encodeURIComponent(id));
     const j = await r.json();
-    if(!j.ok) throw new Error(j.error || '加载失败');
+    if(!j.ok) throw new Error(j.error || (isEnInitial ? 'Failed to load invitation' : '加载失败'));
     render(j.invitation);
   }catch(err){ showErr(err.message); }
 })();
 
 function showErr(msg){
+  const isEn = isEnInitial || document.documentElement.lang === 'en';
   $('loading').classList.add('hidden');
   $('errMsg').textContent = msg;
+  const back = $('error').querySelector('a');
+  if (back && isEn) {
+    back.href = '/en/';
+    back.textContent = 'Return to wedding-tv.cn';
+  }
   $('error').classList.remove('hidden');
 }
 
@@ -351,18 +359,20 @@ async function shareInvite(){
 }
 function addToCalendar(){
   const inv = window.__inv;
-  const T = window.__T || {invalidDate:'日期无效'};
+  const isEn = inv?.lang === 'en' || params.get('lang') === 'en' || document.documentElement.lang === 'en';
+  const T = window.__T || (isEn ? { invalidDate: 'Invalid wedding date' } : { invalidDate: '日期无效' });
   if(!inv?._date || isNaN(inv._date)) return alert(T.invalidDate);
-  const isEn = inv.lang === 'en';
   const start = inv._date;
   const end = new Date(start.getTime() + 4*3600*1000);
   const fmt = d => d.toISOString().replace(/[-:]/g,'').replace(/\.\d+/, '');
+  const summary = (window.__T && window.__T.calSummary) ? window.__T.calSummary(inv.groom, inv.bride) : (isEn ? `${inv.groom} & ${inv.bride}'s Wedding` : `${inv.groom} & ${inv.bride} 的婚礼`);
+  const desc = (window.__T && window.__T.calDesc) ? `${window.__T.calDesc} · ${location.href}` : (isEn ? `Created with wedding-tv.cn · ${location.href}` : `由 wedding-tv.cn 制作 · ${location.href}`);
   const ics = [
     'BEGIN:VCALENDAR','VERSION:2.0','BEGIN:VEVENT',
-    `SUMMARY:${inv.groom} & ${inv.bride} ${isEn ? 'Wedding' : '的婚礼'}`,
+    `SUMMARY:${summary}`,
     `LOCATION:${inv.city||''} ${inv.venue||''}`,
     `DTSTART:${fmt(start)}`,`DTEND:${fmt(end)}`,
-    `DESCRIPTION:${isEn ? 'Made with wedding-tv.cn' : '由 wedding-tv.cn 制作'} · ${location.href}`,
+    `DESCRIPTION:${desc}`,
     'END:VEVENT','END:VCALENDAR'
   ].join('\n');
   const blob = new Blob([ics],{type:'text/calendar'});

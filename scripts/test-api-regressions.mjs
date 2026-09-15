@@ -688,3 +688,33 @@ test("AI prompt constraints: checklist prompt forbids hallucinating merchants an
   assert.ok(aiSource.includes("规划参考比例"), "checklist prompt must allocate budget as percentage/planning reference");
   assert.ok(aiSource.includes("向当地婚姻登记机关、预订场地或双方家庭长辈沟通确认"), "checklist prompt must convert local matters to verification tasks");
 });
+
+test("Baidu analytics consent banner: supports bilingual rendering and privacy link parity", () => {
+  const root = path.resolve(process.cwd());
+  const bannerSource = fs.readFileSync(path.join(root, "src", "baidu-analytics.js"), "utf8");
+  assert.ok(bannerSource.includes("/en/privacy.html#baidu-analytics"), "must link to English privacy anchor for en pages");
+  assert.ok(bannerSource.includes("/privacy.html#baidu-analytics"), "must link to Chinese privacy anchor for zh pages");
+  assert.ok(bannerSource.includes("Decline") && bannerSource.includes("Accept"), "must have English action buttons");
+  assert.ok(bannerSource.includes("拒绝") && bannerSource.includes("允许统计"), "must have Chinese action buttons");
+});
+
+test("Invitation normalization: preserves lang parameter for bilingual persistence", () => {
+  const root = path.resolve(process.cwd());
+  const saveSource = fs.readFileSync(path.join(root, "functions", "api", "save.js"), "utf8");
+  assert.ok(saveSource.includes('lang: lang === "en" ? "en" : "zh"'), "save.js must preserve and normalize lang to en or zh");
+});
+
+test("Service Worker: stale-while-revalidate revalidation is wrapped in event.waitUntil", () => {
+  const root = path.resolve(process.cwd());
+  const swSource = fs.readFileSync(path.join(root, "sw.js"), "utf8");
+  assert.ok(swSource.includes("event.waitUntil(fetchPromise.catch("), "sw.js must keep worker alive with event.waitUntil on cache hit");
+});
+
+test("Invitation shortlink route and UI: i.html parses route id and provides bilingual calendar export", () => {
+  const root = path.resolve(process.cwd());
+  const iHtml = fs.readFileSync(path.join(root, "i.html"), "utf8");
+  assert.ok(iHtml.includes("/\\/i\\/([a-z0-9]{4,16})/i"), "i.html must extract ID from pathname");
+  assert.ok(iHtml.includes("isEnInitial"), "i.html must support English initial error text");
+  assert.ok(iHtml.includes("calSummary"), "i.html must use localized calendar summary");
+});
+
