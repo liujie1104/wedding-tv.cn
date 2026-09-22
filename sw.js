@@ -47,6 +47,8 @@ self.addEventListener('fetch', event => {
   if (
     url.pathname.startsWith('/api/') ||
     url.hostname.includes('hm.baidu.com') ||
+    url.hostname === 'clarity.ms' || url.hostname.endsWith('.clarity.ms') ||
+    url.hostname === 'clarity.microsoft.com' || url.hostname.endsWith('.clarity.microsoft.com') ||
     url.hostname.includes('googlesyndication.com') ||
     url.hostname.includes('google-analytics.com') ||
     url.hostname.includes('doubleclick.net')

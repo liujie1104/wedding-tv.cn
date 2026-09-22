@@ -430,6 +430,9 @@ for (const fullPath of allHtml) {
   if (/hm\.baidu\.com/.test(html)) {
     errors.push(`${relativePath}: Baidu analytics must be injected centrally to enforce consent and route exclusions`);
   }
+  if (/clarity\.ms\/tag\//.test(html)) {
+    errors.push(`${relativePath}: Clarity must be injected centrally to enforce consent and route exclusions`);
+  }
   if (/\/api\/track\b/.test(html)) {
     errors.push(`${relativePath}: retired first-party tracking remains`);
   }
@@ -462,6 +465,15 @@ if (!privacy.includes("百度统计隐私政策") || !privacy.includes("wedding_
   errors.push("privacy.html: missing Baidu analytics consent, provider, or withdrawal disclosure");
 }
 const baiduAnalyticsSource = fs.readFileSync(path.join(root, "src", "baidu-analytics.js"), "utf8");
+for (const privacyPath of ["privacy.html", "en/privacy.html"]) {
+  const policy = fs.readFileSync(path.join(root, privacyPath), "utf8");
+  if (!policy.includes("Microsoft Clarity") || !policy.includes("wedding_analytics_consent_v2") || !policy.includes('id="clarity-analytics"')) {
+    errors.push(`${privacyPath}: missing Clarity consent and privacy disclosure`);
+  }
+}
+if (!baiduAnalyticsSource.includes("ym2xvwuebv") || !baiduAnalyticsSource.includes('ad_Storage: "denied"')) {
+  errors.push("src/baidu-analytics.js: missing Clarity project or denied advertising storage");
+}
 if (!baiduAnalyticsSource.includes("1df8fda3d25e8df34a5c8e08f945e9fb") || !baiduAnalyticsSource.includes("hm.baidu.com/hm.js")) {
   errors.push("src/baidu-analytics.js: missing the configured Baidu analytics tracking ID");
 }
@@ -474,6 +486,9 @@ for (const noindexPath of allHtml.filter((fullPath) => /<meta[^>]+name=["']robot
 const analyticsServiceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 if (!analyticsServiceWorker.includes("hm.baidu.com")) {
   errors.push("sw.js: Baidu analytics requests must remain network-only");
+}
+if (!analyticsServiceWorker.includes("clarity.ms")) {
+  errors.push("sw.js: Clarity requests must remain network-only");
 }
 for (const sourcePath of ["functions/api/save.js", "functions/api/upload.js"]) {
   const source = fs.readFileSync(path.join(root, sourcePath), "utf8");

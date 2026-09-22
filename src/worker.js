@@ -11,7 +11,7 @@ import { onRequestGet as posterImgGet } from "../functions/api/poster-img.js";
 import { onRequest as wallRequest } from "../functions/api/wall.js";
 import { managedFetch, managedAlarm } from "./managed-wall.js";
 import {
-  BAIDU_ANALYTICS_SNIPPET,
+  buildAnalyticsSnippet,
   shouldInjectBaiduAnalytics,
 } from "./baidu-analytics.js";
 
@@ -127,7 +127,7 @@ function staticResponse(response, path) {
     body = new HTMLRewriter()
       .on("head", {
         element(element) {
-          element.append(BAIDU_ANALYTICS_SNIPPET, { html: true });
+          element.append(buildAnalyticsSnippet(path), { html: true });
         },
       })
       .transform(response).body;

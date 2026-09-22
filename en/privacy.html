@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Privacy Policy — wedding-tv.cn</title>
-<meta name="description" content="wedding-tv.cn Privacy Policy: Explaining data processing for digital invitations, interactive live wedding walls, AI utilities, Cloudflare Web Analytics, and data retention rules." />
+<meta name="description" content="wedding-tv.cn privacy policy: invitations, AI, live walls, Baidu Analytics and Microsoft Clarity, consent withdrawal, replay exclusions and data retention." />
 <meta name="author" content="wedding-tv.cn" />
 <meta name="robots" content="index,follow,max-snippet:-1" />
 <meta name="theme-color" content="#0e0a14" />
@@ -19,7 +19,7 @@
   "name":"wedding-tv.cn Privacy Policy",
   "url":"https://wedding-tv.cn/en/privacy.html",
   "inLanguage":"en",
-  "dateModified":"2026-09-14",
+  "dateModified":"2026-09-22",
   "genre":"Privacy policy",
   "publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/en/"}
 }
@@ -62,7 +62,7 @@
   <div class="wrap">
     <a href="/privacy.html" class="lang-switch">中文版</a>
     <h1>Privacy Policy</h1>
-    <p class="meta">Last Updated: September 14, 2026 · <a href="/en/">Back to Home</a></p>
+    <p class="meta">Last Updated: September 22, 2026 · <a href="/en/">Back to Home</a></p>
   </div>
 </header>
 
@@ -71,9 +71,9 @@
     <p>wedding-tv.cn ("we", "us", or "our") respects and protects your privacy. This Privacy Policy details how we handle information across our free wedding utilities, interactive live wedding wall, and cultural guides.</p>
 
     <div class="highlight-box">
-      <strong>Active Operational Status (September 14, 2026):</strong>
+      <strong>Active Operational Status (September 22, 2026):</strong>
       <p style="margin:8px 0 0;font-size:14px;color:var(--sub)">
-        wedding-tv.cn is committed to privacy by design. We do not load Google Analytics, Google AdSense ad-serving scripts, or third-party behavioral profiling trackers. Our pages contain a publisher account meta tag solely for AdSense site ownership verification without executing advertising scripts. Cloudflare Web Analytics is used for aggregate performance metrics without cookies or cross-site tracking. Most tools (timeline builder, countdown poster, checklists) process data entirely within your local browser.
+        After you accept our updated analytics prompt, public pages load Baidu Analytics, and selected home, blog and guide pages also load Microsoft Clarity for heatmaps and session replays. A previous Baidu-only acceptance does not authorize Clarity: we ask again. Previous refusals remain effective. Neither provider is loaded on invitation displays, guest blessing pages or live walls. Clarity is also excluded from tool editors, AI results, room creation, privacy and terms pages. Google Analytics and Google AdSense ad-serving scripts remain disabled; the publisher meta tag only verifies account ownership. Cloudflare may load its aggregate performance measurement separately. Local tools do not send their inputs to our servers unless you request an online feature.
       </p>
     </div>
 
@@ -92,7 +92,8 @@
       <li><strong>Hosting & Security Telemetry:</strong> Delivered via Cloudflare's global edge network, standard technical server logs (IP address, browser user-agent, request timestamp, URL) may be processed transiently to deliver web assets, protect against DDoS attacks, and mitigate abuse.</li>
       <li><strong>Cloudflare Web Analytics:</strong> Privacy-first analytics script measuring page load times, country-level aggregate metrics, and device categories without using cookies or persistent identifiers.</li>
       <li id="baidu-analytics"><strong>Baidu Analytics (Optional Consent):</strong> On public editorial content pages, Baidu Analytics script is loaded only after you explicitly click "Accept" on our analytics consent banner. It uses cookies to distinguish unique visitors and compile aggregate visit volume, traffic sources, browser types, and navigation paths. It is never loaded on user-generated pages (such as live wedding wall displays, blessing screens, or invitations). For details on Baidu's data processing, see the <a href="https://tongji.baidu.com/web/help/article?id=330&amp;type=0" target="_blank" rel="nofollow noopener">Baidu Analytics Privacy Policy</a>.</li>
-      <li><strong>Local Browser Storage:</strong> Local storage is used for saving utility inputs locally, as well as preserving your analytics consent preference under key <code>wedding_baidu_analytics_consent_v1</code>. You can revoke or reset your consent at any time below.</li>
+      <li id="clarity-analytics"><strong>Microsoft Clarity (Optional Consent):</strong> On selected reading pages, Clarity records clicks, scrolling, page interactions, device information and session replays to help identify usability problems. This is not a camera or microphone recording. Cookies such as <code>_clck</code> and <code>_clsk</code> may connect visits. We grant analytics storage and deny advertising storage through Clarity's consent API; we do not send custom user identifiers. Tool inputs and AI result pages are excluded. Form elements on permitted pages are masked before Clarity loads. URLs with query strings or fragments are excluded, as are visits whose same-site referrer is outside the recording allowlist, reducing the risk of sharing invitation IDs or room links. See <a href="https://clarity.microsoft.com/privacy/" target="_blank" rel="nofollow noopener">Clarity's privacy information</a> and <a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-cookies" target="_blank" rel="nofollow noopener">cookie documentation</a>.</li>
+      <li><strong>Local Browser Storage:</strong> Tool inputs remain in local browser storage. The updated analytics preference is stored under <code>wedding_analytics_consent_v2</code>. The old <code>wedding_baidu_analytics_consent_v1</code> key only preserves previous refusals, never authorizes Clarity. The preference button below withdraws consent, clears accessible first-party analytics cookies and asks again, without deleting tool data. Manage third-party cookies through your browser settings.</li>
       <li><strong>API Rate Limiting & Abuse Defense:</strong> To safeguard free AI APIs from automated scraping, IP addresses are transformed using a salted one-way hash (plain IP is never stored) and kept in Cloudflare KV for up to 48 hours solely to track daily request quotas.</li>
     </ul>
 
@@ -109,6 +110,7 @@
     <ul>
       <li><strong>Cloudflare:</strong> Provides DNS, CDN edge delivery, KV storage for invitations/wall messages, and Web Analytics.</li>
       <li><strong>Baidu Analytics:</strong> Used strictly upon your explicit consent on public pages for aggregate traffic analytics. May set first-party cookies according to their privacy policy. You can reject analytics without affecting any site functionality, or withdraw consent at any time.</li>
+      <li><strong>Microsoft Clarity:</strong> Used with your updated consent for heatmaps and session replays on selected reading pages. Data is sent to Microsoft and may be processed outside your country according to its privacy information and our project settings. Declining does not affect site functionality.</li>
       <li><strong>Alibaba DashScope / Qwen:</strong> Processes selected AI text generation requests.</li>
       <li><strong>Google Gemini:</strong> Secondary model provider for text generation and image comprehension tasks.</li>
       <li><strong>Cloudflare Workers AI:</strong> Model provider for serverless AI inference.</li>
@@ -121,6 +123,7 @@
       <li><strong>Digital Invitations & Photos:</strong> New invitations created after August 2026 are scheduled to expire automatically after 365 days. Early deletion requests can be submitted anytime.</li>
       <li><strong>Rate Limiting Keys:</strong> Salted hash counters expire after 48 hours.</li>
       <li><strong>Browser Data:</strong> Stored locally until you click "Clear All" or wipe your browser cache.</li>
+      <li><strong>Analytics Data:</strong> Baidu and Clarity retain data according to their service rules and project settings. Withdrawal stops future collection; it does not automatically erase previously sent data. Contact the email below for requests about existing data.</li>
     </ul>
 
     <h2>5. Your Rights & GDPR / CCPA Compliance</h2>
@@ -128,11 +131,11 @@
     <ul>
       <li><strong>Access:</strong> Inquire about what data is stored relating to your invitation or wedding wall room.</li>
       <li><strong>Deletion:</strong> Request immediate removal of published invitations or uploaded wedding images.</li>
-      <li><strong>Opt-Out:</strong> Our site does not sell personal data, does not serve targeted ads, and does not conduct cross-site tracking.</li>
+      <li><strong>Opt-Out:</strong> You can decline optional analytics without losing site functionality. We do not serve targeted ads and send a denied advertising-storage signal to Clarity. Provider cookie handling is described in the links above.</li>
       <li><strong>Consent Withdrawal:</strong> You may withdraw your cookie and analytics consent at any time using the button below.</li>
     </ul>
     <p>To exercise any of these rights, contact us at <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>.</p>
-    <p><button class="button" type="button" id="resetAnalyticsConsent">Reset Analytics Preferences</button></p>
+    <p><button class="button" type="button" id="resetAnalyticsConsent">Withdraw and Reset Analytics Preferences</button></p>
 
     <h2>6. Security Measures</h2>
     <p>We implement modern security practices including end-to-end SSL/TLS encryption, salted hashing for rate-limiting, strict input sanitization against XSS, and automated content expiration.</p>
@@ -158,7 +161,7 @@
 document.getElementById("resetAnalyticsConsent")?.addEventListener("click", function () {
   if (window.WeddingAnalyticsConsent) window.WeddingAnalyticsConsent.reset();
   else {
-    try { localStorage.removeItem("wedding_baidu_analytics_consent_v1"); location.reload(); } catch(_) {}
+    try { localStorage.removeItem("wedding_analytics_consent_v2"); localStorage.removeItem("wedding_baidu_analytics_consent_v1"); location.reload(); } catch(_) {}
   }
 });
 </script>

@@ -1,6 +1,7 @@
 // Automated regression tests for Cloudflare Worker API contracts, frontend image resolution, quota execution order, XSS security, and policy dates
 import test from "node:test";
 import "./test-managed-wall.mjs";
+import "./test-analytics-consent.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -941,6 +942,5 @@ test("Timezone bug regressions: save.js rejects invalid timezones, Phoenix summe
   const summerLaStr = context.formatTimezoneShort("America/Los_Angeles", false, new Date("2026-07-12T16:00:00Z"));
   assert.ok(summerLaStr.includes("PDT") || summerLaStr.includes("GMT-7"), `Summer LA must show daylight saving time (PDT), got: ${summerLaStr}`);
 });
-
 
 

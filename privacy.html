@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>隐私政策 — wedding-tv.cn</title>
-<meta name="description" content="wedding-tv.cn 隐私政策与数据处理说明：说明电子请帖、现场祝福墙、AI 功能、Cloudflare 与百度统计的数据用途、选择机制和保存范围，以及当前未启用广告脚本的实际状态。" />
+<meta name="description" content="wedding-tv.cn 隐私政策与数据处理说明：说明电子请帖、祝福墙、AI、Cloudflare、百度统计与 Microsoft Clarity 的数据用途、同意与撤回方式、会话回放排除范围及保存规则。" />
 <meta name="robots" content="index,follow,max-snippet:-1" />
 <meta name="theme-color" content="#0e0a14" />
 <link rel="canonical" href="https://wedding-tv.cn/privacy.html" />
@@ -12,7 +12,7 @@
 <link rel="alternate" hreflang="en" href="https://wedding-tv.cn/en/privacy.html" />
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/privacy.html" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","name":"wedding-tv.cn 隐私政策","url":"https://wedding-tv.cn/privacy.html","inLanguage":"zh-CN","dateModified":"2026-09-14","genre":"Privacy policy","publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"}}
+{"@context":"https://schema.org","@type":"WebPage","name":"wedding-tv.cn 隐私政策","url":"https://wedding-tv.cn/privacy.html","inLanguage":"zh-CN","dateModified":"2026-09-22","genre":"Privacy policy","publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"}}
 </script>
 <style>
   :root{
@@ -54,14 +54,14 @@
 <header>
   <div class="wrap">
     <h1>隐私政策</h1>
-    <p class="meta">最后更新：2026年9月14日</p>
+    <p class="meta">最后更新：2026年9月22日</p>
   </div>
 </header>
 
 <main>
   <div class="wrap">
     <p>wedding-tv.cn（以下简称“本网站”）尊重并保护用户隐私。本政策按照当前实际功能说明信息如何处理，并将已启用、须经选择后启用和尚未启用的服务分别说明。</p>
-    <p><strong>当前状态（2026年9月14日）：</strong>公共内容页会先显示访问统计选择，只有访客点击“允许统计”后才加载百度统计；邀请展示、祝福提交、现场大屏等可能在地址中包含请帖标识或房间号的页面不加载百度统计。网站不加载 Google Analytics 或 Google AdSense 广告投放脚本，也不运行本站自建的点击行为追踪接口。页面包含 <code>google-adsense-account</code> 发布商账户关联元标签，用于 AdSense 账户所有权验证；该元标签本身不发起广告请求，也不设置广告 Cookie。Cloudflare 可能自动加载 Web Analytics 性能测量脚本，具体处理方式见下文。报价对比器、应急预案生成器等本地工具的输入保存在用户浏览器中，不由工具代码主动上传至本站服务器。</p>
+    <p><strong>当前状态（2026年9月22日）：</strong>访客点击新版提示中的“允许统计”后，公共页面才加载百度统计；指定的首页、博客与阅读指南还会加载 Microsoft Clarity，用于点击热图、滚动与会话回放。此前仅允许百度统计的选择不会自动授权 Clarity，需要重新选择；此前的拒绝选择继续有效。请帖展示、祝福提交和现场大屏不加载这两种统计；Clarity 也不在工具编辑、AI 生成、房间创建、隐私或条款页面加载。网站不加载 Google Analytics 或 Google AdSense 广告投放脚本，也不运行本站自建的点击行为追踪接口。页面包含 <code>google-adsense-account</code> 发布商账户关联元标签，用于 AdSense 账户所有权验证；该元标签本身不发起广告请求，也不设置广告 Cookie。Cloudflare 可能自动加载 Web Analytics 性能测量脚本，具体处理方式见下文。报价对比器、应急预案生成器等本地工具的输入保存在用户浏览器中，不由工具代码主动上传至本站服务器。</p>
 
     <h2>1. 收集的信息类型</h2>
     <h3>a) 您主动提供的信息</h3>
@@ -81,7 +81,8 @@
       <li><strong>Cloudflare Web Analytics</strong>：Cloudflare 可能在浏览器页面中自动加载性能测量脚本，通过 <code>/cdn-cgi/rum</code> 收集页面加载性能、访问页面、来源页面、浏览器和设备类别、国家或地区等聚合指标。根据 Cloudflare 的服务说明，该功能不使用 Cookie 或 localStorage 建立跨站访客档案；Cloudflare 仍会处理完成网络请求和生成聚合指标所需的信息。</li>
       <li id="baidu-analytics"><strong>百度统计</strong>：仅在您点击“允许统计”后，公共内容页才会加载百度统计代码，用于统计页面访问、来源渠道、设备和浏览器环境、停留与访问路径等数据。百度统计会使用 Cookie 等技术识别独立访客；具体处理方式见<a href="https://tongji.baidu.com/web/help/article?id=330&amp;type=0" target="_blank" rel="nofollow noopener">百度统计隐私政策</a>。本站不在电子请帖展示、现场祝福和现场大屏等含用户生成内容的页面加载该代码。</li>
       <li><strong>API 频次防护与配额控制</strong>：为防止自动化脚本恶意刷取及保护免费 AI 工具配额，当您请求 AI 生成接口时，系统会对您的 IP 地址进行加盐单向散列（不保存明文 IP），并在 Cloudflare KV 中保留最多 48 小时用于统计当日调用频次，过期自动清除。</li>
-      <li><strong>浏览器本地存储</strong>：工具可能使用 localStorage 保存表单状态；本站也使用键 <code>wedding_baidu_analytics_consent_v1</code> 保存您对百度统计的允许或拒绝选择。您可以通过工具的清空按钮、下方偏好按钮或浏览器站点数据设置删除。</li>
+      <li id="clarity-analytics"><strong>Microsoft Clarity</strong>：仅经新版统计提示同意后，在指定阅读页面记录页面交互、点击、滚动、设备信息与会话回放，用于发现页面操作障碍，不是录制摄像头或麦克风。Clarity 可能使用 <code>_clck</code>、<code>_clsk</code> 等 Cookie 关联访问。本站向 Clarity 发送“允许分析存储、拒绝广告存储”的同意信号，不调用自定义用户身份关联接口。工具输入与生成结果页面不接入 Clarity；允许录制页面上的表单元素在加载前加以遮罩。带查询参数或地址片段的访问不加载 Clarity，从本站未允许录制的页面跳转而来的访问也跳过，以减少请帖标识或房间地址通过来源页面泄露的风险。有关微软的数据处理与 Cookie，见<a href="https://clarity.microsoft.com/privacy/" target="_blank" rel="nofollow noopener">Clarity 隐私说明</a>及<a href="https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-cookies" target="_blank" rel="nofollow noopener">Cookie 说明</a>。</li>
+      <li><strong>浏览器本地存储</strong>：工具可能使用 localStorage 保存表单状态；本站使用键 <code>wedding_analytics_consent_v2</code> 保存新版百度统计与 Clarity 的允许或拒绝选择。旧键 <code>wedding_baidu_analytics_consent_v1</code> 仅用于保留此前的拒绝选择，不用于授权 Clarity。下方偏好按钮会撤回当前统计同意、清除本站可访问的上述分析 Cookie，并重新显示选择，不删除您的工具数据；第三方域名的 Cookie 可通过浏览器设置管理。</li>
       <li><strong>当前未启用的统计与广告服务</strong>：截至本页更新日期，页面未加载 Google Analytics 或 Google AdSense 广告投放脚本，因此本站当前不会通过这些页面脚本设置对应的统计或广告 Cookie。账户关联元标签不等同于广告投放代码。</li>
     </ul>
 
@@ -99,6 +100,7 @@
     <ul>
       <li><strong>Cloudflare</strong>：用于托管、内容分发、安全防护、现场祝福墙数据存储以及 Web Analytics 页面性能测量，可能按其隐私政策处理网络请求和相关功能数据。</li>
       <li><strong>百度统计</strong>：在您允许后用于公共内容页的访问与来源分析。百度统计可能使用 Cookie，并按其隐私政策处理统计请求。您可以拒绝且不影响网站功能，也可随时在下方重新选择。</li>
+      <li><strong>Microsoft Clarity</strong>：在您允许后用于指定阅读页面的热图与会话回放。数据发送给微软处理，可能涉及境外服务器；保存、删除与安全措施以微软的隐私说明及本站项目配置为准。拒绝不会影响网站功能。</li>
       <li><strong>阿里云百炼 / DashScope</strong>：用于部分 AI 文案和海报生成。使用对应功能时，相关提示词和必要输入会发送给该服务。</li>
       <li><strong>Google Gemini</strong>：用于部分故事、图像理解和 AI 文案备用生成。使用对应功能时，相关文字或您主动上传的合照可能发送给该服务。</li>
       <li><strong>Cloudflare Workers AI</strong>：用于部分头像图像生成。头像功能会根据上一步形成的描述生成图片。</li>
@@ -118,6 +120,7 @@
       <li>AI 临时输入与生成结果：本站接口仅为完成当次请求向对应服务传输；第三方服务的日志、滥用监测和保存期限以其实际服务配置及隐私政策为准。</li>
       <li>Cloudflare Web Analytics 数据：由 Cloudflare 生成和保存聚合性能指标，保存与删除规则以本站 Cloudflare 配置及其服务政策为准。</li>
       <li>百度统计数据：只有在您允许后才通过页面脚本产生，保存与删除规则以百度统计的服务配置和隐私政策为准。本站浏览器中的允许或拒绝选择会保留到您重新选择或清除站点数据。</li>
+      <li>Clarity 数据：只有在允许的页面且获得新版同意后产生，保存期限以 Clarity 项目配置与微软服务规则为准。撤回同意停止后续采集，不等同于删除此前已经发送的数据；有关已有数据的请求请通过本页邮箱联系。</li>
       <li>托管与安全日志：保留期限由对应服务配置和提供商政策决定，本站不在本页承诺固定天数。</li>
       <li>已停用的本站点击追踪数据：相关公开接口已删除，部署后会自动清除此前保存在 Cloudflare KV 中、以 <code>track:</code> 开头的历史记录与汇总键。</li>
       <li>Google Analytics 和 AdSense 数据：当前未通过页面脚本产生；启用后的保存和控制方式将按实际配置更新。</li>
@@ -133,7 +136,7 @@
       <li><strong>投诉</strong>：向相关数据保护机构提出投诉。</li>
     </ul>
     <p>如需行使这些权利，请邮件联系 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>。</p>
-    <p><button class="preference-button" type="button" id="resetAnalyticsConsent">重新选择百度统计偏好</button></p>
+    <p><button class="preference-button" type="button" id="resetAnalyticsConsent">撤回并重新选择统计偏好</button></p>
 
     <h2>6. Google 广告启用后的披露</h2>
     <p>如果本站未来启用 Google AdSense，第三方供应商（包括 Google）可能使用 Cookie，根据用户此前访问本站或其他网站的情况投放广告。Google 使用广告 Cookie，可使 Google 及其合作伙伴根据访问情况展示广告。</p>
