@@ -51,7 +51,8 @@ self.addEventListener('fetch', event => {
     url.hostname === 'clarity.microsoft.com' || url.hostname.endsWith('.clarity.microsoft.com') ||
     url.hostname.includes('googlesyndication.com') ||
     url.hostname.includes('google-analytics.com') ||
-    url.hostname.includes('doubleclick.net')
+    url.hostname.includes('doubleclick.net') ||
+    url.hostname.includes('profitableratecpmnetwork.com')
   ) {
     return; // Standard network fetch
   }
