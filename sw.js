@@ -52,7 +52,8 @@ self.addEventListener('fetch', event => {
     url.hostname.includes('googlesyndication.com') ||
     url.hostname.includes('google-analytics.com') ||
     url.hostname.includes('doubleclick.net') ||
-    url.hostname.includes('profitableratecpmnetwork.com')
+    url.hostname.includes('profitableratecpmnetwork.com') ||
+    url.hostname.includes('highrevenueformat.com')
   ) {
     return; // Standard network fetch
   }
