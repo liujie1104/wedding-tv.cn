@@ -219,8 +219,30 @@ CORE_ITEMS = [
 ]
 
 
+import re
+
+def get_all_items():
+    weekly_items = []
+    weekly_files = sorted(
+        [f for f in ROOT.glob("wedding-weekly-issue-*.html")],
+        key=lambda p: int(re.search(r"\d+", p.name).group()) if re.search(r"\d+", p.name) else 0,
+        reverse=True
+    )
+    for wf in weekly_files:
+        html = wf.read_text("utf-8")
+        title_m = re.search(r"<title>(.*?)</title>", html)
+        desc_m = re.search(r'<meta name="description" content="(.*?)"', html)
+        if title_m and desc_m:
+            weekly_items.append({
+                "title": title_m.group(1).split(" | ")[0],
+                "link": f"{SITE}/{wf.name}",
+                "desc": desc_m.group(1)
+            })
+    return weekly_items + CORE_ITEMS
+
+
 def build_rss(max_items: int = 80) -> int:
-    items = CORE_ITEMS[:max_items]
+    items = get_all_items()[:max_items]
     last_build = format_datetime(datetime.now(timezone.utc))
     parts = [
         '<?xml version="1.0" encoding="UTF-8"?>',

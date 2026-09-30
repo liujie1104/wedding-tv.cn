@@ -174,11 +174,26 @@ def extract_html_date(rel_path: str) -> str:
     
     return EXPLICIT_CORE_DATES.get(rel_path, "2026-08-26")
 
+def get_core_pages():
+    pages = []
+    for rel_path, prio, freq in CORE_PAGES:
+        if rel_path == "wedding-weekly-issue-1.html":
+            weekly_files = sorted(
+                [f for f in os.listdir(PROJECT_ROOT) if re.match(r"^wedding-weekly-issue-\d+\.html$", f)],
+                key=lambda x: int(re.search(r"\d+", x).group())
+            )
+            for wf in weekly_files:
+                pages.append((wf, "0.9", "monthly"))
+        else:
+            pages.append((rel_path, prio, freq))
+    return pages
+
 def build_sitemap():
     urlset = ET.Element("urlset")
     urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
-    for rel_path, priority, freq in CORE_PAGES:
+    all_pages = get_core_pages()
+    for rel_path, priority, freq in all_pages:
         url_el = ET.SubElement(urlset, "url")
         loc_el = ET.SubElement(url_el, "loc")
         loc_el.text = f"https://wedding-tv.cn/{rel_path}"
@@ -203,7 +218,7 @@ def build_sitemap():
     with open(SITEMAP_PATH, "w", encoding="utf-8") as f:
         f.write(final_xml)
 
-    print(f"Sitemap rebuilt successfully with {len(CORE_PAGES)} URLs.")
+    print(f"Sitemap rebuilt successfully with {len(all_pages)} URLs.")
 
 if __name__ == "__main__":
     build_sitemap()

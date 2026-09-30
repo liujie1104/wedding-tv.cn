@@ -1,0 +1,57 @@
+name: Publish Weekly Wedding Digest
+
+on:
+  schedule:
+    # 每周一上午 09:00（北京时间，即 UTC 01:00）自动运行
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # 支持在 GitHub Actions 控制台随时手动一键触发
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate New Weekly Digest Issue
+        run: python scripts/generate_weekly_digest.py
+
+      - name: Verify Static Content Audit
+        run: node scripts/audit-static-content.cjs
+
+      - name: Run Regression Tests
+        run: node --test scripts/test-api-regressions.mjs
+
+      - name: Commit and Push New Issue
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "feat(weekly): publish new weekly wedding digest issue automatically"
+            git push origin main
+          fi
+
+      - name: Render Xiaohongshu & Social Copy to Job Summary
+        if: always()
+        run: |
+          if [ -f "latest-social-copy.md" ]; then
+            cat latest-social-copy.md >> $GITHUB_STEP_SUMMARY
+          fi
