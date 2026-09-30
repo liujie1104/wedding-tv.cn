@@ -271,7 +271,7 @@ for (const relativePath of reviewedRegionPages) {
   if (textLength < 2500) errors.push(`${relativePath}: reviewed regional longform is too short (${textLength})`);
   if (sectionCount < 8) errors.push(`${relativePath}: reviewed regional longform lacks depth (${sectionCount} sections)`);
   if (tableCount < 1) errors.push(`${relativePath}: reviewed regional longform needs at least one factual structure table (${tableCount})`);
-  if (!/AI 辅助说明/.test(html)) errors.push(`${relativePath}: missing AI assistance disclosure`);
+  if (!/(?:采编说明|AI 辅助说明)/.test(html)) errors.push(`${relativePath}: missing editorial boundary disclosure`);
   if (!/(?:适用边界|范围声明|阅读原则|本页定位|特别提示)/.test(html)) {
     errors.push(`${relativePath}: missing locality and applicability boundary`);
   }
