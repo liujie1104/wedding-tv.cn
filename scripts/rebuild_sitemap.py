@@ -119,7 +119,7 @@ EXPLICIT_CORE_DATES = {
     "invitation.html": "2026-08-26",
     "poster.html": "2026-08-26",
     "qr-poster.html": "2026-08-26",
-    "almanac.html": "2026-08-26",
+    "almanac.html": "2026-09-30",
     "timeline.html": "2026-08-26",
     "timeline-templates.html": "2026-08-26",
     "playlist.html": "2026-08-26",
