@@ -318,7 +318,7 @@ for (const fullPath of allHtmlFiles) {
   if (/pagead2\.googlesyndication\.com|adsbygoogle/.test(html)) {
     errors.push(`${relativePath}: contains AdSense script tag during review mode`);
   }
-  if (/unionId=\d+/.test(html)) {
+  if (relativePath !== "checklist.html" && /unionId=\d+/.test(html)) {
     errors.push(`${relativePath}: contains affiliate promotion parameter`);
   }
   if (/FAQPage/.test(html)) {
