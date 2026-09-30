@@ -73,6 +73,7 @@ CORE_PAGES = [
     ("outdoor-wedding-emergency-case.html", "0.9", "monthly"),
     ("tool-methodology.html", "0.8", "monthly"),
     ("blog.html", "0.9", "weekly"),
+    ("wedding-weekly-issue-1.html", "0.9", "monthly"),
     ("about.html", "0.7", "monthly"),
     ("editorial-policy.html", "0.7", "monthly"),
     ("authors.html", "0.7", "monthly"),
@@ -95,6 +96,7 @@ CORE_PAGES = [
 
 EXPLICIT_CORE_DATES = {
     "": "2026-09-14",
+    "wedding-weekly-issue-1.html": "2026-09-30",
     "wedding-live-wall.html": "2026-09-14",
     "en/": "2026-09-14",
     "en/wedding-live-wall.html": "2026-09-14",
