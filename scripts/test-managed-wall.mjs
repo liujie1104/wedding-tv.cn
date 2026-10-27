@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { managedFetch, managedAlarm, keyHash, MESSAGE_TTL, ROOM_TTL, MESSAGE_LIMIT, normalizeSettings } from "../src/managed-wall.js";
+import { onRequest as wallRequest } from "../functions/api/wall.js";
 
 // Serialized, clone-on-read storage models the transaction boundary; browser tests
 // separately exercise Cloudflare's actual local Durable Object implementation.
@@ -37,6 +38,58 @@ async function room() {
   return state;
 }
 function message(extra = {}) { return { id: crypto.randomUUID(), name: "Guest", message: "Best wishes", ...extra }; }
+
+test("event rooms: a named activity needs no couple fields and survives editing and public readback", async () => {
+  for (const eventType of ["birthday", "gathering", "annual", "training"]) {
+    const state = { storage: new Storage() };
+    const settings = { eventType, eventName: "<Event> & Friends", organizer: "Host", date: "2026-12-12", theme: "forest" };
+    const created = await call(state, "create", { settings, keyHash: await keyHash(key) });
+    assert.equal(created.status, 201);
+    assert.equal(created.data.room.eventType, eventType);
+    assert.equal(created.data.room.eventName, settings.eventName);
+    assert.equal(created.data.room.bride, "");
+    assert.equal((await call(state, "settings", { settings: { ...settings, eventName: "Updated activity" } }, "wrong")).status, 403);
+    assert.equal((await call(state, "settings", { settings: { ...settings, eventName: "Updated activity" } }, key)).status, 200);
+    const room = (await call(state, "public")).data.room;
+    assert.equal(room.eventName, "Updated activity");
+    assert.equal(room.organizer, "Host");
+    assert.equal(room.keyHash, undefined);
+    assert.equal((await call(state, "settings", { settings: { eventType, eventName: "  " } }, key)).status, 400);
+    assert.equal((await call(state, "public")).data.room.eventName, "Updated activity");
+  }
+});
+
+test("event rooms: unknown types and blank names are rejected before quota or room allocation", async () => {
+  for (const settings of [{ eventType: "unknown", eventName: "Test" }, { eventType: "annual", eventName: " \n " }]) {
+    let allocated = false;
+    const response = await wallRequest({ request: new Request("https://wedding-tv.cn/api/wall", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "create", settings }),
+    }), env: {
+      WALL_DO: { idFromName() { allocated = true; throw new Error("must not allocate"); } },
+      WEDDING: { get() { throw new Error("must not check quota"); }, put() { throw new Error("must not consume quota"); } },
+    } });
+    assert.equal(response.status, 400);
+    assert.equal(allocated, false);
+    const state = { storage: new Storage() };
+    assert.equal((await call(state, "create", { settings, keyHash: await keyHash(key) })).status, 400);
+    assert.equal(await state.storage.get("managed"), undefined);
+  }
+});
+
+test("event rooms: legacy wedding metadata without an event type still reads and edits", async () => {
+  const state = await room();
+  const meta = await state.storage.get("managed");
+  delete meta.settings.eventType; delete meta.settings.eventName; delete meta.settings.organizer;
+  await state.storage.put("managed", meta);
+  const legacy = (await call(state, "public")).data.room;
+  assert.equal(legacy.groom, "A");
+  assert.equal(legacy.bride, "B");
+  assert.equal(legacy.eventType, undefined);
+  const edited = await call(state, "settings", { settings: { groom: "New A", bride: "B" } }, key);
+  assert.equal(edited.status, 200);
+  assert.equal(edited.data.room.eventType, "wedding");
+  assert.equal(edited.data.room.groom, "New A");
+});
 
 test("managed wall: pending content and secrets are private; approval is authorized and idempotent", async () => {
   const state = await room(), item = message({ message: "<img src=x onerror=alert(1)>" });

@@ -5,6 +5,7 @@ export const ROOM_TTL = 7 * MESSAGE_TTL;
 export const MESSAGE_LIMIT = 1000;
 export const managedRoomPattern = /^w_[a-f0-9]{24}$/;
 const colors = new Set(["gold", "rose", "purple", "red"]);
+const eventTypes = new Set(["wedding", "birthday", "gathering", "annual", "training"]);
 export const line = (value, max) => String(value || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
 export async function keyHash(key) {
   const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key));
@@ -13,11 +14,18 @@ export async function keyHash(key) {
 export function normalizeSettings(input = {}) {
   if (!input || typeof input !== "object") input = {};
   return {
+    eventType: input.eventType == null || input.eventType === "" ? "wedding" : (eventTypes.has(input.eventType) ? input.eventType : "invalid"),
+    eventName: line(input.eventName, 60), organizer: line(input.organizer, 40),
     groom: line(input.groom, 20), bride: line(input.bride, 20),
     date: /^\d{4}-\d{2}-\d{2}$/.test(input.date || "") ? input.date : "",
     venue: line(input.venue, 60),
     theme: ["rose", "forest", "ink"].includes(input.theme) ? input.theme : "rose",
   };
+}
+export function settingsError(settings) {
+  if (!eventTypes.has(settings.eventType)) return "请选择支持的活动类型";
+  if (settings.eventType === "wedding") return !settings.groom || !settings.bride ? "请填写两位新人的称呼" : "";
+  return settings.eventName ? "" : "请填写活动名称";
 }
 function publicRoom(meta) {
   return { ...meta.settings, expiresAt: meta.expiresAt, accepting: meta.accepting, paused: meta.paused, mode: meta.mode };
@@ -39,8 +47,11 @@ export async function managedFetch(state, request) {
     let meta = await store.get("managed");
     if (action === "create" && request.method === "POST") {
       if (meta) return error(409, "房间已存在");
+      const settings = normalizeSettings(body.settings);
+      const invalid = settingsError(settings);
+      if (invalid) return error(400, invalid);
       meta = {
-        settings: normalizeSettings(body.settings), keyHash: body.keyHash,
+        settings, keyHash: body.keyHash,
         createdAt: now, expiresAt: now + ROOM_TTL, accepting: true, paused: false,
         mode: body.mode === "event" ? "event" : "trial",
         submitted: 0, approved: 0, firstMessageAt: null,
@@ -66,10 +77,10 @@ export async function managedFetch(state, request) {
     if (action === "submit") {
       const id = line(body.id, 36);
       const name = line(body.name, 16), message = line(body.message, 120);
-      if (!/^[a-f0-9-]{36}$/.test(id) || !name || !message) return error(400, "请填写昵称和祝福");
+      if (!/^[a-f0-9-]{36}$/.test(id) || !name || !message) return error(400, "请填写昵称和留言");
       // The client reuses this ID after a timeout so a retry never creates a duplicate.
       if (await store.get("receipt:" + id)) return json(200, { ok: true, pending: true });
-      if (!meta.accepting) return error(409, "主持人已暂停接收祝福");
+      if (!meta.accepting) return error(409, "主持人已暂停接收留言");
       if (meta.submitted >= MESSAGE_LIMIT) return error(409, "本房间已达到 1000 条上限，请联系主持人");
       const item = { id, name, message, identity: line(body.identity, 24), color: colors.has(body.color) ? body.color : "rose", ts: now, status: "pending" };
       await store.put("entry:" + id, item);
@@ -97,7 +108,8 @@ export async function managedFetch(state, request) {
     if (action === "settings") {
       if (body.settings) {
         const settings = normalizeSettings(body.settings);
-        if (!settings.groom || !settings.bride) return error(400, "请填写两位新人的称呼");
+        const invalid = settingsError(settings);
+        if (invalid) return error(400, invalid);
         meta.settings = settings;
       }
       if (typeof body.accepting === "boolean") meta.accepting = body.accepting;

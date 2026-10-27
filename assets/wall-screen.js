@@ -3,6 +3,7 @@
   const { $, node, request, remember, recall, download, saveCanvas, card, copy } = WallUI;
   const params = new URLSearchParams(location.search);
   const demo = params.get("demo") === "1", roomId = params.get("room") || "";
+  const demoEventType = ["birthday", "gathering", "annual", "training"].includes(params.get("type")) ? params.get("type") : "";
   const managed = /^w_[a-f0-9]{24}$/.test(roomId), embed = demo && params.get("embed") === "1";
   let screenLang = params.get("lang") === "en" ? "en" : (recall("wedding_screen_lang", "zh") === "en" ? "en" : "zh");
   if (!demo && !roomId) { location.replace(screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html"); return; }
@@ -13,9 +14,13 @@
   let data = null, paused = false, stopped = false, inFlight = false;
   let queue = [], seen = new Set(), listSignature = "", audioUrl = "";
   const winners = [];
+  function isEvent() { return WallUI.isEventRoom(data?.room) || (demo && Boolean(demoEventType)); }
+  function createUrl() {
+    return isEvent() ? "/event-wall.html?type=" + (data?.room.eventType || demoEventType) : (screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html");
+  }
   function getGuestUrl() {
     return demo
-      ? location.origin + (screenLang === "en" ? "/en/wedding-live-wall.html?from=demo&lang=en" : "/wedding-live-wall.html?from=demo")
+      ? location.origin + createUrl() + (isEvent() ? "&from=demo" : "?from=demo")
       : location.origin + "/blessing.html?room=" + encodeURIComponent(roomId) + (screenLang === "en" ? "&lang=en" : "");
   }
   let guestUrl = getGuestUrl();
@@ -107,10 +112,44 @@
   function notice(text, error = false) { $("adminNotice").textContent = text; $("adminNotice").classList.toggle("error", error); }
   function status(text, error = false) { $("connection").textContent = text; $("connection").classList.toggle("error", error); }
   function approved() { return (data?.messages || []).filter(m => m.status === "approved" || !managed); }
+  function applyEventLabels() {
+    const generic = isEvent(), en = screenLang === "en";
+    for (const name of ["groom", "bride", "eventName", "organizer"]) {
+      const field = $("settingsForm").elements[name];
+      const visible = generic ? ["eventName", "organizer"].includes(name) : ["groom", "bride"].includes(name);
+      field.closest(".field").hidden = !visible;
+      field.disabled = !visible;
+      field.required = visible && name !== "organizer";
+    }
+    if (!generic) return;
+    const labels = {
+      brandLink: en ? "wedding-tv.cn · Event Wall" : "wedding-tv.cn · 活动留言墙",
+      replay: en ? "Replay Messages" : "重播留言",
+      qrLabel: en ? "Scan to Leave a Message" : "扫码留下活动留言",
+      copyGuest: en ? "Copy Participant Link" : "复制参与链接",
+      exportImage: en ? "Message Card PNG" : "留言纪念图 PNG",
+      exportCsv: en ? "Export Messages CSV" : "导出留言 CSV",
+      adminSettingsSummary: en ? "Event & Background Settings" : "活动信息与背景设置",
+      lblSettingEventName: en ? "Event Name" : "活动名称",
+      lblSettingOrganizer: en ? "Organizer (Optional)" : "组织者（选填）",
+      lblSettingDate: en ? "Event Date" : "活动日期",
+      adminPendingTitle: en ? "Pending Messages" : "待审核留言",
+      adminApprovedSummary: en ? "Approved Messages" : "已通过的留言",
+      bgDialogTitle: en ? "Screen Background" : "活动背景图片",
+      adminExportNotice: en ? "Card: latest 20 approved messages. CSV: all retained approved messages. Obtain participant consent before sharing." : "纪念图取最近 20 条已通过留言；CSV 包含当前保留的全部已通过内容。分享前请征得参与者同意。",
+      lotteryDesc: en ? "Casual nickname draw from approved messages; identical names are merged. History resets on reload. Not an employee roster draw." : "从已通过留言的昵称中娱乐抽取，同名合并。抽取记录仅限当前页面，刷新后清空，不适用于员工名单或正式奖项抽取。",
+    };
+    for (const [id, text] of Object.entries(labels)) $(id).textContent = text;
+    $("newRoomLink").href = createUrl();
+    $("brandLink").href = createUrl();
+    $("backgroundImage").alt = en ? "Custom event background" : "自选活动背景";
+  }
   function applyRoom() {
     const room = data.room;
-    $("couple").textContent = room.groom + " & " + room.bride;
-    $("eventDetails").textContent = [room.date, room.venue].filter(Boolean).join(" · ");
+    applyEventLabels();
+    $("couple").textContent = WallUI.roomTitle(room);
+    $("eventDetails").textContent = [room.date, room.venue, isEvent() ? room.organizer : ""].filter(Boolean).join(" · ");
+    if (isEvent()) document.title = screenLang === "en" ? "Event Wall | Live Display" : "活动留言墙｜现场展示";
     $("stage").dataset.theme = room.theme || "rose";
     paused = !!room.paused; $("stage").classList.toggle("paused", paused);
     $("pause").textContent = paused
@@ -123,10 +162,10 @@
       : (screenLang === "en" ? "Legacy Room" : "旧版房间");
     $("ribbon").textContent = demo
       ? (screenLang === "en" ? "Demo · Sample Wishes" : "演示 · 虚构昵称和祝福")
-      : (screenLang === "en" ? "Live Wishes · wedding-tv.cn" : "祝福互动 · wedding-tv.cn");
+      : isEvent() ? (WallUI.eventTypeName(room, screenLang) + " · wedding-tv.cn") : (screenLang === "en" ? "Live Wishes · wedding-tv.cn" : "祝福互动 · wedding-tv.cn");
     $("accepting").textContent = room.accepting
-      ? (screenLang === "en" ? "Pause Accepting Wishes" : "暂停接收祝福")
-      : (screenLang === "en" ? "Resume Accepting Wishes" : "恢复接收祝福");
+      ? (screenLang === "en" ? "Pause Accepting Messages" : (isEvent() ? "暂停接收留言" : "暂停接收祝福"))
+      : (screenLang === "en" ? "Resume Accepting Messages" : (isEvent() ? "恢复接收留言" : "恢复接收祝福"));
     if (managed && key) {
       $("manage").hidden = false; $("pause").hidden = false;
       const s = data.stats;
@@ -135,7 +174,7 @@
         : `提交 ${s.submitted} · 累计通过 ${s.approved} · 当前保留 ${data.messages.length} · 剩余可提交 ${s.remaining}`;
       $("expiry").textContent = screenLang === "en"
         ? `Room expires: ${new Date(room.expiresAt).toLocaleString("en-US")}. Messages are cleared after 24h.`
-        : `房间到期：${new Date(room.expiresAt).toLocaleString("zh-CN")}。每条祝福发送后 24 小时清除，请及时导出。`;
+        : `房间到期：${new Date(room.expiresAt).toLocaleString("zh-CN")}。每条${isEvent() ? "留言" : "祝福"}发送后 24 小时清除，请及时导出。`;
       const records = recall("wedding_wall_trials_v1", []), record = records.find(r => r.id === roomId);
       if (record) { Object.assign(record, s, { syncedAt: Date.now() }); remember("wedding_wall_trials_v1", records); }
       renderManagement();
@@ -146,8 +185,8 @@
     for (const item of approved()) if (!seen.has(item.id)) { seen.add(item.id); queue.push(item); }
     $("emptyMessage").hidden = approved().length > 0;
     $("emptyMessage").textContent = screenLang === "en"
-      ? "Waiting for guest wishes · Moderated live"
-      : "等待宾客送祝福 · 主持人审核后展示";
+      ? (isEvent() ? "Waiting for messages · Moderated live" : "Waiting for guest wishes · Moderated live")
+      : (isEvent() ? "等待活动留言 · 主持人审核后展示" : "等待宾客送祝福 · 主持人审核后展示");
   }
   function spawn(item) {
     const gap = document.fullscreenElement ? 92 : 72;
@@ -177,8 +216,8 @@
       const b = node("button", screenLang === "en" ? "Delete" : "删除"); b.onclick = () => act("delete", { id: item.id }, b); actions.append(b);
       row.append(actions); $(item.status === "pending" ? "pending" : "approved").append(row);
     }
-    if (!$("pending").children.length) $("pending").append(node("p", screenLang === "en" ? "No pending wishes" : "暂无待审核祝福", "muted"));
-    if (!$("approved").children.length) $("approved").append(node("p", screenLang === "en" ? "No approved wishes yet" : "暂无已通过祝福", "muted"));
+    if (!$("pending").children.length) $("pending").append(node("p", screenLang === "en" ? "No pending messages" : (isEvent() ? "暂无待审核留言" : "暂无待审核祝福"), "muted"));
+    if (!$("approved").children.length) $("approved").append(node("p", screenLang === "en" ? "No approved messages yet" : (isEvent() ? "暂无已通过留言" : "暂无已通过祝福"), "muted"));
   }
   async function poll() {
     if (demo || stopped || inFlight) return;
@@ -214,7 +253,7 @@
   }
   document.querySelectorAll("[data-close]").forEach(b => b.onclick = () => $(b.dataset.close).close());
   $("manage").onclick = () => {
-    for (const name of ["groom", "bride", "date", "venue", "theme"]) $("settingsForm").elements[name].value = data.room[name] || "";
+    for (const name of ["eventType", "eventName", "organizer", "groom", "bride", "date", "venue", "theme"]) $("settingsForm").elements[name].value = data.room[name] || (name === "eventType" ? "wedding" : "");
     $("adminDialog").showModal();
   };
   $("settingsForm").onsubmit = async event => { event.preventDefault(); await act("settings", { settings: Object.fromEntries(new FormData($("settingsForm"))) }, $("settingsForm").querySelector("button")); };
@@ -240,9 +279,9 @@
   $("musicFile").onchange = () => { const file = $("musicFile").files[0]; if (!file) return; if (audioUrl) URL.revokeObjectURL(audioUrl); audioUrl = URL.createObjectURL(file); $("audio").src = audioUrl; };
   function csvValue(value) { let text = String(value ?? ""); if (/^\s*[=+\-@]/.test(text)) text = "'" + text; return '"' + text.replaceAll('"', '""') + '"'; }
   $("exportCsv").onclick = () => {
-    const headers = screenLang === "en" ? ["Nickname", "Identity/Table", "Wish", "Time"] : ["昵称", "身份或桌号", "祝福", "发送时间"];
+    const headers = screenLang === "en" ? ["Nickname", "Identity/Table", isEvent() ? "Message" : "Wish", "Time"] : ["昵称", isEvent() ? "分组或身份" : "身份或桌号", isEvent() ? "留言" : "祝福", "发送时间"];
     const rows = [headers, ...approved().map(m => [m.name, m.identity, m.message, new Date(m.ts).toISOString()])];
-    download(new Blob(["\ufeff" + rows.map(r => r.map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), screenLang === "en" ? "approved_wishes.csv" : "当前已通过祝福.csv");
+    download(new Blob(["\ufeff" + rows.map(r => r.map(csvValue).join(",")).join("\r\n")], { type: "text/csv;charset=utf-8" }), isEvent() ? (screenLang === "en" ? "event_messages.csv" : "活动已通过留言.csv") : (screenLang === "en" ? "approved_wishes.csv" : "当前已通过祝福.csv"));
   };
   $("exportStats").onclick = () => {
     const note = screenLang === "en" ? "Purpose decided by creator; submission count is not unique guests. Current room only, contains no names, text, link, or key." : "用途由创建者选择；提交数不是独立宾客数。仅当前房间，不含昵称、正文、链接或密钥。";
@@ -251,9 +290,9 @@
   };
   $("exportImage").onclick = async () => {
     const items = approved().slice(-20); if (!items.length) { notice(screenLang === "en" ? "Please approve at least one wish first" : "请先审核通过至少一条祝福", true); return; }
-    const title = screenLang === "en" ? (data.room.groom + " & " + data.room.bride + " · Wedding Wishes") : (data.room.groom + " & " + data.room.bride + " · 祝福纪念");
-    const subtitle = screenLang === "en" ? ("wedding-tv.cn · Latest " + items.length + " approved wishes") : ("wedding-tv.cn · 最近 " + items.length + " 条已通过祝福");
-    const filename = screenLang === "en" ? "wedding_wishes_keepsake.png" : "婚礼祝福纪念.png";
+    const title = WallUI.roomTitle(data.room) + (isEvent() ? (screenLang === "en" ? " · Event Messages" : " · 活动留言纪念") : (screenLang === "en" ? " · Wedding Wishes" : " · 祝福纪念"));
+    const subtitle = screenLang === "en" ? ("wedding-tv.cn · Latest " + items.length + " approved messages") : ("wedding-tv.cn · 最近 " + items.length + (isEvent() ? " 条已通过留言" : " 条已通过祝福"));
+    const filename = isEvent() ? (screenLang === "en" ? "event_messages.png" : "活动留言纪念.png") : (screenLang === "en" ? "wedding_wishes_keepsake.png" : "婚礼祝福纪念.png");
     try { await card(title, items.map(m => ({ heading: m.name, text: m.message })), subtitle, filename); } catch (error) { notice(error.message, true); }
   };
   $("tableCard").onclick = async () => {
@@ -263,22 +302,22 @@
       const canvas = node("canvas"); canvas.width = 1000; canvas.height = 1300;
       const ctx = canvas.getContext("2d"); ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, 1000, 1300);
       ctx.fillStyle = "#a32d4a"; ctx.font = 'bold 38px "Microsoft YaHei",sans-serif'; ctx.textAlign = "center";
-      WallUI.wrap(ctx, data.room.groom + " & " + data.room.bride, 850).forEach((line, i) => ctx.fillText(line, 500, 120 + i * 50));
+      WallUI.wrap(ctx, WallUI.roomTitle(data.room), 850).forEach((line, i) => ctx.fillText(line, 500, 120 + i * 50));
       const qrCanvas = node("canvas"); await QRCode.toCanvas(qrCanvas, guestUrl, { width: 650, margin: 4, errorCorrectionLevel: "M" }); ctx.drawImage(qrCanvas, 175, 280, 650, 650);
       ctx.fillStyle = "#26252b"; ctx.font = '36px "Microsoft YaHei",sans-serif';
-      ctx.fillText(screenLang === "en" ? (demo ? "Demo Card · Scan to Experience" : "Scan to Send Wedding Wishes") : (demo ? "演示桌牌 · 扫码体验工具" : "扫码，留下你的婚礼祝福"), 500, 1040);
+      ctx.fillText(screenLang === "en" ? (demo ? "Demo Card · Scan to Experience" : (isEvent() ? "Scan to Leave a Message" : "Scan to Send Wedding Wishes")) : (demo ? "演示桌牌 · 扫码体验工具" : (isEvent() ? "扫码，留下你的活动留言" : "扫码，留下你的婚礼祝福")), 500, 1040);
       ctx.font = '24px "Microsoft YaHei",sans-serif';
       ctx.fillText(screenLang === "en" ? "Displayed after host approval · No personal contact info" : "主持人审核后展示 · 请勿填写私人联系方式", 500, 1110);
       ctx.fillText("wedding-tv.cn", 500, 1220);
-      await saveCanvas(canvas, screenLang === "en" ? "wedding_qr_table_card.png" : "婚礼扫码桌牌.png");
+      await saveCanvas(canvas, isEvent() ? (screenLang === "en" ? "event_qr_card.png" : "活动扫码桌牌.png") : (screenLang === "en" ? "wedding_qr_table_card.png" : "婚礼扫码桌牌.png"));
     } catch { status(screenLang === "en" ? "Failed to export card, please retry" : "桌牌导出失败，请重试", true); }
   };
   $("closeRoom").onclick = async () => {
     const confirmMsg = screenLang === "en"
       ? "Immediately delete room, all pending and approved wishes? Please export any needed data first. This action cannot be undone."
-      : "立即删除房间、所有待审及已通过祝福？请先导出需要保留的内容。此操作不可恢复。";
+      : "立即删除房间、所有待审及已通过留言？请先导出需要保留的内容。此操作不可恢复。";
     if (!confirm(confirmMsg)) return;
-    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace(screenLang === "en" ? "/en/wedding-live-wall.html" : "/wedding-live-wall.html"); }
+    try { await request(roomId, "close", {}, key); stopped = true; try { localStorage.removeItem("wall_admin_" + roomId); } catch {} location.replace(createUrl()); }
     catch (error) { notice(error.message, true); }
   };
   async function backgroundStore(value, write = false) {
@@ -324,8 +363,9 @@
   };
   try { setBackground(await backgroundStore()); } catch {}
   if (demo) {
-    const samples = [["同学小陈", "愿你们并肩走过每一个春夏秋冬"], ["朋友小周", "今天的笑容，往后的每一天都要有"], ["家人", "平安喜乐，携手同行"], ["同事小赵", "新婚快乐，日子常有小惊喜"]];
-    data = { room: { groom: "小林", bride: "小夏", venue: "欢迎一起见证我们的婚礼", theme: "rose", accepting: true }, messages: samples.map(([name, message], i) => ({ id: "demo-" + i, name, message, color: i % 2 ? "rose" : "gold", status: "approved", ts: Date.now() })) };
+    const samples = demoEventType ? [["参与者甲", "期待今天的活动！"], ["参与者乙", "谢谢大家一起参与！"], ["参与者丙", "留下美好的回忆。"]] : [["同学小陈", "愿你们并肩走过每一个春夏秋冬"], ["朋友小周", "今天的笑容，往后的每一天都要有"], ["家人", "平安喜乐，携手同行"], ["同事小赵", "新婚快乐，日子常有小惊喜"]];
+    const room = demoEventType ? { eventType: demoEventType, eventName: WallUI.eventTypeName({ eventType: demoEventType }) + "留言墙演示", organizer: "活动组织者", venue: "本地演示", theme: "forest", accepting: true } : { groom: "小林", bride: "小夏", venue: "欢迎一起见证我们的婚礼", theme: "rose", accepting: true };
+    data = { room, messages: samples.map(([name, message], i) => ({ id: "demo-" + i, name, message, color: i % 2 ? "rose" : "gold", status: "approved", ts: Date.now() })) };
     applyRoom(); spawn(queue.shift()); $("messages").firstElementChild.style.animationDelay = "-4s"; status("本地演示 · 不上传数据");
     $("pause").hidden = false; $("pause").onclick = () => { data.room.paused = !data.room.paused; applyRoom(); };
   } else { await poll(); setInterval(poll, 4000); }

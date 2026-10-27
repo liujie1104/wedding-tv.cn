@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>免费活动留言墙｜生日聚会、年会团建与分享会扫码投屏</title>
+<meta name="description" content="免费创建活动扫码留言墙，适用于生日、朋友聚会、年会团建和培训分享。参与者手机留言，主持人审核后上屏，支持本机背景图片、暂停展示、CSV 留言导出和 PNG 纪念图。无需注册，可先体验演示。" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="author" content="wedding-tv.cn 内容维护" />
+<meta name="google-adsense-account" content="ca-pub-6560247681968502" />
+<link rel="canonical" href="https://wedding-tv.cn/event-wall.html" />
+<meta property="og:title" content="免费活动扫码留言墙" />
+<meta property="og:description" content="生日、聚会、年会和分享会，手机留言，主持人审核后投屏。" />
+<meta property="og:url" content="https://wedding-tv.cn/event-wall.html" />
+<meta property="og:type" content="website" />
+<link rel="icon" href="/icon-192.png" />
+<link rel="stylesheet" href="/assets/wall.css" />
+<script defer src="/assets/wall-ui.js?v=20261027"></script>
+<script defer src="/assets/wall-create.js?v=20261027"></script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"免费活动扫码留言墙","url":"https://wedding-tv.cn/event-wall.html","applicationCategory":"UtilitiesApplication","operatingSystem":"Web","inLanguage":"zh-CN","dateModified":"2026-10-27","description":"为生日、聚会、年会和分享会创建独立留言房间，参与者扫码发送文字，主持人审核后投屏，并可导出纪念图和 CSV。","publisher":{"@type":"Organization","name":"wedding-tv.cn","url":"https://wedding-tv.cn/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"}}
+</script>
+</head>
+<body>
+<header class="site-head"><a class="brand" href="/">wedding-tv.cn</a><nav aria-label="工具导航"><a href="/wedding-live-wall.html">婚礼大屏</a><a href="/event-wall.html" aria-current="page">活动留言墙</a><a href="/blog.html">全部工具</a></nav></header>
+<main class="content">
+<h1>免费活动扫码留言墙</h1>
+<p class="muted">生日、聚会、年会和分享会，手机留言，主持人审核后展示在电脑或现场屏幕上。</p>
+<div class="workspace">
+<form id="createForm">
+  <div class="fields">
+    <div class="field wide"><label for="eventType">活动类型</label><select id="eventType" name="eventType"><option value="gathering">朋友聚会</option><option value="birthday">生日聚会</option><option value="annual">年会 / 团建</option><option value="training">培训 / 分享会</option></select></div>
+    <div class="field wide"><label for="eventName">活动名称</label><input id="eventName" name="eventName" maxlength="60" placeholder="例如：研发小组年终聚会" required /></div>
+    <div class="field wide"><label for="organizer">组织者（选填）</label><input id="organizer" name="organizer" maxlength="40" placeholder="例如：活动筹备组" /></div>
+    <div class="field"><label for="date">活动日期（选填）</label><input id="date" name="date" type="date" /></div>
+    <div class="field"><label for="theme">屏幕配色</label><select id="theme" name="theme"><option value="forest">松绿</option><option value="ink">墨黑</option><option value="rose">玫瑰</option></select></div>
+    <div class="field wide"><label for="venue">场地简称（选填）</label><input id="venue" name="venue" maxlength="60" placeholder="例如：一楼活动室，不必填写详细地址" /></div>
+    <div class="field wide"><label for="mode">房间用途</label><select id="mode" name="mode"><option value="trial">设备试用 / 彩排</option><option value="event">正式活动</option></select></div>
+    <label class="check field wide"><input id="privacyAgree" type="checkbox" required /><span>我了解活动名称、组织者及已通过留言会向房间链接持有者展示。<a href="/privacy.html">数据说明</a></span></label>
+  </div>
+  <div class="actions"><button class="primary" id="createButton" type="submit">创建活动留言墙</button><a class="button" data-event-demo href="/live-wall.html?demo=1&amp;type=gathering">体验演示</a></div>
+  <div class="status" id="createStatus" role="status"></div>
+  <small>房间有效期 7 天；每条留言保留 24 小时。每房间累计最多接收 1000 条，包含待审和已删除留言。</small>
+</form>
+<div><iframe class="preview-frame" data-event-demo title="活动留言墙演示，使用虚构昵称和留言" src="/live-wall.html?demo=1&amp;type=gathering&amp;embed=1" loading="lazy"></iframe><div class="preview-caption"><span>演示效果 · 虚构数据</span><a data-event-demo href="/live-wall.html?demo=1&amp;type=gathering">打开完整演示</a></div></div>
+</div>
+<section id="recentSection" class="guide" hidden><h2>这台设备创建的房间</h2><ul class="room-list" id="recentRooms"></ul><div class="actions"><button id="exportTrials" type="button">导出本机使用记录 CSV</button><button id="clearTrials" type="button">清除本机使用记录</button></div><p class="muted">记录包含本机创建的婚礼及活动房间。用途由创建者选择，提交条数不代表独立参与人数；清除本机记录不会删除线上房间。</p></section>
+<section class="guide"><h2>按活动选择留言方式</h2><div class="guide-grid">
+<div><h3>生日与朋友聚会</h3><p>把留言二维码放到桌牌或电视画面上，参与者写下祝福与回忆。主持人先审核，再决定是否展示。结束前导出留言纪念图，当前纪念图取最近 20 条已通过内容，CSV 可保存仍在保留期内的全部已通过留言。</p></div>
+<div><h3>年会与团建</h3><p>适合收集文字感想、团队祝福和节目反馈。现有抽奖按已通过留言的昵称合并抽取，记录仅限当前页面；刷新后重新开始。需要员工名单、多奖项或保留中奖记录的正式抽奖，请另行安排。</p></div>
+<div><h3>培训与分享会</h3><p>参与者可把想讨论的问题作为留言提交，组织者审核后投屏讨论。当前按留言展示，不提供问题点赞、投票、答题评分或已回答状态。请在活动开始时说明主持人的提问安排。</p></div>
+<div><h3>活动名称与组织者</h3><p>活动名称单独显示为大屏标题；组织者、日期和场地简称显示在下方。组织者名称可以留空。房间设置可由主持人修改，参与者不需要填写两位新人，也不必注册账户。</p></div>
+</div></section>
+<section class="guide"><h2>投屏与现场控制</h2><ol>
+<li>先创建“设备试用 / 彩排”房间，用电脑打开大屏并通过 HDMI 接入电视或投影，确认信号源、文字大小和二维码可扫描。</li>
+<li>主持人使用管理页面审核留言，观众和参与者使用独立链接。管理链接可以控制或删除房间，请保存并仅交给可信的组织者。</li>
+<li>背景图片在实际投屏电脑上设置，仅保存在该浏览器。手机上设置背景不会自动同步到另一台电脑。</li>
+<li>遇到不合适的留言可以拒绝展示或删除；需要整理列表时，可暂停展示或暂停接收新留言。</li>
+</ol><p>电脑和参与者手机均需联网。断网后页面会提示异常并尝试恢复，活动前请实际测试发送、审核和展示。当前容量限制按累计提交条数计算，不是同时在线人数承诺。</p></section>
+<section class="guide"><h2>活动结束前保存什么</h2><p>在主持人管理页导出留言 CSV、纪念图和本场使用记录。CSV 带 UTF-8 标记，便于表格软件打开中文；桌牌和纪念图在浏览器生成。留言发送满 24 小时后会清除，房间创建满 7 天后到期；需要提前结束时，主持人可以删除整个房间。</p><p>公开分享图片或表格前请征得参与者同意，避免附带私人信息。房间链接持有者能看到已通过内容，不应把二维码随意放到无关公开群中。问题反馈可联系 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>，说明设备、网络与操作步骤即可。</p></section>
+</main>
+<footer><a href="/authors.html">内容责任</a><a href="/privacy.html">隐私政策</a><a href="/terms.html">使用条款</a><span>更新：2026-10-27</span></footer>
+</body>
+</html>

@@ -3,6 +3,7 @@
   const params = new URLSearchParams(location.search), roomId = params.get("room") || "";
   const managed = /^w_[a-f0-9]{24}$/.test(roomId);
   let sending = false, active = false, stopped = false, loading = false, lastPayload = "", retryId = "", signature = "";
+  let currentRoom = null;
 
   const I18N = {
     zh: {
@@ -83,8 +84,40 @@
 
   let lang = params.get("lang") === "en" ? "en" : (localStorage.getItem("wall_guest_lang") === "en" ? "en" : "zh");
 
+  function translations() {
+    const base = I18N[lang];
+    if (!WallUI.isEventRoom(currentRoom)) return base;
+    const birthday = currentRoom.eventType === "birthday";
+    return { ...base, ...(lang === "en" ? {
+      tag: WallUI.eventTypeName(currentRoom, lang) + " Messages",
+      roomNoticePaused: "The host has paused new messages",
+      roomNoticeManaged: "Connected · Messages appear after approval and are kept for 24h",
+      feedEmpty: "No approved messages yet.", identLabel: "Group / Role (Optional)", identPl: "e.g., Team A",
+      msgLabel: birthday ? "Birthday Message" : "Event Message", msgPl: "Leave a message for this event",
+      quick1Btn: birthday ? "Happy birthday" : "Glad to be here",
+      quick1Msg: birthday ? "Happy birthday! Wishing you a wonderful year ahead!" : "Glad to join you today!",
+      quick2Btn: "Thank you", quick2Msg: "Thank you for bringing us together!",
+      submitBtn: "Send Message", approvedTitle: "Approved Messages",
+      createTitle: "Organizing your own event?", createDesc: "Create a message wall for a birthday, gathering, team event or workshop.",
+      createWall: "Create Event Wall",
+    } : {
+      tag: WallUI.eventTypeName(currentRoom, lang) + "留言",
+      roomNoticePaused: "主持人已暂停接收留言", roomNoticeManaged: "已连接 · 留言审核通过后展示，每条保留 24 小时",
+      feedEmpty: "暂时没有已通过的留言", identLabel: "分组或身份（选填）", identPl: "例如：一组 · 同事",
+      msgLabel: birthday ? "生日祝福" : "活动留言", msgPl: "写下你想分享的话",
+      quick1Btn: birthday ? "生日快乐" : "很高兴一起参与",
+      quick1Msg: birthday ? "生日快乐，愿你新的一岁平安顺利！" : "很高兴和大家一起参与今天的活动！",
+      quick2Btn: "感谢相聚", quick2Msg: "感谢组织，留下美好的回忆！",
+      submitBtn: "发送留言", approvedTitle: "已通过的留言",
+      createTitle: "你也要组织活动？", createDesc: "为生日、聚会、年会团建或分享会创建独立留言墙。",
+      createWall: "创建活动留言墙",
+    }) };
+  }
+
   function applyLanguage() {
-    const t = I18N[lang];
+    const t = translations();
+    const generic = WallUI.isEventRoom(currentRoom);
+    if (generic) document.title = lang === "en" ? "Event Wall | Leave a Message" : "活动留言墙｜参与留言";
     if ($("guestTag")) $("guestTag").textContent = t.tag;
     if ($("langToggle")) $("langToggle").textContent = t.langToggle;
     if ($("lblGuestName")) $("lblGuestName").textContent = t.nameLabel;
@@ -119,9 +152,10 @@
     if ($("lblCreateDesc")) $("lblCreateDesc").textContent = t.createDesc;
     if ($("btnCreateWall")) {
       $("btnCreateWall").textContent = t.createWall;
-      $("btnCreateWall").href = lang === "en" ? "/en/wedding-live-wall.html?from=guest" : "/wedding-live-wall.html?from=guest";
+      $("btnCreateWall").href = generic ? "/event-wall.html?type=" + currentRoom.eventType + "&from=guest" : (lang === "en" ? "/en/wedding-live-wall.html?from=guest" : "/wedding-live-wall.html?from=guest");
     }
     if ($("btnCreateTimeline")) {
+      $("btnCreateTimeline").hidden = generic;
       $("btnCreateTimeline").textContent = t.createTimeline;
       $("btnCreateTimeline").href = lang === "en" ? "/en/timeline.html" : "/timeline.html";
     }
@@ -152,7 +186,6 @@
 
   async function load() {
     if (loading || stopped) return; loading = true;
-    const t = I18N[lang];
     try {
       let data;
       if (managed) data = await request(roomId, "public");
@@ -161,8 +194,11 @@
         data = await response.json(); if (!response.ok || !data.ok) throw new Error("房间连接失败");
         data.room = { groom: params.get("g") || "新人", bride: params.get("b") || "新人", accepting: true };
       }
+      currentRoom = data.room;
+      applyLanguage();
+      const t = translations();
       active = data.room.accepting;
-      $("guestCouple").textContent = (data.room.groom || "Partner") + " & " + (data.room.bride || "Partner");
+      $("guestCouple").textContent = WallUI.roomTitle(data.room);
       $("roomNotice").textContent = !active ? t.roomNoticePaused : managed ? t.roomNoticeManaged : t.roomNoticeLegacy;
       $("submitGuest").disabled = sending || !active;
       $("feedCount").textContent = t.feedCount(data.total);
@@ -176,6 +212,7 @@
         if (!data.messages.length) $("feedList").append(node("p", t.feedEmpty, "muted"));
       }
     } catch (error) {
+      const t = translations();
       active = false; $("submitGuest").disabled = true;
       $("roomNotice").textContent = error.status === 410 ? error.message : t.connError;
       if (error.status === 410) { stopped = true; $("feedList").replaceChildren(); $("feedCount").textContent = t.roomClosed; }
@@ -184,7 +221,7 @@
 
   $("guestForm").onsubmit = async event => {
     event.preventDefault(); if (sending || !active || !$("guestForm").reportValidity()) return;
-    const t = I18N[lang];
+    const t = translations();
     const payload = { name: $("guestName").value.trim(), identity: $("guestIdentity").value.trim(), message: $("guestMsg").value.trim(), color: $("guestColor").value };
     if (!payload.name || !payload.message) return;
     const encoded = JSON.stringify(payload);

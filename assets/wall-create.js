@@ -1,6 +1,20 @@
 (function () {
   const { $, node, request, remember, recall, download } = WallUI;
   const recordKey = "wedding_wall_trials_v1";
+  if ($("eventType")) {
+    const selected = new URLSearchParams(location.search).get("type");
+    if (["birthday", "gathering", "annual", "training"].includes(selected)) $("eventType").value = selected;
+    const updatePreview = () => {
+      const type = $("eventType").value;
+      document.querySelectorAll("[data-event-demo]").forEach(el => {
+        const url = "/live-wall.html?demo=1&type=" + encodeURIComponent(type);
+        if (el.tagName === "IFRAME") el.src = url + "&embed=1";
+        else el.href = url;
+      });
+    };
+    $("eventType").addEventListener("change", updatePreview);
+    updatePreview();
+  }
   $("createForm").addEventListener("submit", async event => {
     event.preventDefault();
     if (!$("createForm").reportValidity()) return;
@@ -33,7 +47,7 @@
     }
   }
   $("exportTrials").onclick = () => {
-    const rows = [["创建时间", "用途（自报）", "提交条数", "累计通过条数", "首次祝福时间", "最近同步时间"]];
+    const rows = [["创建时间", "用途（自报）", "提交条数", "累计通过条数", "首次提交时间", "最近同步时间"]];
     for (const r of recall(recordKey, [])) rows.push([new Date(r.createdAt).toISOString(), r.mode === "event" ? "正式活动" : "彩排试用", r.submitted ?? "未同步", r.approved ?? "未同步", r.firstMessageAt ? new Date(r.firstMessageAt).toISOString() : "", r.syncedAt ? new Date(r.syncedAt).toISOString() : ""]);
     const csv = rows.map(row => row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(",")).join("\r\n");
     download(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }), "大屏本机试用汇总.csv");

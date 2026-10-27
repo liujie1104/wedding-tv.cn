@@ -80,6 +80,7 @@ CORE_PAGES = [
     ("privacy.html", "0.7", "monthly"),
     ("terms.html", "0.7", "monthly"),
     ("wedding-live-wall.html", "0.9", "monthly"),
+    ("event-wall.html", "0.9", "monthly"),
     ("en/", "0.95", "daily"),
     ("en/wedding-live-wall.html", "0.9", "weekly"),
     ("en/timeline.html", "0.9", "weekly"),
@@ -95,7 +96,8 @@ CORE_PAGES = [
 ]
 
 EXPLICIT_CORE_DATES = {
-    "": "2026-09-14",
+    "": "2026-10-27",
+    "event-wall.html": "2026-10-27",
     "wedding-weekly-issue-1.html": "2026-09-30",
     "wedding-live-wall.html": "2026-09-14",
     "en/": "2026-09-14",

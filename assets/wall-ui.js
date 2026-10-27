@@ -1,6 +1,13 @@
 (function () {
   "use strict";
   const $ = id => document.getElementById(id);
+  const eventTypes = {
+    birthday: ["生日聚会", "Birthday"], gathering: ["朋友聚会", "Gathering"],
+    annual: ["年会团建", "Team Event"], training: ["培训分享", "Workshop"],
+  };
+  function isEventRoom(room) { return Boolean(room && Object.hasOwn(eventTypes, room.eventType)); }
+  function eventTypeName(room, lang = "zh") { return isEventRoom(room) ? eventTypes[room.eventType][lang === "en" ? 1 : 0] : (lang === "en" ? "Wedding" : "婚礼"); }
+  function roomTitle(room) { return isEventRoom(room) ? room.eventName : [room?.groom, room?.bride].filter(Boolean).join(" & "); }
   function node(tag, text, className) {
     const el = document.createElement(tag);
     if (text != null) el.textContent = text;
@@ -95,5 +102,5 @@
     document.body.append(dialog); dialog.addEventListener("close", () => dialog.remove());
     dialog.showModal(); field.select();
   }
-  window.WallUI = { $, node, request, remember, recall, download, saveCanvas, wrap, card, copy };
+  window.WallUI = { $, node, request, remember, recall, download, saveCanvas, wrap, card, copy, isEventRoom, eventTypeName, roomTitle };
 })();

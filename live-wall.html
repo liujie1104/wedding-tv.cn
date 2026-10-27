@@ -11,8 +11,8 @@
 <link rel="icon" href="/icon-192.png" />
 <link rel="stylesheet" href="/assets/wall.css" />
 <script defer src="/assets/qrcode.js"></script>
-<script defer src="/assets/wall-ui.js?v=20260914"></script>
-<script defer src="/assets/wall-screen.js?v=20260914"></script>
+<script defer src="/assets/wall-ui.js?v=20261027"></script>
+<script defer src="/assets/wall-screen.js?v=20261027"></script>
 </head><body class="wall-body">
 <header class="wall-header"><a class="brand" href="/wedding-live-wall.html" id="brandLink">wedding-tv.cn · 婚礼大屏</a><div class="actions"><span class="tag" id="modeTag">正在连接</span><button id="manage" hidden>主持人管理</button><a class="button" href="/wedding-live-wall.html" id="newRoomLink">创建新房间</a></div></header>
 <main class="stage" id="stage" data-theme="rose">
@@ -32,6 +32,9 @@
 <div class="actions"><button id="accepting">暂停接收祝福</button><button id="exportImage">祝福纪念图 PNG</button><button id="exportCsv">导出祝福 CSV</button><button id="exportStats">导出本场记录</button></div>
 <p class="muted" id="adminExportNotice">纪念图取最近 20 条已通过祝福；CSV 包含当前保留的全部已通过内容。分享前请征得参与者同意。</p>
 <details id="adminSettingsDetails"><summary id="adminSettingsSummary">新人信息与背景设置</summary><form id="settingsForm"><div class="fields">
+<input type="hidden" id="settingEventType" name="eventType" value="wedding" />
+<div class="field wide" hidden><label for="settingEventName" id="lblSettingEventName">活动名称</label><input id="settingEventName" name="eventName" maxlength="60" disabled /></div>
+<div class="field wide" hidden><label for="settingOrganizer" id="lblSettingOrganizer">组织者（选填）</label><input id="settingOrganizer" name="organizer" maxlength="40" disabled /></div>
 <div class="field"><label for="settingGroom" id="lblSettingGroom">新人称呼一</label><input id="settingGroom" name="groom" maxlength="20" required /></div>
 <div class="field"><label for="settingBride" id="lblSettingBride">新人称呼二</label><input id="settingBride" name="bride" maxlength="20" required /></div>
 <div class="field"><label for="settingDate" id="lblSettingDate">婚礼日期</label><input id="settingDate" name="date" type="date" /></div>

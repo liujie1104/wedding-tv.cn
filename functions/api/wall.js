@@ -1,5 +1,5 @@
 import { json, readJsonBody, rateLimit, getIp, checkDailyQuota } from "../_lib.js";
-import { keyHash, managedRoomPattern, normalizeSettings } from "../../src/managed-wall.js";
+import { keyHash, managedRoomPattern, normalizeSettings, settingsError } from "../../src/managed-wall.js";
 
 function randomHex(size) {
   return Array.from(crypto.getRandomValues(new Uint8Array(size)), b => b.toString(16).padStart(2, "0")).join("");
@@ -19,7 +19,8 @@ export async function onRequest({ request, env }) {
   let key;
   if (action === "create") {
     const settings = normalizeSettings(body.settings);
-    if (!settings.groom || !settings.bride) return json(400, { ok: false, error: "请填写两位新人的称呼" });
+    const invalid = settingsError(settings);
+    if (invalid) return json(400, { ok: false, error: invalid });
     const ip = getIp(request);
     if (!rateLimit("wall-create:" + ip, 5) || !(await checkDailyQuota(env, ip, "wall-create", 10, 300))) {
       return json(429, { ok: false, error: "创建过于频繁，请稍后再试" });

@@ -98,7 +98,7 @@ test("Clarity: unknown routes, tool inputs, UGC and policy pages are default-den
   for (const pathname of ["/", "/en/", "/blog.html", "/blog/hunan.html", "/wedding-day-timeline-guide.html"]) {
     assert.equal(shouldInjectClarityAnalytics(pathname), true, pathname);
   }
-  for (const pathname of ["/new-tool.html", "/api/load", "/i/abc12345", "/i.html", "/blessing.html", "/live-wall.html", "/invitation.html", "/en/invitation.html", "/wedding-live-wall.html", "/en/wedding-live-wall.html", "/ai-planner.html", "/poster.html", "/vows.html", "/en/vows.html", "/speech.html", "/timeline.html", "/checklist.html", "/quote-comparison.html", "/privacy.html", "/en/privacy.html", "/terms.html"]) {
+  for (const pathname of ["/new-tool.html", "/api/load", "/i/abc12345", "/i.html", "/blessing.html", "/live-wall.html", "/event-wall.html", "/invitation.html", "/en/invitation.html", "/wedding-live-wall.html", "/en/wedding-live-wall.html", "/ai-planner.html", "/poster.html", "/vows.html", "/en/vows.html", "/speech.html", "/timeline.html", "/checklist.html", "/quote-comparison.html", "/privacy.html", "/en/privacy.html", "/terms.html"]) {
     assert.equal(shouldInjectClarityAnalytics(pathname), false, pathname);
     assert.equal(browser({ pathname, stored: { [KEY]: "granted" } }).clarityScripts.length, 0, pathname);
   }
