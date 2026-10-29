@@ -2,6 +2,7 @@
 import test from "node:test";
 import "./test-managed-wall.mjs";
 import "./test-analytics-consent.mjs";
+import "./test-robots-policy.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";

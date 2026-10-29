@@ -28,6 +28,14 @@ wrangler.jsonc         Cloudflare 配置（KV/Durable Objects/AI/vars）
 - 无扩展名和尾斜杠旧地址由 Worker 以 `301` 永久重定向到对应 `.html`；`index.html` 重定向到首页，`live.html` 重定向到 `live-wall.html`。
 - `404.html` 只作为真实 `404` 响应返回，不能作为可索引的 `200` 页面。
 
+## 搜索抓取与训练爬虫
+
+- `robots.txt` 由仓库维护；Cloudflare 的 `Enable Bot Preference Sync` 应关闭，避免自动名单重新禁止 `Baiduspider`。
+- 名单以 2026-10-29 的线上配置为依据，只移除百度的禁止声明，保留其他 31 个爬虫的限制和 `search=yes,ai-train=no,use=reference` 信号。后续新增或调整爬虫需人工审核并更新测试，不会再自动同步。
+- Cloudflare 的 Search、Agent、Training 策略以及 WAF、DDoS、HTTPS 设置不随此文件修改。`robots.txt` 不是访问控制，不能替代用户内容的权限和 `noindex`。
+- 切换时先部署仓库文件，再关闭同步；核对线上文件与仓库一致，并比较普通请求、百度、GPTBot、CCBot 的响应。若其他拦截发生变化，恢复同步并回滚文件。
+- 自动回归：`node --test scripts/test-robots-policy.mjs`，已纳入 API 回归测试入口。
+
 ## 本地开发
 
 需要 Node.js 22 或更高版本。
