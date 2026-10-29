@@ -581,6 +581,28 @@ if (/1\s*分钟(?:内)?(?:生成|完成)|高清原图/.test(posterPage)) {
   errors.push("poster.html: contains generation speed or image quality promises that cannot be guaranteed");
 }
 
+// Keep retired search/share promises from returning independently of the body copy.
+const unsupportedMetadataClaims = new Map([
+  ["poster.html", /宴会厅桌号|桌牌二维码|高清迎宾水牌/],
+  ["playlist.html", /100\s*\+\s*首|8\s*大仪式环节|支持在线试听|一键搜索播放/],
+  ["wedding-budget-planning-guide.html", /40-30-20-10|黄金分配法则/],
+  ["wedding-invitation-wording-guide.html", /双姓请帖|单方宴请|短信模板/],
+  ["wedding-customs-verification-guide.html", /历史渊源|温情沟通话术/],
+  ["wedding-emergency-plan-guide.html", /20\s*种高发状况|假睫毛脱落/],
+  ["emergency-plan-generator.html", /根据天气、交通、直播、备用电/],
+  ["blog.html", /可直接执行的免费备婚工具矩阵/],
+]);
+for (const [relativePath, unsupportedClaim] of unsupportedMetadataClaims) {
+  const html = fs.readFileSync(path.join(root, relativePath), "utf8");
+  for (const tag of html.match(/<meta\b[^>]*>/gi) || []) {
+    if (!/\b(?:name|property)=["'](?:description|(?:og|twitter):description)["']/i.test(tag)) continue;
+    const value = tag.match(/\bcontent=["']([^"']*)["']/i)?.[1] || "";
+    if (unsupportedClaim.test(value)) {
+      errors.push(`${relativePath}: search/share description contains a retired unsupported content or feature claim`);
+    }
+  }
+}
+
 for (const interactivePage of ["live-wall.html", "blessing.html"]) {
   if (urls.includes(interactivePage)) {
     errors.push(`${interactivePage}: interactive UGC page must not be included in sitemap.xml`);
