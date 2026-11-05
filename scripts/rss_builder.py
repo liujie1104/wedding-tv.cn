@@ -7,9 +7,13 @@ wedding-tv.cn 审核期 RSS 重建器。
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import json
+import xml.etree.ElementTree as ET
+from datetime import datetime, timedelta, timezone
 from email.utils import format_datetime
+from html import unescape
 from pathlib import Path
+from xml.sax.saxutils import escape
 
 ROOT = Path(__file__).resolve().parent.parent
 RSS = ROOT / "rss.xml"
@@ -234,15 +238,36 @@ def get_all_items():
         desc_m = re.search(r'<meta name="description" content="(.*?)"', html)
         if title_m and desc_m:
             weekly_items.append({
-                "title": title_m.group(1).split(" | ")[0],
+                "title": unescape(title_m.group(1).removesuffix(" | wedding-tv.cn")),
                 "link": f"{SITE}/{wf.name}",
-                "desc": desc_m.group(1)
+                "desc": unescape(desc_m.group(1))
             })
     return weekly_items + CORE_ITEMS
 
 
+def publication_date(link: str, previous: str | None = None) -> str | None:
+    page = ROOT / link.removeprefix(SITE + "/")
+    if page.is_file():
+        html = page.read_text("utf-8")
+        for raw in re.findall(r'<script\b[^>]*type="application/ld\+json"[^>]*>([\s\S]*?)</script>', html):
+            data = json.loads(raw)
+            nodes = data if isinstance(data, list) else [data]
+            for node in nodes:
+                if isinstance(node, dict) and node.get("datePublished"):
+                    stamp = datetime.fromisoformat(node["datePublished"])
+                    if stamp.tzinfo is None:
+                        stamp = stamp.replace(tzinfo=timezone(timedelta(hours=8)))
+                    return format_datetime(stamp.astimezone(timezone.utc))
+    # Keep a prior feed timestamp for old undated pages; never invent today's pubDate.
+    return previous
+
+
 def build_rss(max_items: int = 80) -> int:
     items = get_all_items()[:max_items]
+    previous_dates = {}
+    if RSS.exists():
+        previous_dates = {item.findtext("link"): item.findtext("pubDate")
+                          for item in ET.parse(RSS).findall("./channel/item")}
     last_build = format_datetime(datetime.now(timezone.utc))
     parts = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -257,13 +282,15 @@ def build_rss(max_items: int = 80) -> int:
         "  <generator>wedding-tv.cn rss_builder review mode</generator>",
     ]
     for item in items:
+        published = publication_date(item["link"], previous_dates.get(item["link"]))
+        date_xml = f"    <pubDate>{escape(published)}</pubDate>\n" if published else ""
         parts.append(
             "  <item>\n"
-            f"    <title>{item['title']}</title>\n"
-            f"    <link>{item['link']}</link>\n"
-            f"    <guid>{item['link']}</guid>\n"
-            f"    <description>{item['desc']}</description>\n"
-            f"    <pubDate>{last_build}</pubDate>\n"
+            f"    <title>{escape(item['title'])}</title>\n"
+            f"    <link>{escape(item['link'])}</link>\n"
+            f"    <guid>{escape(item['link'])}</guid>\n"
+            f"    <description>{escape(item['desc'])}</description>\n"
+            f"{date_xml}"
             "  </item>"
         )
     parts.append("</channel>\n</rss>\n")

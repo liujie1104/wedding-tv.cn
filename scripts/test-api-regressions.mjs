@@ -300,6 +300,54 @@ test("Bailian endpoint policy: only Beijing free-quota endpoints are accepted", 
   assert.throws(() => requireBailianBeijingBaseUrl("http://dashscope.aliyuncs.com"), /仅允许华北 2/);
 });
 
+test("AI API rejects inherited prompt kinds before quota or provider access", async (t) => {
+  let calls = 0;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => {
+    calls += 1;
+    throw new Error("Provider must not be called");
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const kv = new MockKV();
+  for (const kind of ["constructor", "__proto__", "toString", "valueOf", "hasOwnProperty", "unknown"]) {
+    const response = await aiPost({
+      request: new Request("https://wedding-tv.cn/api/ai", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ kind, sys: "attacker system", user: "attacker content", cfg: { maxTokens: 12345 } }),
+      }),
+      env: { DASHSCOPE_API_KEY: "test-key", WEDDING: kv },
+    });
+    assert.equal(response.status, 400, kind);
+    assert.equal((await response.json()).error, "unsupported kind");
+  }
+  assert.equal(calls, 0);
+  assert.equal(kv.gets.length, 0);
+  assert.equal(kv.puts.length, 0);
+});
+
+test("AI API keeps supported prompts and generation limits server-owned", async (t) => {
+  let sent;
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, options) => {
+    sent = JSON.parse(options.body);
+    return Response.json({ choices: [{ message: { content: "mock result" } }] });
+  };
+  t.after(() => { globalThis.fetch = originalFetch; });
+  const response = await aiPost({
+    request: new Request("https://wedding-tv.cn/api/ai", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "vows", name1: "A", name2: "B", story: "our shared story",
+        sys: "attacker system", user: "attacker content", cfg: { temperature: 99, maxTokens: 12345 } }),
+    }),
+    env: { DASHSCOPE_API_KEY: "test-key", WEDDING: new MockKV() },
+  });
+  assert.equal(response.status, 200);
+  assert.notEqual(sent.messages[0].content, "attacker system");
+  assert.notEqual(sent.messages[1].content, "attacker content");
+  assert.equal(sent.max_tokens, 800);
+  assert.equal(sent.temperature, 0.9);
+});
+
 test("AI API rejects an unquotaed model before making a provider request", async (t) => {
   const originalFetch = globalThis.fetch;
   let providerCalled = false;

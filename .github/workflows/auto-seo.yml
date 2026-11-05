@@ -9,6 +9,7 @@ on:
       - 'blog/**'
       - 'functions/**'
       - 'scripts/**'
+      - 'weekly-drafts/**'
       - 'src/**'
       - 'sitemap.xml'
       - 'robots.txt'
@@ -26,6 +27,7 @@ on:
       - 'blog/**'
       - 'functions/**'
       - 'scripts/**'
+      - 'weekly-drafts/**'
       - 'src/**'
       - 'sitemap.xml'
       - 'robots.txt'
@@ -55,6 +57,14 @@ jobs:
         run: npx --yes wrangler@4.128.0 deploy --dry-run --outdir /tmp/wrangler-dry-run
       - name: Run API regression tests
         run: node --test scripts/test-api-regressions.mjs scripts/test-managed-wall.mjs
+      - name: Use Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test weekly publication gates
+        run: python -m unittest discover -s scripts -p 'test_weekly_*.py' -v
+      - name: Check weekly body duplication
+        run: python scripts/generate_weekly_digest.py --check
       - name: Audit indexed content
         run: node scripts/audit-static-content.cjs
 

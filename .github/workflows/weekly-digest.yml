@@ -1,11 +1,11 @@
 name: Publish Weekly Wedding Digest
 
 on:
-  # 定时自动发布已暂停，避免模板兜底产生重复内容；新刊编撰入库后通过手动触发发布
+  # No scheduled filler: only manually reviewed, fresh news drafts may publish.
   workflow_dispatch:
     inputs:
       issue:
-        description: '指定发布的周刊期数（留空则自动顺延下一期）'
+        description: '已审阅热点稿件的期数（没有稿件则跳过，不凑刊）'
         required: false
         type: string
       date:
@@ -35,15 +35,19 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Generate New Weekly Digest Issue
+      - name: Check reviewed news and generate only when eligible
+        id: generate
         env:
           INPUT_ISSUE: ${{ github.event.inputs.issue }}
           INPUT_DATE: ${{ github.event.inputs.date }}
         run: |
-          ARGS=""
-          if [ -n "$INPUT_ISSUE" ]; then ARGS="$ARGS --issue $INPUT_ISSUE"; fi
-          if [ -n "$INPUT_DATE" ]; then ARGS="$ARGS --date $INPUT_DATE"; fi
-          python scripts/generate_weekly_digest.py $ARGS
+          ARGS=()
+          if [ -n "$INPUT_ISSUE" ]; then ARGS+=(--issue "$INPUT_ISSUE"); fi
+          if [ -n "$INPUT_DATE" ]; then ARGS+=(--date "$INPUT_DATE"); fi
+          python scripts/generate_weekly_digest.py "${ARGS[@]}"
+
+      - name: Test weekly publication gates
+        run: python -m unittest discover -s scripts -p 'test_weekly_*.py' -v
 
       - name: Verify Static Content Audit
         run: node scripts/audit-static-content.cjs
@@ -52,6 +56,7 @@ jobs:
         run: node --test scripts/test-api-regressions.mjs
 
       - name: Commit and Push New Issue
+        if: steps.generate.outputs.published == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -59,13 +64,17 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "feat(weekly): publish new weekly wedding digest issue automatically"
+            git commit -m "feat(weekly): publish reviewed wedding news digest"
             git push origin main
           fi
 
       - name: Render Xiaohongshu & Social Copy to Job Summary
-        if: always()
+        if: success() && steps.generate.outputs.published == 'true'
         run: |
           if [ -f "latest-social-copy.md" ]; then
             cat latest-social-copy.md >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: Report skipped issue
+        if: success() && steps.generate.outputs.published != 'true'
+        run: echo "No eligible new wedding news. No issue, promotion or commit was created." >> "$GITHUB_STEP_SUMMARY"

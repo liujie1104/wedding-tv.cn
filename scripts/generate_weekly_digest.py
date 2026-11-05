@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-wedding-tv.cn 每周备婚周刊自动编写与发布引擎
-- 自动识别当前最新期数，顺延生成第 N 期周刊 HTML
+wedding-tv.cn 备婚周刊发布工具
+- 没有经人工核验的近期热点稿件则正常跳过，不按周凑稿
+- 新稿必须通过来源、审核记录、重复事件与正文相似度检查
 - 套用暗黑奢华标准规范与 Article / BreadcrumbList JSON-LD 结构化数据
 - 自动更新 blog.html 博客入口与往期归档
 - 自动更新 sitemap.xml 与 rss.xml
@@ -17,122 +18,86 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
+from html import escape
 from pathlib import Path
+from weekly_quality import SkipPublication, approved_news, news_from_html, verify_candidate_unique
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# 权威精选周刊智库矩阵（按期轮转，覆盖备婚全生命周期）
+# Historical issues may only be revised in place, never rotated into new issues.
 ISSUES_DATABASE = {
     2: {
-        "title": "2026金秋备婚周刊第2期：国庆婚礼实操复盘、秋冬室内灯光色温选型与婚车租赁维权要点",
-        "short_title": "2026金秋备婚周刊第2期：国庆婚礼复盘与秋冬灯光避坑",
-        "description": "wedding-tv.cn 2026金秋备婚周刊第2期：主创编委会权威梳理国庆婚宴高峰复盘与临时餐标结算、秋冬季婚礼（11月-1月）室内暖光色温选型避坑、婚车租赁合同备用车违约条款约定与黄金三金置办技巧。",
+        "title": "备婚周刊第2期归档：领证材料更正、婚礼灯光试拍与婚车接送约定",
+        "short_title": "备婚周刊第2期：领证材料、灯光试拍与婚车接送",
+        "description": "本期归档更正内地居民结婚登记材料要求，区分信息核查不一致时的补充证明；并提供宴会厅灯光试拍顺序、婚车接送行程写法及临时加项费用核算示例。内容是政策背景与筹备建议，不是本周新闻、市场报价或法律意见。",
         "highlights": [
             {
-                "section": "🏛️ 民政与行业风向",
-                "title": "民政系统全国联网深化与婚假跨城审批实务",
+                "section": "登记材料更正",
+                "title": "内地居民领证不再提交户口簿，信息不一致另行核查",
                 "content": """
-<p>随着各省市婚姻登记系统全国联网推进，跨省通办领证预约的放号效率显著提升。本周编委会追踪到，部分一线及新一线城市民政局已将预约放号周期延长至提前 30 天，对于计划跨省办理婚姻登记的新人，建议提前 20 天在对应政务平台上传身份证、户口簿原件扫描件完成预审，避免当天现场因户口簿婚姻状况未更新（如仍为未婚或与实际不符）导致无法出证。</p>
-<div class="takeaway">
-  <strong>💡 编委会实操指引</strong>
-  户口簿上的“婚姻状况”若显示为空白或与民政局系统不一致，务必在领证前前往户籍所在地派出所户籍科完成卡片更新，避免跨省通办现场被驳回。
-</div>
+<p><strong>更正：</strong>旧稿要求上传户口簿、先到派出所更新婚姻状态后才能领证，现撤回这一要求。2025 年 5 月 10 日新规实施后，内地居民的登记材料已简化，户口簿不再是结婚登记所需证件。身份证及相关签字声明仍须按登记机关要求准备。港澳台居民、华侨和外国人的材料不能照搬这一清单。</p>
+<p>如果申报身份或婚姻信息与核查结果不一致，应向登记机关询问相应证明要求，而不是一律回户籍地改户口簿。预约放号时间、照片规格和提交入口应查看拟办登记处的办事指南；本站没有核实到统一的“提前 30 天放号、提前 20 天上传”规则，不再保留这些数字。</p>
+<p>依据：<a href="https://www.hubei.gov.cn/szyw/202505/t20250511_5645849.shtml" rel="noopener">民政部《婚姻登记“全国通办”政策问答》（湖北省政府转载，2025-05-11）</a>。这是现行办理背景，不是本周新增政策。</p>
 """
             },
             {
-                "section": "📈 备婚大盘与行情",
-                "title": "秋冬季婚礼室内灯光色温避坑与三金配置策略",
+                "section": "宴会厅试拍",
+                "title": "先让摄影师试拍真实走位，再确定灯光组合",
                 "content": """
-<p>进入 10 月中旬后，秋冬季婚礼预订逐步进入高峰。本周督导实务中最突出的问题是<strong>宴会厅灯光色温与摄影机位冲突</strong>：部分酒店为追求科技感，私自开启高色温冷光荧光射灯（5500K 以上）或蓝紫氛围灯，导致摄影摄像机位录制的新人面部出现严重色偏与阴阳脸。</p>
-<table>
-  <thead>
-    <tr>
-      <th>空间区域</th>
-      <th>推荐灯光色温</th>
-      <th>严禁灯光类型</th>
-      <th>现场核对要点</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>主仪式台 / 交换对戒区</strong></td>
-      <td>3200K - 3800K 暖白光</td>
-      <td>冷白光、RGB 循环呼吸灯</td>
-      <td>面光必须柔和均匀，显色指数 CRI &ge; 90</td>
-    </tr>
-    <tr>
-      <td><strong>迎宾区与签到台</strong></td>
-      <td>3000K 暖黄漫反射</td>
-      <td>顶光直射（极易产生黑眼圈）</td>
-      <td>建议两侧加装柔光地排灯或灯箱</td>
-    </tr>
-    <tr>
-      <td><strong>舞台T台交接区</strong></td>
-      <td>3500K 定点追光</td>
-      <td>杂乱激光光束、爆闪电脑灯</td>
-      <td>追光灯必须在父亲交接新娘前完成聚焦调试</td>
-    </tr>
-  </tbody>
-</table>
-<p>在珠宝预算方面，受国际黄金现货价格持续高位波动影响，本周建议备婚新人采取“工艺件精选+投资金保值”的组合采购：三金中用于当天佩戴的喜饰尽量选择 5G/古法素金款（工费建议控制在 ¥35~¥65/克区间），避免一口价高溢价饰品。</p>
+<p>下面是本站建议的试拍办法，不是灯具行业统一参数。不要把某一个色温数值当作所有场地的合格线；先用婚礼当天计划使用的相机、位置和灯光组合观察成片。</p>
+<table><thead><tr><th>试拍位置</th><th>具体动作</th><th>看什么结果</th></tr></thead><tbody>
+<tr><td>宴会厅入口</td><td>请一位同伴按入场路线走到交接点，连续拍照并录一段视频。</td><td>人脸是否从亮到暗突变，追光是否跟丢，视频有没有条纹或闪烁。</td></tr>
+<tr><td>主舞台</td><td>站在交换戒指的位置，分别开启和关闭彩色氛围灯。</td><td>肤色是否被染色，白色衣物是否过曝，背景屏幕是否影响主体。</td></tr>
+<tr><td>父母与宾客席</td><td>在仪式灯光状态下拍摄坐席，再拍台上人物。</td><td>摄影师能否兼顾台上与台下；若不能，明确哪些环节需要补光或换机位。</td></tr>
+</tbody></table>
+<p>试拍后保存一张满意的画面和对应灯光状态，交给音控与摄影师。设备、灯位、屏幕亮度改变时重新确认，不承诺一组固定参数能解决所有色偏问题。</p>
 """
             },
             {
-                "section": "🚨 真实避坑与维权实操",
-                "title": "婚车租赁临时降级或迟到：合同必须这样约定",
+                "section": "接送行程",
+                "title": "把婚车服务写成可核对的路线，不预设赔偿结果",
                 "content": """
-<p>根据多地婚庆消费维权案例，婚礼当天最容易引发纠纷的环节之一便是<strong>婚车车队迟到或主婚车被临时掉包</strong>。普通婚车租赁合同往往仅模糊约定“提供同级别车型”，一旦主婚车遇故障，中介可能随意派出一辆老旧杂牌车顶替。</p>
-<div class="highlight-card">
-  <h4>📝 编委会建议签约补充条款模板：</h4>
-  <p style="font-size:14px;color:var(--fg);margin:0;line-height:1.7">
-    “乙方承诺提供指定车牌号（车牌号：_________）之头车及跟车车队。若因乙方原因造成车队迟到超过 20 分钟，乙方退还该车次全部租金并赔偿该车租金 50% 作为违约金；若原定车辆发生故障无法出车，乙方须提前至少 12 小时通知甲方，并提供同品牌且年限更新的同级别或更高级别替代车型，严禁擅自降级。若私自降级，甲方有权拒付尾款并追索双倍定金。”
-  </p>
-</div>
+<p>比“豪华车队一天”更有用的是一张完整行程：每辆车的车型、座位数、集合位置、到达时间、途经点、最终下客点，以及租金已包含的服务时长和里程。未确定车牌时，让对方说明确认时间和换车需经谁同意，不把样车照片直接视为实际交付承诺。</p>
+<p>例如上午接亲、下午送长辈回酒店，可能不是同一段服务。把两段之间的等待、停车、高速费、空驶和超时起算方式分别列出，再比较总价。若车辆故障，事先谈好联系顺序、替代车型和乘客分流办法。</p>
+<p>旧稿“迟到即退全款并赔 50%、降级即可双倍定金”的写法已删除。责任与金额须结合有效约定及事实判断，本文不保证任何争议结果；需要拟定赔偿条款时请咨询具备资质的专业人士。</p>
 """
             },
             {
-                "section": "📋 本周筹备要务与行动清单",
-                "title": "距离婚礼 60 天至 90 天必抓的三件核心任务",
+                "section": "现场费用算例",
+                "title": "把临时加项拆成数量、单价和批准记录",
                 "content": """
-<p>如果您的婚期在接下来的 11 月至 12 月，本周是锁定以下三项细节的关键窗口期：</p>
-<ol style="padding-left:20px;line-height:1.8">
-  <li><strong>终审四大金刚尾款节点</strong>：切忌在婚礼开场前一次性结清所有费用；务必坚持“定金 &le; 20%、现场执行结束当天付至 70%、精修照片与成品视频验收合格后付 30% 尾款”的原则。</li>
-  <li><strong>伴手礼与喜糖排期打样</strong>：定制类伴手礼盒（如烫金丝带、定制铭牌）平均制作周期为 15-20 天，本周需完成试吃打样并确定数量（按出席人数 + 10% 备用计算）。</li>
-  <li><strong>跟妆试妆与晨间时间表反推</strong>：与化妆师预约本周试妆，记录完整妆发耗时，并根据出阁吉时反推新娘清晨起床与跟摄到场时间（通常为吉时前 3.5 小时）。</li>
-</ol>
+<p><strong>假设算例，不是市场报价：</strong>原订单 20 桌，现场追加 2 桌，每桌约定 2,000 元，另经确认增加 300 元设备服务费，则加项合计为 2 × 2,000 + 300 = 4,300 元。若设备费原已包含，不应在算例中再计一次；争议费用先单列，不与已确认项目混在同一笔总数里。</p>
+<p>使用<a href="/quote-comparison.html">报价对比器</a>或自己的表格时，保留原订单、变更数量、批准人、付款凭证和未决事项。支付阶段按双方协商的交付节点设置，不把某个三段付款比例说成所有婚庆服务的统一规则。</p>
 """
             }
         ]
     },
     3: {
-        "title": "2026金秋备婚周刊第3期：各地婚假审批细则、摄影双机位分工约定与预算压减技巧",
-        "short_title": "2026金秋备婚周刊第3期：婚假审批细则与摄影双机位分工",
-        "description": "wedding-tv.cn 2026金秋备婚周刊第3期：主创编委会权威梳理各地婚假跨单位跨城审批细则、婚礼摄影双机位分工与RAW原片交付合同要点、无痕婚房布置物料清单与预算削减实战技巧。",
+        "title": "备婚周刊第3期归档：摄影双机位分工、照片交付与花艺预算算例",
+        "short_title": "备婚周刊第3期：摄影交付与花艺预算核算",
+        "description": "本期归档区分双机位分工、RAW文件与成片交付约定，说明如何试贴婚房装饰，并用明确的假设价格演算花艺替换后的费用。没有统一的600张交付底线，也不承诺布置效果相同或固定节省比例；金额仅用于演算，不代表市场行情。",
         "highlights": [
             {
-                "section": "🏛️ 民政与行业风向",
-                "title": "各省婚假休假有效期与人事审批实操注意事项",
+                "section": "摄影排班",
+                "title": "双机位先解决不同地点与不同视角，别只购买人数",
                 "content": """
-<p>目前全国已有 20 余个省份修改了计生条例并给予延长婚假（如山西 30 天、甘肃 30 天、多省份 10-18 天不等）。但在实际执行中，许多新人遇到了<strong>“休假时效限制”</strong>的问题：部分企事业单位内部规章规定“婚假须在领取结婚证后半年或一年内一次性休完，不得分段跨年休假”。</p>
-<div class="takeaway">
-  <strong>💡 编委会实操指引</strong>
-  领证前务必向双方单位人力资源部门查阅员工手册中的《考勤与休假管理规定》，核实婚假是否包含法定公休日与法定节假日，以及申请婚假时所需提交的证明材料（部分单位要求结婚证复印件及婚礼举行证明）。
-</div>
+<p>双机位是否值得，先看两个无法同时出现的场景：新人分别在两个住处准备，或者仪式台与父母坐席都需要连续记录。如果全天主要在同一小场地，增加第二位摄影师未必比先明确必拍人物、缩短转场更重要。</p>
+<p>排班时写清两位摄影师各自开始与结束的地点，谁负责新娘准备、谁跟随新郎出发、到酒店后在哪里汇合。两个人都拍同一个正面画面，并不等于已经覆盖父母反应、入场背影与远景。以下安排是可协商的工作示例，不是行业统一服务标准。</p>
 """
             },
             {
-                "section": "📈 备婚大盘与行情",
+                "section": "照片交付",
                 "title": "婚礼摄影双机位 vs 单机位：分工约定与交付标准",
                 "content": """
-<p>在备婚影像预算中，许多新人纠结是否需要升级为“双机位摄影”。根据我们对多地跟拍交付案例的分析，只有满足以下条件，双机位才能真正发挥价值：</p>
+<p>在报价中分别写“人员分工”和“最终文件”。摄影师拍了多少次快门、筛选后交付多少张、精修多少张，是三个不同的数量；文件格式、交付日期、下载期限和备份期限也要单独约定。</p>
 <table>
   <thead>
     <tr>
       <th>对比维度</th>
       <th>主机位职责</th>
       <th>辅机位职责</th>
-      <th>合同必签交付底线</th>
+      <th>需协商的交付内容</th>
     </tr>
   </thead>
   <tbody>
@@ -140,7 +105,7 @@ ISSUES_DATABASE = {
       <td><strong>晨袍与接亲阶段</strong></td>
       <td>新娘房核心妆容、亲情互动特写</td>
       <td>新郎方出发准备、伴郎堵门游戏抓拍</td>
-      <td rowspan="3" style="vertical-align:middle">必须全送全部无压缩原始 RAW 格式或高分 JPG 底片（不低于 600 张），精修数量明确入册。</td>
+      <td rowspan="3" style="vertical-align:middle">约定筛选成片与精修数量、JPG分辨率、交付日期和修改次数；需要 RAW 时另问是否提供、是否收费及如何使用。不设统一张数底线。</td>
     </tr>
     <tr>
       <td><strong>典礼仪式阶段</strong></td>
@@ -154,54 +119,58 @@ ISSUES_DATABASE = {
     </tr>
   </tbody>
 </table>
+<p>“原片全送”要进一步说明是否排除误触、失焦、闭眼和测试画面。RAW 不是可直接浏览的统一成片格式，也不自动包含在每个摄影套餐中。收片时按约定的文件夹、数量和格式抽查，不因为旧稿中的“600 张”就认定服务已经达标或违约。</p>
 """
             },
             {
-                "section": "🚨 真实避坑与维权实操",
+                "section": "婚房装饰",
                 "title": "婚房布置被酒店扣押金？无痕胶与静电贴实战清单",
                 "content": """
-<p>几乎每年结婚旺季都会发生“新人在酒店婚房贴喜字，退房时因墙皮脱落被扣除上千元清洁维修押金”的纠纷。传统普通海绵双面胶在高温或受潮后会牢固粘连墙纸与乳胶漆，强行撕扯必损墙面。</p>
+<p>装饰能否粘贴，先看酒店允许的表面和材料。不能只凭包装上的“无痕”二字判断安全；墙面涂层、老化程度、贴附时间及拆除方式不同，结果可能不同。没有获得允许时，改用独立支架或桌面摆件，不把试贴成功当作全屋都可贴的证明。</p>
 <div class="highlight-card">
-  <h4>🛡️ 婚房物料零失误避坑三原则：</h4>
+  <h4>婚房装饰试贴与拆除办法</h4>
   <ul style="margin:0;padding-left:20px;line-height:1.7">
-    <li><strong>光滑表面（玻璃/穿衣镜/瓷砖）</strong>：100% 使用静电吸附喜字，靠静电原理吸附，喷少许清水即可平整贴合，撕下绝无残留。</li>
-    <li><strong>乳胶漆墙面与木质门套</strong>：必须使用“可移无痕点胶”或低粘度美纹纸打底，严禁使用红海绵胶和强力纳米胶。</li>
-    <li><strong>地毯与床品</strong>：床上抛撒的干花与纸屑必须避免遇水掉色的劣质染料红纸屑，以免染红酒店纯白床单。</li>
+    <li><strong>玻璃与镜面</strong>：先清洁一小块不显眼的位置，按产品说明贴附、拆除；带镀膜或特殊涂层的表面仍需征得许可。</li>
+    <li><strong>墙纸、乳胶漆与木饰面</strong>：避免直接粘贴；确需使用时让酒店确认可用材料与试贴位置，移除时发现起皮就停止。</li>
+    <li><strong>地毯与床品</strong>：不散撒可能掉色的纸屑或花瓣；收拾前后拍照，装饰物集中装袋带走，发现污损及时告知酒店。</li>
   </ul>
 </div>
 """
             },
             {
-                "section": "📋 本周筹备要务与行动清单",
-                "title": "预算超支 20% 时如何做结构性削减？",
+                "section": "预算演算",
+                "title": "花艺替换是否省钱，用同口径明细算一次",
                 "content": """
-<p>如果近期核对预算发现总金额超支，切忌盲目压缩四大金刚（司仪、摄影、跟妆、摄像）的劳务质量，而应从以下高消耗低感知项目中削减：</p>
+<p><strong>假设算例，不是报价或实测：</strong>同一背景墙，方案甲花材 4,000 元、结构运输与人工 2,000 元，总计 6,000 元。方案乙替换部分花材后花材 2,400 元，但多了 300 元租赁清洁费，其余不变，总计 4,700 元。差额 1,300 元，约为原方案的 21.7%。如果新增运输、押金损耗或更换结构，还要继续计入。</p>
 <ol style="padding-left:20px;line-height:1.8">
-  <li><strong>花艺结构替换</strong>：将合影背景墙的高级鲜花改为 70% 高品质仿真花 + 30% 局部真花点缀，视觉效果无差别，成本直接下降 40% 以上。</li>
-  <li><strong>纸质请帖数字化</strong>：除少数高龄长辈保留纸质请柬外，年轻同辈全部改用带导航与音乐的免费电子请帖，省下印刷与快递费用。</li>
-  <li><strong>酒水自购与开瓶费谈判</strong>：利用本周电商大促自购婚宴红白酒与饮料，并提前与酒店销售书面确认免收开瓶费与自带酒水服务费。</li>
+  <li><strong>保持比较范围一致</strong>：背景墙尺寸、覆盖密度、安装时长与撤场要求相同，才适合比较差价，不能拿局部样板价对比完整搭建价。</li>
+  <li><strong>现场看材料</strong>：分别观察近距离触感、远景照片和场地灯光下的颜色；接受效果差异后再决定，不承诺真假花视觉无差别。</li>
+  <li><strong>先删不需要的项目</strong>：取消没人使用的合影装置或重复花艺点位，再讨论材料替换。真实节省额按最终订单计算，不能把演算比例当作保证。</li>
 </ol>
+<p>合同背景参考：<a href="https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/bgt/art/2023/art_60fb3863b7364b759123a42d1df568ca.html" rel="noopener">国家市场监督管理总局公开《民法典》合同编</a>。上面的排班、文件清单和预算数字是本站建议或假设，不是法律规定的摄影套餐标准。</p>
 """
             }
         ]
     },
     4: {
-        "title": "2026金秋备婚周刊第4期：跨年与春季婚礼档期争夺、伴手礼分层定制与仪式精简原则",
-        "short_title": "2026金秋备婚周刊第4期：春季档期争夺与伴手礼分层定制",
-        "description": "wedding-tv.cn 2026金秋备婚周刊第4期：主创编委会权威梳理跨年及春季好日子早鸟锁档技巧、结婚伴手礼按客分层采购法、极简婚礼早晨仪式精简与合同定金安全防线。",
+        "title": "备婚周刊第4期归档：场地档期询价、伴手礼数量与简化仪式安排",
+        "short_title": "备婚周刊第4期：档期询价、伴手礼与简化仪式",
+        "description": "本期归档撤回无来源的全国场地预订比例与催付定金建议，说明如何向具体场地询问档期、试算伴手礼数量与包装预算，以及删减重复仪式的办法。预算为假设示例，档期与条款以实际书面确认及适用规则为准，不是行业统计或最新新闻。",
         "highlights": [
             {
-                "section": "🏛️ 民政与行业风向",
-                "title": "来年春季（4-5月）吉日锁定与场地签约窗口期",
+                "section": "场地询价",
+                "title": "具体日期向具体场地核实，不用全国比例催单",
                 "content": """
-<p>根据全国各地婚礼堂与酒店宴会厅档期预订数据，春季（特别是清明节后至五一黄金周之间的高频吉日）的热门草坪与无柱厅已被预订过半。业内督导建议：如果婚期定在来年春季，必须在本月内完成场地实地勘测与定金签署。签署合同时须特别注明“如遇市政工程或特殊天气不可抗力，允许在 6 个月内免费延期一次”的弹性条款。</p>
+<p><strong>更正：</strong>本站没有支持“全国热门场地预订过半”的数据，也没有统一要求新人“本月必须交定金”的依据，旧稿相应说法撤回。某一家场地说档期紧张，不能推导为全国或全城都没有选择。</p>
+<p>给候选场地发送相同条件：日期及可接受备选日、午宴或晚宴、预计人数、仪式与用餐是否同场、布置进场和撤场时间。请对方说明当前是可售、临时保留还是已签约，保留到哪一天，是否与其他活动共用前厅或停车区。每次回复保留时间戳，过期后重新确认。</p>
+<p>改期安排应逐项谈：可选日期范围、已发生费用、换厅差价、外包供应商能否同步更换。市政施工、天气变化是否影响合同履行，不能仅凭本站一句话认定一律免费延期。本文不提供自动生效的法律条款。</p>
 """
             },
             {
-                "section": "📈 备婚大盘与行情",
-                "title": "结婚伴手礼按宾客分级采购法：高体面低成本实操",
+                "section": "伴手礼预算",
+                "title": "按携带与饮食需要选伴手礼，先算份数再做包装",
                 "content": """
-<p>传统伴手礼全场一刀切的采购方式既浪费预算又难以兼顾不同圈层的喜好。当前备婚主流趋向于“精细化分层”：</p>
+<p>伴手礼可以按成人、儿童、食品过敏与长途携带需要区分，不必按宾客职位分等级。下面只是选品思路与自定预算示例，不是市场均价，也没有“高档”品牌保证。</p>
 <table>
   <thead>
     <tr>
@@ -213,14 +182,14 @@ ISSUES_DATABASE = {
   </thead>
   <tbody>
     <tr>
-      <td><strong>普通到场宾客</strong></td>
-      <td>高档品牌喜糖盒 + 定制红茶/花茶包</td>
+      <td><strong>成人宾客</strong></td>
+      <td>独立包装糖果或茶包，先问是否需要食品类礼物</td>
       <td>¥15 - ¥25 / 份</td>
       <td>喜糖必须认准官方授权正品，避免临期拼装糖果。</td>
     </tr>
     <tr>
-      <td><strong>长辈与重要领导</strong></td>
-      <td>传统喜饼礼盒 + 地方非遗工夫茶/健康滋补品</td>
+      <td><strong>长途携带宾客</strong></td>
+      <td>轻便、不易碎、无需冷藏的小包装，不暗示滋补功效</td>
       <td>¥60 - ¥100 / 份</td>
       <td>包装讲究沉稳大气，避免过度花哨轻浮的年轻化包装。</td>
     </tr>
@@ -232,30 +201,33 @@ ISSUES_DATABASE = {
     </tr>
   </tbody>
 </table>
+<p><strong>数量演算：</strong>假设按家庭送礼，已确认 80 户，另给协助人员 8 份，再自行预留 4 份，则采购 92 份；如果一份礼物 20 元、包装 3 元，合计 92 × 23 = 2,116 元。按人发还是按户发要先决定，不能用宴席人数直接代替礼盒数量。上述金额均为自拟预算，尚未包含运费与定制费。</p>
 """
             },
             {
-                "section": "🚨 真实避坑与维权实操",
+                "section": "接亲取舍",
                 "title": "堵门接亲游戏尺度与现场意外防范",
                 "content": """
-<p>低俗闹婚与无底线整蛊游戏是破坏婚礼当天喜庆氛围的重灾区。伴娘团在设计堵门环节时，应坚守“安全、体面、有笑点但不尴尬”的底线：严禁涉及面部强力胶带撕拉、生吃刺激性食物或任何易弄脏西装礼服的道具。推荐采用知识问答、红绳抽签、默契考验等文娱类快节奏互动，时间严格控制在 25-30 分钟以内。</p>
+<p>接亲游戏不是必选环节。想保留时，先问新人和参与者是否愿意，用答题、读信或合影代替强迫进食、身体捆绑和涂抹衣物。约定一句停止口令，任何人提出停止都结束，不以红包数额决定能否离开。门口、楼梯与消防通道不设置障碍。</p>
+<p>若晨间只有很短空档，直接取消游戏，把时间留给吃早餐、整理衣物和与父母合影。不要一边保留全部节目，一边要求车辆、摄影和化妆各自“压缩一点”；删掉明确的一个环节，比让所有人同时赶时间更容易执行。</p>
 """
             },
             {
-                "section": "📋 本周筹备要务与行动清单",
-                "title": "新娘出阁前一个月必须完成的护肤与流程排布",
+                "section": "简化流程",
+                "title": "简化早晨流程：合并重复仪式，保留个人决定权",
                 "content": """
 <ol style="padding-left:20px;line-height:1.8">
-  <li><strong>严禁临近婚期尝试医美新品</strong>：婚前 30 天内绝对不要尝试水光针、刷酸或激光类项目，以防出现泛红反黑或过敏爆发无法化妆。</li>
-  <li><strong>建立当天核心干系人联络表</strong>：明确一位沉稳可靠的总管（通常为亲舅舅或好友），将车辆、烟酒、红包保管、供应商对接等权限完全交出，新人当天只负责保持好状态。</li>
-  <li><strong>誓词卡与致辞文稿手写誊抄</strong>：提前打印或手写誓词本，避免当天在台上低头划手机看备忘录的尴尬体态。</li>
+  <li><strong>茶礼不重复摆拍</strong>：若家中已经完成茶礼，可将宴会厅对应节目改为简短致谢，不要求长辈再走一遍同样流程。</li>
+  <li><strong>把协助权限说清</strong>：亲友可以联络车辆或核对到场人数；新增支出、身份材料和账户密码仍由本人决定，不以“总管负责”要求交出手机与支付权限。</li>
+  <li><strong>誓词准备两个载体</strong>：纸质手卡为主、手机文档备用；提前按自己的语速读一遍，删去不想公开的个人信息，无需为凑时长重复致辞。</li>
 </ol>
+<p>定金与其他预付款不要混称。<a href="https://www.stats.gov.cn/gk/tjfg/xgfxfg/202503/t20250312_1958939.html" rel="noopener">《民法典》第 586—588 条</a>对定金效力及相关责任作出规定；“定金超过总价 20% 的部分仍享有同样效力”并不准确。具体付款性质、改期及退款争议应结合合同咨询专业人士，本期不是法律意见。</p>
 """
             }
         ]
     },
     5: {
-        "title": "2026金秋备婚周刊第5期：婚宴试菜核对清单、婚礼直播多机位网络保障与化妆师试妆避坑",
+        "title": "备婚周刊第5期归档：婚宴试菜核对、直播网络测试与试妆约定",
         "short_title": "2026金秋备婚周刊第5期：婚宴试菜核对与婚礼直播网络保障",
         "description": "wedding-tv.cn 2026金秋备婚周刊第5期：梳理婚宴试菜克重标注与备桌开启条款、异地亲友婚礼云直播多机位网络上行测速要点、新娘试妆定金折抵与早妆合同约定，以及婚前30至45天宾客席位编排清单。",
         "highlights": [
@@ -263,7 +235,7 @@ ISSUES_DATABASE = {
                 "section": "🍽️ 婚宴与场地核对",
                 "title": "婚宴试菜与菜单锁定实务：克重标注、备桌条件与酒水协议",
                 "content": """
-<p>进入 10 月下旬，年底及明春婚宴陆续进入试菜与最终菜单确认阶段。许多新人在拿到酒店提供的吉祥菜名菜单（如“鸿运当头”“金玉满堂”“富贵吉祥”）时，往往忽略了食材品种、净重规格与烹饪方式等关键细节，导致婚礼当天出品缩水或冷热上菜节奏失控。建议在试菜当天将以下核对事项写入婚宴补充协议（更多签约细节可对照<a href="/wedding-vendor-contract-guide.html">《婚庆与酒店合同签约核对指南》</a>与<a href="/wedding-budget-planning-guide.html">《婚礼预算分配指南》</a>）：</p>
+<p>试菜不只确认“鸿运当头”等菜名，而应问到食材品种、份量、做法和上菜顺序。下面是本站建议的核对方向，不是某个月的消费调查或酒店统一标准。试菜结束后，把实际同意的菜单与变更写进订单，更多签约问题可对照<a href="/wedding-vendor-contract-guide.html">《婚庆与酒店合同签约核对指南》</a>与<a href="/wedding-budget-planning-guide.html">《婚礼预算分配指南》</a>。</p>
 <table>
   <thead>
     <tr>
@@ -346,7 +318,7 @@ ISSUES_DATABASE = {
         ]
     },
     6: {
-        "title": "2026深秋备婚周刊第6期：婚礼摄影摄像成片验收标准、双方父母沟通分歧调解与礼服押金防坑",
+        "title": "备婚周刊第6期归档：影像交付核对、家庭分歧沟通与礼服押金",
         "short_title": "2026深秋备婚周刊第6期：影像成片验收与双方家庭沟通调解",
         "description": "wedding-tv.cn 2026深秋备婚周刊第6期：详解双方父母在桌数、礼金与改口茶礼上的沟通原则，梳理婚礼摄影摄像原片与成片交付验收表，拆解婚纱租赁押金定损防坑要点与婚前两周流程时间轴彩排。",
         "highlights": [
@@ -354,12 +326,12 @@ ISSUES_DATABASE = {
                 "section": "🤝 家庭协同与礼俗沟通",
                 "title": "双方家庭筹备分歧调解：酒席桌数、礼金归属与改口敬茶沟通原则",
                 "content": """
-<p>随着婚期临近，两代人及两个原生家庭在礼俗细节与费用分摊上的观念差异容易集中浮现。处理家庭筹备分歧的核心准则是<strong>“各自沟通、内部消化、对外一致”</strong>——新郎负责说服男方父母，新娘负责安抚女方父母，避免让伴侣直接面对对方长辈提出异议。</p>
+<p>筹备分歧可以先由各自与熟悉的家人沟通，再安排共同讨论；这只是可选办法，不要求任何一方必须“说服”父母或独自承担安抚责任。先说出愿意承担的费用和不接受的要求，再讨论桌数、礼金和仪式，不用职位或性别分配决定权。</p>
 <div class="takeaway">
   <strong>💡 三大高频分歧协商路径（完整话术详见<a href="/wedding-family-communication-guide.html">《婚礼双方父母沟通指南》</a>与<a href="/wedding-customs-verification-guide.html">《地方婚俗核对指南》</a>）</strong>
   • <strong>酒席桌数与超桌账目</strong>：若两家合办一场婚宴，建议按“共同基础费用（婚庆布置+四大金刚）平摊或专款支出，酒席餐费按男方桌数与女方桌数各自结算、礼金各自收取”的方式清晰切分；<br />
-  • <strong>改口敬茶红包对等</strong>：提前半个月由小夫妻在双方父母间同步改口红包金额（如统一为 ¥6,666 或 ¥10,001），并准备好同款红包封皮，避免仪式台上红包厚薄差异引发尴尬；<br />
-  • <strong>传统礼俗与现代流程折中</strong>：将长辈看重的上头、敬茶、回门礼安排在接亲房内完成，将主舞台仪式留给简洁庄重的现代流程。
+  • <strong>改口敬茶红包</strong>：金额由赠与者自行决定，也可以不设置，不将示例中的吉利数字当作最低要求；不在台上展示和比较金额。<br />
+  • <strong>传统礼俗与现代流程</strong>：分别确认家庭实际保留哪些环节、在何时何地进行，不能把上头、敬茶与回门当成可随意合并的一组固定节目。
 </div>
 """
             },
@@ -367,7 +339,7 @@ ISSUES_DATABASE = {
                 "section": "🎬 影像交付与质量验收",
                 "title": "婚礼摄影摄像成片交付验收标准：底片数量、色温还原与音频底噪核查",
                 "content": """
-<p>秋季婚礼扎堆过后，许多新人陆续收到摄影摄像团队交付的初版照片与剪辑成片。为了在支付尾款前高效完成质量把关，建议对照以下四维验收表逐项检查（详细验收流程可查阅<a href="/wedding-photo-video-delivery-guide.html">《婚礼摄影摄像交付验收指南》</a>，前期选团队可使用<a href="/quote-comparison.html">供应商报价对比器</a>）：</p>
+<p>收到成片后，先拿出双方确认的交付约定，再检查数量、格式、声音与修改范围。下表是验收参考，不是法律或行业统一标准；旧稿“单机位至少 400 张、双机位至少 800 张”的说法撤回。详细步骤见<a href="/wedding-photo-video-delivery-guide.html">《婚礼摄影摄像交付验收指南》</a>，服务范围可用<a href="/quote-comparison.html">供应商报价对比器</a>整理。</p>
 <table>
   <thead>
     <tr>
@@ -380,13 +352,13 @@ ISSUES_DATABASE = {
   <tbody>
     <tr>
       <td><strong>原始底片与素材包</strong></td>
-      <td>单机位有效底片 &ge; 400 张，双机位 &ge; 800 张；覆盖接亲、外景、迎宾、仪式、敬酒全环节</td>
+      <td>对照约定的筛选照片数量、文件格式、服务时段和必拍人物，不以机位数推算统一交付张数</td>
       <td>漏拍双方父母合影、长辈敬酒闭眼废片率过高、JPG 底片被过度压缩</td>
-      <td>索取全量未压缩大图或 RAW 文件备份</td>
+      <td>检查约定尺寸的 JPG；只有约定提供 RAW 时才将其纳入验收</td>
     </tr>
     <tr>
       <td><strong>精修照片成片</strong></td>
-      <td>肤色自然通透，婚纱蕾丝纹理清晰，背景杂物（灭火器、安全出口绿灯）已清理</td>
+      <td>与约定样片和修图范围比较肤色、衣物细节与背景处理，不因个人偏好要求无限次修改</td>
       <td>液化过度导致背景门框弯曲、暗光场景噪点涂抹成塑料感、主舞台脸色偏洋红或偏绿</td>
       <td>按编号列出具体修改意见表，集中一次性提交返修</td>
     </tr>
@@ -398,7 +370,7 @@ ISSUES_DATABASE = {
     </tr>
     <tr>
       <td><strong>存储介质与归档</strong></td>
-      <td>提供独立加密网盘高速下载链接 + 实体 U 盘，文件按环节分文件夹命名</td>
+      <td>按合同约定的网盘、硬盘或其他介质交付，确认下载有效期及备份方式</td>
       <td>网盘链接 7 天即失效、仅通过微信对话框发送压缩视频</td>
       <td>验收后立即在本地硬盘与家庭云盘完成异地双备份</td>
     </tr>
@@ -410,12 +382,12 @@ ISSUES_DATABASE = {
                 "section": "🚨 真实避坑与维权实操",
                 "title": "婚纱礼服租赁“定金转押金”与归还定损纠纷防范",
                 "content": """
-<p>高定婚纱礼服租赁通常伴随 ¥3,000 至 ¥8,000 不等的押金。在退还礼服时，部分不良商家会以“裙摆网纱局部勾丝”“迎亲草坪泥渍无法清洗”为由，强行扣除数千元押金甚至要求按原价买断。</p>
+<p>租礼服时把租金、定金与押金分别记下，核对各自金额、用途和退还条件；本站没有可支持统一押金区间的市场调查。取件时已有的勾丝、污迹或配件缺失要拍照记录，归还时逐项对照；发生争议不代表某个固定赔偿比例必然适用。</p>
 <div class="highlight-card">
-  <h4>🛡️ 礼服取还零纠纷三步取证法：</h4>
+  <h4>礼服取还的记录与确认办法</h4>
   <ul style="margin:0;padding-left:20px;line-height:1.7">
     <li><strong>提裙当面视频验纱</strong>：婚前 1–2 天到店取纱时，与礼服师一起将主纱、秀禾服、敬酒服挂起，用手机录制裙摆底边、拉链扣眼、珠片刺绣的近景视频，将既有微小勾丝批注在取件单上并双方签字。</li>
-    <li><strong>书面界定免责磨损范围</strong>：签约时补充约定“租金已包含常规干洗清洁费；婚礼当天正常行走造成的裙摆灰尘及 2 厘米以内的底层网纱轻微勾丝属于合理损耗，免予赔偿；如需定损赔偿，单件赔偿上限不超过该件礼服单日租金的 50%”。</li>
+    <li><strong>问清定损方法</strong>：普通清洁是否包含、什么损伤要修复、按维修费还是其他依据计价、发生争议如何复核，均需事先协商。不要把某个网纱勾丝长度或租金百分比当作通用免责条款。</li>
     <li><strong>还纱现场当面签收</strong>：婚礼次日归还礼服时，务必要求店员当场检查并出具《礼服完好归还确认单》，明确押金原路退回的具体工作日。</li>
   </ul>
 </div>
@@ -436,7 +408,7 @@ ISSUES_DATABASE = {
         ]
     },
     7: {
-        "title": "2026初冬备婚周刊第7期：立冬婚礼保暖与迎宾动线设计、婚礼音乐歌单排布与现场应急预案",
+        "title": "备婚周刊第7期归档：冬季迎宾动线、婚礼音乐排布与现场应急预案",
         "short_title": "2026初冬备婚周刊第7期：立冬保暖动线、歌单排布与应急预案",
         "description": "wedding-tv.cn 2026初冬备婚周刊第7期：围绕11月立冬后婚礼保暖与迎宾衣帽寄存动线、暖场至敬酒四阶段BGM音乐歌单编排、四大金刚尾款分段支付防加价，以及婚礼现场突发状况B计划与应急箱清单展开实操拆解。",
         "highlights": [
@@ -505,8 +477,8 @@ ISSUES_DATABASE = {
 <div class="highlight-card">
   <h4>📝 现场财务交接与防加价三项铁律（合同模板详见<a href="/wedding-vendor-contract-guide.html">《婚庆合同签约指南》</a>）：</h4>
   <ul style="margin:0;padding-left:20px;line-height:1.7">
-    <li><strong>严格执行三段式付款比例</strong>：签约付定金 20%–30%；婚礼当天仪式圆满礼成后支付至总款的 70%–80%；剩余 20%–30% 作为质量尾款，须在收到全部合格原片与精修成片后支付（司仪与跟妆无后期交付物的，在敬酒妆面完成后由总管结清）。</li>
-    <li><strong>收款权限移交婚礼总管</strong>：新人手机当天由伴娘保管，所有尾款结算统一由婚礼总管对照纸质合同附件核验后转账，任何未写入合同的临时加价一律不予认可。</li>
+    <li><strong>按实际交付协商付款节点</strong>：司仪现场服务与摄影后期交付不同，不能套用同一付款表。明确预付款性质、现场验收和成片交付对应的金额；定金的法律效力限额参见<a href="https://www.stats.gov.cn/gk/tjfg/xgfxfg/202503/t20250312_1958939.html" rel="noopener">《民法典》第 586 条</a>，旧稿“定金 20%–30%”已撤回，具体争议请咨询专业人士。</li>
+    <li><strong>有人核单，本人确认支付</strong>：可请可信亲友整理票据和核对订单，但不交出支付密码、身份材料或账户权限。新增费用先记录项目、数量、单价和提出人，由有权决定的人确认，争议项目与已确认项目分开处理。</li>
     <li><strong>超时计费须有书面起止宽限期</strong>：合同中应提前约定“因不可抗力或正常仪式顺延 30 分钟内免收超时费；超出部分按每小时固定标准计费”，杜绝口头漫天要价。</li>
   </ul>
 </div>
@@ -541,40 +513,30 @@ def get_next_issue_number() -> int:
     return max(issues) + 1 if issues else 1
 
 def verify_all_weekly_issues_unique(up_to: int | None = None):
-    """校验所有已生成的周刊页面，确保标题、摘要与正文内容绝不重复。"""
-    import hashlib
-    seen_titles = {}
-    seen_descs = {}
-    seen_bodies = {}
+    """Include near duplicates and long copied paragraphs, not just identical hashes."""
+    published = {}
     for num in get_existing_issue_numbers():
         if up_to is not None and num > up_to:
             continue
         p = ROOT / f"wedding-weekly-issue-{num}.html"
         html = p.read_text("utf-8")
-        t_m = re.search(r"<title>(.*?)</title>", html)
-        d_m = re.search(r'<meta name="description" content="(.*?)"', html)
-        b_m = re.search(r'</div>\s*(<h2 id="section-1">[\s\S]*?)<div class="action-box">', html)
-        title = t_m.group(1).strip() if t_m else ""
-        desc = d_m.group(1).strip() if d_m else ""
-        body = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", b_m.group(1))).strip() if b_m else ""
-        body_hash = hashlib.md5(body.encode("utf-8")).hexdigest()[:12]
+        verify_candidate_unique(html, published, news_from_html(html))
+        published[p.name] = html
 
-        if title in seen_titles:
-            raise RuntimeError(f"Duplicate weekly title detected between issue #{num} and #{seen_titles[title]}: {title}")
-        seen_titles[title] = num
-
-        if desc in seen_descs:
-            raise RuntimeError(f"Duplicate weekly description detected between issue #{num} and #{seen_descs[desc]}")
-        seen_descs[desc] = num
-
-        if body_hash in seen_bodies:
-            raise RuntimeError(f"Duplicate weekly body content detected between issue #{num} and #{seen_bodies[body_hash]} (hash={body_hash})")
-        seen_bodies[body_hash] = num
-
-def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str:
+def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict, modified: str | None = None) -> str:
     title = topic_data["title"]
     short_title = topic_data.get("short_title", title)
     description = topic_data["description"]
+    modified = modified or date_str
+    news = topic_data.get("news", [])
+    news_html = ""
+    for item in news:
+        news_html += (f'<h2>{escape(item["title"])}</h2><p>{escape(item["summary"])}</p>'
+                      f'<p>来源发布日期：{escape(item["published_at"])} · '
+                      f'<a href="{escape(item["url"], quote=True)}" rel="noopener">查看一手来源</a></p>\n')
+    news_record = json.dumps(news, ensure_ascii=False).replace("<", "\\u003c")
+    status_text = ("热点发布：来源与事件已按本期审阅记录核对；没有新热点时不出刊。" if news else
+                   "历史实务归档，不作为当周热点新闻或行情快报。旧文修订保留原发布日期，不新增期数。")
     
     sections_html = ""
     toc_items = ""
@@ -591,8 +553,8 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>{title} | wedding-tv.cn</title>
-<meta name="description" content="{description}" />
+<title>{escape(title)} | wedding-tv.cn</title>
+<meta name="description" content="{escape(description, quote=True)}" />
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
 <meta name="theme-color" content="#0e0a14" />
 <meta name="author" content="wedding-tv.cn 内容维护" />
@@ -602,8 +564,8 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
 <link rel="alternate" hreflang="x-default" href="https://wedding-tv.cn/wedding-weekly-issue-{issue_num}.html" />
 
 <meta property="og:site_name" content="wedding-tv.cn" />
-<meta property="og:title" content="{short_title}" />
-<meta property="og:description" content="{description[:120]}" />
+<meta property="og:title" content="{escape(short_title, quote=True)}" />
+<meta property="og:description" content="{escape(description[:120], quote=True)}" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wedding-tv.cn/wedding-weekly-issue-{issue_num}.html" />
 <meta property="og:image" content="https://wedding-tv.cn/og.png" />
@@ -616,17 +578,18 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
   "@context": "https://schema.org",
   "@type": "Article",
   "mainEntityOfPage": {{ "@type": "WebPage", "@id": "https://wedding-tv.cn/wedding-weekly-issue-{issue_num}.html" }},
-  "headline": "{title}",
-  "description": "{description}",
+  "headline": {json.dumps(title, ensure_ascii=False)},
+  "description": {json.dumps(description, ensure_ascii=False)},
   "inLanguage": "zh-CN",
   "datePublished": "{date_str}",
-  "dateModified": "{date_str}",
+  "dateModified": "{modified}",
   "image": "https://wedding-tv.cn/og.png",
   "author": {{ "@type": "Organization", "name": "wedding-tv.cn 内容维护", "url": "https://wedding-tv.cn/authors.html" }},
   "reviewedBy": {{ "@type": "Organization", "name": "wedding-tv.cn 内容维护", "url": "https://wedding-tv.cn/editorial-policy.html" }},
   "publisher": {{ "@type": "Organization", "name": "wedding-tv.cn", "logo": {{ "@type": "ImageObject", "url": "https://wedding-tv.cn/og.png" }} }}
 }}
 </script>
+<script type="application/json" id="weekly-news-record">{news_record}</script>
 <script type="application/ld+json">
 {{
   "@context": "https://schema.org",
@@ -647,9 +610,10 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
   a:hover{{text-decoration:underline}}
   .wrap{{max-width:840px;margin:0 auto;padding:48px 22px}}
   header.topbar{{border-bottom:1px solid var(--line);background:#0a060f;position:sticky;top:0;z-index:5}}
-  header.topbar .wrap{{padding:14px 22px;display:flex;justify-content:space-between;align-items:center}}
+  header.topbar .wrap{{padding:14px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}}
   header.topbar a.brand{{font-weight:700;color:var(--fg)}}
-  nav a{{margin-left:18px;color:var(--mute);font-size:14px}}
+  nav{{display:flex;flex-wrap:wrap;gap:8px 18px}}
+  nav a{{color:var(--mute);font-size:14px}}
   .tag{{display:inline-block;padding:3px 10px;border-radius:4px;background:rgba(212,165,116,.15);color:var(--accent);font-size:12px;font-weight:600;margin-bottom:12px}}
   h1{{font-size:30px;line-height:1.35;margin:0 0 14px}}
   h2{{font-size:22px;margin:42px 0 14px;border-left:4px solid var(--accent);padding-left:12px;color:var(--fg)}}
@@ -660,8 +624,9 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
   .toc{{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:24px 0 36px}}
   .toc strong{{display:block;margin-bottom:8px;color:var(--accent)}}
   .toc ol{{margin:0;padding-left:20px}}
-  table{{width:100%;border-collapse:collapse;margin:18px 0;background:var(--card);border-radius:8px;overflow:hidden}}
-  th,td{{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}}
+  table{{width:100%;table-layout:fixed;border-collapse:collapse;margin:18px 0;background:var(--card);border-radius:8px;overflow:hidden}}
+  th,td{{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;overflow-wrap:anywhere}}
+  @media(max-width:600px){{th,td{{padding:8px 6px}}}}
   th{{background:#1f1628;color:var(--accent)}}
   .takeaway{{background:rgba(212,165,116,.08);border-left:4px solid var(--accent);padding:14px 18px;margin:18px 0;border-radius:0 8px 8px 0}}
   .takeaway strong{{color:var(--accent);display:block;margin-bottom:4px}}
@@ -694,10 +659,11 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
 <main class="wrap">
 
   <div class="tag">📰 WEDDING WEEKLY · 第 {issue_num:02d} 期</div>
-  <h1>{title}</h1>
+  <h1>{escape(title)}</h1>
   <div class="meta">
-    发布日期：{date_str} · 编撰：<a href="/authors.html" rel="author">周明远（主编）</a> · 审校：程静、林雪 · 出品：wedding-tv.cn
+    发布日期：{date_str} · 更新：{modified} · 编撰：<a href="/authors.html" rel="author">周明远（主编）</a> · 审校：程静、林雪 · 出品：wedding-tv.cn
   </div>
+  <p class="weekly-status">{status_text}</p>
 
   <div class="toc">
     <strong>📋 本期深度导读</strong>
@@ -705,6 +671,7 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
 {toc_items}    </ol>
   </div>
 
+{news_html}
 {sections_html}
 
   <div class="action-box">
@@ -717,8 +684,9 @@ def generate_weekly_html(issue_num: int, date_str: str, topic_data: dict) -> str
 
   <section class="content-boundary" style="margin:44px 0 24px;padding:22px;background:#171121;border:1px solid rgba(255,255,255,.12);border-radius:8px;line-height:1.8">
     <h3 style="font-size:17px;margin:0 0 10px;color:var(--accent)">采编说明与适用边界</h3>
-    <p style="margin:0 0 10px;font-size:14px;color:var(--fg)">本周刊由 <a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a>（主编：周明远）编撰，事实判断对照民政公报与一线执行实录。若发现政策变动或内容勘误，请发送页面地址与依据至 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>。本站提供客观备婚中立实务参考，不代理任何第三方商户交易。</p>
-    <p style="margin:14px 0 0;color:#b9b1a3;font-size:13px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：{date_str} · <a href="/editorial-policy.html">采编规范</a></p>
+    <p style="margin:0 0 10px;font-size:14px;color:var(--fg)">本刊由 <a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a>负责，主编周明远。政策判断以正文所列来源及适用范围为准；筹备方案属于本站建议，演算数字不代表市场报价。使用 AI 辅助初稿、结构整理和文字检查，不将模型输出当作事实来源。涉及合同争议时应咨询具备资质的专业人士，本文不构成法律意见。</p>
+    <p style="margin:0 0 10px;font-size:14px;color:var(--fg)">没有可核验的新热点不出刊，不用旧指南换标题充当新闻。勘误请发送页面地址与依据至 <a href="mailto:1396656381@qq.com">1396656381@qq.com</a>。</p>
+    <p style="margin:14px 0 0;color:#b9b1a3;font-size:13px">内容责任：<a href="/authors.html" rel="author">wedding-tv.cn 内容维护</a> · 更新：{modified} · <a href="/editorial-policy.html">采编规范</a></p>
   </section>
 
 </main>
@@ -755,7 +723,8 @@ def update_blog_html():
 
     new_hero = f"""<h2>📰 备婚周刊 · 行业动态与实操观察</h2>
 <div class="card" style="border-color:var(--accent);background:linear-gradient(135deg,rgba(212,165,116,.12),var(--card));margin-bottom:20px;">
-  <span class="tag" style="background:#ff6b9d;color:#fff;border-radius:4px;padding:3px 8px;font-weight:700;font-size:12px;letter-spacing:1px">NEW · 第 {latest_num:02d} 期周报</span>
+  <span class="tag" style="background:#ff6b9d;color:#fff;border-radius:4px;padding:3px 8px;font-weight:700;font-size:12px">最近归档 · 第 {latest_num:02d} 期</span>
+  <p>周刊不固定出刊：只发布有一手来源、经审阅且未报道过的新热点；没有合格新闻就暂停，实务旧文只在原页修订。</p>
   <h3 style="font-size:20px;margin:8px 0 10px"><a href="/wedding-weekly-issue-{latest_num}.html" style="color:var(--fg)">{latest_title}</a></h3>
   <p style="color:var(--mute);margin:0 0 14px">{latest_desc}</p>
   <a class="go" href="/wedding-weekly-issue-{latest_num}.html" style="font-weight:700;color:var(--accent)">阅读本期完整周刊与避坑清单 →</a>
@@ -787,44 +756,24 @@ def update_blog_html():
     else:
         raise RuntimeError("Could not locate weekly digest section in blog.html")
 
-    if latest_date:
-        content = re.sub(r'"dateModified":\s*"\d{4}-\d{2}-\d{2}"', f'"dateModified":"{latest_date}"', content)
+    content = re.sub(r'"dateModified":\s*"\d{4}-\d{2}-\d{2}"', f'"dateModified":"{beijing_today().isoformat()}"', content)
 
     blog_path.write_text(content, "utf-8")
     print(f"Updated blog.html with latest issue #{latest_num} and {latest_num - 1} archived issues")
 
 def generate_social_copy(issue_num: int, date_str: str, topic_data: dict) -> str:
     title = topic_data["title"]
-    short_title = topic_data.get("short_title", title)
-    
-    highlights_text = ""
-    for idx, item in enumerate(topic_data["highlights"], start=1):
-        highlights_text += f"{idx}️⃣ 【{item['section'].split(' ')[1]}】{item['title']}\n"
-    
-    copy_text = f"""# 📕 小红书 / 微信公众号本周一键分发文案
+    highlights_text = "\n\n".join(
+        f"## {item['title']}\n{item['summary']}\n来源（{item['published_at']}）：{item['url']}"
+        for item in topic_data["news"]
+    )
+    copy_text = f"""# {title}
 
-### 📌 备用标题库（直接取用）：
-1. 《2026最新备婚周刊：近期领证结婚避坑全指南》
-2. 《备婚别踩雷！{short_title}》
-3. 《主编手记第{issue_num}期：备婚人必看的实操干货》
-
----
-
-### 📝 小红书图文文案（一键复制）：
-
-🔥 2026 备婚周刊第 {issue_num} 期上线啦！近期领证与备婚的新人们，这期干货务必先收藏再看：
+发布日期：{date_str}。以下文案只整理本期已审阅事件，发布到外部平台前仍需检查适用范围。
 
 {highlights_text}
-💡 督导实操避坑核心划重点：
-• 严防合同模糊约定，违约责任与交付明细必须白纸黑字写入补充协议！
-• 备婚任务按时间节点分阶段推进，把控预算重点不花冤枉钱！
 
-💬 备婚中的姐妹们，你们目前筹备到哪一步了？有踩过哪些合同或物料的坑？欢迎在评论区交流排雷~
-🔗 完整无删减周刊与免费备婚工具（清单/预算/致辞）已同步更新在 wedding-tv.cn 官网，自取即可！
-
----
-🏷️ 热门标签：
-#备婚攻略 #备婚清单 #婚礼避坑 #领证吉日 #极简婚礼 #结婚准备 #备婚日记
+完整解读：https://wedding-tv.cn/wedding-weekly-issue-{issue_num}.html
 """
     # Write to root for GitHub Actions Step Summary
     (ROOT / "latest-social-copy.md").write_text(copy_text, "utf-8")
@@ -836,27 +785,64 @@ def generate_social_copy(issue_num: int, date_str: str, topic_data: dict) -> str
     
     return copy_text
 
+def beijing_today():
+    return datetime.now(timezone(timedelta(hours=8))).date()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate Weekly Digest Issue")
     parser.add_argument("--issue", type=int, default=None, help="Force specific issue number")
     parser.add_argument("--date", type=str, default=None, help="Force publication date (YYYY-MM-DD)")
     parser.add_argument("--dry-run", action="store_true", help="Dry run without writing files")
+    parser.add_argument("--revise", action="store_true", help="Revise an existing archive in place, never publish a new issue")
+    parser.add_argument("--check", action="store_true", help="Check all published weekly bodies for duplication")
     args = parser.parse_args()
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+            output.write("published=false\n")
 
+    if args.check:
+        verify_all_weekly_issues_unique()
+        print("PASS: published weekly issues are not duplicate bodies")
+        return
     issue_num = args.issue or get_next_issue_number()
-    date_str = args.date or datetime.now().strftime("%Y-%m-%d")
-
-    if issue_num not in ISSUES_DATABASE:
-        raise SystemExit(
-            f"Error: Issue #{issue_num} is not defined in ISSUES_DATABASE. "
-            f"Refusing to generate fallback duplicate content. Please add Issue #{issue_num} to ISSUES_DATABASE first."
-        )
-    topic_data = ISSUES_DATABASE[issue_num]
-
-    print(f"Generating Weekly Digest Issue #{issue_num} for {date_str}...")
-    html_content = generate_weekly_html(issue_num, date_str, topic_data)
-    
     target_file = ROOT / f"wedding-weekly-issue-{issue_num}.html"
+    today = beijing_today()
+    date_str = args.date or today.isoformat()
+    date.fromisoformat(date_str)
+    if args.revise:
+        if not target_file.exists() or issue_num not in ISSUES_DATABASE:
+            raise ValueError("--revise requires an existing archived issue")
+        if args.date:
+            raise ValueError("Archive revisions preserve datePublished; do not pass --date")
+        topic_data = ISSUES_DATABASE[issue_num]
+        old_html = target_file.read_text("utf-8")
+        date_str = re.search(r'"datePublished":\s*"(\d{4}-\d{2}-\d{2})"', old_html).group(1)
+        news = []
+    else:
+        if target_file.exists():
+            print(f"SKIP: issue #{issue_num} already exists; revise the original instead of republishing")
+            return
+        draft = ROOT / "weekly-drafts" / f"issue-{issue_num}.json"
+        if not draft.exists():
+            print(f"SKIP: no reviewed news draft for issue #{issue_num}; no issue or promotional copy generated")
+            return
+        topic_data = json.loads(draft.read_text("utf-8"))
+        try:
+            news = approved_news(topic_data, date.fromisoformat(date_str), today)
+        except SkipPublication as reason:
+            print(f"SKIP: {reason}; no files changed")
+            return
+
+    html_content = generate_weekly_html(issue_num, date_str, topic_data, modified=today.isoformat())
+    published = {}
+    for p in [*ROOT.glob("*.html"), *ROOT.glob("blog/*.html")]:
+        if p == target_file:
+            continue
+        html = p.read_text("utf-8")
+        if p.name.startswith("wedding-weekly-issue-") or re.search(r'"@type"\s*:\s*"(?:Article|BlogPosting)"', html):
+            published[str(p.relative_to(ROOT))] = html
+    verify_candidate_unique(html_content, published, news)
     
     if args.dry_run:
         print(f"[Dry Run] Generated {len(html_content)} bytes for {target_file.name}")
@@ -866,16 +852,13 @@ def main():
     target_file.write_text(html_content, "utf-8")
     print(f"Created {target_file.name}")
 
-    # 2. Verify all weekly issues have unique titles, descriptions, and body content
-    verify_all_weekly_issues_unique(up_to=issue_num)
-    print("Verified all weekly digest issues have unique titles, descriptions, and body content")
-
     # 3. Update blog.html
     update_blog_html()
 
     # 4. Generate Social Copy
-    generate_social_copy(issue_num, date_str, topic_data)
-    print("Generated social copy in latest-social-copy.md")
+    if not args.revise:
+        generate_social_copy(issue_num, date_str, topic_data)
+        print("Generated social copy in latest-social-copy.md")
 
     # 5. Rebuild Sitemap
     sitemap_script = ROOT / "scripts" / "rebuild_sitemap.py"
@@ -884,6 +867,10 @@ def main():
     # 6. Rebuild RSS
     rss_script = ROOT / "scripts" / "rss_builder.py"
     subprocess.run([sys.executable, str(rss_script)], check=True)
+
+    if os.environ.get("GITHUB_OUTPUT") and not args.revise:
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+            output.write("published=true\n")
 
     print(f"Successfully generated and linked Weekly Digest #{issue_num}!")
 

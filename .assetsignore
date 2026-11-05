@@ -2,6 +2,7 @@
 functions/
 src/
 scripts/
+weekly-drafts/
 .github/
 .vscode/
 .wrangler/

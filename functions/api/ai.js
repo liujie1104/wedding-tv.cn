@@ -346,8 +346,9 @@ export const onRequestPost = async ({ request, env }) => {
   if (err) return badRequest("invalid json");
 
   const kind = String(body?.kind || "");
+  if (!Object.hasOwn(PROMPTS, kind)) return badRequest("unsupported kind");
   const builder = PROMPTS[kind];
-  if (!builder) return badRequest("unsupported kind");
+  if (typeof builder !== "function") return badRequest("unsupported kind");
 
   const { sys, user: rawUser, cfg } = builder(body || {});
   if (!rawUser || rawUser.length < 5) return badRequest("内容太少");
